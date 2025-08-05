@@ -1,0 +1,61 @@
+{
+  "type": "MaxHistoryTrackerFeaturizer",
+  "state_featurizer": {
+    "action_texts": [],
+    "entity_tag_specs": [],
+    "feature_states": {
+      "intent": {
+        "back": 0,
+        "buscar_oferta": 1,
+        "buscar_por_ingrediente": 2,
+        "buscar_producto": 3,
+        "detalle_oferta": 4,
+        "detalle_producto": 5,
+        "fuera_aplicacion": 6,
+        "nlu_fallback": 7,
+        "oferta_por_categoria": 8,
+        "out_of_scope": 9,
+        "producto_por_categoria": 10,
+        "restart": 11,
+        "session_start": 12
+      },
+      "action_name": {
+        "action_listen": 0,
+        "action_restart": 1,
+        "action_session_start": 2,
+        "action_default_fallback": 3,
+        "action_deactivate_loop": 4,
+        "action_revert_fallback_events": 5,
+        "action_default_ask_affirmation": 6,
+        "action_default_ask_rephrase": 7,
+        "action_two_stage_fallback": 8,
+        "action_unlikely_intent": 9,
+        "action_back": 10,
+        "...": 11,
+        "action_extract_slots": 12,
+        "utter_buscar_oferta": 13,
+        "utter_buscar_producto": 14,
+        "utter_fuera_aplicacion": 15,
+        "utter_default": 16
+      },
+      "entities": {
+        "accion_terapeutica": 0,
+        "categoria": 1,
+        "descuento": 2,
+        "ingrediente_activo": 3,
+        "producto": 4,
+        "tipo_oferta": 5
+      },
+      "slots": {
+        "producto_0": 0,
+        "categoria_0": 1,
+        "ingrediente_activo_0": 2,
+        "accion_terapeutica_0": 3,
+        "tipo_oferta_0": 4
+      },
+      "active_loop": {}
+    }
+  },
+  "remove_duplicates": true,
+  "max_history": 5
+}

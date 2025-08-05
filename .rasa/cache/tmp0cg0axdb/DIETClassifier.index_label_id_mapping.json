@@ -1,0 +1,10 @@
+{
+  "0": "buscar_oferta",
+  "1": "buscar_por_ingrediente",
+  "2": "buscar_producto",
+  "3": "detalle_oferta",
+  "4": "detalle_producto",
+  "5": "fuera_aplicacion",
+  "6": "oferta_por_categoria",
+  "7": "producto_por_categoria"
+}

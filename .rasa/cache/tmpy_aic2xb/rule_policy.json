@@ -1,0 +1,24 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"fuera_aplicacion\"}}]": "utter_fuera_aplicacion",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"fuera_aplicacion\"}}, {\"prev_action\": {\"action_name\": \"utter_fuera_aplicacion\"}, \"user\": {\"intent\": \"fuera_aplicacion\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"buscar_producto\"}}]": "utter_buscar_producto",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"buscar_producto\"}}, {\"prev_action\": {\"action_name\": \"utter_buscar_producto\"}, \"user\": {\"intent\": \"buscar_producto\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"buscar_oferta\"}}]": "utter_buscar_oferta",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"buscar_oferta\"}}, {\"prev_action\": {\"action_name\": \"utter_buscar_oferta\"}, \"user\": {\"intent\": \"buscar_oferta\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"nlu_fallback\"}}]": "utter_fuera_aplicacion",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"nlu_fallback\"}}, {\"prev_action\": {\"action_name\": \"utter_fuera_aplicacion\"}, \"user\": {\"intent\": \"nlu_fallback\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "predicting default action with intent back",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"nlu_fallback\"}}]",
+      "predicting default action with intent restart",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"nlu_fallback\"}}, {\"prev_action\": {\"action_name\": \"utter_fuera_aplicacion\"}, \"user\": {\"intent\": \"nlu_fallback\"}}]",
+      "predicting default action with intent session_start"
+    ]
+  }
+}
