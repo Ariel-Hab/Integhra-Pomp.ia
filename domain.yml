@@ -1,0 +1,107 @@
+version: "3.0"
+
+intents:
+  - buscar_producto
+  - buscar_oferta
+  - fuera_aplicacion
+  # - detalle_producto
+  # - detalle_oferta
+  # - producto_por_categoria
+  # - oferta_por_categoria
+  # - buscar_por_ingrediente
+
+entities:
+  - producto
+  - tipo_oferta
+  - categoria
+  - ingrediente_activo
+  - accion_terapeutica
+  - cantidad_descuento
+  - cantidad_stock
+  - fecha
+  - tiempo
+  - proveedor
+  - precio
+  - bonificacion
+
+slots:
+  producto:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: producto
+  categoria:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: categoria
+  ingrediente_activo:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: ingrediente_activo
+  accion_terapeutica:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: accion_terapeutica
+  tipo_oferta:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: tipo_oferta
+  descuento:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: descuento
+  cantidad:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: cantidad
+  fecha:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: fecha
+  proveedor:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: proveedor
+  precio:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: precio
+  bonificacion:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: bonificacion
+
+responses:
+  utter_buscar_oferta:
+    - text: "Consulta de Oferta"
+
+  utter_buscar_producto:
+    - text: "Buscar información de producto"
+
+  utter_fuera_aplicacion:
+    - text: "general (derivar a chatgpt)"
+
+  utter_default:
+    - text: "No estoy seguro de haber entendido. ¿Podés intentar con otra pregunta relacionada con la app?"
+
+actions:
+  - action_mostrar_entidades
+  # - action_buscar_producto
+  # - utter_buscar_oferta
+  # - utter_buscar_producto
+  # - utter_fuera_aplicacion
+  # - utter_default
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
