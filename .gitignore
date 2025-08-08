@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.rasa/
+.keras/
+.config/
+*.log
+*.tmp
+.env/
+venv/
+poetry.lock
