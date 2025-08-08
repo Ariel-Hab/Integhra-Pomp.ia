@@ -1,0 +1,13 @@
+# Dockerfile.rasa
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY bot/pyproject.toml bot/poetry.lock ./bot/
+RUN pip install poetry && \
+    cd bot && poetry install --no-root --no-dev
+
+COPY bot /app/bot
+
+WORKDIR /app/bot
+CMD ["poetry", "run", "python", "main.py"]

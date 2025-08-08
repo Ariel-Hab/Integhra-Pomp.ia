@@ -1,11 +1,12 @@
-version: '3.9'
-
 services:
   rasa:
-    image: rasa/rasa:3.6.10
+    build:
+      context: .
+      dockerfile: Dockerfile.rasa
     container_name: rasa_server
     volumes:
-      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
     working_dir: /app
     ports:
       - "5005:5005"
@@ -19,11 +20,11 @@ services:
 
   action_server:
     build:
-      context: ./actions
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.actions
     container_name: rasa_actions
     volumes:
-      - .:/app
+      - ./actions:/app/actions
     working_dir: /app/actions
     ports:
       - "5055:5055"

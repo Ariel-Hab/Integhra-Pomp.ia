@@ -1,0 +1,16 @@
+__pycache__/
+.rasa/cache/
+.config/
+.venv/
+.ideas/
+*.log
+*.sqlite3
+*.db
+*.tmp
+*.bak
+*.swp
+.env
+.git/
+.gitignore
+*.md
+docker-compose.yml
