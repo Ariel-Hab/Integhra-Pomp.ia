@@ -11,9 +11,6 @@
 ```
 pomp.ia/
 │
-├── .config/            # Configs de herramientas externas
-├── .keras/             # Archivos cacheados por keras (se puede ignorar)
-├── .rasa/              # Metadata generada por Rasa (modelos, etc)
 │
 ├── bot/                # Proyecto principal del chatbot
 │   ├── data/           # NLU y ejemplos de conversación

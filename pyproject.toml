@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "pomp-ia"
+version = "0.1.0"
+description = "Pomp-IA: Plataforma de automatización conversacional y lógica personalizada con modelos de lenguaje."
+authors = ["Ariel-Hab <ari.habib.arg@gmail.com>"]
+packages = [
+  { include = "bot", from = "." },
+  { include = "actions", from = "." }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9.0,<3.11"
+make = "^0.1.6.post2"
+packaging = ">=20.0,<21.0"
+
+[tool.poetry.group.dev.dependencies]
+tomli = "^2.2.1"
+
+[tool.poetry.group.bot.dependencies]
+pandas = ">=1.5.3,<2.0.0"
+transformers = ">=4.54.1,<5.0.0"
+torch = ">=2.7.1,<3.0.0"
+sentencepiece = ">=0.2.0,<0.3.0"
+sacremoses = ">=0.1.1,<0.2.0"
+unidecode = ">=1.4.0,<2.0.0"
+rasa-sdk = "^3.6.1"
+rasa = "^3.6.21"
+
+[tool.poetry.group.actions.dependencies]
+rasa-sdk = "^3.6.1"
+rasa = "^3.6.21"
+
+# Scripts para llamar directamente a manage.py desde poetry
+[tool.poetry.scripts]
+manage = "scripts.manage:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
