@@ -1,30 +1,35 @@
+version: "3.9"
+
 services:
   rasa:
     build:
       context: .
-      dockerfile: Dockerfile.rasa
+      target: rasa
     container_name: rasa_server
     volumes:
-      - ./data:/app/data
-      - ./models:/app/models
-    working_dir: /app
+      - ./bot/data:/app/bot/data
+      - ./bot/models:/app/bot/models
     ports:
       - "5005:5005"
-    command:
-      - run
-      - --enable-api
-      - --cors
-      - "*"
     depends_on:
       - action_server
 
   action_server:
     build:
       context: .
-      dockerfile: Dockerfile.actions
+      target: actions
     container_name: rasa_actions
     volumes:
       - ./actions:/app/actions
-    working_dir: /app/actions
     ports:
       - "5055:5055"
+
+  trainer:
+    build:
+      context: .
+      target: rasa
+    container_name: rasa_trainer
+    volumes:
+      - ./bot/data:/app/bot/data
+      - ./bot/models:/app/bot/models
+    entrypoint: ["poetry", "run", "python", "entrenador/train.py"]
