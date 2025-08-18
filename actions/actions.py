@@ -1,65 +1,47 @@
 from typing import Any, Text, Dict, List
+import logging
+
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk.events import EventType
 
-class ActionMostrarEntidades(Action):
+# Importamos los handlers específicos
+from handlers.busqueda import handle_busqueda
+from handlers.fuera import handle_fuera
+from handlers.fallback import handle_fallback
 
+# ---------------- LOGGING ----------------
+logger = logging.getLogger("ActionRouter")
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# ---------------- MAPA INTENT -> HANDLER ----------------
+INTENT_TO_HANDLER = {
+    "buscar_producto": handle_busqueda,
+    "buscar_oferta": handle_busqueda,
+    "fuera_aplicacion": handle_fuera,
+    "nlu_fallback": handle_fallback,   # intent por defecto de Rasa
+    "verificar_contexto": handle_fallback,
+    "completar_pedido_pendiente": handle_fallback,
+}
+
+# ---------------- ACTION GENÉRICA ----------------
+class ActionGenerica(Action):
     def name(self) -> Text:
-        return "action_mostrar_entidades"
+        return "action_generica"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[EventType]:
+        intent = tracker.latest_message.get("intent", {}).get("name", "")
+        logger.info(f"[Router] Intent detectado: {intent}")
 
-        entidades = tracker.latest_message.get("entities", [])
-
-        entidad_map = {}
-        for ent in entidades:
-            entidad = ent.get("entity")
-            valor = ent.get("value")
-            if entidad and valor:
-                entidad_map[entidad] = valor
-
-        mensaje = ""
-
-        if "producto" in entidad_map:
-            mensaje += f"¿Estás interesado en el producto **{entidad_map['producto']}**?"
-
-        if "tipo_oferta" in entidad_map:
-            mensaje += f" Hay una oferta del tipo **{entidad_map['tipo_oferta']}**."
-
-        if "cantidad_descuento" in entidad_map:
-            mensaje += f" Tiene un descuento de **{entidad_map['cantidad_descuento']}**."
-
-        if "bonificacion" in entidad_map:
-            mensaje += f" La bonificación es de **{entidad_map['bonificacion']}**."
-
-        if "categoria" in entidad_map:
-            mensaje += f" Pertenece a la categoría **{entidad_map['categoria']}**."
-
-        if "ingrediente_activo" in entidad_map:
-            mensaje += f" Contiene **{entidad_map['ingrediente_activo']}** como principio activo."
-
-        if "accion_terapeutica" in entidad_map:
-            mensaje += f" Es usado para **{entidad_map['accion_terapeutica']}**."
-
-        if "cantidad_stock" in entidad_map:
-            mensaje += f" Hay un stock de **{entidad_map['cantidad_stock']}** unidades."
-
-        if "fecha" in entidad_map:
-            mensaje += f" La fecha mencionada es **{entidad_map['fecha']}**."
-
-        if "tiempo" in entidad_map:
-            mensaje += f" El tiempo indicado es **{entidad_map['tiempo']}**."
-
-        if "proveedor" in entidad_map:
-            mensaje += f" El proveedor es **{entidad_map['proveedor']}**."
-
-        if "precio" in entidad_map:
-            mensaje += f" El precio informado es **{entidad_map['precio']}**."
-
-        if not mensaje:
-            mensaje = "No detecté ninguna entidad relevante para continuar la conversación."
-
-        dispatcher.utter_message(text=mensaje.strip())
-        return []
+        handler = INTENT_TO_HANDLER.get(intent, handle_fallback)
+        return handler(dispatcher, tracker, domain)

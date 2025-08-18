@@ -67,3 +67,14 @@ policies:
 
 # Optional assistant ID (not always needed unless you're using Rasa Pro)
 assistant_id: 20250802-131303-coral-parent
+
+nlu:
+  - data/nlu.yml
+  - data/lookup_tables.yml
+  - data/synonyms.yml
+
+stories:
+  - data/stories.yml
+
+rules:
+  - data/rules.yml

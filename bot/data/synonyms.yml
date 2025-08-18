@@ -1,311 +1,315 @@
 version: '3.1'
 nlu:
-- synonym: Kensol
-  examples: '- kensol'
-- synonym: Acederm
-  examples: '- acederm'
 - synonym: Adaptil
   examples: '- adaptil'
+- synonym: Bucal
+  examples: '- bucal'
+- synonym: Enroplus
+  examples: '- enroplus'
+- synonym: Totalvet
+  examples: '- totalvet'
+- synonym: Kothrina
+  examples: '- kothrina'
 - synonym: Legend
   examples: '- legend'
-- synonym: Kuraderm
-  examples: '- kuraderm'
-- synonym: Tripackprotech
-  examples: '- tripackprotech'
-- synonym: Pimocard
-  examples: '- pimocard'
+- synonym: Pimobendan
+  examples: '- pimobendan'
+- synonym: Cetfur
+  examples: '- cetfur'
 - synonym: Cidar
   examples: '- cidar'
+- synonym: Semintra
+  examples: '- semintra'
 - synonym: Advantix
   examples: '- advantix'
-- synonym: Moxidex
-  examples: '- moxidex'
-- synonym: Pimocard
-  examples: '- pimocard'
-- synonym: Acedan
-  examples: '- acedan'
+- synonym: Ecthol
+  examples: '- ecthol'
 - synonym: Espuma
   examples: '- espuma'
-- synonym: Algidol
-  examples: '- algidol'
+- synonym: Enroplus
+  examples: '- enroplus'
+- synonym: Tripackprotech
+  examples: '- tripackprotech'
 - synonym: Ciclosporina
   examples: '- ciclosporina'
 - synonym: Duosecretina
   examples: '- duosecretina'
-- synonym: Ecthonil
-  examples: '- ecthonil'
-- synonym: Advantix
-  examples: '- advantix'
+- synonym: Mv
+  examples: '- mv'
+- synonym: Neo
+  examples: '- neo'
+- synonym: Colirama
+  examples: '- colirama'
+- synonym: Terramicina
+  examples: '- terramicina'
 - synonym: Nogastrol
   examples: '- nogastrol'
-- synonym: Simparica
-  examples: '- simparica'
-- synonym: Comfortis
-  examples: '- comfortis'
-- synonym: Injection
-  examples: '- injection'
-- synonym: Ol
-  examples: '- ol'
-- synonym: Oxisol
-  examples: '- oxisol'
-- synonym: Simparica
-  examples: '- simparica'
+- synonym: Baytril
+  examples: '- baytril'
 - synonym: Simparica
   examples: '- simparica'
 - synonym: Advantix
   examples: '- advantix'
 - synonym: Pragma
   examples: '- pragma'
-- synonym: Mv
-  examples: '- mv'
+- synonym: Ecthol
+  examples: '- ecthol'
 - synonym: Euthanyle
   examples: '- euthanyle'
-- synonym: Mv
-  examples: '- mv'
+- synonym: Eutanasico
+  examples: '- eutanasico'
+- synonym: Convenia
+  examples: '- convenia'
+- synonym: Pets
+  examples: '- pets'
+- synonym: Neovita
+  examples: '- neovita'
 - synonym: Toltrazol
   examples: '- toltrazol'
 - synonym: Convenia
   examples: '- convenia'
-- synonym: Fenobarbital
-  examples: '- fenobarbital'
-- synonym: Seresto
-  examples: '- seresto'
 - synonym: Azitromicina
   examples: '- azitromicina'
-- synonym: Full
-  examples: '- full'
 - synonym: Simparica
   examples: '- simparica'
 - synonym: Dectomax
   examples: '- dectomax'
-- synonym: Tratam
-  examples: '- tratam'
 - synonym: Entero
   examples: '- entero'
-- synonym: Mv
-  examples: '- mv'
 - synonym: Comfortis
   examples: '- comfortis'
-- synonym: Carprodol
-  examples: '- carprodol'
 - synonym: Mv
   examples: '- mv'
 - synonym: Power
   examples: '- power'
-- synonym: Bactrovet
-  examples: '- bactrovet'
 - synonym: Tripackprotech
   examples: '- tripackprotech'
-- synonym: Basken
-  examples: '- basken'
+- synonym: Credelio
+  examples: '- credelio'
 - synonym: Toracard
   examples: '- toracard'
 - synonym: Sosten
   examples: '- sosten'
-- synonym: Adaptil
-  examples: '- adaptil'
-- synonym: Pets
-  examples: '- pets'
-- synonym: Dectomax
-  examples: '- dectomax'
+- synonym: Seresto
+  examples: '- seresto'
+- synonym: Power
+  examples: '- power'
 - synonym: Credelio
   examples: '- credelio'
 - synonym: Dominal
   examples: '- dominal'
-- synonym: Cumepina
-  examples: '- cumepina'
-- synonym: Carprodol
-  examples: '- carprodol'
-- synonym: Oxisol
-  examples: '- oxisol'
-- synonym: Simparica
-  examples: '- simparica'
-- synonym: Mv
-  examples: '- mv'
-- synonym: Credelio
-  examples: '- credelio'
-- synonym: Prednisol
-  examples: '- prednisol'
-- synonym: Ioduro
-  examples: '- ioduro'
-- synonym: Ol
-  examples: '- ol'
-- synonym: Adaptil
-  examples: '- adaptil'
 - synonym: Baytril
   examples: '- baytril'
+- synonym: Azitromicina
+  examples: '- azitromicina'
+- synonym: Oxisol
+  examples: '- oxisol'
+- synonym: Pets
+  examples: '- pets'
 - synonym: Mv
   examples: '- mv'
+- synonym: Power
+  examples: '- power'
+- synonym: Credelio
+  examples: '- credelio'
+- synonym: Ol
+  examples: '- ol'
+- synonym: Tripackprotech
+  examples: '- tripackprotech'
 - synonym: Mv
   examples: '- mv'
-- synonym: Mv
-  examples: '- mv'
+- synonym: Comfortis
+  examples: '- comfortis'
+- synonym: Ecthol
+  examples: '- ecthol'
 - synonym: Tau
   examples: '- tau'
-- synonym: Otiflex
-  examples: '- otiflex'
 - synonym: Sosten
   examples: '- sosten'
+- synonym: Nogastrol
+  examples: '- nogastrol'
+- synonym: Adaptil
+  examples: '- adaptil'
 - synonym: Oxitetraciclina
   examples: '- oxitetraciclina'
+- synonym: Pets
+  examples: '- pets'
+- synonym: Trocoxil
+  examples: '- trocoxil'
 - synonym: Apoquel
   examples: '- apoquel'
+- synonym: Mv
+  examples: '- mv'
 - synonym: Enroxina
   examples: '- enroxina'
+- synonym: Kil
+  examples: '- kil'
+- synonym: Credelio
+  examples: '- credelio'
 - synonym: Advocate
   examples: '- advocate'
-- synonym: Ecthonil
-  examples: '- ecthonil'
 - synonym: Otiflex
   examples: '- otiflex'
 - synonym: Proteliv
   examples: '- proteliv'
-- synonym: Condroitin
-  examples: '- condroitin'
-- synonym: Algicam
-  examples: '- algicam'
 - synonym: Mv
   examples: '- mv'
 - synonym: Diazepet
   examples: '- diazepet'
 - synonym: Proteliv
   examples: '- proteliv'
-- synonym: Ocladerm
-  examples: '- ocladerm'
-- synonym: Tobramax
-  examples: '- tobramax'
-- synonym: Mv
-  examples: '- mv'
-- synonym: Mv
-  examples: '- mv'
-- synonym: Tipertox
-  examples: '- tipertox'
-- synonym: Ivomec
-  examples: '- ivomec'
-- synonym: Fipro
-  examples: '- fipro'
-- synonym: Tratam
-  examples: '- tratam'
-- synonym: Apetil
-  examples: '- apetil'
-- synonym: Cefalong
-  examples: '- cefalong'
-- synonym: Enteroplus
-  examples: '- enteroplus'
-- synonym: Mv
-  examples: '- mv'
-- synonym: Bio
-  examples: '- bio'
-- synonym: Algicam
-  examples: '- algicam'
 - synonym: Credelio
   examples: '- credelio'
-- synonym: Crema
-  examples: '- crema'
-- synonym: Fipro
-  examples: '- fipro'
+- synonym: Dominal
+  examples: '- dominal'
+- synonym: Enroplus
+  examples: '- enroplus'
+- synonym: Cae
+  examples: '- cae'
+- synonym: Rimadyl
+  examples: '- rimadyl'
+- synonym: Meltra
+  examples: '- meltra'
+- synonym: Credelio
+  examples: '- credelio'
+- synonym: Sincelar
+  examples: '- sincelar'
+- synonym: Apetil
+  examples: '- apetil'
+- synonym: Sh
+  examples: '- sh'
+- synonym: Bio
+  examples: '- bio'
+- synonym: Ivomec
+  examples: '- ivomec'
+- synonym: Algicam
+  examples: '- algicam'
+- synonym: Cardial
+  examples: '- cardial'
+- synonym: Sosten
+  examples: '- sosten'
 - synonym: Spinomax
   examples: '- spinomax'
+- synonym: Atb
+  examples: '- atb'
 - synonym: Tiu
   examples: '- tiu'
 - synonym: Viviramv
   examples: '- viviramv'
-- synonym: Fipro
-  examples: '- fipro'
-- synonym: Idocarb12
-  examples: '- idocarb12'
+- synonym: Mv
+  examples: '- mv'
+- synonym: Colotrin
+  examples: '- colotrin'
 - synonym: Aplonal
   examples: '- aplonal'
 - synonym: Fider
   examples: '- fider'
-- synonym: Griseofulvina
-  examples: '- griseofulvina'
+- synonym: Virbac
+  examples: '- virbac'
 - synonym: Sh
   examples: '- sh'
 - synonym: Eqvalan
   examples: '- eqvalan'
+- synonym: Pf
+  examples: '- pf'
+- synonym: Fleegard
+  examples: '- fleegard'
 - synonym: Fider
   examples: '- fider'
 - synonym: Baycox
   examples: '- baycox'
+- synonym: Ocladerm
+  examples: '- ocladerm'
+- synonym: Idocarb12
+  examples: '- idocarb12'
 - synonym: Epitelizante
   examples: '- epitelizante'
 - synonym: Ecthol
   examples: '- ecthol'
-- synonym: Barbitol
-  examples: '- barbitol'
 - synonym: Ivermex
   examples: '- ivermex'
-- synonym: Fortepen
-  examples: '- fortepen'
-- synonym: Librela
-  examples: '- librela'
+- synonym: Credelio
+  examples: '- credelio'
+- synonym: Advantage
+  examples: '- advantage'
 - synonym: Fider
   examples: '- fider'
+- synonym: Eutanasico
+  examples: '- eutanasico'
+- synonym: Linco
+  examples: '- linco'
 - synonym: Barbitol
   examples: '- barbitol'
+- synonym: Fluido
+  examples: '- fluido'
 - synonym: Simparica
   examples: '- simparica'
+- synonym: Kil
+  examples: '- kil'
 - synonym: Enteroplus
   examples: '- enteroplus'
+- synonym: Credelio
+  examples: '- credelio'
+- synonym: Total
+  examples: '- total'
 - synonym: Basken
   examples: '- basken'
-- synonym: Ocubiotic
-  examples: '- ocubiotic'
-- synonym: Barbitol
-  examples: '- barbitol'
+- synonym: Fider
+  examples: '- fider'
+- synonym: Feliway
+  examples: '- feliway'
 - synonym: Pf
   examples: '- pf'
 - synonym: Total
   examples: '- total'
-- synonym: Dozilam
-  examples: '- dozilam'
-- synonym: Ranitidina
-  examples: '- ranitidina'
-- synonym: Tonico
-  examples: '- tonico'
-- synonym: Pip
-  examples: '- pip'
-- synonym: Ivermex
-  examples: '- ivermex'
-- synonym: Drontal
-  examples: '- drontal'
+- synonym: Ocubiotic
+  examples: '- ocubiotic'
+- synonym: Ohm
+  examples: '- ohm'
+- synonym: Coagulante
+  examples: '- coagulante'
+- synonym: Pantoliv
+  examples: '- pantoliv'
 - synonym: Simparica
   examples: '- simparica'
-- synonym: Bagovac
-  examples: '- bagovac'
+- synonym: Librela
+  examples: '- librela'
 - synonym: Cytopoint
   examples: '- cytopoint'
 - synonym: Power
   examples: '- power'
-- synonym: Librela
-  examples: '- librela'
-- synonym: Bactroflay
-  examples: '- bactroflay'
-- synonym: Colotrin
-  examples: '- colotrin'
-- synonym: Seniorline
-  examples: '- seniorline'
-- synonym: Baytril
-  examples: '- baytril'
-- synonym: Atriben
-  examples: '- atriben'
-- synonym: Pip
-  examples: '- pip'
+- synonym: Duosecretina
+  examples: '- duosecretina'
+- synonym: Pileran
+  examples: '- pileran'
 - synonym: Vita
   examples: '- vita'
-- synonym: Feline
-  examples: '- feline'
+- synonym: Meltra
+  examples: '- meltra'
+- synonym: Terpan
+  examples: '- terpan'
+- synonym: Bagogard
+  examples: '- bagogard'
 - synonym: Vita
   examples: '- vita'
 - synonym: Driptol
   examples: '- driptol'
-- synonym: Hepatoprotector
-  examples: '- hepatoprotector'
+- synonym: Artrin
+  examples: '- artrin'
+- synonym: Meltra
+  examples: '- meltra'
 - synonym: Tratam
   examples: '- tratam'
 - synonym: Pf
   examples: '- pf'
+- synonym: Drontal
+  examples: '- drontal'
+- synonym: Protech
+  examples: '- protech'
+- synonym: Ciproplus
+  examples: '- ciproplus'
+- synonym: Pentabiotico
+  examples: '- pentabiotico'
 - synonym: Fortekor
   examples: '- fortekor'
 - synonym: Bactrovet
@@ -316,14 +320,10 @@ nlu:
   examples: '- pimocard'
 - synonym: Advantage
   examples: '- advantage'
-- synonym: Prednovet
-  examples: '- prednovet'
 - synonym: Itraconazol
   examples: '- itraconazol'
 - synonym: Feline
   examples: '- feline'
-- synonym: Pets
-  examples: '- pets'
 - synonym: Algicam
   examples: '- algicam'
 - synonym: Virbac
@@ -338,126 +338,124 @@ nlu:
   examples: '- dermodene'
 - synonym: Shampoo
   examples: '- shampoo'
-- synonym: Basken
-  examples: '- basken'
+- synonym: Puppyline
+  examples: '- puppyline'
+- synonym: Silihepatic
+  examples: '- silihepatic'
+- synonym: Cefalong
+  examples: '- cefalong'
 - synonym: Protech
   examples: '- protech'
 - synonym: Rochy
   examples: '- rochy'
-- synonym: Virbac
-  examples: '- virbac'
+- synonym: Neuroalivio
+  examples: '- neuroalivio'
 - synonym: Pf
   examples: '- pf'
-- synonym: Rochy
-  examples: '- rochy'
-- synonym: Tolzuril
-  examples: '- tolzuril'
-- synonym: Clorhexidina
-  examples: '- clorhexidina'
-- synonym: Dipirona
-  examples: '- dipirona'
+- synonym: Virbac
+  examples: '- virbac'
+- synonym: Terramicina
+  examples: '- terramicina'
+- synonym: Doxin
+  examples: '- doxin'
 - synonym: Albex
   examples: '- albex'
 - synonym: Power
   examples: '- power'
-- synonym: Seniorline
-  examples: '- seniorline'
 - synonym: Virbac
   examples: '- virbac'
-- synonym: Pets
-  examples: '- pets'
-- synonym: Basken
-  examples: '- basken'
 - synonym: Protech
   examples: '- protech'
-- synonym: Integhra
-  examples: '- integhra'
+- synonym: Prednisolona
+  examples: '- prednisolona'
 - synonym: Shampoo
   examples: '- shampoo'
 - synonym: Antiverrugas
   examples: '- antiverrugas'
-- synonym: Cidar
-  examples: '- cidar'
-- synonym: Cidar
-  examples: '- cidar'
-- synonym: Bucal
-  examples: '- bucal'
-- synonym: Virbac
-  examples: '- virbac'
+- synonym: Rochy
+  examples: '- rochy'
 - synonym: Kil
   examples: '- kil'
 - synonym: Librela
   examples: '- librela'
-- synonym: Power
-  examples: '- power'
 - synonym: Shampoo
   examples: '- shampoo'
-- synonym: Itraconazol
-  examples: '- itraconazol'
-- synonym: Diafin
-  examples: '- diafin'
-- synonym: Rochy
-  examples: '- rochy'
+- synonym: Ivermectina
+  examples: '- ivermectina'
+- synonym: Tramadol
+  examples: '- tramadol'
+- synonym: Virbac
+  examples: '- virbac'
+- synonym: Dynamide
+  examples: '- dynamide'
 - synonym: Power
   examples: '- power'
 - synonym: Pf
   examples: '- pf'
 - synonym: Isiquick
   examples: '- isiquick'
-- synonym: Cefalong
-  examples: '- cefalong'
-- synonym: Btk
-  examples: '- btk'
-- synonym: Protech
-  examples: '- protech'
 - synonym: Dexa
   examples: '- dexa'
-- synonym: Virbac
-  examples: '- virbac'
-- synonym: Pf
-  examples: '- pf'
-- synonym: Aurix
-  examples: '- aurix'
-- synonym: Sincelar
-  examples: '- sincelar'
-- synonym: Trivermex
-  examples: '- trivermex'
-- synonym: Pets
-  examples: '- pets'
-- synonym: Vaquero
-  examples: '- vaquero'
 - synonym: Power
   examples: '- power'
+- synonym: Aurix
+  examples: '- aurix'
+- synonym: Endospot
+  examples: '- endospot'
+- synonym: Artroglycan
+  examples: '- artroglycan'
 - synonym: Pf
   examples: '- pf'
 - synonym: Genabil
   examples: '- genabil'
 - synonym: Sincelar
   examples: '- sincelar'
+- synonym: Protech
+  examples: '- protech'
 - synonym: Pets
   examples: '- pets'
+- synonym: Clavamox
+  examples: '- clavamox'
 - synonym: Artroglycan
   examples: '- artroglycan'
-- synonym: Power
-  examples: '- power'
+- synonym: Bagogard
+  examples: '- bagogard'
+- synonym: Pf
+  examples: '- pf'
+- synonym: Cloralen
+  examples: '- cloralen'
+- synonym: Sincelar
+  examples: '- sincelar'
+- synonym: Pets
+  examples: '- pets'
+- synonym: Revol
+  examples: '- revol'
 - synonym: Dominal
   examples: '- dominal'
-- synonym: Tea
-  examples: '- tea'
+- synonym: Power
+  examples: '- power'
 - synonym: Tratam
   examples: '- tratam'
 - synonym: Sincelar
   examples: '- sincelar'
-- synonym: Labyderm
-  examples: '- labyderm'
-- synonym: Vetscan
-  examples: '- vetscan'
+- synonym: Tea
+  examples: '- tea'
+- synonym: Coagulante
+  examples: '- coagulante'
+- synonym: Pets
+  examples: '- pets'
+- synonym: Clamoxyl
+  examples: '- clamoxyl'
+- synonym: Lectora
+  examples: '- lectora'
+- synonym: Prius
+  examples: '- prius'
+- synonym: Rochy
+  examples: '- rochy'
 - synonym: Mayor
   examples: '- mayor'
 - synonym: Ciclosporina
   examples: '- ciclosporina'
-- synonym: Bactroprofen
-  examples: '- bactroprofen'
 - synonym: Fip
   examples: '- fip'
 - synonym: Vermiplex
@@ -470,62 +468,88 @@ nlu:
   examples: '- ecthonil'
 - synonym: Labyderm
   examples: '- labyderm'
-- synonym: Pets
-  examples: '- pets'
-- synonym: Vetscan
-  examples: '- vetscan'
+- synonym: Totalvet
+  examples: '- totalvet'
+- synonym: Pimocard
+  examples: '- pimocard'
 - synonym: Artrosan
   examples: '- artrosan'
-- synonym: Aplonal
-  examples: '- aplonal'
-- synonym: Ecthol
-  examples: '- ecthol'
-- synonym: Terpan
-  examples: '- terpan'
-- synonym: Dominal
-  examples: '- dominal'
+- synonym: Totalvet
+  examples: '- totalvet'
+- synonym: Ranitidina
+  examples: '- ranitidina'
+- synonym: Bagogard
+  examples: '- bagogard'
+- synonym: Relay
+  examples: '- relay'
+- synonym: Voren
+  examples: '- voren'
+- synonym: Meltra
+  examples: '- meltra'
 - synonym: Feliway
   examples: '- feliway'
 - synonym: Simparica
   examples: '- simparica'
+- synonym: Vetscan
+  examples: '- vetscan'
+- synonym: Virbac
+  examples: '- virbac'
+- synonym: Vetscan
+  examples: '- vetscan'
 - synonym: Galmetrin
   examples: '- galmetrin'
+- synonym: Medroxiprogesterona
+  examples: '- medroxiprogesterona'
+- synonym: Ecthol
+  examples: '- ecthol'
+- synonym: Anfotropina
+  examples: '- anfotropina'
 - synonym: Sosten
   examples: '- sosten'
 - synonym: Ursomarina
   examples: '- ursomarina'
-- synonym: Cidar
-  examples: '- cidar'
+- synonym: Vetscan
+  examples: '- vetscan'
+- synonym: Flexapet
+  examples: '- flexapet'
+- synonym: Dominal
+  examples: '- dominal'
 - synonym: Kobra
   examples: '- kobra'
+- synonym: Power
+  examples: '- power'
 - synonym: Pro
   examples: '- pro'
-- synonym: Ol
-  examples: '- ol'
 - synonym: Pragma
   examples: '- pragma'
+- synonym: Ecthol
+  examples: '- ecthol'
+- synonym: Virbac
+  examples: '- virbac'
+- synonym: Novotioc
+  examples: '- novotioc'
+- synonym: Rochy
+  examples: '- rochy'
 - synonym: Dexashock
   examples: '- dexashock'
 - synonym: Aplonal
   examples: '- aplonal'
-- synonym: Bromhexina
-  examples: '- bromhexina'
-- synonym: Acedan
-  examples: '- acedan'
 - synonym: Dominal
   examples: '- dominal'
-- synonym: Novotioc
-  examples: '- novotioc'
+- synonym: Dominal
+  examples: '- dominal'
+- synonym: Block
+  examples: '- block'
 - synonym: Ecthonil
   examples: '- ecthonil'
 - synonym: Endectocida
   examples: '- endectocida'
 - synonym: Energia
   examples: '- energia'
+- synonym: Protech
+  examples: '- protech'
 - synonym: Prednisolona
   examples: '- prednisolona'
-- synonym: Tonico
-  examples: '- tonico'
 - synonym: Ranitidina
   examples: '- ranitidina'
 - synonym: Block
@@ -534,84 +558,90 @@ nlu:
   examples: '- kuramicina'
 - synonym: Driptol
   examples: '- driptol'
+- synonym: Shampoo
+  examples: '- shampoo'
 - synonym: Furocal
   examples: '- furocal'
-- synonym: Virbac
-  examples: '- virbac'
-- synonym: Pimocard
-  examples: '- pimocard'
+- synonym: Block
+  examples: '- block'
 - synonym: Bactroprofen
   examples: '- bactroprofen'
 - synonym: Canis
   examples: '- canis'
 - synonym: Promafine
   examples: '- promafine'
-- synonym: Ecthol
-  examples: '- ecthol'
-- synonym: Enroplus
-  examples: '- enroplus'
+- synonym: Pip
+  examples: '- pip'
 - synonym: Virbac
   examples: '- virbac'
 - synonym: Previcox
   examples: '- previcox'
+- synonym: Labyderm
+  examples: '- labyderm'
 - synonym: Previcox
   examples: '- previcox'
 - synonym: Ketafine
   examples: '- ketafine'
-- synonym: Kil
-  examples: '- kil'
-- synonym: Diurene
-  examples: '- diurene'
-- synonym: Floxaday
-  examples: '- floxaday'
+- synonym: Power
+  examples: '- power'
+- synonym: Ketamid
+  examples: '- ketamid'
 - synonym: Floxaday
   examples: '- floxaday'
 - synonym: Cardial
   examples: '- cardial'
 - synonym: Novotioc
   examples: '- novotioc'
-- synonym: Cidar
-  examples: '- cidar'
-- synonym: Flurbiprofeno
-  examples: '- flurbiprofeno'
-- synonym: Hialurina
-  examples: '- hialurina'
-- synonym: Ocuflox
-  examples: '- ocuflox'
-- synonym: Tramadol
-  examples: '- tramadol'
-- synonym: Super
-  examples: '- super'
+- synonym: Bactrovet
+  examples: '- bactrovet'
 - synonym: Repexxin
   examples: '- repexxin'
 - synonym: Dominal
   examples: '- dominal'
+- synonym: Flurbiprofeno
+  examples: '- flurbiprofeno'
+- synonym: Ocuflox
+  examples: '- ocuflox'
+- synonym: Rochy
+  examples: '- rochy'
+- synonym: Clorhex
+  examples: '- clorhex'
+- synonym: Grupo
+  examples: '- grupo'
+- synonym: Tramadol
+  examples: '- tramadol'
+- synonym: Moxidex
+  examples: '- moxidex'
 - synonym: Giacoccide
   examples: '- giacoccide'
-- synonym: Pip
-  examples: '- pip'
+- synonym: Bactrovet
+  examples: '- bactrovet'
 - synonym: Dominal
   examples: '- dominal'
 - synonym: Canis
   examples: '- canis'
-- synonym: Pimocard
-  examples: '- pimocard'
 - synonym: Furocal
   examples: '- furocal'
 - synonym: Colotrin
   examples: '- colotrin'
 - synonym: Sosten
   examples: '- sosten'
+- synonym: Doxilina
+  examples: '- doxilina'
 - synonym: Toltrazol
   examples: '- toltrazol'
+- synonym: Pregabaliv
+  examples: '- pregabaliv'
+- synonym: Bactrovet
+  examples: '- bactrovet'
+- synonym: Basken
+  examples: '- basken'
 - synonym: Vermkon
   examples: '- vermkon'
 - synonym: Dominal
   examples: '- dominal'
-- synonym: Kuramicina
-  examples: '- kuramicina'
-- synonym: Canis
-  examples: '- canis'
+- synonym: Serenex
+  examples: '- serenex'
 - synonym: Ocladerm
   examples: '- ocladerm'
 - synonym: Rolenal
@@ -620,30 +650,40 @@ nlu:
   examples: '- power'
 - synonym: Tratam
   examples: '- tratam'
+- synonym: Totalvet
+  examples: '- totalvet'
+- synonym: Sedomin
+  examples: '- sedomin'
+- synonym: Pimocard
+  examples: '- pimocard'
 - synonym: Power
   examples: '- power'
-- synonym: Ohm
-  examples: '- ohm'
 - synonym: Block
   examples: '- block'
-- synonym: Bactrovet
-  examples: '- bactrovet'
+- synonym: Butormin
+  examples: '- butormin'
 - synonym: Endectocida
   examples: '- endectocida'
 - synonym: Singestar
   examples: '- singestar'
-- synonym: Doxilina
-  examples: '- doxilina'
+- synonym: Dermoxil
+  examples: '- dermoxil'
 - synonym: Serenex
   examples: '- serenex'
+- synonym: Canis
+  examples: '- canis'
+- synonym: Ascaricida
+  examples: '- ascaricida'
+- synonym: Shampoo
+  examples: '- shampoo'
 - synonym: Block
   examples: '- block'
 - synonym: Total
   examples: '- total'
-- synonym: Block
-  examples: '- block'
-- synonym: Tonico
-  examples: '- tonico'
+- synonym: Dexametasona
+  examples: '- dexametasona'
+- synonym: Ranitidina
+  examples: '- ranitidina'
 - synonym: Tramadol
   examples: '- tramadol'
 - synonym: Singestar
@@ -652,50 +692,60 @@ nlu:
   examples: '- doxilina'
 - synonym: Total
   examples: '- total'
-- synonym: Basken
-  examples: '- basken'
 - synonym: Poten
   examples: '- poten'
-- synonym: Oxisol
-  examples: '- oxisol'
 - synonym: Terramicina
   examples: '- terramicina'
-- synonym: Complejo
-  examples: '- complejo'
+- synonym: Meltra
+  examples: '- meltra'
+- synonym: Sosten
+  examples: '- sosten'
+- synonym: Ecthol
+  examples: '- ecthol'
+- synonym: Nutripet
+  examples: '- nutripet'
 - synonym: Estreptocarbocaftiazol
   examples: '- estreptocarbocaftiazol'
 - synonym: Biox
   examples: '- biox'
-- synonym: Osurnia
-  examples: '- osurnia'
+- synonym: Feliway
+  examples: '- feliway'
 - synonym: Meloxivet
   examples: '- meloxivet'
 - synonym: Neo
   examples: '- neo'
-- synonym: Serenex
-  examples: '- serenex'
-- synonym: Spinomax
-  examples: '- spinomax'
-- synonym: Pro
-  examples: '- pro'
 - synonym: Ohm
   examples: '- ohm'
-- synonym: Basken
-  examples: '- basken'
+- synonym: Cidar
+  examples: '- cidar'
+- synonym: Serenex
+  examples: '- serenex'
+- synonym: Doxilina
+  examples: '- doxilina'
+- synonym: Giacoccide
+  examples: '- giacoccide'
+- synonym: Pro
+  examples: '- pro'
+- synonym: Pileran
+  examples: '- pileran'
 - synonym: Basken
   examples: '- basken'
 - synonym: Aurix
   examples: '- aurix'
-- synonym: Dermomax
-  examples: '- dermomax'
+- synonym: Bagomectina
+  examples: '- bagomectina'
+- synonym: Canis
+  examples: '- canis'
+- synonym: Power
+  examples: '- power'
 - synonym: Ivomec
   examples: '- ivomec'
 - synonym: Seraquin
   examples: '- seraquin'
-- synonym: Vetscan
-  examples: '- vetscan'
 - synonym: Cetfur
   examples: '- cetfur'
+- synonym: Itraconazol
+  examples: '- itraconazol'
 - synonym: Canis
   examples: '- canis'
 - synonym: Clorhex
@@ -704,108 +754,100 @@ nlu:
   examples: '- block'
 - synonym: Kuraderm
   examples: '- kuraderm'
-- synonym: Power
-  examples: '- power'
-- synonym: Giacoccide
-  examples: '- giacoccide'
-- synonym: Nutripet
-  examples: '- nutripet'
 - synonym: Basken
   examples: '- basken'
-- synonym: Tea
-  examples: '- tea'
-- synonym: Dominal
-  examples: '- dominal'
-- synonym: Pruricilona
-  examples: '- pruricilona'
+- synonym: Aurix
+  examples: '- aurix'
+- synonym: Dermomax
+  examples: '- dermomax'
+- synonym: Giacoccide
+  examples: '- giacoccide'
+- synonym: Enroplus
+  examples: '- enroplus'
+- synonym: Basken
+  examples: '- basken'
+- synonym: Canis
+  examples: '- canis'
 - synonym: Totalvet
   examples: '- totalvet'
 - synonym: Cardial
   examples: '- cardial'
-- synonym: Griseofulvina
-  examples: '- griseofulvina'
-- synonym: Ecthol
-  examples: '- ecthol'
-- synonym: Tea
-  examples: '- tea'
-- synonym: Spinomax
-  examples: '- spinomax'
-- synonym: Tea
-  examples: '- tea'
-- synonym: Meltra
-  examples: '- meltra'
+- synonym: Triavet
+  examples: '- triavet'
+- synonym: Rimadyl
+  examples: '- rimadyl'
+- synonym: Algicam
+  examples: '- algicam'
+- synonym: Meloxivet
+  examples: '- meloxivet'
 - synonym: Toltrazol
   examples: '- toltrazol'
-- synonym: Rochy
-  examples: '- rochy'
-- synonym: Rochy
-  examples: '- rochy'
+- synonym: Meloxivet
+  examples: '- meloxivet'
 - synonym: Basken
   examples: '- basken'
 - synonym: Tea
   examples: '- tea'
-- synonym: Block
-  examples: '- block'
-- synonym: Cardial
-  examples: '- cardial'
+- synonym: Osteo
+  examples: '- osteo'
+- synonym: Proderma
+  examples: '- proderma'
 - synonym: Ecthol
   examples: '- ecthol'
+- synonym: Tea
+  examples: '- tea'
 - synonym: Ecthol
   examples: '- ecthol'
 - synonym: Osteo
   examples: '- osteo'
 - synonym: Power
   examples: '- power'
+- synonym: Power
+  examples: '- power'
+- synonym: Toltrazol
+  examples: '- toltrazol'
+- synonym: Spinomax
+  examples: '- spinomax'
 - synonym: Sulfavet
   examples: '- sulfavet'
 - synonym: Nogastrol
   examples: '- nogastrol'
-- synonym: Block
-  examples: '- block'
-- synonym: Cestodan
-  examples: '- cestodan'
-- synonym: Tea
-  examples: '- tea'
-- synonym: Tripackprotech
-  examples: '- tripackprotech'
+- synonym: Cephilexine
+  examples: '- cephilexine'
+- synonym: Pip
+  examples: '- pip'
+- synonym: Spinomax
+  examples: '- spinomax'
+- synonym: Vitaminico
+  examples: '- vitaminico'
 - synonym: Crema
   examples: '- crema'
-- synonym: Tea
-  examples: '- tea'
 - synonym: Dominal
   examples: '- dominal'
-- synonym: Pimobendan
-  examples: '- pimobendan'
-- synonym: Bagogard
-  examples: '- bagogard'
+- synonym: Pragma
+  examples: '- pragma'
 - synonym: Dominal
   examples: '- dominal'
+- synonym: Ecp
+  examples: '- ecp'
 - synonym: Tea
   examples: '- tea'
 - synonym: Tea
   examples: '- tea'
-- synonym: Tea
-  examples: '- tea'
-- synonym: Enteroplus
-  examples: '- enteroplus'
-- synonym: Calcio
-  examples: '- calcio'
-- synonym: Energomag
-  examples: '- energomag'
-- synonym: Tea
-  examples: '- tea'
-- synonym: Proderma
-  examples: '- proderma'
-- synonym: Duosecretina
-  examples: '- duosecretina'
-- synonym: Colotrin
-  examples: '- colotrin'
-- synonym: Fip
-  examples: '- fip'
-- synonym: Aplonal
-  examples: '- aplonal'
+- synonym: Bactroflay
+  examples: '- bactroflay'
+- synonym: Crema
+  examples: '- crema'
+- synonym: Cefalexina
+  examples: '- cefalexina'
 - synonym: Trivermex
   examples: '- trivermex'
+- synonym: Duosecretina
+  examples: '- duosecretina'
+- synonym: Fip
+  examples: '- fip'
+- synonym: Vetanarcol
+  examples: '- vetanarcol'
 - synonym: Terramicina
   examples: '- terramicina'
 - synonym: Cerenia
@@ -816,5 +858,3 @@ nlu:
   examples: '- mv'
 - synonym: Meltra
   examples: '- meltra'
-- synonym: Vetscan
-  examples: '- vetscan'

@@ -1,39 +1,39 @@
+# exportadores.py (modificado)
+
 import re
 import yaml
 from collections import defaultdict
 import unidecode
 
+def validar_yaml(path="data/nlu.yml"):
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            yaml.safe_load(f)
+        print("✅ YAML válido.")
+    except yaml.YAMLError as e:
+        print("❌ Error en YAML:", e)
+
 def generar_synonyms_from_list(canonicos):
-    """
-    Dado un listado de nombres canónicos, genera un dict listo para exportar a synonyms.yml.
-    Incluye variantes: original, lowercase, sin acentos (unidecode).
-    """
     synonyms = {"version": "3.1", "nlu": []}
-    
     for item in canonicos:
         variantes = set()
         variantes.add(item)  # original
         variantes.add(item.lower())
         variantes.add(unidecode.unidecode(item.lower()))
-        
-        # Quitamos el nombre canonico de la lista de variantes
+
         ejemplos = [v for v in variantes if v != item]
-        
+
         if ejemplos:
-            # Formatear ejemplos con guiones y saltos de línea para YAML
             ejemplos_str = "\n".join(f"- {e}" for e in ejemplos)
-            
             synonyms["nlu"].append({
                 "synonym": item,
                 "examples": ejemplos_str
             })
-    
     return synonyms
 
 def exportar_synonyms_a_yaml(synonyms, path="data/synonyms.yml"):
     with open(path, "w", encoding="utf-8") as f:
         yaml.dump(synonyms, f, allow_unicode=True, sort_keys=False)
-
 
 def limpiar_yaml(ejemplo):
     ejemplo = ejemplo.replace('"', '\\"')
@@ -42,6 +42,9 @@ def limpiar_yaml(ejemplo):
     return ejemplo.strip()
 
 def exportar_yaml(ejemplos, output_path="data/nlu.yml"):
+    """
+    Exporta ejemplos anotados agrupados por intent.
+    """
     intents = defaultdict(list)
     for texto, intent in ejemplos:
         intents[intent].append(texto)
@@ -55,16 +58,12 @@ def exportar_yaml(ejemplos, output_path="data/nlu.yml"):
                 f.write(f'    - "{clean}"\n')
             f.write("\n")
 
-def validar_yaml(path="data/nlu.yml"):
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            yaml.safe_load(f)
-        print("✅ YAML válido.")
-    except yaml.YAMLError as e:
-        print("❌ Error en YAML:", e)
-
-def exportar_lookup_tables(lookup_tables, output_path="data/nlu.yml"):
-    with open(output_path, "a", encoding="utf-8") as f:
+def exportar_lookup_tables(lookup_tables, output_path="data/lookup_tables.yml"):
+    """
+    Exporta lookup tables a un archivo separado.
+    """
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write('version: "3.1"\n\nnlu:\n')
         for entity, ejemplos in lookup_tables.items():
             if not ejemplos:
                 continue
@@ -73,11 +72,11 @@ def exportar_lookup_tables(lookup_tables, output_path="data/nlu.yml"):
                 e = str(e).strip()
                 e = e.replace('\n', ' ').replace('\r', '')
                 e = e.replace('"', "'")  # evitar errores de comillas
-                e = re.sub(r"\s{2,}", " ", e)  # elimina espacios duplicados
+                e = re.sub(r"\s{2,}", " ", e)
 
                 if ":" in e:
                     print(f"⚠️ Posible problema en entidad '{entity}': {e}")
-                    continue  # saltear
+                    continue
 
                 if e:
                     f.write(f'    - {e}\n')
