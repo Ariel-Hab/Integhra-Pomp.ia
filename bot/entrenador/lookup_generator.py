@@ -116,9 +116,18 @@ def generar_lookup_tables(data_dir="data"):
                     resultados.append(limpio)
         return resultados
     lookup_tables["producto"] = cargar_lista("product.csv", "title", tipo="producto")
+    # lookup_tables["producto"].append("producto")
     lookup_tables["categoria"] = cargar_lista("category.csv", "title", tipo="categoria")
+    # lookup_tables["categoria"].append("categoría")
+    # lookup_tables["categoria"].append("categoría médica")
     lookup_tables["proveedor"] = cargar_lista("enterprise.csv", "title", tipo="proveedor")
+    # lookup_tables["proveedor"].append("proveedor")
+    # lookup_tables["proveedor"].append("empresa")
     lookup_tables["compuesto"] = cargar_lista("product.csv", "active_ingredient", tipo="compuesto")
+    # lookup_tables["compuesto"].append("compuesto")
+    # lookup_tables["compuesto"].append("ingrediente activo")
+    # lookup_tables["compuesto"].append("ingrediente")
+
 
     return lookup_tables  # ← Agregá esta línea
 

@@ -1,17 +1,124 @@
-# version: "3.0"
-
-# stories:
-# - story: buscar oferta
-#   steps:
-#   - intent: buscar_oferta
-#   - action: utter_buscar_oferta
-
-# - story: buscar producto
-#   steps:
-#   - intent: buscar_producto
-#   - action: utter_buscar_producto
-
-# - story: fuera de la aplicacion
-#   steps:
-#   - intent: fuera_aplicacion
-#   - action: utter_fuera_aplicacion
+version: '3.1'
+stories:
+- story: story_buscar_producto_1
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_producto_2
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: categoria
+      value: categoria_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_producto_3
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: proveedor
+      value: proveedor_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_producto_4
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: cantidad
+      value: cantidad_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_producto_5
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: dosis
+      value: dosis_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_producto_6
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: compuesto
+      value: compuesto_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_oferta_7
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_oferta_8
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: cantidad_descuento
+      value: cantidad_descuento_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_oferta_9
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: categoria
+      value: categoria_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_buscar_oferta_10
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: proveedor
+      value: proveedor_valor_1
+  - active_loop: validate_busqueda_form
+  - active_loop: null
+  - action: action_busqueda
+- story: story_completar_pedido_pendiente_11
+  steps:
+  - intent: completar_pedido_pendiente
+  - action: action_default_fallback
+- story: story_default_fallback_12
+  steps:
+  - intent: default_fallback
+  - action: action_default_fallback
+- story: story_verificar_contexto_13
+  steps:
+  - intent: verificar_contexto
+  - action: action_default_fallback
+- story: story_fuera_aplicacion_14
+  steps:
+  - intent: fuera_aplicacion
+  - action: action_fuera_aplicacion

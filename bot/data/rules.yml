@@ -1,32 +1,104 @@
-version: "3.1"
-
+version: '3.1'
 rules:
-- rule: Mostrar entidades detectadas en buscar_producto
+- rule: rule_buscar_producto_1
   steps:
   - intent: buscar_producto
-  - action: action_mostrar_entidades
-
-- rule: Mostrar entidades detectadas en buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_producto_2
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: categoria
+      value: categoria_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_producto_3
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: proveedor
+      value: proveedor_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_producto_4
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: cantidad
+      value: cantidad_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_producto_5
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: dosis
+      value: dosis_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_producto_6
+  steps:
+  - intent: buscar_producto
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: compuesto
+      value: compuesto_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_oferta_7
   steps:
   - intent: buscar_oferta
-  - action: action_mostrar_entidades
-
-# - rule: Mostrar entidades detectadas en detalle_producto
-#   steps:
-#   - intent: detalle_producto
-#   - action: action_mostrar_entidades
-
-# - rule: Mostrar entidades detectadas en buscar_por_ingrediente
-#   steps:
-#   - intent: buscar_por_ingrediente
-#   - action: action_mostrar_entidades
-
-# - rule: Mostrar entidades detectadas en producto_por_categoria
-#   steps:
-#   - intent: producto_por_categoria
-#   - action: action_mostrar_entidades
-
-# - rule: Mostrar entidades detectadas en consultar_precio
-#   steps:
-#   - intent: consultar_precio
-#   - action: action_mostrar_entidades
+    entities:
+    - entity: producto
+      value: producto_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_oferta_8
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: cantidad_descuento
+      value: cantidad_descuento_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_oferta_9
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: categoria
+      value: categoria_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_buscar_oferta_10
+  steps:
+  - intent: buscar_oferta
+    entities:
+    - entity: producto
+      value: producto_valor_1
+    - entity: proveedor
+      value: proveedor_valor_1
+  - active_loop: validate_busqueda_form
+- rule: rule_completar_pedido_pendiente_11
+  steps:
+  - intent: completar_pedido_pendiente
+  - action: action_default_fallback
+- rule: rule_default_fallback_12
+  steps:
+  - intent: default_fallback
+  - action: action_default_fallback
+- rule: rule_verificar_contexto_13
+  steps:
+  - intent: verificar_contexto
+  - action: action_default_fallback
+- rule: rule_fuera_aplicacion_14
+  steps:
+  - intent: fuera_aplicacion
+  - action: action_fuera_aplicacion
