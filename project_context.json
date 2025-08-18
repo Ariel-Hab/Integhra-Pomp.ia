@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-09T14:27:05.468314",
+  "timestamp": "2025-08-13T12:03:08.912069",
   "base_dir": "C:\\Ariel\\integhra\\pomp.ia",
   "file_structure": {
     "num_files": 8,
@@ -24,22 +24,70 @@
         "dirs": {}
       },
       "bot": {
-        "num_files": 5,
-        "num_dirs": 3,
+        "num_files": 6,
+        "num_dirs": 4,
         "files": [
           "config.yml",
           "domain.yml",
           "endpoints.yml",
           "logging.yml",
-          "main.py"
+          "main.py",
+          "rasa_project_files.json"
         ],
         "dirs": {
+          ".rasa": {
+            "num_files": 0,
+            "num_dirs": 1,
+            "files": [],
+            "dirs": {
+              "cache": {
+                "num_files": 1,
+                "num_dirs": 10,
+                "files": [
+                  "cache.db"
+                ],
+                "dirs": {
+                  "tmp197e5jp_": {
+                    "note": "max depth reached"
+                  },
+                  "tmp19tqjm7y": {
+                    "note": "max depth reached"
+                  },
+                  "tmp4iewjbha": {
+                    "note": "max depth reached"
+                  },
+                  "tmp719mk254": {
+                    "note": "max depth reached"
+                  },
+                  "tmpcdb52zlc": {
+                    "note": "max depth reached"
+                  },
+                  "tmpg_fxobq2": {
+                    "note": "max depth reached"
+                  },
+                  "tmph4gj8ig7": {
+                    "note": "max depth reached"
+                  },
+                  "tmpj8agf0hn": {
+                    "note": "max depth reached"
+                  },
+                  "tmpsiawra0k": {
+                    "note": "max depth reached"
+                  },
+                  "tmpyrov3hdm": {
+                    "note": "max depth reached"
+                  }
+                }
+              }
+            }
+          },
           "data": {
-            "num_files": 9,
+            "num_files": 10,
             "num_dirs": 1,
             "files": [
               "category.csv",
               "enterprise.csv",
+              "lookup_tables.yml",
               "nlu.yml",
               "offer.csv",
               "offer_product.csv",
@@ -61,15 +109,17 @@
             }
           },
           "entrenador": {
-            "num_files": 8,
+            "num_files": 10,
             "num_dirs": 0,
             "files": [
+              "combinations_generator.py",
+              "data_generator.py",
               "entidades.py",
+              "examples_generator.py",
               "exporter.py",
-              "generator.py",
-              "lookup.py",
+              "lookup_generator.py",
               "paraphraser.py",
-              "templates.py",
+              "templates_generator.py",
               "train.py",
               "utils.py"
             ],
@@ -79,7 +129,7 @@
             "num_files": 1,
             "num_dirs": 0,
             "files": [
-              "20250808-112500-patient-monitor.tar.gz"
+              "20250812-114409-elegant-solution.tar.gz"
             ],
             "dirs": {}
           }
@@ -100,7 +150,8 @@
   "poetry_dependencies": {
     "general": {
       "python": ">=3.9.0,<3.11",
-      "make": "^0.1.6.post2"
+      "make": "^0.1.6.post2",
+      "packaging": ">=20.0,<21.0"
     },
     "groups": {
       "dev": {
@@ -108,7 +159,7 @@
       },
       "bot": {
         "pandas": ">=1.5.3,<2.0.0",
-        "transformers": ">=4.54.1,<5.0.0",
+        "transformers": ">=4.31.0,<4.34.0",
         "torch": ">=2.7.1,<3.0.0",
         "sentencepiece": ">=0.2.0,<0.3.0",
         "sacremoses": ">=0.1.1,<0.2.0",
@@ -176,13 +227,13 @@
       }
     },
     "dockerfiles": {
-      "Dockerfile": "# ----------------------\n# Etapa base\n# ----------------------\nFROM python:3.10-slim AS base\n\nWORKDIR /app\n\n# Evitar prompts y mejorar cacheo\nENV POETRY_VIRTUALENVS_CREATE=false \\\n    PIP_DISABLE_PIP_VERSION_CHECK=on \\\n    PIP_NO_CACHE_DIR=on\n\n# Copiamos dependencias primero para aprovechar cache\nCOPY pyproject.toml poetry.lock ./\nRUN pip install --upgrade pip && pip install poetry\n\n# ----------------------\n# Etapa Bot (Rasa)\n# ----------------------\nFROM base AS rasa\nRUN poetry install --only bot --no-root --no-dev\nCOPY bot /app/bot\nWORKDIR /app/bot\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"--enable-api\", \"--cors\", \"*\"]\n\n# ----------------------\n# Etapa Actions\n# ----------------------\nFROM base AS actions\nRUN poetry install --only actions --no-root --no-dev\nCOPY actions /app/actions\nWORKDIR /app/actions\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"actions\"]\n"
+      "Dockerfile": "# ----------------------\n# Etapa base\n# ----------------------\nFROM python:3.10-slim AS base\n\nWORKDIR /app\n\n# Evitar prompts y mejorar cacheo\nENV POETRY_VIRTUALENVS_CREATE=false \\\n    PIP_DISABLE_PIP_VERSION_CHECK=on \\\n    PIP_NO_CACHE_DIR=on\n\n# Copiamos dependencias primero para aprovechar cache\nCOPY pyproject.toml poetry.lock ./\nRUN pip install --upgrade pip && pip install poetry\n\n# ----------------------\n# Etapa Bot (Rasa)\n# ----------------------\nFROM base AS rasa\nRUN poetry install --only bot --no-root --without dev\nCOPY bot /app/bot\nWORKDIR /app/bot\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"--enable-api\", \"--cors\", \"*\"]\n\n# ----------------------\n# Etapa Actions\n# ----------------------\nFROM base AS actions\nRUN poetry install --only actions --no-root --without dev\nCOPY actions /app/actions\nWORKDIR /app/actions\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"actions\"]\n"
     }
   },
   "manage_py": null,
   "scripts": {
-    "manage.py": "#!/usr/bin/env python3\n\"\"\"\nGestor de tareas para PompIA\n----------------------------\nUso:\n    python manage.py <comando>\n\nComandos disponibles:\n    up          → Levanta los contenedores\n    down        → Baja los contenedores\n    build       → Construye imágenes Docker\n    restart     → Reinicia el sistema con build\n    logs        → Muestra logs en vivo\n    shell       → Abre bash dentro del contenedor Rasa\n    clean       → Limpieza de contenedores huérfanos\n    prune       → Limpieza total de Docker (¡cuidado!)\n    clean-all   → Limpieza profunda\n    reset       → Borra todo y reconstruye\n    train       → Entrena el bot\n    run         → Ejecuta bot + acciones\n    snapshot    → Guarda contexto del proyecto\n    help        → Muestra esta ayuda\n\"\"\"\n\nimport subprocess\nimport sys\nimport os\n\n# Forzar UTF-8 para evitar errores con emojis en Windows\nsys.stdout.reconfigure(encoding='utf-8')\n\n# ====================\n# Funciones utilitarias\n# ====================\ndef run(cmd, shell=False):\n    \"\"\"Ejecuta un comando y muestra su salida en tiempo real.\"\"\"\n    pretty_cmd = ' '.join(cmd) if isinstance(cmd, list) else cmd\n    print(f\"⚙️  Ejecutando: {pretty_cmd}\")\n    try:\n        subprocess.run(cmd, shell=shell, check=True)\n    except subprocess.CalledProcessError as e:\n        print(f\"❌ Error ejecutando: {pretty_cmd}\")\n        sys.exit(e.returncode)\n\n# ====================\n# Comandos del gestor\n# ====================\ndef up():\n    \"\"\"Levanta los contenedores\"\"\"\n    run([\"docker\", \"compose\", \"up\"])\n\ndef down():\n    \"\"\"Baja los contenedores\"\"\"\n    run([\"docker\", \"compose\", \"down\"])\n\ndef build():\n    \"\"\"Construye las imágenes Docker\"\"\"\n    run([\"docker\", \"compose\", \"build\"])\n\ndef restart():\n    \"\"\"Reinicia el sistema con build\"\"\"\n    run(\"docker compose down && docker compose up --build\", shell=True)\n\ndef logs():\n    \"\"\"Muestra logs en tiempo real\"\"\"\n    run([\"docker\", \"compose\", \"logs\", \"-f\"])\n\ndef shell_():\n    \"\"\"Abre una shell dentro del contenedor Rasa\"\"\"\n    run([\"docker\", \"compose\", \"exec\", \"rasa\", \"bash\"])\n\ndef clean():\n    \"\"\"Limpia contenedores y volúmenes huérfanos\"\"\"\n    run([\"docker\", \"compose\", \"down\", \"--volumes\", \"--remove-orphans\"])\n\ndef prune():\n    \"\"\"Limpieza total de Docker (cuidado)\"\"\"\n    run([\"docker\", \"system\", \"prune\", \"-af\", \"--volumes\"])\n\ndef clean_all():\n    \"\"\"Limpieza profunda: contenedores, imágenes, volúmenes y redes\"\"\"\n    run([\"docker\", \"container\", \"prune\", \"-f\"])\n    run([\"docker\", \"image\", \"prune\", \"-af\"])\n    run([\"docker\", \"volume\", \"prune\", \"-f\"])\n    run([\"docker\", \"network\", \"prune\", \"-f\"])\n\ndef reset():\n    \"\"\"Borra todo, reconstruye y levanta el sistema\"\"\"\n    clean()\n    build()\n    up()\n\ndef train():\n    \"\"\"Entrena el bot dentro del contenedor\"\"\"\n    run([\"docker\", \"compose\", \"exec\", \"rasa\", \"rasa\", \"train\"])\n\ndef run_agent():\n    \"\"\"Ejecuta bot y acciones juntas\"\"\"\n    run([\"docker\", \"compose\", \"up\", \"rasa\", \"actions\"])\n\ndef snapshot():\n    \"\"\"Guarda contexto del proyecto\"\"\"\n    python_exe = sys.executable\n    ...",
-    "savecontext.py": "import os\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom datetime import datetime\nimport sys\nsys.stdout.reconfigure(encoding='utf-8')\nimport tomli\nimport yaml\n\nBASE_DIR = Path.cwd()\nCONTEXT_FILE = BASE_DIR / \"project_context.json\"\n\ndef get_file_structure_summary(base_dir, max_depth=3):\n    \"\"\"Recorre la estructura de archivos hasta max_depth y devuelve un árbol resumido.\"\"\"\n    def helper(path, depth):\n        if depth > max_depth:\n            return {\"note\": \"max depth reached\"}\n        try:\n            files = [\n                f for f in os.listdir(path)\n                if os.path.isfile(os.path.join(path, f)) and not f.endswith('.pyc')\n            ]\n            dirs = [\n                d for d in os.listdir(path)\n                if os.path.isdir(os.path.join(path, d))\n                and d != '__pycache__'\n                and not d.startswith('.git')\n            ]\n            return {\n                \"num_files\": len(files),\n                \"num_dirs\": len(dirs),\n                \"files\": files,\n                \"dirs\": {d: helper(os.path.join(path, d), depth+1) for d in dirs}\n            }\n        except Exception:\n            return {\"error\": \"no access\"}\n    return helper(base_dir, 0)\n\ndef get_poetry_groups_dependencies(pyproject_path):\n    \"\"\"Lee las dependencias generales y por grupos desde pyproject.toml.\"\"\"\n    try:\n        with open(pyproject_path, \"rb\") as f:\n            data = tomli.load(f)\n        tool_poetry = data.get(\"tool\", {}).get(\"poetry\", {})\n        groups = tool_poetry.get(\"group\", {})\n\n        groups_deps = {\n            group_name: group_data.get(\"dependencies\", {})\n            for group_name, group_data in groups.items()\n        }\n        general_deps = tool_poetry.get(\"dependencies\", {})\n\n        return {\"general\": general_deps, \"groups\": groups_deps}\n    except Exception as e:\n        return {\"error\": f\"No se pudo leer pyproject.toml: {e}\"}\n\ndef read_file_if_exists(path, max_chars=3000):\n    \"\"\"Lee un archivo si existe, recortando a max_chars para evitar sobrecarga.\"\"\"\n    p = Path(path)\n    if p.exists():\n        text = p.read_text(encoding=\"utf-8\", errors=\"ignore\")\n        return text[:max_chars] + (\"...\" if len(text) > max_chars else \"\")\n    return None\n\ndef get_docker_info():\n    \"\"\"Extrae configuración de docker-compose.yml y Dockerfiles.\"\"\"\n    info = {}\n    docker_compose_path = BASE_DIR / \"docker-compose.yml\"\n    if docker_compose_path.exists():\n        try:\n            with open(docker_compose_path, \"r\", encoding=\"utf-8\") as f:\n                info[\"docker_compose\"] = yaml.safe_load(f)\n        except Exception as e:\n            info[\"docker_compose_error\"] = str(e)\n    # Buscar Dockerfiles\n    dockerfiles = list(BASE_DIR.glob(\"Dockerfile*\"))\n    dockerfile_contents = {}\n    for df in dockerfiles:\n        dockerfile_contents[df.name] = read_file_if_exists(df, max_chars=3000)\n    if dockerfile_contents:\n        info[\"dockerfiles\"] = dockerfile_contents\n    return info\n\ndef get_git_info():\n    \"\"\"Devu...",
+    "manage.py": "#!/usr/bin/env python3\n\"\"\"\nGestor de tareas PompIA con menú interactivo y acceso rápido\n-----------------------------------------------------------\nUso:\n    python manage.py            # Muestra menú principal\n    python manage.py local      # Abre menú Bot Local\n    python manage.py docker     # Abre menú Docker\n    python manage.py deps       # Abre menú Dependencias\n    python manage.py clean      # Abre menú Limpieza\n    python manage.py snapshot   # Ejecuta snapshot directamente\n\"\"\"\n\nimport subprocess\nimport sys\nimport os\n\ntry:\n    sys.stdout.reconfigure(encoding=\"utf-8\")\nexcept Exception:\n    pass\n\ndef run(cmd, shell=False, cwd=None):\n    pretty_cmd = \" \".join(cmd) if isinstance(cmd, list) else cmd\n    print(f\"\\n⚙️  Ejecutando: {pretty_cmd} (cwd: {cwd or os.getcwd()})\\n\")\n    try:\n        subprocess.run(cmd, shell=shell, check=True, cwd=cwd)\n        print(\"✅ Comando ejecutado correctamente.\\n\")\n    except subprocess.CalledProcessError as e:\n        print(f\"❌ Error ejecutando: {pretty_cmd}\")\n        try:\n            if e.stdout:\n                print(e.stdout)\n            if e.stderr:\n                print(e.stderr)\n        except Exception:\n            pass\n        sys.exit(e.returncode)\n\n# --- Funciones Docker ---\ndef docker_up(): run([\"docker\", \"compose\", \"up\"])\ndef docker_build(): run([\"docker\", \"compose\", \"build\"])\ndef docker_restart(): run(\"docker compose down && docker compose up --build\", shell=True)\ndef docker_logs(): run([\"docker\", \"compose\", \"logs\", \"-f\"])\ndef docker_shell_rasa(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"bash\"])\ndef docker_run_agent(): run([\"docker\", \"compose\", \"up\", \"rasa\", \"actions\"])\ndef docker_train_container(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"rasa\", \"train\"])\n\n# --- Dependencias Contenedor ---\ndef update_deps_container_rasa(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef update_deps_container_actions(): run([\"docker\", \"compose\", \"exec\", \"rasa_actions\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"actions\", \"--without\", \"dev\"])\ndef update_deps_container_trainer(): run([\"docker\", \"compose\", \"exec\", \"rasa_trainer\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef update_deps_all_containers():\n    update_deps_container_rasa()\n    update_deps_container_actions()\n    update_deps_container_trainer()\n\n# --- Dependencias Local ---\ndef install_deps_bot_local(): run([\"poetry\", \"install\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef install_deps_actions_local(): run([\"poetry\", \"install\", \"--only\", \"actions\", \"--without\", \"dev\"])\n\n# --- Bot Local ---\ndef train_local_nlu():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"python\", \"entrenador/train.py\"], cwd=\"bot\")\ndef train_local():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"rasa\", \"train\"], cwd=\"bot\")\ndef run_bot_local():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"python\", \"main.py\"], cwd=\"bot\")\ndef run_actions_local():\n    instal...",
+    "savecontext.py": "import os\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom datetime import datetime\nimport sys\nsys.stdout.reconfigure(encoding='utf-8')\nimport tomli\nimport yaml\n\n# --- Agrego imports para Rasa ---\nfrom rasa.core.agent import Agent\n\nBASE_DIR = Path.cwd()\nCONTEXT_FILE = BASE_DIR / \"project_context.json\"\n\n\ndef get_file_structure_summary(base_dir, max_depth=3):\n    \"\"\"Recorre la estructura de archivos hasta max_depth y devuelve un árbol resumido.\"\"\"\n    def helper(path, depth):\n        if depth > max_depth:\n            return {\"note\": \"max depth reached\"}\n        try:\n            files = [\n                f for f in os.listdir(path)\n                if os.path.isfile(os.path.join(path, f)) and not f.endswith('.pyc')\n            ]\n            dirs = [\n                d for d in os.listdir(path)\n                if os.path.isdir(os.path.join(path, d))\n                and d != '__pycache__'\n                and not d.startswith('.git')\n            ]\n            return {\n                \"num_files\": len(files),\n                \"num_dirs\": len(dirs),\n                \"files\": files,\n                \"dirs\": {d: helper(os.path.join(path, d), depth+1) for d in dirs}\n            }\n        except Exception:\n            return {\"error\": \"no access\"}\n    return helper(base_dir, 0)\n\n\ndef get_poetry_groups_dependencies(pyproject_path):\n    \"\"\"Lee las dependencias generales y por grupos desde pyproject.toml.\"\"\"\n    try:\n        with open(pyproject_path, \"rb\") as f:\n            data = tomli.load(f)\n        tool_poetry = data.get(\"tool\", {}).get(\"poetry\", {})\n        groups = tool_poetry.get(\"group\", {})\n\n        groups_deps = {\n            group_name: group_data.get(\"dependencies\", {})\n            for group_name, group_data in groups.items()\n        }\n        general_deps = tool_poetry.get(\"dependencies\", {})\n\n        return {\"general\": general_deps, \"groups\": groups_deps}\n    except Exception as e:\n        return {\"error\": f\"No se pudo leer pyproject.toml: {e}\"}\n\n\ndef read_file_if_exists(path, max_chars=3000):\n    \"\"\"Lee un archivo si existe, recortando a max_chars para evitar sobrecarga.\"\"\"\n    p = Path(path)\n    if p.exists():\n        text = p.read_text(encoding=\"utf-8\", errors=\"ignore\")\n        return text[:max_chars] + (\"...\" if len(text) > max_chars else \"\")\n    return None\n\n\ndef get_docker_info():\n    \"\"\"Extrae configuración de docker-compose.yml y Dockerfiles.\"\"\"\n    info = {}\n    docker_compose_path = BASE_DIR / \"docker-compose.yml\"\n    if docker_compose_path.exists():\n        try:\n            with open(docker_compose_path, \"r\", encoding=\"utf-8\") as f:\n                info[\"docker_compose\"] = yaml.safe_load(f)\n        except Exception as e:\n            info[\"docker_compose_error\"] = str(e)\n    # Buscar Dockerfiles\n    dockerfiles = list(BASE_DIR.glob(\"Dockerfile*\"))\n    dockerfile_contents = {}\n    for df in dockerfiles:\n        dockerfile_contents[df.name] = read_file_if_exists(df, max_chars=3000)\n    if dockerfile_contents:\n        info[\"dockerfile...",
     "__init__.py": ""
   },
   "readme_excerpt": "# 🤖 PompIA – Sistema de Asistente Virtual Inteligente\n\n**PompIA** es un sistema modular de asistente virtual construido con **Rasa** y **Python**, que permite la gestión, entrenamiento y ejecución de un bot conversacional inteligente. Está diseñado para ser escalable, mantenible y fácilmente desplegable mediante contenedores Docker.\n\n> 💡 Este repositorio central (`pomp.ia`) organiza y orquesta los distintos módulos (bot y actions), cada uno ejecutado en su propio contenedor.\n\n---\n\n## 🧱 Estructura del Proyecto\n\n```\npomp.ia/\n│\n│\n├── bot/                # Proyecto principal del chatbot\n│   ├── data/           # NLU y ejemplos de conversación\n│   ├── models/         # Modelos entrenados por Rasa\n│   ├── entrenador/     # Lógica de entrenamiento (opcional)\n│   ├── config.yml      # Configuración del pipeline de Rasa\n│   ├── domain.yml      # Intents, entidades, acciones, respuestas\n│   ├── endpoints.yml   # Configuración de endpoints\n│   ├── pyproject.toml  # Dependencias con Poetry\n│   └── poetry.lock\n│\n├── actions/            # Acciones personalizadas (custom actions)\n│   ├── actions.py      # Acciones en Python\n│   ├── pyproject.toml\n│   └── poetry.lock\n│\n├── docker-compose.yml  # Orquestación de servicios\n├── Dockerfile.rasa     # Imagen del servicio del bot\n├── Dockerfile.actions  # Imagen del servicio de acciones\n├── .dockerignore       # Archivos ignorados en el build\n└── README.md           # Este archivo ✨\n```\n\n---\n\n## 🚀 ¿Qué hace este proyecto?\n\n- 🧠 Usa **Rasa** para NLP/NLU: interpreta intenciones, entidades y contexto.\n- 🎯 Implementa **acciones personalizadas** para integrar lógica adicional en Python.\n- 🐳 Usa **Docker** para aislar los entornos de ejecución (bot y actions).\n- 🔁 Es **modular**, cada componente es autocontenible y fácil de mantener.\n- 🛠️ Puede entrenarse, probarse, actualizarse y desplegarse con un solo comando.\n\n---\n\n## ⚙️ Requisitos Previos\n\n- Docker + Docker Compose\n- Python 3.10+ (solo si corrés fuera de Docker)\n- [Poetry](https://python-p..."
