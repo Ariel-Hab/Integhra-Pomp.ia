@@ -6,9 +6,13 @@ intents:
 entities:
 - cantidad
 - cantidad_descuento
+- cantidad_stock
 - categoria
 - compuesto
+- dia
 - dosis
+- fecha
+- oferta
 - producto
 - proveedor
 slots:
@@ -18,12 +22,17 @@ slots:
     - type: from_entity
       entity: cantidad
   cantidad_descuento:
-    type: list
+    type: text
     mappings:
     - type: from_entity
       entity: cantidad_descuento
+  cantidad_stock:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: cantidad_stock
   categoria:
-    type: list
+    type: text
     mappings:
     - type: from_entity
       entity: categoria
@@ -32,18 +41,33 @@ slots:
     mappings:
     - type: from_entity
       entity: compuesto
+  dia:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: dia
   dosis:
     type: text
     mappings:
     - type: from_entity
       entity: dosis
+  fecha:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: fecha
+  oferta:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: oferta
   producto:
-    type: list
+    type: text
     mappings:
     - type: from_entity
       entity: producto
   proveedor:
-    type: list
+    type: text
     mappings:
     - type: from_entity
       entity: proveedor
@@ -51,21 +75,13 @@ slots:
     type: text
     mappings:
     - type: from_text
-forms:
-  validate_busqueda_form: {}
+forms: {}
 responses:
-  utter_default_fallback:
-  - text: No entendí eso, ¿podrías reformularlo?
-  utter_verificar_contexto:
-  - text: Parece que perdimos el hilo, ¿podés repetir tu pedido?
   utter_buscar_producto:
-  - text: Respuesta para el intent buscar_producto.
+  - text: Respuesta para buscar_producto
   utter_buscar_oferta:
-  - text: Respuesta para el intent buscar_oferta.
+  - text: Respuesta para buscar_oferta
   utter_fuera_aplicacion:
-  - text: Respuesta para el intent fuera_aplicacion.
+  - text: Respuesta para fuera_aplicacion
 actions:
-- action_busqueda
-- action_default_fallback
-- action_fuera_aplicacion
-- validate_busqueda_form
+- action_generica

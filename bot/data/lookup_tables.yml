@@ -4,353 +4,353 @@ nlu:
 - lookup: producto
   examples: |
     - Kensol
-    - Acederm
+    - acederm
     - adaptil
-    - Bucal
+    - bucal
     - enroplus
     - totalvet
-    - kothrina
+    - Kothrina
     - legend
-    - Pimobendan
-    - kuraderm
+    - pimobendan
+    - Kuraderm
     - cetfur
-    - tripackprotech
+    - Tripackprotech
     - Pimocard
-    - Comfortis
-    - Trivermex
-    - Cidar
-    - semintra
+    - comfortis
+    - trivermex
+    - cidar
+    - Semintra
     - Advantix
-    - moxidex
+    - Moxidex
     - pimocard
     - Acedan
     - Ecthol
     - Espuma
     - Vetscan
-    - kothrina
+    - Kothrina
     - enroplus
     - Algidol
     - tripackprotech
     - Ciclosporina
     - Duosecretina
     - mv
-    - Neo
+    - neo
     - pets
     - ecthonil
     - Colirama
     - Feliway
     - Advantix
     - terramicina
-    - nogastrol
-    - simparica
-    - Comfortis
+    - Nogastrol
+    - Simparica
+    - comfortis
     - Injection
-    - giacoccide
-    - baytril
+    - Giacoccide
+    - Baytril
     - Ecthonil
     - Ol
-    - Oxisol
-    - simparica
+    - oxisol
     - Simparica
-    - advantix
-    - Pragma
-    - ecthol
+    - simparica
+    - Advantix
+    - pragma
+    - Ecthol
     - Power
     - mv
-    - adaptil
+    - Adaptil
     - euthanyle
-    - Eutanasico
-    - Vcc
+    - eutanasico
+    - vcc
     - comfortis
-    - Convenia
+    - convenia
     - tripackprotech
-    - Mv
+    - mv
     - pets
     - ecthonil
-    - mv
+    - Mv
     - Neovita
-    - toltrazol
+    - Toltrazol
     - convenia
     - fenobarbital
-    - Seresto
-    - azitromicina
-    - full
-    - Tripackprotech
-    - Simparica
-    - dectomax
+    - seresto
+    - Azitromicina
+    - Full
+    - tripackprotech
+    - simparica
+    - Dectomax
     - tratam
     - entero
-    - Mv
-    - Comfortis
-    - Carprodol
     - mv
-    - power
+    - Comfortis
+    - carprodol
+    - Mv
+    - Power
     - Bactrovet
-    - Tripackprotech
+    - tripackprotech
     - Basken
-    - Credelio
-    - toracard
+    - credelio
+    - Toracard
     - sosten
     - Ketamina
-    - Adaptil
+    - adaptil
     - Pets
     - Ecthonil
-    - seresto
-    - Tau
+    - Seresto
+    - tau
     - Vita
     - Simparica
     - Dectomax
     - Power
     - credelio
-    - Dominal
-    - baytril
-    - cumepina
+    - dominal
+    - Baytril
+    - Cumepina
     - azitromicina
-    - Otiflex
-    - nogastrol
-    - Nomat
+    - otiflex
+    - Nogastrol
+    - nomat
     - carprodol
     - Oxisol
     - Pets
     - Itraconazol
-    - simparica
-    - dectomax
+    - Simparica
+    - Dectomax
     - mv
-    - pro
+    - Pro
     - power
     - Credelio
-    - Prednisol
+    - prednisol
     - Ioduro
-    - Ol
+    - ol
     - Vilisinh
     - Adaptil
-    - Baytril
+    - baytril
     - Tripackprotech
+    - Trocoxil
     - trocoxil
-    - trocoxil
+    - Mv
     - mv
     - mv
-    - mv
-    - Power
-    - comfortis
+    - power
+    - Comfortis
     - Vetscan
-    - ecthol
+    - Ecthol
     - Baytril
     - tau
-    - Otiflex
+    - otiflex
     - Sosten
-    - nogastrol
+    - Nogastrol
     - Adaptil
     - oxitetraciclina
     - Pets
     - Trocoxil
-    - Apoquel
+    - apoquel
     - Mv
-    - Enroxina
-    - Kil
+    - enroxina
+    - kil
     - credelio
     - tonico
-    - Advocate
+    - advocate
     - Ecthonil
     - otiflex
     - Enroplus
     - artrovet
     - Proteliv
-    - condroitin
+    - Condroitin
     - Cae
-    - algicam
-    - rimadyl
-    - Bagogard
+    - Algicam
+    - Rimadyl
+    - bagogard
     - Mv
     - diazepet
     - proteliv
-    - Credelio
-    - Laxavet
-    - tramadol
+    - credelio
+    - laxavet
+    - Tramadol
     - anti
     - Fipro
     - dominal
-    - Ocladerm
-    - Enroplus
+    - ocladerm
+    - enroplus
     - advocate
     - algidol
-    - Tobramax
-    - cae
-    - rimadyl
+    - tobramax
+    - Cae
+    - Rimadyl
     - mv
     - Mv
-    - Enroxina
-    - meltra
-    - Tipertox
+    - enroxina
+    - Meltra
+    - tipertox
     - credelio
-    - Ivomec
+    - ivomec
     - advocate
     - Tears
-    - fipro
-    - tratam
+    - Fipro
+    - Tratam
     - Sincelar
-    - Trivermex
+    - trivermex
     - Apetil
     - Cefalong
-    - Enteroplus
-    - Revol
+    - enteroplus
+    - revol
     - mv
     - Sh
-    - Advocate
-    - Bio
+    - advocate
+    - bio
     - Ivomec
-    - Algicam
-    - credelio
-    - cardial
+    - algicam
+    - Credelio
+    - Cardial
     - Crema
-    - Fipro
+    - fipro
     - sosten
     - Tratam
-    - spinomax
+    - Spinomax
     - atb
-    - Tiu
+    - tiu
     - Revol
-    - Viviramv
-    - mv
-    - pf
-    - Fipro
+    - viviramv
+    - Mv
+    - Pf
+    - fipro
     - Enroplus
-    - Colotrin
-    - advocate
+    - colotrin
+    - Advocate
     - Idocarb12
     - aplonal
     - fider
     - Griseofulvina
     - Credelio
-    - amoxivet
-    - Apoquel
-    - virbac
-    - calcificante
+    - Amoxivet
+    - apoquel
+    - Virbac
+    - Calcificante
     - sh
     - eqvalan
     - pf
     - pf
     - fleegard
-    - fider
-    - Baycox
-    - ocladerm
+    - Fider
+    - baycox
+    - Ocladerm
     - Fip
     - Idocarb12
     - Epitelizante
-    - Ecthol
+    - ecthol
     - Barbitol
     - ivermex
-    - apoquel
+    - Apoquel
     - fortepen
-    - Librela
+    - librela
     - Credelio
     - advantage
-    - Fider
-    - fipro
-    - albex
+    - fider
+    - Fipro
+    - Albex
     - eutanasico
-    - Linco
-    - Barbitol
-    - fluido
-    - Simparica
+    - linco
+    - barbitol
+    - Fluido
+    - simparica
     - kil
-    - eqvalan
-    - Enteroplus
-    - Credelio
-    - total
-    - basken
+    - Eqvalan
+    - enteroplus
+    - credelio
+    - Total
+    - Basken
     - Fider
     - rochy
-    - ocubiotic
+    - Ocubiotic
     - fip
-    - kothrina
+    - Kothrina
     - feliway
-    - Barbitol
-    - Simparica
+    - barbitol
+    - simparica
     - Fenobarbital
     - Pf
-    - Total
+    - total
     - Dozilam
-    - Ranitidina
-    - ocubiotic
-    - tonico
+    - ranitidina
+    - Ocubiotic
+    - Tonico
     - pip
-    - ciclar
-    - ohm
+    - Ciclar
+    - Ohm
     - ivermex
     - coagulante
     - pantoliv
-    - Drontal
+    - drontal
     - Feline
-    - Simparica
-    - meltra
-    - librela
+    - simparica
+    - Meltra
+    - Librela
     - bagovac
     - multivit
-    - Pigatoperro
-    - Cytopoint
-    - Power
+    - pigatoperro
+    - cytopoint
+    - power
     - librela
     - bactroflay
     - Colotrin
-    - seniorline
+    - Seniorline
     - baytril
     - power
     - Duosecretina
     - atriben
-    - Drontal
-    - Pip
-    - pileran
+    - drontal
+    - pip
+    - Pileran
     - Vita
-    - Feline
-    - meltra
-    - terpan
-    - Doxivit
-    - bagogard
-    - vita
-    - Driptol
-    - Artrin
-    - hepatoprotector
+    - feline
     - Meltra
-    - tratam
-    - Pf
+    - Terpan
+    - doxivit
+    - Bagogard
+    - vita
+    - driptol
+    - Artrin
+    - Hepatoprotector
+    - meltra
+    - Tratam
+    - pf
     - Revol
-    - Drontal
+    - drontal
     - protech
     - Ectocan
     - ciproplus
     - pentabiotico
-    - fortekor
+    - Fortekor
     - ecthonil
     - bactrovet
     - Uv
-    - Pimocard
-    - Advantage
-    - prednovet
+    - pimocard
+    - advantage
+    - Prednovet
     - itraconazol
-    - Feline
-    - pets
+    - feline
+    - Pets
     - algicam
     - algicam
-    - Virbac
-    - Artrin
-    - librela
+    - virbac
+    - artrin
+    - Librela
     - Solubron
-    - dermodene
-    - Shampoo
+    - Dermodene
+    - shampoo
     - Puppyline
-    - silihepatic
+    - Silihepatic
     - basken
     - cefalong
     - Dexa
     - protech
     - rochy
+    - virbac
+    - neuroalivio
+    - Pf
     - Virbac
-    - Neuroalivio
-    - pf
-    - Virbac
-    - Rochy
-    - bagogard
+    - rochy
+    - Bagogard
     - Atropina
     - Terramicina
     - tolzuril
@@ -359,135 +359,135 @@ nlu:
     - Clorhexidina
     - Doxin
     - dipirona
-    - Albex
-    - power
+    - albex
+    - Power
     - seniorline
-    - Virbac
+    - virbac
     - Pets
-    - Floxaday
-    - basken
-    - Revol
-    - Protech
-    - integhra
+    - floxaday
+    - Basken
+    - revol
+    - protech
+    - Integhra
     - prednisolona
-    - shampoo
-    - eutanasico
+    - Shampoo
+    - Eutanasico
     - Antiverrugas
     - Cidar
-    - Cidar
-    - bucal
+    - cidar
+    - Bucal
     - Endospot
-    - Rochy
-    - Virbac
-    - Kil
+    - rochy
+    - virbac
+    - kil
     - Librela
     - Integhra
-    - Power
-    - Shampoo
+    - power
+    - shampoo
     - shampoo
     - ivermectina
     - tramadol
     - itraconazol
-    - Diafin
+    - diafin
     - Endospot
-    - rochy
-    - Virbac
-    - dynamide
-    - power
+    - Rochy
+    - virbac
+    - Dynamide
+    - Power
     - Pf
-    - isiquick
-    - Itraconazol
+    - Isiquick
+    - itraconazol
     - Sincelar
     - cefalong
     - Ecthol
     - btk
-    - Protech
+    - protech
     - dexa
-    - vaquero
+    - Vaquero
     - Virbac
-    - power
+    - Power
     - Pf
-    - dexaflox
-    - tratam
-    - Aurix
+    - Dexaflox
+    - Tratam
+    - aurix
     - endospot
-    - sincelar
-    - Trivermex
+    - Sincelar
+    - trivermex
     - diazepam
     - pets
     - vaquero
-    - Artroglycan
-    - Power
-    - Pf
+    - artroglycan
+    - power
+    - pf
     - aurix
-    - genabil
-    - sincelar
+    - Genabil
+    - Sincelar
     - protech
     - Pets
-    - Clavamox
+    - clavamox
     - Artroglycan
     - bagogard
     - Power
-    - Pf
-    - Cloralen
+    - pf
+    - cloralen
     - sincelar
     - Pets
     - Full
     - revol
     - meloxivet
-    - dominal
+    - Dominal
     - Tea
     - Labyderm
     - Prednisolona
-    - doloalivio
+    - Doloalivio
     - pf
-    - Power
+    - power
     - Fauna
     - Tratam
     - Sincelar
-    - Tea
-    - labyderm
+    - tea
+    - Labyderm
     - Coagulante
     - Pets
     - Doxivit
-    - clamoxyl
+    - Clamoxyl
     - lectora
-    - Prius
+    - prius
     - vetscan
-    - Rochy
-    - mayor
-    - ciclosporina
-    - bactroprofen
-    - Fip
+    - rochy
+    - Mayor
+    - Ciclosporina
+    - Bactroprofen
+    - fip
     - enzimax
-    - Vermiplex
+    - vermiplex
     - Terramicina
     - Vetscan
-    - vetscan
-    - Biochip
-    - Ecthonil
+    - Vetscan
+    - biochip
+    - ecthonil
     - Labyderm
     - totalvet
-    - Opter
-    - pimocard
-    - pets
-    - Vetscan
+    - opter
+    - Pimocard
+    - Pets
+    - vetscan
     - Bactroflay
-    - terramicina
+    - Terramicina
     - artrosan
-    - totalvet
+    - Totalvet
     - Ranitidina
-    - aplonal
-    - ecthol
+    - Aplonal
+    - Ecthol
     - Bagogard
-    - relay
-    - voren
+    - Relay
+    - Voren
     - terpan
     - Dominal
-    - meltra
-    - feliway
+    - Meltra
+    - Feliway
     - Shampoo
-    - Simparica
+    - simparica
     - vetscan
     - trihepat
     - virbac
@@ -495,64 +495,64 @@ nlu:
     - Galmetrin
     - medroxiprogesterona
     - Ecthol
-    - Block
-    - protech
     - block
-    - Anfotropina
+    - protech
+    - Block
+    - anfotropina
     - Power
-    - sosten
-    - ursomarina
+    - Sosten
+    - Ursomarina
     - Vetscan
-    - Flexapet
-    - Cidar
+    - flexapet
+    - cidar
     - dominal
     - glypondin
     - Cortidural
     - kobra
-    - Power
-    - Pro
+    - power
+    - pro
     - Ol
     - pragma
     - ecthol
-    - Ofloxacina
+    - ofloxacina
     - Virbac
     - novotioc
-    - Rochy
-    - Dexashock
-    - Aplonal
-    - Pimocard
-    - Dominal
-    - Protech
-    - Bromhexina
-    - acedan
-    - atropina
+    - rochy
+    - dexashock
+    - aplonal
+    - pimocard
     - dominal
+    - protech
+    - Bromhexina
+    - Acedan
+    - atropina
+    - Dominal
     - novotioc
     - virbac
-    - tramadol
+    - Tramadol
     - block
     - Ecthonil
-    - aminolite
+    - Aminolite
     - endectocida
     - energia
-    - Protech
-    - diazepam
+    - protech
+    - Diazepam
     - prednisolona
-    - Tonico
+    - tonico
     - ranitidina
-    - block
-    - ecthol
-    - kuramicina
-    - driptol
+    - Block
+    - Ecthol
+    - Kuramicina
+    - Driptol
     - Power
     - Plano
     - Shampoo
-    - furocal
-    - block
-    - Virbac
-    - ecthol
-    - pimocard
-    - Bactroprofen
+    - Furocal
+    - Block
+    - virbac
+    - Ecthol
+    - Pimocard
+    - bactroprofen
     - canis
     - Promafine
     - ecthol
@@ -562,279 +562,279 @@ nlu:
     - Previcox
     - Labyderm
     - cefalexina
-    - Previcox
-    - ketafine
-    - Power
+    - previcox
+    - Ketafine
+    - power
     - kil
-    - Diurene
-    - Ketamid
-    - giacoccide
-    - floxaday
+    - diurene
+    - ketamid
+    - Giacoccide
     - Floxaday
-    - cardial
+    - floxaday
+    - Cardial
     - Novotioc
-    - Bactrovet
-    - cidar
-    - repexxin
+    - bactrovet
+    - Cidar
+    - Repexxin
     - Dominal
     - cidar
-    - protech
-    - Flurbiprofeno
-    - Prednisolona
+    - Protech
+    - flurbiprofeno
+    - prednisolona
     - hialurina
     - Pregabaliv
     - ocuflox
     - Rochy
     - Clorhex
-    - grupo
-    - Tramadol
+    - Grupo
+    - tramadol
     - super
-    - repexxin
-    - dominal
-    - Moxidex
+    - Repexxin
+    - Dominal
+    - moxidex
     - giacoccide
     - Pip
-    - Bactrovet
+    - bactrovet
     - dominal
-    - Canis
+    - canis
     - Pimocard
     - furocal
-    - Colotrin
+    - colotrin
     - Sosten
     - Doxilina
     - toltrazol
-    - pregabaliv
+    - Pregabaliv
     - bactrovet
     - total
     - Total
     - Total
-    - basken
-    - vermkon
-    - Dominal
+    - Basken
+    - Vermkon
+    - dominal
     - serenex
-    - ziflor
-    - Dexametasona
-    - Aplonal
+    - Ziflor
+    - dexametasona
+    - aplonal
     - Bactrovet
-    - kuramicina
+    - Kuramicina
     - Canis
     - Ocladerm
-    - Rolenal
-    - Pimobendan
-    - Power
-    - Proteliv
+    - rolenal
+    - pimobendan
+    - power
+    - proteliv
     - tratam
     - power
-    - Totalvet
-    - Sedomin
+    - totalvet
+    - sedomin
     - Ohm
-    - pimocard
-    - Diurene
-    - Power
+    - Pimocard
+    - diurene
+    - power
     - Prednisolona
-    - block
-    - Bactrovet
-    - butormin
+    - Block
+    - bactrovet
+    - Butormin
     - endectocida
     - Singestar
     - Doxilina
     - Dermoxil
     - serenex
-    - Serenex
+    - serenex
     - Canis
-    - Ascaricida
-    - Shampoo
+    - ascaricida
+    - shampoo
     - Mayor
     - Block
-    - total
-    - Dermodene
-    - total
-    - Block
+    - Total
+    - dermodene
+    - Total
+    - block
     - tonico
     - Dexametasona
-    - ranitidina
-    - Tramadol
-    - singestar
+    - Ranitidina
+    - tramadol
+    - Singestar
     - display
     - Canis
-    - doxilina
+    - Doxilina
     - total
-    - Basken
-    - Poten
+    - basken
+    - poten
     - Oxisol
-    - terramicina
-    - complejo
-    - Canis
-    - meltra
-    - felilax
-    - sosten
+    - Terramicina
+    - Complejo
+    - canis
+    - Meltra
+    - Felilax
+    - Sosten
     - ecthol
     - Nutripet
-    - Dexa
-    - estreptocarbocaftiazol
+    - dexa
+    - Estreptocarbocaftiazol
     - biox
     - Osurnia
-    - Singestar
-    - Tea
-    - serenex
+    - singestar
+    - tea
+    - Serenex
     - feliway
-    - Meloxivet
-    - Neo
-    - ohm
-    - Cidar
-    - serenex
-    - canis
-    - Doxilina
-    - Giacoccide
-    - Spinomax
-    - Pro
-    - Pileran
+    - meloxivet
+    - neo
     - Ohm
-    - basken
-    - Basken
-    - aurix
-    - Bagomectina
+    - cidar
     - serenex
     - Canis
-    - Power
-    - Dermomax
-    - ivomec
-    - seraquin
-    - Vetscan
-    - Cetfur
-    - giacoccide
-    - Itraconazol
-    - canis
-    - cefalexina
-    - clorhex
-    - block
-    - Tramadol
-    - Kuraderm
+    - Doxilina
+    - Giacoccide
+    - spinomax
+    - pro
+    - pileran
+    - Ohm
     - Basken
-    - Aurix
+    - Basken
+    - aurix
+    - bagomectina
+    - serenex
+    - Canis
     - power
     - dermomax
-    - giacoccide
-    - enroplus
-    - artrovet
-    - oxisol
-    - serenex
-    - serenex
-    - block
-    - curavet
-    - Ursomarina
-    - Nutripet
+    - Ivomec
+    - seraquin
+    - vetscan
+    - Cetfur
+    - Giacoccide
+    - itraconazol
+    - canis
+    - Cefalexina
+    - clorhex
+    - Block
+    - Tramadol
+    - kuraderm
     - basken
+    - Aurix
+    - Power
+    - Dermomax
+    - Giacoccide
+    - Enroplus
+    - Artrovet
+    - Oxisol
+    - Serenex
+    - Serenex
+    - Block
+    - Curavet
+    - ursomarina
+    - nutripet
+    - Basken
     - tea
     - dominal
     - tea
     - canis
-    - Pruricilona
+    - pruricilona
     - totalvet
     - floxaday
     - Cardial
     - griseofulvina
-    - Ecthol
+    - ecthol
     - block
     - Vitamina
-    - ursoliv
+    - Ursoliv
     - Basken
     - Tea
-    - gerioox
-    - prius
+    - Gerioox
+    - Prius
     - Pigatoperro
     - Spinomax
-    - Triavet
-    - Rimadyl
+    - triavet
+    - rimadyl
     - Algicam
     - Block
     - Meloxivet
     - Tea
-    - rolenal
-    - meltra
+    - Rolenal
+    - Meltra
     - toltrazol
-    - toltrazol
+    - Toltrazol
     - rochy
-    - rochy
-    - Meloxivet
-    - basken
-    - Tea
-    - osteo
-    - power
+    - Rochy
+    - meloxivet
+    - Basken
+    - tea
+    - Osteo
+    - Power
     - proderma
     - toltrazol
     - Trivermex
     - pro
-    - Block
+    - block
     - Cardial
-    - Ecthol
-    - Cestodan
-    - tea
     - ecthol
+    - Cestodan
+    - Tea
+    - Ecthol
     - osteo
     - power
     - Power
-    - toltrazol
-    - Spinomax
+    - Toltrazol
+    - spinomax
     - Sulfavet
     - Nogastrol
-    - algicam
-    - ecthol
-    - Block
+    - Algicam
+    - Ecthol
+    - block
     - Cephilexine
     - pip
     - cestodan
     - Enrofloxacina
     - diafin
-    - Tea
+    - tea
     - tea
     - spinomax
     - tripackprotech
     - Vitaminico
     - Crema
     - tea
-    - Dominal
-    - Methiovertan
-    - pragma
-    - pimobendan
-    - Bagogard
     - dominal
-    - ecp
+    - methiovertan
+    - Pragma
+    - Pimobendan
+    - bagogard
+    - Dominal
+    - Ecp
     - Tea
     - tea
     - tea
-    - tea
+    - Tea
     - artrosan
-    - Enteroplus
+    - enteroplus
     - Calcio
-    - energomag
-    - Bactroflay
+    - Energomag
+    - bactroflay
     - tea
-    - Crema
+    - crema
     - Proderma
-    - Cefalexina
+    - cefalexina
     - trivermex
     - duosecretina
-    - Colotrin
+    - colotrin
     - fip
-    - Dominal
-    - nutrical
+    - dominal
+    - Nutrical
     - tea
     - aplonal
     - episol
     - vetanarcol
-    - trivermex
+    - Trivermex
     - Tripackprotech
-    - feliway
-    - Terramicina
+    - Feliway
     - terramicina
-    - revol
+    - terramicina
+    - Revol
     - Simparica
-    - Simparica
-    - Cerenia
+    - simparica
+    - cerenia
     - cytopoint
     - mv
-    - Meltra
+    - meltra
     - vetscan
 
 - lookup: categoria
@@ -857,17 +857,17 @@ nlu:
     - integhra-proveedor
     - Konig s.a.
     - Konig
-    - Brouwer
-    - zoetis
+    - brouwer
+    - Zoetis
     - Ceva
-    - Holliday scott s.a.
-    - Holliday
+    - holliday scott s.a.
+    - holliday
     - boehringer ingelheim
     - boehringer
     - john martin
     - john
-    - Biogenesis bago
-    - Biogenesis
+    - biogenesis bago
+    - biogenesis
     - suizo argentina
     - suizo
     - Labyes
