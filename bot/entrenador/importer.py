@@ -1,4 +1,3 @@
-# importer.py
 import os
 import re
 import csv
@@ -13,7 +12,7 @@ from utils import formatear_nombre, generar_fecha_random, limpiar_texto, extraer
 # -------------------------
 # ANOTACIÓN DE ENTIDADES
 # -------------------------
-def anotar_entidades(texto, nombre, proveedor, cantidad, dosis, compuesto, categoria,
+def anotar_entidades(texto, producto, proveedor, cantidad, dosis, compuesto, categoria,
                      dia=None, fecha=None, cantidad_stock=None, cantidad_descuento=None):
 
     def limpiar_valor(valor):
@@ -35,7 +34,7 @@ def anotar_entidades(texto, nombre, proveedor, cantidad, dosis, compuesto, categ
             return re.sub(pattern, f"[{valor}]({label})", texto_actual, count=1)
         return texto_actual
 
-    texto = anotar(nombre, "producto", texto)
+    texto = anotar(producto, "producto", texto)
     texto = anotar(proveedor, "proveedor", texto)
     texto = anotar(cantidad, "cantidad", texto)
     texto = anotar(dosis, "dosis", texto)
@@ -153,6 +152,16 @@ def generar_lookup_tables(data_dir="data"):
 # -------------------------
 # GENERACIÓN DE ENTIDADES POR PRODUCTO
 # -------------------------
+def generar_cantidad_descuento():
+    return random.randint(5, 80)
+    # tipo = random.choice(["porcentaje", "monto"])
+    # if tipo == "porcentaje":
+    #     valor = random.randint(5, 80)  # Descuento entre 5% y 50%
+    #     return f"{valor}"
+    # else:
+    #     valor = random.choice([100, 200, 500, 1000, 1500])  # Montos en $ arbitrarios
+    #     return f"{valor}"
+
 def generar_entidades_por_producto(lookup):
     productos = lookup.get("producto", [])
     proveedores = lookup.get("proveedor", [])
@@ -171,7 +180,7 @@ def generar_entidades_por_producto(lookup):
         fecha = generar_fecha_random()
         dia = random.choice(["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"])
         cantidad_stock = random.choice(["10 unidades", "50 productos", "pocas unidades", "stock limitado"])
-        cantidad_descuento = random.choice(["20%", "10%", "$500", "15%"])
+        cantidad_descuento = generar_cantidad_descuento()
 
         entidades_por_producto[nombre] = {
             "nombre": nombre,
@@ -187,6 +196,28 @@ def generar_entidades_por_producto(lookup):
         }
 
     return entidades_por_producto
+
+# -------------------------
+# GENERACIÓN DE REGEX ENTITIES
+# -------------------------
+def generar_regex_yml(path="data/regex_entities.yml"):
+    import yaml
+    regex_data = {
+        "version": "3.1",
+        "regex": [
+            {"name": "cantidad_descuento", "pattern": r"\d{1,3}\s?%"},
+            {"name": "cantidad_descuento", "pattern": r"\d{1,5}\s?\$"},
+            {"name": "cantidad_descuento", "pattern": r"\d{1,3}\s?(por\s*ciento)"},
+        ]
+    }
+
+    path = Path(path)
+    path.parent.mkdir(exist_ok=True, parents=True)
+
+    with path.open("w", encoding="utf-8") as f:
+        yaml.dump(regex_data, f, allow_unicode=True)
+
+    print(f"✅ Archivo regex generado en {path}")
 
 # -------------------------
 # PIPELINE COMPLETO
@@ -210,6 +241,9 @@ def generar_imports(data_dir="data"):
                 f.write(f"{v}\n")
     print(f"✅ Lookup tables exportadas a {data_dir}")
 
+    # 4️⃣ Generar regex entities
+    generar_regex_yml(Path(data_dir) / "regex_entities.yml")
+
     return lookup, entidades
 
 # -------------------------
@@ -217,7 +251,6 @@ def generar_imports(data_dir="data"):
 # -------------------------
 if __name__ == "__main__":
     lookup, entidades = generar_imports()
-    # Ejemplo de anotación rápida
     ejemplo_texto = "Tomar Paracetamol 500 mg de Laboratorios XYZ cada lunes"
     producto = "paracetamol"
     proveedor = "laboratorios xyz"

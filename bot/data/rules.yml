@@ -1,104 +1,14 @@
 version: '3.1'
 rules:
-- rule: rule_buscar_producto_1
+- rule: rule_buscar_producto
   steps:
   - intent: buscar_producto
-    entities:
-    - entity: producto
-      value: producto_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_producto_2
-  steps:
-  - intent: buscar_producto
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: categoria
-      value: categoria_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_producto_3
-  steps:
-  - intent: buscar_producto
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: proveedor
-      value: proveedor_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_producto_4
-  steps:
-  - intent: buscar_producto
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: cantidad
-      value: cantidad_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_producto_5
-  steps:
-  - intent: buscar_producto
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: dosis
-      value: dosis_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_producto_6
-  steps:
-  - intent: buscar_producto
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: compuesto
-      value: compuesto_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_oferta_7
+  - action: action_generica
+- rule: rule_buscar_oferta
   steps:
   - intent: buscar_oferta
-    entities:
-    - entity: producto
-      value: producto_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_oferta_8
-  steps:
-  - intent: buscar_oferta
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: cantidad_descuento
-      value: cantidad_descuento_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_oferta_9
-  steps:
-  - intent: buscar_oferta
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: categoria
-      value: categoria_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_buscar_oferta_10
-  steps:
-  - intent: buscar_oferta
-    entities:
-    - entity: producto
-      value: producto_valor_1
-    - entity: proveedor
-      value: proveedor_valor_1
-  - active_loop: validate_busqueda_form
-- rule: rule_completar_pedido_pendiente_11
-  steps:
-  - intent: completar_pedido_pendiente
-  - action: action_default_fallback
-- rule: rule_default_fallback_12
-  steps:
-  - intent: default_fallback
-  - action: action_default_fallback
-- rule: rule_verificar_contexto_13
-  steps:
-  - intent: verificar_contexto
-  - action: action_default_fallback
-- rule: rule_fuera_aplicacion_14
+  - action: action_generica
+- rule: rule_fuera_aplicacion
   steps:
   - intent: fuera_aplicacion
-  - action: action_fuera_aplicacion
+  - action: action_generica
