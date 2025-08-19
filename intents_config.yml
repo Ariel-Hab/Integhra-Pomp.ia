@@ -2,7 +2,7 @@ version: "1.0"
 
 intents:
   - name: buscar_producto
-    action: action_busqueda
+    action: action_generica
     templates:
       - "{verbo} {producto}"
       - "{verbo} {producto} del proveedor {proveedor}"
@@ -11,6 +11,10 @@ intents:
       - "Busco {producto} con {compuesto}"
       - "¿Cuánto cuesta {producto}?"
       - "¿Hay promociones para {producto} hasta el {fecha}?"
+      - "Quiero {cantidad} unidades de {producto} del proveedor {proveedor}"
+      - "{verbo} {producto} en categoría {categoria} con {compuesto}"
+      - "Me interesa {producto}, ¿cuánto hay en stock?"
+
     entities:
       - producto
       - proveedor
@@ -19,31 +23,43 @@ intents:
       - compuesto
       - categoria
       - fecha
-      - dia
       - cantidad_stock
-      - cantidad_descuento
 
   - name: buscar_oferta
-    action: action_busqueda
+    action: action_generica
     templates:
       - "¿Hay alguna {oferta} para {producto}?"
-      - "Busco promociones con descuento {cantidad_descuento} en {producto}"
+      - "Busco promociones con descuento de {cantidad_descuento}% en {producto}"
+      - "Busco promociones con descuento de {cantidad_descuento}$ para {producto}"
       - "¿Qué {oferta} hay para {producto} de {proveedor}?"
       - "¿Tenés {producto} en oferta solo por el {dia}?"
+      - "¿Cuál es la {oferta} de {producto} para hoy?"
+      - "Busco {producto} con {cantidad_descuento}% de descuento del proveedor {proveedor}"
+      - "¿Hay stock de {producto} en {oferta}?"
+      - "Quiero conocer la {oferta} de {producto} hasta el {fecha}"
+      - "¿Hay {oferta} de {producto} y {cantidad_stock} unidades disponibles?"
+
     entities:
       - producto
       - proveedor
       - categoria
       - dia
       - cantidad_descuento
+      - cantidad_stock
+      - fecha
+      - oferta
 
   - name: fuera_aplicacion
-    action: action_fuera_aplicacion
+    action: action_generica
     templates:
       - "Hola"
       - "Gracias por tu ayuda"
       - "¿Cómo estás?"
       - "¿Querés volver a productos y ofertas?"
+      - "Buen día"
+      - "Nos vemos luego"
+      - "Gracias, hasta luego"
+
     entities: []
 
 synonyms:
@@ -52,11 +68,14 @@ synonyms:
     - "quiero ver"
     - "decime cuáles hay"
     - "enséñame"
+    - "traeme"
+    - "buscame"
   oferta:
     - "oferta"
     - "promoción"
     - "descuento"
     - "rebaja"
+    - "rebaja especial"
   consulta:
     - "productos"
     - "medicamentos"

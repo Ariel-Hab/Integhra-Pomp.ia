@@ -2,8 +2,7 @@
 import os
 from pathlib import Path
 from exporter import exportar_yaml, exportar_synonyms_a_yaml, generar_synonyms_from_list, exportar_lookup_tables, validar_yaml
-from bot.entrenador.examples_generator import generar_ejemplos_completos
-from bot.entrenador.data_generator import generar_domain_yaml, generar_stories_rules, cargar_config
+from bot.entrenador.data_generator import generar_domain_yaml, generar_stories_rules, cargar_config, generar_ejemplos_completos
 from bot.entrenador.importer import generar_imports
 
 def main():
@@ -30,17 +29,17 @@ def main():
     # -------------------------
     # 3. Generar ejemplos NLU
     # -------------------------
-    ejemplos = generar_ejemplos_completos(config, lookup, entidades_por_producto, max_total=500)
+    ejemplos = generar_ejemplos_completos(config, lookup, max_total=500)
     exportar_yaml(ejemplos, nlu_path)
     validar_yaml(nlu_path)
 
     # -------------------------
     # 4. Generar synonyms
     # -------------------------
-    productos = lookup.get("producto", [])
-    synonyms = generar_synonyms_from_list(productos)
-    exportar_synonyms_a_yaml(synonyms, synonyms_path)
-    validar_yaml(synonyms_path)
+    # productos = lookup.get("producto", [])
+    # synonyms = generar_synonyms_from_list(productos)
+    # exportar_synonyms_a_yaml(synonyms, synonyms_path)
+    # validar_yaml(synonyms_path)
 
     # -------------------------
     # 5. Generar stories y rules
@@ -50,7 +49,7 @@ def main():
     # -------------------------
     # 6. Generar domain.yml
     # -------------------------
-    generar_domain_yaml(config, output_path="data/domain.yml")
+    generar_domain_yaml(config, output_path="domain.yml")
 
     # -------------------------
     # 7. Entrenar modelo (opcional)

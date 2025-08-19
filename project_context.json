@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-13T12:03:08.912069",
+  "timestamp": "2025-08-18T15:04:19.685081",
   "base_dir": "C:\\Ariel\\integhra\\pomp.ia",
   "file_structure": {
     "num_files": 8,
@@ -16,12 +16,24 @@
     ],
     "dirs": {
       "actions": {
-        "num_files": 1,
-        "num_dirs": 0,
+        "num_files": 2,
+        "num_dirs": 1,
         "files": [
-          "actions.py"
+          "actions.py",
+          "actions_helper.py"
         ],
-        "dirs": {}
+        "dirs": {
+          "handlers": {
+            "num_files": 3,
+            "num_dirs": 0,
+            "files": [
+              "busqueda.py",
+              "fallback.py",
+              "fuera.py"
+            ],
+            "dirs": {}
+          }
+        }
       },
       "bot": {
         "num_files": 6,
@@ -42,24 +54,162 @@
             "dirs": {
               "cache": {
                 "num_files": 1,
-                "num_dirs": 10,
+                "num_dirs": 120,
                 "files": [
                   "cache.db"
                 ],
                 "dirs": {
+                  "tmp0rkeiisz": {
+                    "note": "max depth reached"
+                  },
+                  "tmp0wxqymhh": {
+                    "note": "max depth reached"
+                  },
+                  "tmp116s_oqn": {
+                    "note": "max depth reached"
+                  },
                   "tmp197e5jp_": {
                     "note": "max depth reached"
                   },
                   "tmp19tqjm7y": {
                     "note": "max depth reached"
                   },
+                  "tmp1tniiwv6": {
+                    "note": "max depth reached"
+                  },
+                  "tmp2dz0aank": {
+                    "note": "max depth reached"
+                  },
+                  "tmp2fzc7i9_": {
+                    "note": "max depth reached"
+                  },
+                  "tmp2gflx9_t": {
+                    "note": "max depth reached"
+                  },
+                  "tmp37sjz71v": {
+                    "note": "max depth reached"
+                  },
+                  "tmp3hw715kv": {
+                    "note": "max depth reached"
+                  },
+                  "tmp3lnywlsf": {
+                    "note": "max depth reached"
+                  },
+                  "tmp3vy36b5j": {
+                    "note": "max depth reached"
+                  },
+                  "tmp41d9ew41": {
+                    "note": "max depth reached"
+                  },
                   "tmp4iewjbha": {
+                    "note": "max depth reached"
+                  },
+                  "tmp4yxg23mo": {
+                    "note": "max depth reached"
+                  },
+                  "tmp4_k8m2xp": {
+                    "note": "max depth reached"
+                  },
+                  "tmp543m8hsg": {
+                    "note": "max depth reached"
+                  },
+                  "tmp56rn0hmf": {
                     "note": "max depth reached"
                   },
                   "tmp719mk254": {
                     "note": "max depth reached"
                   },
+                  "tmp75zk1qqb": {
+                    "note": "max depth reached"
+                  },
+                  "tmp7yj5age2": {
+                    "note": "max depth reached"
+                  },
+                  "tmp7ylytcsa": {
+                    "note": "max depth reached"
+                  },
+                  "tmp81hslvr1": {
+                    "note": "max depth reached"
+                  },
+                  "tmp83t66z9r": {
+                    "note": "max depth reached"
+                  },
+                  "tmp88glur5c": {
+                    "note": "max depth reached"
+                  },
+                  "tmp8e4djjzv": {
+                    "note": "max depth reached"
+                  },
+                  "tmp8mj5uojq": {
+                    "note": "max depth reached"
+                  },
+                  "tmp8qzwzh7j": {
+                    "note": "max depth reached"
+                  },
+                  "tmp91qgm691": {
+                    "note": "max depth reached"
+                  },
+                  "tmp9ev_g9lt": {
+                    "note": "max depth reached"
+                  },
+                  "tmp9h5cvmjq": {
+                    "note": "max depth reached"
+                  },
+                  "tmp9onc_jk5": {
+                    "note": "max depth reached"
+                  },
+                  "tmpa12npxs4": {
+                    "note": "max depth reached"
+                  },
+                  "tmpaovrgqc2": {
+                    "note": "max depth reached"
+                  },
+                  "tmparlgnhjb": {
+                    "note": "max depth reached"
+                  },
+                  "tmpas9n6l7o": {
+                    "note": "max depth reached"
+                  },
+                  "tmpbsndk9vm": {
+                    "note": "max depth reached"
+                  },
+                  "tmpc1jaq4cm": {
+                    "note": "max depth reached"
+                  },
+                  "tmpc3e9h0wr": {
+                    "note": "max depth reached"
+                  },
                   "tmpcdb52zlc": {
+                    "note": "max depth reached"
+                  },
+                  "tmpdobmr0xh": {
+                    "note": "max depth reached"
+                  },
+                  "tmpe49ya2h6": {
+                    "note": "max depth reached"
+                  },
+                  "tmpecn7cjrl": {
+                    "note": "max depth reached"
+                  },
+                  "tmpejbhbjak": {
+                    "note": "max depth reached"
+                  },
+                  "tmpf105yyfr": {
+                    "note": "max depth reached"
+                  },
+                  "tmpf2126k90": {
+                    "note": "max depth reached"
+                  },
+                  "tmpf6lmfkcd": {
+                    "note": "max depth reached"
+                  },
+                  "tmpfuhi_mpg": {
+                    "note": "max depth reached"
+                  },
+                  "tmpgghn8w14": {
+                    "note": "max depth reached"
+                  },
+                  "tmpg_a1fksa": {
                     "note": "max depth reached"
                   },
                   "tmpg_fxobq2": {
@@ -68,13 +218,205 @@
                   "tmph4gj8ig7": {
                     "note": "max depth reached"
                   },
+                  "tmphjn26co4": {
+                    "note": "max depth reached"
+                  },
+                  "tmphloympf7": {
+                    "note": "max depth reached"
+                  },
+                  "tmpiaj32r4g": {
+                    "note": "max depth reached"
+                  },
+                  "tmpilam9r6v": {
+                    "note": "max depth reached"
+                  },
+                  "tmpilulmre9": {
+                    "note": "max depth reached"
+                  },
+                  "tmpirxvv11m": {
+                    "note": "max depth reached"
+                  },
+                  "tmpj6rt30rk": {
+                    "note": "max depth reached"
+                  },
                   "tmpj8agf0hn": {
+                    "note": "max depth reached"
+                  },
+                  "tmpjj6833q1": {
+                    "note": "max depth reached"
+                  },
+                  "tmpjwqxlak0": {
+                    "note": "max depth reached"
+                  },
+                  "tmpk1t47ei8": {
+                    "note": "max depth reached"
+                  },
+                  "tmpk38g7_kt": {
+                    "note": "max depth reached"
+                  },
+                  "tmpk61j_u51": {
+                    "note": "max depth reached"
+                  },
+                  "tmpkubevvpu": {
+                    "note": "max depth reached"
+                  },
+                  "tmpl2bz1jfr": {
+                    "note": "max depth reached"
+                  },
+                  "tmpllivkn_l": {
+                    "note": "max depth reached"
+                  },
+                  "tmpm5vvu774": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmnne7m_o": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmzspiq8o": {
+                    "note": "max depth reached"
+                  },
+                  "tmpn3g3lnm8": {
+                    "note": "max depth reached"
+                  },
+                  "tmpngtdmx8o": {
+                    "note": "max depth reached"
+                  },
+                  "tmpnhzt4i2g": {
+                    "note": "max depth reached"
+                  },
+                  "tmpnj91gj13": {
+                    "note": "max depth reached"
+                  },
+                  "tmpo7eq7kpt": {
+                    "note": "max depth reached"
+                  },
+                  "tmpocjzkw6x": {
+                    "note": "max depth reached"
+                  },
+                  "tmpok971kaq": {
+                    "note": "max depth reached"
+                  },
+                  "tmppoqy0ahu": {
+                    "note": "max depth reached"
+                  },
+                  "tmpppt6dbby": {
+                    "note": "max depth reached"
+                  },
+                  "tmpr5jh4aft": {
+                    "note": "max depth reached"
+                  },
+                  "tmprcc6aoux": {
+                    "note": "max depth reached"
+                  },
+                  "tmprce90lel": {
+                    "note": "max depth reached"
+                  },
+                  "tmprq0qfqi6": {
+                    "note": "max depth reached"
+                  },
+                  "tmprx0ddz5p": {
+                    "note": "max depth reached"
+                  },
+                  "tmpsheo5iy2": {
                     "note": "max depth reached"
                   },
                   "tmpsiawra0k": {
                     "note": "max depth reached"
                   },
+                  "tmpsj7w2lfu": {
+                    "note": "max depth reached"
+                  },
+                  "tmpstev7taq": {
+                    "note": "max depth reached"
+                  },
+                  "tmpsu5h4gki": {
+                    "note": "max depth reached"
+                  },
+                  "tmpt_yzza6d": {
+                    "note": "max depth reached"
+                  },
+                  "tmpu6vb50_0": {
+                    "note": "max depth reached"
+                  },
+                  "tmpu7zwowsd": {
+                    "note": "max depth reached"
+                  },
+                  "tmpu85wlfrg": {
+                    "note": "max depth reached"
+                  },
+                  "tmpu8wmytvo": {
+                    "note": "max depth reached"
+                  },
+                  "tmpuf2pta8n": {
+                    "note": "max depth reached"
+                  },
+                  "tmpufq1yxvo": {
+                    "note": "max depth reached"
+                  },
+                  "tmpugamb535": {
+                    "note": "max depth reached"
+                  },
+                  "tmpur9sai7f": {
+                    "note": "max depth reached"
+                  },
+                  "tmputtmwwyf": {
+                    "note": "max depth reached"
+                  },
+                  "tmpuxyb1f0n": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvbkfsyu8": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvms2dkkx": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvpl7ne0u": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvxsb7nj8": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvz9ph7vy": {
+                    "note": "max depth reached"
+                  },
+                  "tmpw02t45w1": {
+                    "note": "max depth reached"
+                  },
+                  "tmpw6_q40_8": {
+                    "note": "max depth reached"
+                  },
+                  "tmpw9ers9un": {
+                    "note": "max depth reached"
+                  },
+                  "tmpwxb6t43e": {
+                    "note": "max depth reached"
+                  },
+                  "tmpxlix815j": {
+                    "note": "max depth reached"
+                  },
+                  "tmpxwem_5ne": {
+                    "note": "max depth reached"
+                  },
+                  "tmpyakt8fai": {
+                    "note": "max depth reached"
+                  },
                   "tmpyrov3hdm": {
+                    "note": "max depth reached"
+                  },
+                  "tmpz3fj52n9": {
+                    "note": "max depth reached"
+                  },
+                  "tmpz7kacema": {
+                    "note": "max depth reached"
+                  },
+                  "tmpz_u7ugqn": {
+                    "note": "max depth reached"
+                  },
+                  "tmp_83zq06x": {
+                    "note": "max depth reached"
+                  },
+                  "tmp_mme8no7": {
                     "note": "max depth reached"
                   }
                 }
@@ -82,16 +424,20 @@
             }
           },
           "data": {
-            "num_files": 10,
+            "num_files": 14,
             "num_dirs": 1,
             "files": [
+              "categoria_lookup.csv",
               "category.csv",
+              "compuesto_lookup.csv",
               "enterprise.csv",
               "lookup_tables.yml",
               "nlu.yml",
               "offer.csv",
               "offer_product.csv",
               "product.csv",
+              "producto_lookup.csv",
+              "proveedor_lookup.csv",
               "rules.yml",
               "stories.yml",
               "synonyms.yml"
@@ -109,27 +455,36 @@
             }
           },
           "entrenador": {
-            "num_files": 10,
+            "num_files": 6,
             "num_dirs": 0,
             "files": [
-              "combinations_generator.py",
               "data_generator.py",
-              "entidades.py",
-              "examples_generator.py",
               "exporter.py",
-              "lookup_generator.py",
-              "paraphraser.py",
-              "templates_generator.py",
+              "importer.py",
+              "intents_config.yml",
               "train.py",
               "utils.py"
             ],
             "dirs": {}
           },
           "models": {
-            "num_files": 1,
+            "num_files": 14,
             "num_dirs": 0,
             "files": [
-              "20250812-114409-elegant-solution.tar.gz"
+              "20250812-114409-elegant-solution.tar.gz",
+              "20250813-121747-slim-bumper.tar.gz",
+              "20250813-135333-chill-mouth.tar.gz",
+              "20250814-120901-bone-mast.tar.gz",
+              "20250814-132244-swarm-banner.tar.gz",
+              "20250814-162347-white-zoom.tar.gz",
+              "20250814-185029-spicy-antenna.tar.gz",
+              "20250814-191102-blazing-accuracy.tar.gz",
+              "20250814-194140-quantum-davit.tar.gz",
+              "20250818-105140-meek-overpass.tar.gz",
+              "20250818-125240-sensitive-filter.tar.gz",
+              "20250818-130600-pallid-toucan.tar.gz",
+              "20250818-132015-acute-hutch.tar.gz",
+              "20250818-144430-mad-gravity.tar.gz"
             ],
             "dirs": {}
           }
