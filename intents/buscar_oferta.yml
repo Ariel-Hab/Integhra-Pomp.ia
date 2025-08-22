@@ -1,0 +1,36 @@
+templates:
+- ¿Hay alguna {oferta} para {producto}?
+- Busco promociones con descuento de {cantidad_descuento}% en {producto}
+- Busco promociones con descuento de {cantidad_descuento}$ para {producto}
+- ¿Qué {oferta} hay para {producto} de {proveedor}?
+- ¿Tenés {producto} en oferta solo por el {dia}?
+- ¿Cuál es la {oferta} de {producto} para hoy?
+- Busco {producto} con {cantidad_descuento}% de descuento del proveedor {proveedor}
+- ¿Hay stock de {producto} en {oferta}?
+- Quiero conocer la {oferta} de {producto} hasta el {fecha_vencimiento}
+- ¿Hay {oferta} de {producto} y {cantidad_stock} unidades disponibles?
+- Ofertas con bonificación de {cantidad_bonificacion}
+- Promociones por fecha de vencimiento del {fecha_vencimiento}
+- Productos con descuento mayor al {cantidad_descuento}%
+- Ofertas que incluyen {producto} y {cantidad_stock} en stock
+- ¿Qué {oferta} hay para productos en categoría {categoria}?
+- Buscar {producto} con promoción de {cantidad_descuento}%
+- Promociones que incluyen {compuesto} en {producto}
+- Descuentos especiales de {producto} del proveedor {proveedor}
+- ¿Cuáles son las ofertas vigentes para {producto}?
+- Ofertas limitadas de {producto} hasta el {fecha_vencimiento}
+- Ver {oferta} con {cantidad_descuento}% de descuento en {producto}
+- Promociones por cantidad de {producto} disponibles
+- Me interesa {producto} con {cantidad_bonificacion}% de bonificación
+- Listado de {oferta} vigentes
+- Buscar {producto} con oferta y stock disponible
+entities:
+- producto
+- proveedor
+- categoria
+- dia
+- cantidad_descuento
+- cantidad_stock
+- cantidad_bonificacion
+- fecha_vencimiento
+- oferta

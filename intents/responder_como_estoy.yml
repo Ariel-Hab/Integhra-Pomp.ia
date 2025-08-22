@@ -1,0 +1,14 @@
+ejemplos:
+- bien
+- todo bien
+- muy bien
+- re bien
+- joya
+- tranquilo
+- perfecto
+- 10 puntos
+responses:
+  utter_responder_como_estoy:
+  - text: Guau! Me alegro 🐶
+  - text: ¡Sigue así! 💪
+  - text: ¡Eres un campeón! 🏆

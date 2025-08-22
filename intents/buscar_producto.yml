@@ -1,0 +1,28 @@
+templates:
+- '{verbo} {producto}'
+- '{verbo} {producto} del proveedor {proveedor}'
+- ¿Tenés {producto} en categoría {categoria}?
+- Necesito {cantidad} de {producto}
+- Busco {producto} con {compuesto}
+- ¿Cuánto cuesta {producto}?
+- Quiero {cantidad} unidades de {producto} del proveedor {proveedor}
+- '{verbo} {producto} en categoría {categoria} con {compuesto}'
+- Información de {producto}, por favor
+- Dosis y cantidad de {producto}
+- ¿De qué categoría es {producto}?
+- ¿Qué dosis tiene {producto}?
+- Proveedores que tienen {producto}
+- Necesito detalles de {producto}
+- Cantidad disponible de {producto}
+- ¿Qué compuesto tiene {producto}?
+- Buscar {producto} por {compuesto}
+- Lista de productos en categoría {categoria}
+- Quiero ver {producto} de {proveedor}
+- Mostrar {producto} disponibles
+entities:
+- producto
+- proveedor
+- cantidad
+- dosis
+- compuesto
+- categoria
