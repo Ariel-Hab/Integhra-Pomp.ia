@@ -1,8 +1,11 @@
 # train.py
 import os
 from pathlib import Path
+from bot.entrenador.data_generator.domain_generator import DomainGenerator
+from bot.entrenador.data_generator.nlu_generator import NLUGenerator
+from bot.entrenador.data_generator.stories_generator import StoriesGenerator
+from scripts.config_loader import ConfigLoader
 from exporter import exportar_yaml, exportar_synonyms_a_yaml, generar_synonyms_from_list, exportar_lookup_tables, validar_yaml
-from bot.entrenador.data_generator import generar_domain_yaml, generar_stories_rules, cargar_config, generar_ejemplos_completos
 from bot.entrenador.importer import generar_imports
 
 def main():
@@ -24,12 +27,15 @@ def main():
     # -------------------------
     # 2. Cargar configuración de intents
     # -------------------------
-    config = cargar_config("intents_config.yml")
+    config_data = ConfigLoader.cargar_config("intents_config.yml")
+    intents = config_data["intents"]
+    fallback = config_data.get("fallback", {})
+
 
     # -------------------------
     # 3. Generar ejemplos NLU
     # -------------------------
-    ejemplos = generar_ejemplos_completos(config, lookup, max_total=500)
+    ejemplos = NLUGenerator.generar_ejemplos(intents, lookup, n_por_intent=500)
     exportar_yaml(ejemplos, nlu_path)
     validar_yaml(nlu_path)
 
@@ -44,12 +50,13 @@ def main():
     # -------------------------
     # 5. Generar stories y rules
     # -------------------------
-    generar_stories_rules(config, output_path_stories="data/stories.yml", output_path_rules="data/rules.yml")
+    StoriesGenerator.generar_stories_rules(config_data, output_path_stories="data/stories.yml", output_path_rules="data/rules.yml")
 
     # -------------------------
     # 6. Generar domain.yml
     # -------------------------
-    generar_domain_yaml(config, output_path="domain.yml")
+    DomainGenerator.generar_domain(config=config_data, output_path="domain.yml")
+
 
     # -------------------------
     # 7. Entrenar modelo (opcional)
@@ -60,3 +67,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

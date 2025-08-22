@@ -1,87 +1,200 @@
 version: '3.1'
 intents:
+- saludo
+- preguntar_como_estas
+- responder_como_estoy
+- responder_estoy_bien
+- despedida
+- pedir_chiste
+- reirse_chiste
 - buscar_producto
 - buscar_oferta
-- fuera_aplicacion
+- completar_pedido
+- afirmar
+- denegar
+- agradecimiento
 entities:
 - cantidad
+- cantidad_bonificacion
 - cantidad_descuento
 - cantidad_stock
 - categoria
 - compuesto
 - dia
 - dosis
-- fecha
+- fecha_vencimiento
 - oferta
 - producto
 - proveedor
 slots:
   cantidad:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: cantidad
+  cantidad_bonificacion:
+    type: text
+    influence_conversation: true
+    mappings:
+    - type: from_entity
+      entity: cantidad_bonificacion
   cantidad_descuento:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: cantidad_descuento
   cantidad_stock:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: cantidad_stock
   categoria:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: categoria
   compuesto:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: compuesto
   dia:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: dia
   dosis:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: dosis
-  fecha:
+  fecha_vencimiento:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
-      entity: fecha
+      entity: fecha_vencimiento
   oferta:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: oferta
   producto:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: producto
   proveedor:
     type: text
+    influence_conversation: true
     mappings:
     - type: from_entity
       entity: proveedor
-  ultimo_intent:
-    type: text
+  conversation_started:
+    type: bool
+    initial_value: false
+    influence_conversation: false
     mappings:
-    - type: from_text
-forms: {}
+    - type: custom
+  last_intent:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  user_preference:
+    type: categorical
+    values:
+    - busqueda
+    - small_talk
+    - ayuda
+    influence_conversation: true
+    mappings:
+    - type: custom
 responses:
+  utter_saludo:
+  - text: ¡Hola! ¿Cómo estás?
+  - text: Buenas, un gusto saludarte 🐾
+  - text: ¡Hola! Encantado de verte por acá
+  utter_preguntar_cómo_estás:
+  - text: ¡Todo bien! ¿Y vos?
+  utter_responder_como_estoy:
+  - text: Espectacular, gracias por preguntar!
+  - text: Muy bien, preparado para asistirte!
+  utter_despedida:
+  - text: ¡Adiós! Que tengas un gran día ✨
+  - text: Hasta luego, nos vemos pronto 🐾
+  - text: Chao, cuidate mucho
+  utter_contar_chiste:
+  - text: 'Aquí va uno: ¿Por qué el perro se sentó frente al ordenador? Porque quería navegar por la red.'
+  - text: 'Aquí va uno: ¿Qué hace un gato en el ordenador? ¡Miau-sea por internet!'
+  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra, porque está en blanco y negro.'
+  - text: 'Aquí va uno: ¿Por qué los peces no juegan a las cartas? Porque hay demasiados tiburones.'
+  - text: 'Aquí va uno: ¿Cómo se llama el veterinario más rápido? ¡Doctor Rápido!'
+  - text: 'Aquí va uno: ¿Qué le dice un perro a un hueso? ‘¡No te vayas, te estoy mordiendo!’'
+  - text: 'Aquí va uno: ¿Qué hace un conejo con una calculadora? ¡Suma zanahorias!'
+  - text: 'Aquí va uno: ¿Por qué el gato llevaba sombrero? Porque era un gato con estilo.'
+  - text: 'Aquí va uno: ¿Qué hace un pájaro en la computadora? ¡Tuitea!'
+  - text: 'Aquí va uno: ¿Cuál es el pez más divertido? El pez payaso.'
+  - text: 'Aquí va uno: ¿Qué le dijo la vaca a la otra? ‘¡Nos vemos en la leche!’'
+  - text: 'Aquí va uno: ¿Por qué el perro cruzó el parque? ¡Para ir a buscar un hueso!'
+  - text: 'Aquí va uno: ¿Cómo se despiden los gatos? ¡Miau adiós!'
+  - text: 'Aquí va uno: ¿Qué hace un ratón en la biblioteca? Busca ratones de libros.'
+  - text: 'Aquí va uno: ¿Por qué los caballos usan casco? Para no perder la cabeza.'
+  - text: 'Aquí va uno: ¿Qué le dijo un pez a otro pez en el cine? ‘¡No hagas olas!’'
+  - text: 'Aquí va uno: ¿Por qué los gatos son malos contadores? Porque siempre pierden la cuenta de sus vidas.'
+  - text: 'Aquí va uno: ¿Cuál es el perro más musical? ¡El dog-chorista!'
+  - text: 'Aquí va uno: ¿Por qué los pollitos no usan Facebook? Porque ya tienen Twitter.'
+  - text: 'Aquí va uno: ¿Qué hace un caballo en el gimnasio? ¡Ejercicios de caballo!'
+  - text: 'Aquí va uno: ¿Qué le dice un conejo a otro conejo que llega tarde? ‘¡Zanahoria tarde!’'
+  - text: 'Aquí va uno: ¿Cuál es el pez que trabaja en oficina? El pez administrativo.'
+  - text: 'Aquí va uno: ¿Por qué el gato se escondió bajo la cama? Porque quería evitar el ratón.'
+  - text: 'Aquí va uno: ¿Cómo se llama el gato detective? Sherlock Gato.'
+  - text: 'Aquí va uno: ¿Qué hace un perro en el cine? ¡Mira la película ladrando!'
+  - text: 'Aquí va uno: ¿Por qué la gallina no toca el piano? Porque siempre se le escapan las notas.'
+  - text: 'Aquí va uno: ¿Qué le dice un loro a su dueño? ‘¡Repite conmigo!’'
+  - text: 'Aquí va uno: ¿Por qué los peces no hacen tarea? Porque siempre se quedan en el agua.'
+  - text: 'Aquí va uno: ¿Cómo llaman al gato que sabe karate? ¡Gato Fu!'
+  - text: 'Aquí va uno: ¿Por qué los perros no usan el celular? Porque no quieren perder la llamada.'
+  utter_reirse_chiste:
+  - text: 😄 Me alegra que te haya sacado una sonrisa
+  - text: 😂 jajaja, buenísimo
   utter_buscar_producto:
-  - text: Respuesta para buscar_producto
+  - text: Entendido. Permíteme ayudarte con eso.
+  - text: Perfecto, voy a buscar esa información para ti.
   utter_buscar_oferta:
-  - text: Respuesta para buscar_oferta
-  utter_fuera_aplicacion:
-  - text: Respuesta para fuera_aplicacion
+  - text: Entendido. Permíteme ayudarte con eso.
+  - text: Perfecto, voy a buscar esa información para ti.
+  utter_completar_pedido:
+  - text: Entendido. Permíteme ayudarte con eso.
+  - text: Perfecto, voy a buscar esa información para ti.
+  utter_afirmar:
+  - text: ¡Perfecto!
+  - text: Genial, entendido 👍
+  - text: Claro que sí
+  utter_denegar:
+  - text: Está bien, lo respeto 👍
+  - text: Perfecto, no hay problema
+  - text: De acuerdo, entendido
+  utter_agradecimiento:
+  - text: ¡De nada! 😊
+  - text: Siempre a disposición 🙌
+  - text: Me alegra poder ayudarte
+  utter_fallback:
+  - text: Perdón, no entendí lo que quisiste decir.
 actions:
-- action_generica
+- action_busqueda_situacion
+- action_conf_neg_agradecer
+- action_fallback_generico
+- action_smalltalk_situacion
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

@@ -1,14 +1,54 @@
 version: '3.1'
 rules:
+- rule: rule_saludo
+  steps:
+  - intent: saludo
+  - action: action_smalltalk_situacion
+- rule: rule_preguntar_como_estas
+  steps:
+  - intent: preguntar_como_estas
+  - action: action_smalltalk_situacion
+- rule: rule_responder_como_estoy
+  steps:
+  - intent: responder_como_estoy
+  - action: action_smalltalk_situacion
+- rule: rule_responder_estoy_bien
+  steps:
+  - intent: responder_estoy_bien
+  - action: action_smalltalk_situacion
+- rule: rule_despedida
+  steps:
+  - intent: despedida
+  - action: action_smalltalk_situacion
+- rule: rule_pedir_chiste
+  steps:
+  - intent: pedir_chiste
+  - action: action_smalltalk_situacion
+- rule: rule_reirse_chiste
+  steps:
+  - intent: reirse_chiste
+  - action: action_smalltalk_situacion
 - rule: rule_buscar_producto
   steps:
   - intent: buscar_producto
-  - action: action_generica
+  - action: action_busqueda_situacion
 - rule: rule_buscar_oferta
   steps:
   - intent: buscar_oferta
-  - action: action_generica
-- rule: rule_fuera_aplicacion
+  - action: action_busqueda_situacion
+- rule: rule_completar_pedido
   steps:
-  - intent: fuera_aplicacion
-  - action: action_generica
+  - intent: completar_pedido
+  - action: action_busqueda_situacion
+- rule: rule_afirmar
+  steps:
+  - intent: afirmar
+  - action: action_conf_neg_agradecer
+- rule: rule_denegar
+  steps:
+  - intent: denegar
+  - action: action_conf_neg_agradecer
+- rule: rule_agradecimiento
+  steps:
+  - intent: agradecimiento
+  - action: action_conf_neg_agradecer

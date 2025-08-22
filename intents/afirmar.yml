@@ -1,0 +1,12 @@
+ejemplos:
+- sí
+- claro
+- exacto
+- correcto
+- perfecto
+- de acuerdo
+responses:
+  utter_afirmar:
+  - text: ¡Perfecto!
+  - text: Genial, entendido 👍
+  - text: Claro que sí

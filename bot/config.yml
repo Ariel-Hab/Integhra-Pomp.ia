@@ -30,7 +30,8 @@ pipeline:
     constrain_similarities: true
 
   - name: FallbackClassifier
-    threshold: 0.3
+    threshold: 0.6       # Activamos fallback si confidence < 0.6
+    ambiguity_threshold: 0.15  # Activamos si top intents están muy parecidos
 
   - name: DucklingEntityExtractor
     dimensions: ["number", "amount-of-money", "time"]
@@ -39,20 +40,17 @@ pipeline:
     anchor_date: "2023-01-01T12:00:00.000Z"
 
 # --- Dialogue Policies ---
-
 policies:
-  # Memorizes exact training stories.
   - name: MemoizationPolicy
-
-  # Handles rule-based conversations.
   - name: RulePolicy
-
-  # Uses deep learning to generalize dialog behavior.
+    core_fallback_action_name: "action_fallback_generico"
+    core_fallback_threshold: 0.6
+    enable_fallback_prediction: true
   - name: TEDPolicy
-    max_history: 10  # How many previous turns to consider
-    epochs: 100      # Training iterations
+    max_history: 10
+    epochs: 100
 
-# Optional assistant ID (not always needed unless you're using Rasa Pro)
+# Optional assistant ID
 assistant_id: 20250802-131303-coral-parent
 
 nlu:
@@ -60,8 +58,16 @@ nlu:
   - data/lookup_tables.yml
   - data/synonyms.yml
   - data/regex_entities.yml
+
 stories:
   - data/stories.yml
 
 rules:
   - data/rules.yml
+
+# --- Bloque fallback personalizado para tu loader ---
+fallback:
+  action: action_fallback_generico
+  response: "Perdón, no entendí lo que quisiste decir."
+  threshold: 0.6
+  ambiguity_threshold: 0.15

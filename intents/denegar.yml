@@ -1,0 +1,11 @@
+ejemplos:
+- 'no'
+- nunca
+- no, gracias
+- incorrecto
+- no es así
+responses:
+  utter_denegar:
+  - text: Está bien, lo respeto 👍
+  - text: Perfecto, no hay problema
+  - text: De acuerdo, entendido
