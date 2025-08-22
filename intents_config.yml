@@ -1,82 +1,161 @@
-version: "1.0"
+version: '1.0'
 
+# 🔹 Definición de intents
 intents:
-  - name: buscar_producto
-    action: action_generica
-    templates:
-      - "{verbo} {producto}"
-      - "{verbo} {producto} del proveedor {proveedor}"
-      - "¿Tenés {producto} en categoría {categoria}?"
-      - "Necesito {cantidad} de {producto}"
-      - "Busco {producto} con {compuesto}"
-      - "¿Cuánto cuesta {producto}?"
-      - "¿Hay promociones para {producto} hasta el {fecha}?"
-      - "Quiero {cantidad} unidades de {producto} del proveedor {proveedor}"
-      - "{verbo} {producto} en categoría {categoria} con {compuesto}"
-      - "Me interesa {producto}, ¿cuánto hay en stock?"
+  saludo:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/saludo.yml
+    action: action_smalltalk_situacion
+    story_starter: true  # ✅ Puede iniciar conversación
+    next_intents:
+      - preguntar_como_estas
+      - busqueda
+      - pedir_chiste
+      - despedida
 
-    entities:
-      - producto
-      - proveedor
-      - cantidad
-      - dosis
-      - compuesto
-      - categoria
-      - fecha
-      - cantidad_stock
+  preguntar_como_estas:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/preguntar_cómo_estás.yml
+    action: action_smalltalk_situacion
+    story_starter: true  # ✅ Puede iniciar conversación
+    next_intents:
+      - responder_como_estoy
+      - responder_estoy_bien
+      - despedida
 
-  - name: buscar_oferta
-    action: action_generica
-    templates:
-      - "¿Hay alguna {oferta} para {producto}?"
-      - "Busco promociones con descuento de {cantidad_descuento}% en {producto}"
-      - "Busco promociones con descuento de {cantidad_descuento}$ para {producto}"
-      - "¿Qué {oferta} hay para {producto} de {proveedor}?"
-      - "¿Tenés {producto} en oferta solo por el {dia}?"
-      - "¿Cuál es la {oferta} de {producto} para hoy?"
-      - "Busco {producto} con {cantidad_descuento}% de descuento del proveedor {proveedor}"
-      - "¿Hay stock de {producto} en {oferta}?"
-      - "Quiero conocer la {oferta} de {producto} hasta el {fecha}"
-      - "¿Hay {oferta} de {producto} y {cantidad_stock} unidades disponibles?"
 
-    entities:
-      - producto
-      - proveedor
-      - categoria
-      - dia
-      - cantidad_descuento
-      - cantidad_stock
-      - fecha
-      - oferta
+  responder_como_estoy:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/responder_como_estoy.yml
+    action: action_smalltalk_situacion
+    story_starter: false  # ❌ Solo respuesta a "preguntar_como_estas"
+    next_intents:
+      - busqueda
+      - small_talk
+      - despedida
 
-  - name: fuera_aplicacion
-    action: action_generica
-    templates:
-      - "Hola"
-      - "Gracias por tu ayuda"
-      - "¿Cómo estás?"
-      - "¿Querés volver a productos y ofertas?"
-      - "Buen día"
-      - "Nos vemos luego"
-      - "Gracias, hasta luego"
+  responder_estoy_bien:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/responder_estoy_bien.yml
+    action: action_smalltalk_situacion
+    story_starter: false  # ❌ Solo respuesta a "preguntar_como_estas"
+    next_intents:
+      - busqueda
+      - small_talk
+      - despedida
 
-    entities: []
+  despedida:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/despedida.yml
+    action: action_smalltalk_situacion
+    story_starter: true  # ✅ Puede iniciar conversación (usuario quiere terminar)
+    next_intents: []
 
-synonyms:
-  verbo:
-    - "mostrame"
-    - "quiero ver"
-    - "decime cuáles hay"
-    - "enséñame"
-    - "traeme"
-    - "buscame"
-  oferta:
-    - "oferta"
-    - "promoción"
-    - "descuento"
-    - "rebaja"
-    - "rebaja especial"
-  consulta:
-    - "productos"
-    - "medicamentos"
-    - "lo que hay"
+  pedir_chiste:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/pedir_chiste.yml
+    action: action_smalltalk_situacion
+    story_starter: true  # ✅ Puede iniciar conversación
+    next_intents:
+      - reirse_chiste
+      - despedida
+      - agradecer
+      - small_talk
+
+  reirse_chiste:
+    tipo: ejemplos
+    grupo: small_talk
+    archivo: intents/reirse_chiste.yml
+    action: action_smalltalk_situacion
+    story_starter: false  # ❌ Solo respuesta a "pedir_chiste"
+    next_intents:
+      - busqueda
+      - despedida
+      - small_talk
+
+  buscar_producto:
+    tipo: template
+    grupo: busqueda
+    archivo: intents/buscar_producto.yml
+    action: action_busqueda_situacion
+    story_starter: true  # ✅ Puede iniciar conversación
+    next_intents:
+      - confirmacion
+      - small_talk
+      - despedida
+      - completar_pedido
+
+  buscar_oferta:
+    tipo: template
+    grupo: busqueda
+    archivo: intents/buscar_oferta.yml
+    action: action_busqueda_situacion
+    story_starter: true  # ✅ Puede iniciar conversación
+    next_intents:
+      - afirmar
+      - denegar
+      - small_talk
+      - despedida
+      - completar_pedido
+
+  completar_pedido:
+    tipo: template
+    grupo: busqueda
+    archivo: intents/completar_pedido.yml
+    action: action_busqueda_situacion
+    story_starter: true  # ✅ Puede iniciar conversación (usuario ya sabe qué quiere)
+    next_intents:
+      - afirmar
+      - denegar
+      - small_talk
+      - despedida
+      - busqueda
+
+  afirmar:
+    tipo: ejemplos
+    grupo: confirmacion
+    archivo: intents/afirmar.yml
+    action: action_conf_neg_agradecer
+    story_starter: false  # ❌ Solo respuesta a confirmaciones
+    next_intents:
+      - busqueda
+      - small_talk
+      - despedida
+
+  denegar:
+    tipo: ejemplos
+    grupo: negacion
+    archivo: intents/denegar.yml
+    action: action_conf_neg_agradecer
+    story_starter: false  # ❌ Solo respuesta a confirmaciones
+    next_intents:
+      - busqueda
+      - small_talk
+      - despedida
+
+  agradecimiento:
+    tipo: ejemplos
+    grupo: agradecimiento
+    archivo: intents/agradecer.yml
+    action: action_conf_neg_agradecer
+    story_starter: false  # ❌ Solo respuesta a confirmaciones o a como se siente
+    next_intents:
+      - despedida
+      - busqueda
+      - small_talk
+
+# 🔹 Sinónimos globales
+synonyms: synonyms.yml
+
+# 🔹 Fallback genérico
+fallback:
+  action: action_fallback_generico
+  response: "Perdón, no entendí lo que quisiste decir."
+  threshold: 0.6
+  ambiguity_threshold: 0.15
