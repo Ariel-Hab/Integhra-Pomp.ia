@@ -43,7 +43,7 @@ def docker_build(): run(["docker", "compose", "build"])
 def docker_restart(): run("docker compose down && docker compose up --build", shell=True)
 def docker_logs(): run(["docker", "compose", "logs", "-f"])
 def docker_shell_rasa(): run(["docker", "compose", "exec", "rasa", "bash"])
-def docker_run_agent(): run(["docker", "compose", "up", "rasa", "actions"])
+def docker_run_agent(): run(["docker", "compose", "up", "rasa", "actions","--actions","actions.actions"])
 def docker_train_container(): run(["docker", "compose", "exec", "rasa", "rasa", "train"])
 
 # --- Dependencias Contenedor ---
@@ -71,7 +71,7 @@ def run_bot_local():
     run(["poetry", "run", "python", "main.py"], cwd="bot")
 def run_actions_local():
     install_deps_actions_local()
-    run(["poetry", "run", "rasa", "run", "actions"], cwd="actions")
+    run(["poetry", "run", "rasa", "run", "actions","--actions","actions"])
 
 # --- Limpieza ---
 def clean_down_volumes(): run(["docker", "compose", "down", "--volumes", "--remove-orphans"])

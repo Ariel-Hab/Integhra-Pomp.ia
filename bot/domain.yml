@@ -1,185 +1,325 @@
 version: '3.1'
 intents:
-- saludo
-- preguntar_como_estas
-- responder_como_estoy
-- responder_estoy_bien
-- despedida
-- pedir_chiste
-- reirse_chiste
-- buscar_producto
-- buscar_oferta
-- completar_pedido
-- afirmar
-- denegar
-- agradecimiento
+- saludo:
+    is_starter: true
+    use_entities: true
+- preguntar_como_estas:
+    is_starter: true
+    use_entities: true
+- responder_como_estoy:
+    follow_up_only: true
+    use_entities: true
+- responder_estoy_bien:
+    follow_up_only: true
+    use_entities: true
+- despedida:
+    is_starter: true
+    use_entities: true
+- pedir_chiste:
+    is_starter: true
+    use_entities: true
+- reirse_chiste:
+    follow_up_only: true
+    use_entities: true
+- buscar_producto:
+    is_starter: true
+    use_entities: true
+- buscar_oferta:
+    is_starter: true
+    use_entities: true
+- completar_pedido:
+    follow_up_only: true
+    use_entities: true
+- consultar_novedades_producto:
+    is_starter: true
+    use_entities: true
+- consultar_novedades_oferta:
+    is_starter: true
+    use_entities: true
+- consultar_recomendaciones_producto:
+    is_starter: true
+    use_entities: true
+- consultar_recomendaciones_oferta:
+    is_starter: true
+    use_entities: true
+- modificar_busqueda:
+    is_starter: true
+    use_entities: true
+- afirmar:
+    follow_up_only: true
+    use_entities: true
+- denegar:
+    follow_up_only: true
+    use_entities: true
+- agradecimiento:
+    follow_up_only: true
+    use_entities: true
+- off_topic:
+    follow_up_only: true
+    use_entities: true
 entities:
-- cantidad
-- cantidad_bonificacion
-- cantidad_descuento
-- cantidad_stock
-- categoria
-- compuesto
-- dia
-- dosis
-- fecha_vencimiento
-- oferta
 - producto
 - proveedor
+- categoria
+- ingrediente_activo
+- compuesto
+- animal
+- dosis
+- cantidad
+- dia
+- fecha
+- cantidad_stock
+- cantidad_descuento
+- sentimiento_positivo
+- sentimiento_negativo
+- rechazo_total
+- intencion_buscar
+- solicitud_ayuda
 slots:
-  cantidad:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: cantidad
-  cantidad_bonificacion:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: cantidad_bonificacion
-  cantidad_descuento:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: cantidad_descuento
-  cantidad_stock:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: cantidad_stock
-  categoria:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: categoria
-  compuesto:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: compuesto
-  dia:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: dia
-  dosis:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: dosis
-  fecha_vencimiento:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: fecha_vencimiento
-  oferta:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: oferta
   producto:
     type: text
-    influence_conversation: true
+    influence_conversation: false
     mappings:
     - type: from_entity
       entity: producto
   proveedor:
     type: text
-    influence_conversation: true
+    influence_conversation: false
     mappings:
     - type: from_entity
       entity: proveedor
+  categoria:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: categoria
+  ingrediente_activo:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: ingrediente_activo
+    - type: from_entity
+      entity: compuesto
+  compuesto:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: compuesto
+    - type: from_entity
+      entity: ingrediente_activo
+  animal:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: animal
+  dosis:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: dosis
+  cantidad:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad
+  dia:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: dia
+  fecha:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: fecha
+  cantidad_stock:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad_stock
+  cantidad_descuento:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad_descuento
+  sentimiento_positivo:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: sentimiento_positivo
+  sentimiento_negativo:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: sentimiento_negativo
+  rechazo_total:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: rechazo_total
+  intencion_buscar:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: intencion_buscar
+  solicitud_ayuda:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: solicitud_ayuda
+  context_switch:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+    - type: custom
+  user_sentiment:
+    type: categorical
+    values:
+    - positive
+    - negative
+    - neutral
+    - rejection
+    initial_value: neutral
+    influence_conversation: false
+    mappings:
+    - type: custom
+  last_intent_flow:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  pending_search_data:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+  search_history:
+    type: list
+    initial_value: []
+    influence_conversation: false
+    mappings:
+    - type: custom
+  context_decision_pending:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+  user_engagement_level:
+    type: categorical
+    values:
+    - neutral
+    - engaged
+    - needs_help
+    - confused
+    - friendly
+    - collaborative
+    - reset
+    - disengaged
+    - interested
+    - needs_guidance
+    - satisfied
+    influence_conversation: false
+    mappings:
+    - type: custom
+  pedido_incompleto:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+    - type: custom
   conversation_started:
     type: bool
     initial_value: false
     influence_conversation: false
     mappings:
     - type: custom
-  last_intent:
+  awaiting_completion:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+    - type: custom
+  last_completed_action:
     type: text
     influence_conversation: false
     mappings:
     - type: custom
-  user_preference:
-    type: categorical
-    values:
-    - busqueda
-    - small_talk
-    - ayuda
-    influence_conversation: true
+  conversation_turn:
+    type: float
+    initial_value: 0
+    influence_conversation: false
+    mappings:
+    - type: custom
+  pending_suggestion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  suggestion_context:
+    type: text
+    influence_conversation: false
     mappings:
     - type: custom
 responses:
   utter_saludo:
-  - text: ¡Hola! ¿Cómo estás?
-  - text: Buenas, un gusto saludarte 🐾
-  - text: ¡Hola! Encantado de verte por acá
-  utter_preguntar_cómo_estás:
-  - text: ¡Todo bien! ¿Y vos?
+  - text: ¡Hola! ¿Qué necesitas? 🐶
+  - text: Buenas, un gusto saludarte 🐾¿Necesitas algo?
+  - text: ¡Hola! Encantado de verte por acá 🐾¿Queres buscar algun producto?
   utter_responder_como_estoy:
-  - text: Espectacular, gracias por preguntar!
-  - text: Muy bien, preparado para asistirte!
+  - text: Espectacular!
+  - text: Guau! Me alegro 🐶
+  - text: ¡Sigue así! 💪
+  - text: ¡Eres un campeón! 🏆
+  utter_reirse_chiste:
+  - text: 😄 Me alegra que te haya sacado una sonrisa
+  - text: 😂 jajaja, buenísimo
+  utter_preguntar_como_estas:
+  - text: ¡Todo bien! ¿Y vos?
+  utter_responder_estoy_bien:
+  - text: Espectacular! Necesitas buscar algo?
+  - text: Buenisimoo! Necesitas ayuda?
+  - text: Genial! Estoy aquí por si necesitas algo
+  utter_pedir_chiste:
+  - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué hizo? —Vendí la bicicleta.'
+  - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene miedo al *ratón*.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre da el primer *click* del día.'
+  - text: 'Aquí va uno: ¿Qué hace una vaca cuando escucha música? ¡Da leche condensada!'
+  - text: 'Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en *escuela*.'
+  - text: 'Aquí va uno: ¿Qué hace un perro con un taladro? ¡Hace agujeros a lo *guau*!'
+  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía está en blanco y negro.'
+  - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas emocionales*.'
+  - text: 'Aquí va uno: ¿Qué hace un conejo cuando se aburre? ¡Ve *zanahorias* películas!'
+  - text: 'Aquí va uno: ¿Cómo se despiden dos pulgas? ‘Nos vemos en el perro’.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más ordenado? El perro pastor, siempre pone todo en fila.'
+  - text: 'Aquí va uno: ¿Por qué el loro nunca aprueba exámenes? Porque siempre repite.'
+  - text: 'Aquí va uno: ¿Qué le dijo el gato al veterinario? ‘¡Hoy vengo por curiosidad!’'
+  - text: 'Aquí va uno: ¿Cuál es el pez más gracioso? El *pez payaso*... pero siempre hace chistes *de mal gusto*.'
+  - text: 'Aquí va uno: ¿Qué hace un perro frente al aire acondicionado? ¡Esperar que le dé un poco de *fres-canis*!'
+  - text: 'Aquí va uno: ¿Cómo llaman a un perro que sabe cantar? ¡Un *can-tante* profesional!'
+  - text: 'Aquí va uno: ¿Por qué los pollitos no usan Facebook? Porque ya tienen *pío-pío*.'
+  - text: 'Aquí va uno: ¿Qué le dice una oveja presumida a otra? ‘¡Soy la oveja más *cool-la* del rebaño!’'
+  - text: 'Aquí va uno: ¿Cómo se llama el gato que hace magia? ¡Miau-dini!'
+  - text: 'Aquí va uno: ¿Por qué la vaca fue astronauta? Porque quería ver la *Vía Láctea* desde arriba.'
   utter_despedida:
   - text: ¡Adiós! Que tengas un gran día ✨
   - text: Hasta luego, nos vemos pronto 🐾
   - text: Chao, cuidate mucho
-  utter_contar_chiste:
-  - text: 'Aquí va uno: ¿Por qué el perro se sentó frente al ordenador? Porque quería navegar por la red.'
-  - text: 'Aquí va uno: ¿Qué hace un gato en el ordenador? ¡Miau-sea por internet!'
-  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra, porque está en blanco y negro.'
-  - text: 'Aquí va uno: ¿Por qué los peces no juegan a las cartas? Porque hay demasiados tiburones.'
-  - text: 'Aquí va uno: ¿Cómo se llama el veterinario más rápido? ¡Doctor Rápido!'
-  - text: 'Aquí va uno: ¿Qué le dice un perro a un hueso? ‘¡No te vayas, te estoy mordiendo!’'
-  - text: 'Aquí va uno: ¿Qué hace un conejo con una calculadora? ¡Suma zanahorias!'
-  - text: 'Aquí va uno: ¿Por qué el gato llevaba sombrero? Porque era un gato con estilo.'
-  - text: 'Aquí va uno: ¿Qué hace un pájaro en la computadora? ¡Tuitea!'
-  - text: 'Aquí va uno: ¿Cuál es el pez más divertido? El pez payaso.'
-  - text: 'Aquí va uno: ¿Qué le dijo la vaca a la otra? ‘¡Nos vemos en la leche!’'
-  - text: 'Aquí va uno: ¿Por qué el perro cruzó el parque? ¡Para ir a buscar un hueso!'
-  - text: 'Aquí va uno: ¿Cómo se despiden los gatos? ¡Miau adiós!'
-  - text: 'Aquí va uno: ¿Qué hace un ratón en la biblioteca? Busca ratones de libros.'
-  - text: 'Aquí va uno: ¿Por qué los caballos usan casco? Para no perder la cabeza.'
-  - text: 'Aquí va uno: ¿Qué le dijo un pez a otro pez en el cine? ‘¡No hagas olas!’'
-  - text: 'Aquí va uno: ¿Por qué los gatos son malos contadores? Porque siempre pierden la cuenta de sus vidas.'
-  - text: 'Aquí va uno: ¿Cuál es el perro más musical? ¡El dog-chorista!'
-  - text: 'Aquí va uno: ¿Por qué los pollitos no usan Facebook? Porque ya tienen Twitter.'
-  - text: 'Aquí va uno: ¿Qué hace un caballo en el gimnasio? ¡Ejercicios de caballo!'
-  - text: 'Aquí va uno: ¿Qué le dice un conejo a otro conejo que llega tarde? ‘¡Zanahoria tarde!’'
-  - text: 'Aquí va uno: ¿Cuál es el pez que trabaja en oficina? El pez administrativo.'
-  - text: 'Aquí va uno: ¿Por qué el gato se escondió bajo la cama? Porque quería evitar el ratón.'
-  - text: 'Aquí va uno: ¿Cómo se llama el gato detective? Sherlock Gato.'
-  - text: 'Aquí va uno: ¿Qué hace un perro en el cine? ¡Mira la película ladrando!'
-  - text: 'Aquí va uno: ¿Por qué la gallina no toca el piano? Porque siempre se le escapan las notas.'
-  - text: 'Aquí va uno: ¿Qué le dice un loro a su dueño? ‘¡Repite conmigo!’'
-  - text: 'Aquí va uno: ¿Por qué los peces no hacen tarea? Porque siempre se quedan en el agua.'
-  - text: 'Aquí va uno: ¿Cómo llaman al gato que sabe karate? ¡Gato Fu!'
-  - text: 'Aquí va uno: ¿Por qué los perros no usan el celular? Porque no quieren perder la llamada.'
-  utter_reirse_chiste:
-  - text: 😄 Me alegra que te haya sacado una sonrisa
-  - text: 😂 jajaja, buenísimo
-  utter_buscar_producto:
-  - text: Entendido. Permíteme ayudarte con eso.
-  - text: Perfecto, voy a buscar esa información para ti.
-  utter_buscar_oferta:
-  - text: Entendido. Permíteme ayudarte con eso.
-  - text: Perfecto, voy a buscar esa información para ti.
-  utter_completar_pedido:
-  - text: Entendido. Permíteme ayudarte con eso.
-  - text: Perfecto, voy a buscar esa información para ti.
-  utter_afirmar:
-  - text: ¡Perfecto!
-  - text: Genial, entendido 👍
-  - text: Claro que sí
   utter_denegar:
   - text: Está bien, lo respeto 👍
   - text: Perfecto, no hay problema
@@ -188,13 +328,39 @@ responses:
   - text: ¡De nada! 😊
   - text: Siempre a disposición 🙌
   - text: Me alegra poder ayudarte
+  utter_afirmar:
+  - text: ¡Perfecto!
+  - text: Genial, entendido 👍
+  - text: Claro que sí
+  utter_buscar_producto:
+  - text: Buscando información sobre buscar producto...
+  utter_buscar_oferta:
+  - text: Buscando información sobre buscar oferta...
+  utter_completar_pedido:
+  - text: Buscando información sobre completar pedido...
+  utter_consultar_novedades_producto:
+  - text: Buscando información sobre consultar novedades producto...
+  utter_consultar_novedades_oferta:
+  - text: Buscando información sobre consultar novedades oferta...
+  utter_consultar_recomendaciones_producto:
+  - text: Buscando información sobre consultar recomendaciones producto...
+  utter_consultar_recomendaciones_oferta:
+  - text: Buscando información sobre consultar recomendaciones oferta...
+  utter_modificar_busqueda:
+  - text: Buscando información sobre modificar busqueda...
+  utter_off_topic:
+  - text: Respuesta para off topic
   utter_fallback:
   - text: Perdón, no entendí lo que quisiste decir.
 actions:
 - action_busqueda_situacion
 - action_conf_neg_agradecer
-- action_fallback_generico
+- action_context_validator
+- action_despedida_limpia_contexto
+- action_fallback
+- action_generic_intent_reporter
+- action_generica
 - action_smalltalk_situacion
 session_config:
-  session_expiration_time: 60
+  session_expiration_time: 300
   carry_over_slots_to_new_session: true
