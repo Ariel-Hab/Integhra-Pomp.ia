@@ -185,7 +185,7 @@ def main():
         test_chat()
     else:
         print(f"❌ Comando '{cmd}' no reconocido.")
-        print("Comandos disponibles: bot, actions, train_nlu, train_model, reload_model, check_models, status, test_chat")
+        print("Comandos disponibles: bot, actions, train, rasa_train, reload_model, check_models, status, test_chat")
 
 if __name__ == "__main__":
     main()

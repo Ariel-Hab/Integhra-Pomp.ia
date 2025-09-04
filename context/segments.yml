@@ -3,7 +3,7 @@ version: "3.1"
 nlu:
 
 # ---------------------------
-# 🔹 SEGMENTOS DE CONVERSACIÓN
+# 🔹 SEGMENTOS DE CONVERSACIÓN - SINÓNIMOS
 # ---------------------------
 
 - synonym: inicio
@@ -16,8 +16,13 @@ nlu:
     - che
     - disculpá
     - perdón
+    - buenos días
+    - buenas tardes
+    - buenas noches
+    - cómo estás?
+    - cómo andás?
 
-- synonym: cierre
+- synonym: cierre  
   examples: |
     - gracias
     - por favor
@@ -27,6 +32,11 @@ nlu:
     - genial
     - dale
     - joya
+    - perfecto
+    - bárbaro
+    - excelente
+    - muchas gracias
+    - mil gracias
 
 - synonym: solicitud_de_ayuda
   examples: |
@@ -38,6 +48,10 @@ nlu:
     - me pasás
     - me mostrás
     - podrías decirme
+    - me informás
+    - me orientás
+    - me guiás
+    - me explicás
 
 - synonym: duda
   examples: |
@@ -48,6 +62,10 @@ nlu:
     - te consulto
     - no estoy seguro
     - no sé si
+    - será que
+    - habrá
+    - existirá
+    - me pregunto si
 
 - synonym: urgencia
   examples: |
@@ -59,6 +77,9 @@ nlu:
     - rápido
     - lo más pronto posible
     - me corre el tiempo
+    - es importante
+    - prioritario
+    - inmediato
 
 - synonym: muletilla
   examples: |
@@ -69,6 +90,11 @@ nlu:
     - o sea
     - bah
     - digo
+    - tipo
+    - como que
+    - medio que
+    - así como
+    - capaz que
 
 - synonym: afectivo
   examples: |
@@ -80,3 +106,7 @@ nlu:
     - máquina
     - crack
     - campeón
+    - pibe
+    - flaco
+    - amigo
+    - hermano

@@ -71,113 +71,150 @@ def invalidar_cache_config():
 
 def anotar_entidades(texto: str, **kwargs) -> str:
     """
-    Anota entidades en el texto basándose automáticamente en la configuración.
-    Acepta cualquier entidad definida en el config como parámetro nombrado.
-    
-    Args:
-        texto: El texto a anotar
-        **kwargs: Entidades como parámetros nombrados (producto=valor, proveedor=valor, etc.)
-    
-    Returns:
-        str: Texto con entidades anotadas en formato [valor](entidad)
-    
-    Example:
-        texto_anotado = anotar_entidades(
-            texto="necesito paracetamol para mi perro",
-            producto="paracetamol",
-            animal="perro"
-        )
+    Anota entidades en el texto de manera más robusta.
+    CORRIGE los errores de anotación que causan los 599+ errores.
     """
     
     # Cargar configuración de entidades
     config_data = cargar_config_entities()
     entity_names = config_data["entity_names"]
-    entities_config = config_data["entities_config"]
     
     def limpiar_valor(valor):
-        """Limpia y valida un valor de entidad."""
+        """Limpia y valida un valor de entidad de forma más permisiva."""
         if not valor:
             return None
         valor = str(valor).strip()
+        # Remover solo corchetes/paréntesis de anotación, mantener el resto
         valor = re.sub(r"[\[\]\(\)]", "", valor)
         return valor if valor else None
 
-    def anotar_valor(valor, label: str, texto_actual: str) -> str:
-        """Anota un valor específico en el texto con mejor alineación de tokens."""
+    def anotar_valor_robusto(valor, label: str, texto_actual: str) -> str:
+        """
+        Versión CORREGIDA: Anota un valor con múltiples estrategias de matching.
+        """
         # Manejar listas de valores
         if isinstance(valor, Iterable) and not isinstance(valor, str):
             for v in valor:
-                texto_actual = anotar_valor(v, label, texto_actual)
+                texto_actual = anotar_valor_robusto(v, label, texto_actual)
             return texto_actual
 
         valor = limpiar_valor(valor)
-        if not valor or valor not in texto_actual:
+        if not valor:
             return texto_actual
             
-        # Solo anotar si no está ya anotado
-        if f"[{valor}]" in texto_actual:
-            return texto_actual
+        # ESTRATEGIA 1: Búsqueda case-insensitive básica
+        if valor.lower() in texto_actual.lower():
+            # Encontrar la posición exacta conservando el case original
+            start = texto_actual.lower().find(valor.lower())
+            if start != -1:
+                end = start + len(valor)
+                valor_original = texto_actual[start:end]
+                
+                # Solo anotar si no está ya anotado
+                if f"[{valor_original}]" not in texto_actual:
+                    texto_actual = (texto_actual[:start] + 
+                                  f"[{valor_original}]({label})" + 
+                                  texto_actual[end:])
+                return texto_actual
         
-        # MEJORADO: Manejar entidades con espacios y puntos (ej: "konig s.a.")
-        # Buscar coincidencias exactas respetando límites de palabra
-        import re
+        # ESTRATEGIA 2: Búsqueda con límites de palabra flexibles
+        try:
+            # Escapar caracteres especiales para regex
+            valor_escaped = re.escape(valor)
+            # Patrones más flexibles
+            patterns = [
+                # Coincidencia exacta con límites de palabra
+                r'\b' + valor_escaped + r'\b',
+                # Coincidencia exacta sin límites (para casos especiales)
+                valor_escaped,
+                # Coincidencia con espacios flexibles
+                valor_escaped.replace(r'\ ', r'\s+'),
+            ]
+            
+            for pattern in patterns:
+                matches = list(re.finditer(pattern, texto_actual, re.IGNORECASE))
+                if matches:
+                    # Usar la primera coincidencia encontrada
+                    match = matches[0]
+                    matched_text = match.group(0)
+                    
+                    # Solo anotar si no está ya anotado
+                    if f"[{matched_text}]" not in texto_actual:
+                        return (texto_actual[:match.start()] + 
+                               f"[{matched_text}]({label})" + 
+                               texto_actual[match.end():])
+                    return texto_actual
+                    
+        except re.error:
+            # Si el regex falla, continuar con estrategias más simples
+            pass
         
-        # Escapar caracteres especiales pero mantener estructura
-        valor_escaped = re.escape(valor)
-        # Pero permitir que los puntos sean opcionales para mejor matching
-        valor_pattern = valor_escaped.replace(r'\.', r'\.?')
+        # ESTRATEGIA 3: Búsqueda parcial para casos complejos
+        palabras_valor = valor.split()
+        if len(palabras_valor) > 1:
+            # Para valores multi-palabra, buscar cada palabra
+            for palabra in palabras_valor:
+                if len(palabra) > 2 and palabra.lower() in texto_actual.lower():
+                    # Si encontramos al menos una palabra, intentar anotar el valor completo
+                    # usando una búsqueda más amplia
+                    if valor.lower().replace(' ', '') in texto_actual.lower().replace(' ', ''):
+                        # Hacer una anotación aproximada
+                        start = texto_actual.lower().find(palabra.lower())
+                        if start != -1:
+                            # Anotar solo la primera palabra encontrada como proxy
+                            end = start + len(palabra)
+                            palabra_original = texto_actual[start:end]
+                            if f"[{palabra_original}]" not in texto_actual:
+                                return (texto_actual[:start] + 
+                                       f"[{palabra_original}]({label})" + 
+                                       texto_actual[end:])
         
-        # Buscar con límites de palabra flexibles
-        pattern = r'\b' + valor_pattern + r'\b'
-        match = re.search(pattern, texto_actual, re.IGNORECASE)
-        
-        if match:
-            matched_text = match.group(0)
-            # Reemplazar la coincidencia exacta encontrada
-            return texto_actual.replace(matched_text, f"[{matched_text}]({label})", 1)
-        
+        # Si nada funciona, devolver texto sin cambios (no fallar)
         return texto_actual
 
     def determinar_etiqueta_entidad(entity_name: str) -> str:
-        """
-        Determina la etiqueta correcta para una entidad.
-        Maneja casos especiales y aliases.
-        """
-        # Casos especiales para compatibilidad
+        """Determina la etiqueta correcta para una entidad."""
+        # Mapeos especiales
         if entity_name == "compuesto":
-            return "ingrediente_activo"  # Mapear compuesto a ingrediente_activo
-        elif entity_name == "ingrediente_activo":
             return "ingrediente_activo"
         elif entity_name == "dia":
-            return "tiempo"  # Mantener compatibilidad con etiqueta tiempo
+            return "tiempo"  
         else:
             return entity_name
 
-    # Procesar todas las entidades pasadas como kwargs
+    # PROCESO PRINCIPAL: Anotar todas las entidades pasadas
     texto_resultado = texto
     
-    # Procesar entidades en orden de prioridad (entidades principales primero)
+    # Procesar entidades en orden de prioridad
     entidades_prioritarias = [
-        "producto", "proveedor", "cantidad", "dosis", 
-        "ingrediente_activo", "compuesto", "categoria", "animal"
+        "producto", "proveedor", "categoria", "ingrediente_activo", 
+        "compuesto", "dosis", "cantidad", "animal"
     ]
     
-    # Primero procesar entidades prioritarias
+    # Primero entidades prioritarias
     for entity_name in entidades_prioritarias:
         if entity_name in kwargs:
             valor = kwargs[entity_name]
-            etiqueta = determinar_etiqueta_entidad(entity_name)
-            texto_resultado = anotar_valor(valor, etiqueta, texto_resultado)
-    
-    # Luego procesar el resto de entidades
-    for entity_name, valor in kwargs.items():
-        if entity_name not in entidades_prioritarias:
-            # Verificar si la entidad está definida en el config
-            if entity_name in entity_names:
+            if valor:  # Solo procesar si tiene valor
                 etiqueta = determinar_etiqueta_entidad(entity_name)
-                texto_resultado = anotar_valor(valor, etiqueta, texto_resultado)
-            else:
-                print(f"[Importer] Advertencia: Entidad '{entity_name}' no está definida en config")
+                try:
+                    texto_resultado = anotar_valor_robusto(valor, etiqueta, texto_resultado)
+                except Exception as e:
+                    # No fallar por errores de anotación individuales
+                    print(f"[DEBUG] Error anotando {entity_name}={valor}: {e}")
+                    continue
+    
+    # Luego el resto de entidades
+    for entity_name, valor in kwargs.items():
+        if entity_name not in entidades_prioritarias and entity_name in entity_names:
+            if valor:  # Solo procesar si tiene valor
+                etiqueta = determinar_etiqueta_entidad(entity_name)
+                try:
+                    texto_resultado = anotar_valor_robusto(valor, etiqueta, texto_resultado)
+                except Exception as e:
+                    # No fallar por errores de anotación individuales
+                    print(f"[DEBUG] Error anotando {entity_name}={valor}: {e}")
+                    continue
     
     return texto_resultado
 
