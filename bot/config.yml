@@ -43,7 +43,7 @@ pipeline:
 policies:
   - name: MemoizationPolicy
   - name: RulePolicy
-    core_fallback_action_name: "action_fallback_generico"
+    core_fallback_action_name: "action_fallback"
     core_fallback_threshold: 0.6
     enable_fallback_prediction: true
   - name: TEDPolicy
@@ -67,7 +67,7 @@ rules:
 
 # --- Bloque fallback personalizado para tu loader ---
 fallback:
-  action: action_fallback_generico
-  response: "Perdón, no entendí lo que quisiste decir."
+  action: action_fallback
+  response: ""
   threshold: 0.6
   ambiguity_threshold: 0.15

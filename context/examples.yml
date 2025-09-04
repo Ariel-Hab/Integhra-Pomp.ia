@@ -1,0 +1,188 @@
+
+#examples
+version: "3.1"
+
+saludo:
+  - hola
+  - buen día
+  - buenas
+  - buenas tardes
+  - buenasss
+
+responder_estoy_bien:
+  - bien, y vos?
+  - todo bien, vos?
+  - muy bien vos?
+  - re bien, vos como estas?
+  - maso menos, vos que onda?
+  - tranquilo, y vos?
+  - mal, vos como andas?
+  - perfecto, y vos?
+  - 10 puntos y vos vos?
+
+responder_como_estoy:
+  - bien
+  - todo bien
+  - muy bien
+  - re bien
+  - joya
+  - tranquilo
+  - 10 puntos
+
+reirse_chiste:
+  - jajaja
+  - jeje
+  - qué bueno
+  - muy gracioso
+  - me reí
+  - 😂
+  - sos re gracioso
+
+preguntar_como_estas:
+  - cómo estás
+  - cómo andás
+  - todo bien?
+  - qué tal vos
+  - cómo te va?
+  - qué onda
+  - hola que tal
+  - hola, como andas?
+  - buenas, todo bien?
+  - buenasss como va?
+
+pedir_chiste:
+  - contame un chiste
+  - decime un chiste
+  - sabés algún chiste?
+  - tirame un chiste
+  - haceme reír
+
+# 🔹 Low confidence fallback
+low_confidence_fallback:
+  - asdf
+  - kjsdhf kjashd
+  - ajajajajaj
+  - 123456
+  - ????
+  - mmm no sé
+  - bleh
+  - sjdjdj
+  - kjhjkhk
+  - loquesea
+  - qweqwe
+  - :/
+  - bla bla bla
+  - lalalalala
+  - cualquier cosa
+  - nop sé
+  - kjkjk
+  - kpoasjd
+  - 🤯
+
+# 🔹 Ambiguity fallback (pueden sonar a varias intenciones: producto u oferta, agradecer o despedida, etc.)
+ambiguity_fallback:
+  - me mostrás algo?
+  - tenés algo disponible?
+  - decime qué hay
+  - quiero ver más
+  - che, qué opciones hay?
+  - necesito info
+  - hay algo nuevo?
+  - qué tenés?
+  - mostrame lo que sea
+  - contame algo
+  - dale, pasame algo
+  - bueno, qué hay
+  - a ver qué conseguís
+  - enseñame opciones
+  - qué onda con eso?
+  - mostrame otra cosa
+  - quiero saber más
+  - a ver
+  - decime qué podés
+
+off_topic:
+  - "hablame del clima"
+  - "qué hora es"
+  - "cómo está el tráfico"
+  - "contame un cuento"
+# 🔹 Out of scope fallback (cosas fuera de tu dominio, no confundir con smalltalk/off_topic)
+out_of_scope:
+  - podés explicarme matemáticas?
+  - cuánto mide la Torre Eiffel?
+  - enseñame a cocinar pizza
+  - me contás la historia de Roma?
+  - qué significa soñar con agua?
+  - recomendame una canción
+  - quién descubrió América?
+  - hablame en inglés
+  - dame la receta de un flan
+  - qué películas hay en el cine?
+  - cómo arreglo mi auto?
+  - qué tiempo va a hacer mañana?
+  - recomendame un libro
+  - cómo programo en Python?
+  - qué opinás del bitcoin?
+  - enseñame a bailar salsa
+  - cuál es la capital de Noruega?
+  - decime un trabalenguas
+  - haceme la tarea de mate
+  - cómo se dice perro en japonés?
+
+
+despedida:
+  - chau
+  - adiós
+  - hasta luego
+  - nos vemos
+  - me voy
+  - chao
+
+denegar:
+  - no
+  - nunca
+  - no, gracias
+  - incorrecto
+  - no es así
+
+agradecimiento:
+  - gracias
+  - muchas gracias
+  - te agradezco
+  - mil gracias
+  - muy amable
+
+afirmar:
+  - sí
+  - sii
+  - sií
+  - si
+  - claro
+  - exacto
+  - correcto
+  - perfecto
+  - de acuerdo
+  - siii
+
+buscar_oferta:
+  - 'hay ofertas?'
+  - 'qué promociones hay?'
+  - 'mostrame las ofertas'
+  - 'descuentos disponibles'
+  - 'promociones vigentes'
+
+buscar_producto:
+  - 'que productos tenes?'
+  - 'mostrame los productos'
+  - 'informacion de productos'
+
+consultar_novedades_producto:
+  - 'qué productos nuevos llegaron?'
+
+consultar_novedades_generales:
+  - 'qué hay de nuevo?'
+  - 'mostrame las novedades'
+  - 'tenés algo reciente para mostrar?'
+  - 'qué novedades hay en general?'
+  - 'lo último que llegó, mostrame'
+  - 'hay algo reciente que valga la pena?'

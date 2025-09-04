@@ -1,9 +1,9 @@
 {
-  "timestamp": "2025-08-18T15:04:19.685081",
+  "timestamp": "2025-09-03T11:17:03.898612",
   "base_dir": "C:\\Ariel\\integhra\\pomp.ia",
   "file_structure": {
     "num_files": 8,
-    "num_dirs": 3,
+    "num_dirs": 5,
     "files": [
       ".dockerignore",
       ".gitignore",
@@ -15,25 +15,32 @@
       "README.md"
     ],
     "dirs": {
-      "actions": {
-        "num_files": 2,
-        "num_dirs": 1,
+      ".vscode": {
+        "num_files": 1,
+        "num_dirs": 0,
         "files": [
-          "actions.py",
-          "actions_helper.py"
+          "settings.json"
         ],
-        "dirs": {
-          "handlers": {
-            "num_files": 3,
-            "num_dirs": 0,
-            "files": [
-              "busqueda.py",
-              "fallback.py",
-              "fuera.py"
-            ],
-            "dirs": {}
-          }
-        }
+        "dirs": {}
+      },
+      "actions": {
+        "num_files": 12,
+        "num_dirs": 0,
+        "files": [
+          "actions_busqueda.py",
+          "actions_confneg.py",
+          "actions_context_validation.py",
+          "actions_despedida.py",
+          "actions_fallback.py",
+          "actions_generica.py",
+          "actions_smalltalk.py",
+          "config.py",
+          "conversation_state.py",
+          "helpers.py",
+          "lookup_loader.py",
+          "__init__.py"
+        ],
+        "dirs": {}
       },
       "bot": {
         "num_files": 6,
@@ -54,369 +61,627 @@
             "dirs": {
               "cache": {
                 "num_files": 1,
-                "num_dirs": 120,
+                "num_dirs": 206,
                 "files": [
                   "cache.db"
                 ],
                 "dirs": {
-                  "tmp0rkeiisz": {
+                  "tmp01uqb7ss": {
                     "note": "max depth reached"
                   },
-                  "tmp0wxqymhh": {
+                  "tmp03jx8s2h": {
                     "note": "max depth reached"
                   },
-                  "tmp116s_oqn": {
+                  "tmp03oxwmv0": {
                     "note": "max depth reached"
                   },
-                  "tmp197e5jp_": {
+                  "tmp05j_b8zu": {
                     "note": "max depth reached"
                   },
-                  "tmp19tqjm7y": {
+                  "tmp06iydxx7": {
                     "note": "max depth reached"
                   },
-                  "tmp1tniiwv6": {
+                  "tmp0g2o9xvu": {
                     "note": "max depth reached"
                   },
-                  "tmp2dz0aank": {
+                  "tmp0t_ri0ao": {
                     "note": "max depth reached"
                   },
-                  "tmp2fzc7i9_": {
+                  "tmp0xlorsxh": {
                     "note": "max depth reached"
                   },
-                  "tmp2gflx9_t": {
+                  "tmp1fb3fq7z": {
                     "note": "max depth reached"
                   },
-                  "tmp37sjz71v": {
+                  "tmp1jukvtb_": {
                     "note": "max depth reached"
                   },
-                  "tmp3hw715kv": {
+                  "tmp1ojou5hz": {
                     "note": "max depth reached"
                   },
-                  "tmp3lnywlsf": {
+                  "tmp1puw1pel": {
                     "note": "max depth reached"
                   },
-                  "tmp3vy36b5j": {
+                  "tmp1vd7kbrw": {
                     "note": "max depth reached"
                   },
-                  "tmp41d9ew41": {
+                  "tmp27j6yd8i": {
                     "note": "max depth reached"
                   },
-                  "tmp4iewjbha": {
+                  "tmp2c3qhiab": {
                     "note": "max depth reached"
                   },
-                  "tmp4yxg23mo": {
+                  "tmp2dxngm3y": {
                     "note": "max depth reached"
                   },
-                  "tmp4_k8m2xp": {
+                  "tmp2j955h8g": {
                     "note": "max depth reached"
                   },
-                  "tmp543m8hsg": {
+                  "tmp2z332r5p": {
                     "note": "max depth reached"
                   },
-                  "tmp56rn0hmf": {
+                  "tmp38xyqu3v": {
                     "note": "max depth reached"
                   },
-                  "tmp719mk254": {
+                  "tmp3dv1eu3t": {
                     "note": "max depth reached"
                   },
-                  "tmp75zk1qqb": {
+                  "tmp3f3ttkdx": {
                     "note": "max depth reached"
                   },
-                  "tmp7yj5age2": {
+                  "tmp3grqrd2c": {
                     "note": "max depth reached"
                   },
-                  "tmp7ylytcsa": {
+                  "tmp435csnyl": {
                     "note": "max depth reached"
                   },
-                  "tmp81hslvr1": {
+                  "tmp44ioa85d": {
                     "note": "max depth reached"
                   },
-                  "tmp83t66z9r": {
+                  "tmp4505lvwe": {
                     "note": "max depth reached"
                   },
-                  "tmp88glur5c": {
+                  "tmp46egi56l": {
                     "note": "max depth reached"
                   },
-                  "tmp8e4djjzv": {
+                  "tmp4cvvgney": {
                     "note": "max depth reached"
                   },
-                  "tmp8mj5uojq": {
+                  "tmp4dd_tdsx": {
                     "note": "max depth reached"
                   },
-                  "tmp8qzwzh7j": {
+                  "tmp4ef_voy6": {
                     "note": "max depth reached"
                   },
-                  "tmp91qgm691": {
+                  "tmp4ix5mdyb": {
                     "note": "max depth reached"
                   },
-                  "tmp9ev_g9lt": {
+                  "tmp4izb8vg6": {
                     "note": "max depth reached"
                   },
-                  "tmp9h5cvmjq": {
+                  "tmp4u6bbp21": {
                     "note": "max depth reached"
                   },
-                  "tmp9onc_jk5": {
+                  "tmp508bol0e": {
                     "note": "max depth reached"
                   },
-                  "tmpa12npxs4": {
+                  "tmp553istqu": {
                     "note": "max depth reached"
                   },
-                  "tmpaovrgqc2": {
+                  "tmp58ee5aeo": {
                     "note": "max depth reached"
                   },
-                  "tmparlgnhjb": {
+                  "tmp5drsc5im": {
                     "note": "max depth reached"
                   },
-                  "tmpas9n6l7o": {
+                  "tmp5kdt8il8": {
                     "note": "max depth reached"
                   },
-                  "tmpbsndk9vm": {
+                  "tmp5vv73_nv": {
                     "note": "max depth reached"
                   },
-                  "tmpc1jaq4cm": {
+                  "tmp64tm1tde": {
                     "note": "max depth reached"
                   },
-                  "tmpc3e9h0wr": {
+                  "tmp6nypwg98": {
                     "note": "max depth reached"
                   },
-                  "tmpcdb52zlc": {
+                  "tmp73q26mck": {
                     "note": "max depth reached"
                   },
-                  "tmpdobmr0xh": {
+                  "tmp7gvrtbf1": {
                     "note": "max depth reached"
                   },
-                  "tmpe49ya2h6": {
+                  "tmp7nzlyaj0": {
                     "note": "max depth reached"
                   },
-                  "tmpecn7cjrl": {
+                  "tmp7p75rz3q": {
                     "note": "max depth reached"
                   },
-                  "tmpejbhbjak": {
+                  "tmp89sbbh1b": {
                     "note": "max depth reached"
                   },
-                  "tmpf105yyfr": {
+                  "tmp8a98ks0h": {
                     "note": "max depth reached"
                   },
-                  "tmpf2126k90": {
+                  "tmp8i30yj8m": {
                     "note": "max depth reached"
                   },
-                  "tmpf6lmfkcd": {
+                  "tmp8k7or76d": {
                     "note": "max depth reached"
                   },
-                  "tmpfuhi_mpg": {
+                  "tmp8uivh2ke": {
                     "note": "max depth reached"
                   },
-                  "tmpgghn8w14": {
+                  "tmp8w16t4bz": {
                     "note": "max depth reached"
                   },
-                  "tmpg_a1fksa": {
+                  "tmp99tirbpy": {
                     "note": "max depth reached"
                   },
-                  "tmpg_fxobq2": {
+                  "tmp9bh7kcic": {
                     "note": "max depth reached"
                   },
-                  "tmph4gj8ig7": {
+                  "tmp9rjhlqyz": {
                     "note": "max depth reached"
                   },
-                  "tmphjn26co4": {
+                  "tmp9s9aei_7": {
                     "note": "max depth reached"
                   },
-                  "tmphloympf7": {
+                  "tmp9ul_kkqt": {
                     "note": "max depth reached"
                   },
-                  "tmpiaj32r4g": {
+                  "tmp9vklyzi_": {
                     "note": "max depth reached"
                   },
-                  "tmpilam9r6v": {
+                  "tmp9vo8kcgh": {
                     "note": "max depth reached"
                   },
-                  "tmpilulmre9": {
+                  "tmpa41erufa": {
                     "note": "max depth reached"
                   },
-                  "tmpirxvv11m": {
+                  "tmpa7duvdev": {
                     "note": "max depth reached"
                   },
-                  "tmpj6rt30rk": {
+                  "tmpaa38yale": {
                     "note": "max depth reached"
                   },
-                  "tmpj8agf0hn": {
+                  "tmpao76k7bz": {
                     "note": "max depth reached"
                   },
-                  "tmpjj6833q1": {
+                  "tmpb1u3wnpb": {
                     "note": "max depth reached"
                   },
-                  "tmpjwqxlak0": {
+                  "tmpbfa2l8eo": {
                     "note": "max depth reached"
                   },
-                  "tmpk1t47ei8": {
+                  "tmpbrbm43rd": {
                     "note": "max depth reached"
                   },
-                  "tmpk38g7_kt": {
+                  "tmpbspop9to": {
                     "note": "max depth reached"
                   },
-                  "tmpk61j_u51": {
+                  "tmpbtv5ptpr": {
                     "note": "max depth reached"
                   },
-                  "tmpkubevvpu": {
+                  "tmpcexhak6i": {
                     "note": "max depth reached"
                   },
-                  "tmpl2bz1jfr": {
+                  "tmpcisdwf3u": {
                     "note": "max depth reached"
                   },
-                  "tmpllivkn_l": {
+                  "tmpcrh6ho9w": {
                     "note": "max depth reached"
                   },
-                  "tmpm5vvu774": {
+                  "tmpcuzvni94": {
                     "note": "max depth reached"
                   },
-                  "tmpmnne7m_o": {
+                  "tmpcvciz9hz": {
                     "note": "max depth reached"
                   },
-                  "tmpmzspiq8o": {
+                  "tmpc_9nj0a2": {
                     "note": "max depth reached"
                   },
-                  "tmpn3g3lnm8": {
+                  "tmpd2kip4xg": {
                     "note": "max depth reached"
                   },
-                  "tmpngtdmx8o": {
+                  "tmpd48ut_mo": {
                     "note": "max depth reached"
                   },
-                  "tmpnhzt4i2g": {
+                  "tmpd4nk15lw": {
                     "note": "max depth reached"
                   },
-                  "tmpnj91gj13": {
+                  "tmpdhged1u3": {
                     "note": "max depth reached"
                   },
-                  "tmpo7eq7kpt": {
+                  "tmpdrvkpg52": {
                     "note": "max depth reached"
                   },
-                  "tmpocjzkw6x": {
+                  "tmpdskf9wpv": {
                     "note": "max depth reached"
                   },
-                  "tmpok971kaq": {
+                  "tmpd_4jcg8j": {
                     "note": "max depth reached"
                   },
-                  "tmppoqy0ahu": {
+                  "tmpe2461qf3": {
                     "note": "max depth reached"
                   },
-                  "tmpppt6dbby": {
+                  "tmpe5alq2yj": {
                     "note": "max depth reached"
                   },
-                  "tmpr5jh4aft": {
+                  "tmpefrvruif": {
                     "note": "max depth reached"
                   },
-                  "tmprcc6aoux": {
+                  "tmpejs5dui2": {
                     "note": "max depth reached"
                   },
-                  "tmprce90lel": {
+                  "tmpeqcv2gb8": {
                     "note": "max depth reached"
                   },
-                  "tmprq0qfqi6": {
+                  "tmpet10sw6h": {
                     "note": "max depth reached"
                   },
-                  "tmprx0ddz5p": {
+                  "tmpexhzczco": {
                     "note": "max depth reached"
                   },
-                  "tmpsheo5iy2": {
+                  "tmpe_s53zpm": {
                     "note": "max depth reached"
                   },
-                  "tmpsiawra0k": {
+                  "tmpfy5qemd3": {
                     "note": "max depth reached"
                   },
-                  "tmpsj7w2lfu": {
+                  "tmpg06pnbjg": {
                     "note": "max depth reached"
                   },
-                  "tmpstev7taq": {
+                  "tmpg5hh7cmr": {
                     "note": "max depth reached"
                   },
-                  "tmpsu5h4gki": {
+                  "tmpg6626qo3": {
                     "note": "max depth reached"
                   },
-                  "tmpt_yzza6d": {
+                  "tmpgc4_hoxo": {
                     "note": "max depth reached"
                   },
-                  "tmpu6vb50_0": {
+                  "tmpgejypufe": {
                     "note": "max depth reached"
                   },
-                  "tmpu7zwowsd": {
+                  "tmpgknegibc": {
                     "note": "max depth reached"
                   },
-                  "tmpu85wlfrg": {
+                  "tmpgpogycq1": {
                     "note": "max depth reached"
                   },
-                  "tmpu8wmytvo": {
+                  "tmpgr84ukzv": {
                     "note": "max depth reached"
                   },
-                  "tmpuf2pta8n": {
+                  "tmpgrhxm8kl": {
                     "note": "max depth reached"
                   },
-                  "tmpufq1yxvo": {
+                  "tmpgt0hbez9": {
                     "note": "max depth reached"
                   },
-                  "tmpugamb535": {
+                  "tmpgy84o5cl": {
                     "note": "max depth reached"
                   },
-                  "tmpur9sai7f": {
+                  "tmph8w0nkhy": {
                     "note": "max depth reached"
                   },
-                  "tmputtmwwyf": {
+                  "tmphec171ph": {
                     "note": "max depth reached"
                   },
-                  "tmpuxyb1f0n": {
+                  "tmphf6nqhto": {
                     "note": "max depth reached"
                   },
-                  "tmpvbkfsyu8": {
+                  "tmphip41khx": {
                     "note": "max depth reached"
                   },
-                  "tmpvms2dkkx": {
+                  "tmphmv83m98": {
                     "note": "max depth reached"
                   },
-                  "tmpvpl7ne0u": {
+                  "tmphnqwdk2o": {
                     "note": "max depth reached"
                   },
-                  "tmpvxsb7nj8": {
+                  "tmphrsddklq": {
                     "note": "max depth reached"
                   },
-                  "tmpvz9ph7vy": {
+                  "tmph_ugg3lz": {
                     "note": "max depth reached"
                   },
-                  "tmpw02t45w1": {
+                  "tmpi5zh2umq": {
                     "note": "max depth reached"
                   },
-                  "tmpw6_q40_8": {
+                  "tmpiclxau1u": {
                     "note": "max depth reached"
                   },
-                  "tmpw9ers9un": {
+                  "tmpiiv5a51f": {
                     "note": "max depth reached"
                   },
-                  "tmpwxb6t43e": {
+                  "tmpiulggomu": {
                     "note": "max depth reached"
                   },
-                  "tmpxlix815j": {
+                  "tmpj67kdi2t": {
                     "note": "max depth reached"
                   },
-                  "tmpxwem_5ne": {
+                  "tmpj6rnrvnp": {
                     "note": "max depth reached"
                   },
-                  "tmpyakt8fai": {
+                  "tmpj7gqvk7y": {
                     "note": "max depth reached"
                   },
-                  "tmpyrov3hdm": {
+                  "tmpj7tdygjw": {
                     "note": "max depth reached"
                   },
-                  "tmpz3fj52n9": {
+                  "tmpjtzmrxpc": {
                     "note": "max depth reached"
                   },
-                  "tmpz7kacema": {
+                  "tmpk584gif_": {
                     "note": "max depth reached"
                   },
-                  "tmpz_u7ugqn": {
+                  "tmpk7u_5wwo": {
                     "note": "max depth reached"
                   },
-                  "tmp_83zq06x": {
+                  "tmpkb2hw6ub": {
                     "note": "max depth reached"
                   },
-                  "tmp_mme8no7": {
+                  "tmpkhqppyyr": {
+                    "note": "max depth reached"
+                  },
+                  "tmpkkko2nv3": {
+                    "note": "max depth reached"
+                  },
+                  "tmpkkz0b1ah": {
+                    "note": "max depth reached"
+                  },
+                  "tmpkmdk9yk0": {
+                    "note": "max depth reached"
+                  },
+                  "tmpksouj7x7": {
+                    "note": "max depth reached"
+                  },
+                  "tmpl208lz78": {
+                    "note": "max depth reached"
+                  },
+                  "tmplhayk8kz": {
+                    "note": "max depth reached"
+                  },
+                  "tmplji267l2": {
+                    "note": "max depth reached"
+                  },
+                  "tmplm2frk_o": {
+                    "note": "max depth reached"
+                  },
+                  "tmplttas2fe": {
+                    "note": "max depth reached"
+                  },
+                  "tmpm1x_09m_": {
+                    "note": "max depth reached"
+                  },
+                  "tmpm34fgb10": {
+                    "note": "max depth reached"
+                  },
+                  "tmpm4rhnwzm": {
+                    "note": "max depth reached"
+                  },
+                  "tmpm5338i93": {
+                    "note": "max depth reached"
+                  },
+                  "tmpm5l21bor": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmag7tzho": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmdbaacj4": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmifqd22b": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmp_c_6q4": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmrourzns": {
+                    "note": "max depth reached"
+                  },
+                  "tmpmwkyt2dq": {
+                    "note": "max depth reached"
+                  },
+                  "tmpn83nkjep": {
+                    "note": "max depth reached"
+                  },
+                  "tmpncl68x0n": {
+                    "note": "max depth reached"
+                  },
+                  "tmpnfh37kw1": {
+                    "note": "max depth reached"
+                  },
+                  "tmpnj8_51sn": {
+                    "note": "max depth reached"
+                  },
+                  "tmpnljm2733": {
+                    "note": "max depth reached"
+                  },
+                  "tmpnt4x3kf2": {
+                    "note": "max depth reached"
+                  },
+                  "tmpohuk0lex": {
+                    "note": "max depth reached"
+                  },
+                  "tmpoogmaq7y": {
+                    "note": "max depth reached"
+                  },
+                  "tmpoyvok7o0": {
+                    "note": "max depth reached"
+                  },
+                  "tmpoyzz1oqf": {
+                    "note": "max depth reached"
+                  },
+                  "tmpp8w3s4tk": {
+                    "note": "max depth reached"
+                  },
+                  "tmppeula4rh": {
+                    "note": "max depth reached"
+                  },
+                  "tmpptfvxxr5": {
+                    "note": "max depth reached"
+                  },
+                  "tmppxcvf9wx": {
+                    "note": "max depth reached"
+                  },
+                  "tmppyr16a3e": {
+                    "note": "max depth reached"
+                  },
+                  "tmpq0axxi2r": {
+                    "note": "max depth reached"
+                  },
+                  "tmpqeo08mi2": {
+                    "note": "max depth reached"
+                  },
+                  "tmpqfk5frt5": {
+                    "note": "max depth reached"
+                  },
+                  "tmpqg9ot2_1": {
+                    "note": "max depth reached"
+                  },
+                  "tmpqv3ryz9_": {
+                    "note": "max depth reached"
+                  },
+                  "tmpqwzbo_qf": {
+                    "note": "max depth reached"
+                  },
+                  "tmpq_oa7egc": {
+                    "note": "max depth reached"
+                  },
+                  "tmpr2ocucn3": {
+                    "note": "max depth reached"
+                  },
+                  "tmprd5jqqp6": {
+                    "note": "max depth reached"
+                  },
+                  "tmprssjosrv": {
+                    "note": "max depth reached"
+                  },
+                  "tmps0gcmdnf": {
+                    "note": "max depth reached"
+                  },
+                  "tmpsfv2ub1a": {
+                    "note": "max depth reached"
+                  },
+                  "tmps_5d0s27": {
+                    "note": "max depth reached"
+                  },
+                  "tmpt16l532k": {
+                    "note": "max depth reached"
+                  },
+                  "tmptenqxw3_": {
+                    "note": "max depth reached"
+                  },
+                  "tmptf7ufnui": {
+                    "note": "max depth reached"
+                  },
+                  "tmptff9lyp3": {
+                    "note": "max depth reached"
+                  },
+                  "tmptglrt_73": {
+                    "note": "max depth reached"
+                  },
+                  "tmptxdj5_c4": {
+                    "note": "max depth reached"
+                  },
+                  "tmpu0vdcnug": {
+                    "note": "max depth reached"
+                  },
+                  "tmpuc0zazt4": {
+                    "note": "max depth reached"
+                  },
+                  "tmpuuxbydxd": {
+                    "note": "max depth reached"
+                  },
+                  "tmpv5705jz2": {
+                    "note": "max depth reached"
+                  },
+                  "tmpv5odw_wd": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvrl0nrwu": {
+                    "note": "max depth reached"
+                  },
+                  "tmpvse8ts_k": {
+                    "note": "max depth reached"
+                  },
+                  "tmpv_t3uwmb": {
+                    "note": "max depth reached"
+                  },
+                  "tmpw5zlf93m": {
+                    "note": "max depth reached"
+                  },
+                  "tmpwa4b037s": {
+                    "note": "max depth reached"
+                  },
+                  "tmpwajfhmw7": {
+                    "note": "max depth reached"
+                  },
+                  "tmpwc0_82np": {
+                    "note": "max depth reached"
+                  },
+                  "tmpwtt8_wk2": {
+                    "note": "max depth reached"
+                  },
+                  "tmpwwzimmwb": {
+                    "note": "max depth reached"
+                  },
+                  "tmpw_kumifm": {
+                    "note": "max depth reached"
+                  },
+                  "tmpx0p9welf": {
+                    "note": "max depth reached"
+                  },
+                  "tmpxo237ncb": {
+                    "note": "max depth reached"
+                  },
+                  "tmpxxfkx_pi": {
+                    "note": "max depth reached"
+                  },
+                  "tmpxy3lkn_5": {
+                    "note": "max depth reached"
+                  },
+                  "tmpybjo2j6c": {
+                    "note": "max depth reached"
+                  },
+                  "tmpyj4b7hbd": {
+                    "note": "max depth reached"
+                  },
+                  "tmpyx9ypx6w": {
+                    "note": "max depth reached"
+                  },
+                  "tmpz1rbni30": {
+                    "note": "max depth reached"
+                  },
+                  "tmpz2znbxbl": {
+                    "note": "max depth reached"
+                  },
+                  "tmpzavjo0ur": {
+                    "note": "max depth reached"
+                  },
+                  "tmpze537gd4": {
+                    "note": "max depth reached"
+                  },
+                  "tmpze9ak3us": {
+                    "note": "max depth reached"
+                  },
+                  "tmpzrmy987a": {
+                    "note": "max depth reached"
+                  },
+                  "tmpzzfmjqx4": {
+                    "note": "max depth reached"
+                  },
+                  "tmp_bq4nvel": {
+                    "note": "max depth reached"
+                  },
+                  "tmp_dm3nk9s": {
+                    "note": "max depth reached"
+                  },
+                  "tmp_ocsjqyf": {
                     "note": "max depth reached"
                   }
                 }
@@ -424,7 +689,7 @@
             }
           },
           "data": {
-            "num_files": 14,
+            "num_files": 15,
             "num_dirs": 1,
             "files": [
               "categoria_lookup.csv",
@@ -438,6 +703,7 @@
               "product.csv",
               "producto_lookup.csv",
               "proveedor_lookup.csv",
+              "regex_entities.yml",
               "rules.yml",
               "stories.yml",
               "synonyms.yml"
@@ -455,45 +721,80 @@
             }
           },
           "entrenador": {
-            "num_files": 6,
-            "num_dirs": 0,
+            "num_files": 4,
+            "num_dirs": 1,
             "files": [
-              "data_generator.py",
               "exporter.py",
               "importer.py",
-              "intents_config.yml",
               "train.py",
               "utils.py"
             ],
-            "dirs": {}
+            "dirs": {
+              "data_generator": {
+                "num_files": 3,
+                "num_dirs": 0,
+                "files": [
+                  "domain_generator.py",
+                  "nlu_generator.py",
+                  "stories_generator.py"
+                ],
+                "dirs": {}
+              }
+            }
           },
           "models": {
-            "num_files": 14,
+            "num_files": 25,
             "num_dirs": 0,
             "files": [
-              "20250812-114409-elegant-solution.tar.gz",
-              "20250813-121747-slim-bumper.tar.gz",
-              "20250813-135333-chill-mouth.tar.gz",
-              "20250814-120901-bone-mast.tar.gz",
-              "20250814-132244-swarm-banner.tar.gz",
-              "20250814-162347-white-zoom.tar.gz",
-              "20250814-185029-spicy-antenna.tar.gz",
-              "20250814-191102-blazing-accuracy.tar.gz",
-              "20250814-194140-quantum-davit.tar.gz",
-              "20250818-105140-meek-overpass.tar.gz",
-              "20250818-125240-sensitive-filter.tar.gz",
-              "20250818-130600-pallid-toucan.tar.gz",
-              "20250818-132015-acute-hutch.tar.gz",
-              "20250818-144430-mad-gravity.tar.gz"
+              "20250819-093501-tranquil-cue.tar.gz",
+              "20250819-175616-coped-median.tar.gz",
+              "20250819-212349-silent-papaya.tar.gz",
+              "20250820-102603-charitable-brightness.tar.gz",
+              "20250820-123433-progressive-vision.tar.gz",
+              "20250821-145426-international-mayonnaise.tar.gz",
+              "20250821-162308-energetic-shadow.tar.gz",
+              "20250821-203215-blistering-grip.tar.gz",
+              "20250822-152635-level-startup.tar.gz",
+              "20250822-160110-cerulean-titanium.tar.gz",
+              "20250825-094823-scared-pulsar.tar.gz",
+              "20250825-130257-yellow-information.tar.gz",
+              "20250826-202451-navy-contract.tar.gz",
+              "20250826-210039-wood-assumption.tar.gz",
+              "20250828-175426-inverted-equator.tar.gz",
+              "20250828-211917-damp-sherry.tar.gz",
+              "20250828-221000-hot-kite.tar.gz",
+              "20250829-123630-acute-farad.tar.gz",
+              "20250829-125958-one-cod.tar.gz",
+              "20250829-133527-inventive-bosun.tar.gz",
+              "20250901-113217-bent-stock.tar.gz",
+              "20250901-115819-greasy-ketchup.tar.gz",
+              "20250901-154151-bounded-cabin.tar.gz",
+              "20250901-195342-light-sempre.tar.gz",
+              "20250901-202958-wide-trainer.tar.gz"
             ],
             "dirs": {}
           }
         }
       },
-      "scripts": {
-        "num_files": 3,
+      "context": {
+        "num_files": 7,
         "num_dirs": 0,
         "files": [
+          "context_config.yml",
+          "entidades.yml",
+          "examples.yml",
+          "responses.yml",
+          "segments.yml",
+          "templates.yml",
+          "training_limits.yml"
+        ],
+        "dirs": {}
+      },
+      "scripts": {
+        "num_files": 4,
+        "num_dirs": 0,
+        "files": [
+          "config_loader.py",
           "manage.py",
           "savecontext.py",
           "__init__.py"
@@ -520,7 +821,9 @@
         "sacremoses": ">=0.1.1,<0.2.0",
         "unidecode": ">=1.4.0,<2.0.0",
         "rasa-sdk": "^3.6.1",
-        "rasa": "^3.6.21"
+        "rasa": "^3.6.21",
+        "fastapi": "^0.116.1",
+        "uvicorn": "^0.35.0"
       },
       "actions": {
         "rasa-sdk": "^3.6.1",
@@ -582,12 +885,13 @@
       }
     },
     "dockerfiles": {
-      "Dockerfile": "# ----------------------\n# Etapa base\n# ----------------------\nFROM python:3.10-slim AS base\n\nWORKDIR /app\n\n# Evitar prompts y mejorar cacheo\nENV POETRY_VIRTUALENVS_CREATE=false \\\n    PIP_DISABLE_PIP_VERSION_CHECK=on \\\n    PIP_NO_CACHE_DIR=on\n\n# Copiamos dependencias primero para aprovechar cache\nCOPY pyproject.toml poetry.lock ./\nRUN pip install --upgrade pip && pip install poetry\n\n# ----------------------\n# Etapa Bot (Rasa)\n# ----------------------\nFROM base AS rasa\nRUN poetry install --only bot --no-root --without dev\nCOPY bot /app/bot\nWORKDIR /app/bot\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"--enable-api\", \"--cors\", \"*\"]\n\n# ----------------------\n# Etapa Actions\n# ----------------------\nFROM base AS actions\nRUN poetry install --only actions --no-root --without dev\nCOPY actions /app/actions\nWORKDIR /app/actions\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"actions\"]\n"
+      "Dockerfile": "# ----------------------\n# Etapa base\n# ----------------------\nFROM python:3.10-slim AS base\n\nWORKDIR /app\n\n# Evitar prompts y mejorar cacheo\nENV POETRY_VIRTUALENVS_CREATE=false \\\n    PIP_DISABLE_PIP_VERSION_CHECK=on \\\n    PIP_NO_CACHE_DIR=on\n\n# Instalar dependencias del sistema\nRUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*\n\n# Copiamos dependencias primero para aprovechar cache\nCOPY pyproject.toml poetry.lock ./\nRUN pip install --upgrade pip && pip install poetry\n\n\n# ----------------------\n# Etapa Bot (Rasa)\n# ----------------------\nFROM base AS rasa\nRUN poetry install --only bot --no-root --without dev\n\n# Clonamos solo la carpeta \"bot\"\nRUN git clone --depth 1 --filter=blob:none --sparse https://github.com/Ariel-Hab/Integhra-Pomp.ia.git /app/repo \\\n    && cd /app/repo && git sparse-checkout set bot\n\nWORKDIR /app/repo/bot\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"--enable-api\", \"--cors\", \"*\"]\n\n\n# ----------------------\n# Etapa Actions\n# ----------------------\nFROM base AS actions\nRUN poetry install --only actions --no-root --without dev\n\n# Clonamos solo la carpeta \"actions\"\nRUN git clone --depth 1 --filter=blob:none --sparse https://github.com/Ariel-Hab/Integhra-Pomp.ia.git /app/repo \\\n    && cd /app/repo && git sparse-checkout set actions\n\nWORKDIR /app/repo/actions\nCMD [\"poetry\", \"run\", \"rasa\", \"run\", \"actions\"]\n"
     }
   },
   "manage_py": null,
   "scripts": {
-    "manage.py": "#!/usr/bin/env python3\n\"\"\"\nGestor de tareas PompIA con menú interactivo y acceso rápido\n-----------------------------------------------------------\nUso:\n    python manage.py            # Muestra menú principal\n    python manage.py local      # Abre menú Bot Local\n    python manage.py docker     # Abre menú Docker\n    python manage.py deps       # Abre menú Dependencias\n    python manage.py clean      # Abre menú Limpieza\n    python manage.py snapshot   # Ejecuta snapshot directamente\n\"\"\"\n\nimport subprocess\nimport sys\nimport os\n\ntry:\n    sys.stdout.reconfigure(encoding=\"utf-8\")\nexcept Exception:\n    pass\n\ndef run(cmd, shell=False, cwd=None):\n    pretty_cmd = \" \".join(cmd) if isinstance(cmd, list) else cmd\n    print(f\"\\n⚙️  Ejecutando: {pretty_cmd} (cwd: {cwd or os.getcwd()})\\n\")\n    try:\n        subprocess.run(cmd, shell=shell, check=True, cwd=cwd)\n        print(\"✅ Comando ejecutado correctamente.\\n\")\n    except subprocess.CalledProcessError as e:\n        print(f\"❌ Error ejecutando: {pretty_cmd}\")\n        try:\n            if e.stdout:\n                print(e.stdout)\n            if e.stderr:\n                print(e.stderr)\n        except Exception:\n            pass\n        sys.exit(e.returncode)\n\n# --- Funciones Docker ---\ndef docker_up(): run([\"docker\", \"compose\", \"up\"])\ndef docker_build(): run([\"docker\", \"compose\", \"build\"])\ndef docker_restart(): run(\"docker compose down && docker compose up --build\", shell=True)\ndef docker_logs(): run([\"docker\", \"compose\", \"logs\", \"-f\"])\ndef docker_shell_rasa(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"bash\"])\ndef docker_run_agent(): run([\"docker\", \"compose\", \"up\", \"rasa\", \"actions\"])\ndef docker_train_container(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"rasa\", \"train\"])\n\n# --- Dependencias Contenedor ---\ndef update_deps_container_rasa(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef update_deps_container_actions(): run([\"docker\", \"compose\", \"exec\", \"rasa_actions\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"actions\", \"--without\", \"dev\"])\ndef update_deps_container_trainer(): run([\"docker\", \"compose\", \"exec\", \"rasa_trainer\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef update_deps_all_containers():\n    update_deps_container_rasa()\n    update_deps_container_actions()\n    update_deps_container_trainer()\n\n# --- Dependencias Local ---\ndef install_deps_bot_local(): run([\"poetry\", \"install\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef install_deps_actions_local(): run([\"poetry\", \"install\", \"--only\", \"actions\", \"--without\", \"dev\"])\n\n# --- Bot Local ---\ndef train_local_nlu():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"python\", \"entrenador/train.py\"], cwd=\"bot\")\ndef train_local():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"rasa\", \"train\"], cwd=\"bot\")\ndef run_bot_local():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"python\", \"main.py\"], cwd=\"bot\")\ndef run_actions_local():\n    instal...",
+    "config_loader.py": "import yaml\nfrom pathlib import Path\nfrom typing import Dict, Any, List\n\nclass ConfigLoader:\n    @staticmethod\n    def _load_yaml(path: Path) -> Dict[str, Any]:\n        \"\"\"Carga un YAML y devuelve un diccionario vacío si no existe.\"\"\"\n        if not path.exists():\n            return {}\n        with open(path, \"r\", encoding=\"utf-8\") as f:\n            return yaml.safe_load(f) or {}\n\n    @staticmethod\n    def cargar_config(\n        context_path=\"context/context_config.yml\",\n        ejemplos_path=\"context/examples.yml\",\n        templates_path=\"context/templates.yml\",\n        responses_path=\"context/responses.yml\",\n        segments_path=\"context/segments.yml\"  # NUEVO: soporte para segments\n    ) -> Dict[str, Any]:\n        \"\"\"Carga la configuración completa de intents, entidades, slots y responses.\"\"\"\n        base_path = Path(__file__).parent.parent\n        context_file = (base_path / context_path).resolve()\n        ejemplos_file = (base_path / ejemplos_path).resolve()\n        templates_file = (base_path / templates_path).resolve()\n        responses_file = (base_path / responses_path).resolve()\n        segments_file = (base_path / segments_path).resolve()  # NUEVO\n\n        # Verificar archivos requeridos\n        required_files = [context_file, ejemplos_file, templates_file, responses_file]\n        for f in required_files:\n            if not f.exists():\n                raise FileNotFoundError(f\"No se encontró el archivo: {f}\")\n\n        # Cargar todos los archivos\n        context_data = ConfigLoader._load_yaml(context_file)\n        ejemplos_data = ConfigLoader._load_yaml(ejemplos_file)\n        templates_data = ConfigLoader._load_yaml(templates_file)\n        responses_data = ConfigLoader._load_yaml(responses_file)\n        segments_data = ConfigLoader._load_yaml(segments_file)  # NUEVO\n\n        # Extraer configuraciones principales\n        intents_raw = context_data.get(\"intents\", {})\n        entities_config = context_data.get(\"entities\", {})\n        slots_config = context_data.get(\"slots\", {})\n        detection_patterns = context_data.get(\"detection_patterns\", {})\n        flow_groups = context_data.get(\"flow_groups\", {})\n        story_starters = context_data.get(\"story_starters\", [])\n        follow_up_only = context_data.get(\"follow_up_only\", [])\n        \n        # Configuraciones con defaults mejorados\n        context_validation = context_data.get(\"context_validation\", {})\n        context_validation.setdefault(\"enabled\", False)\n        context_validation.setdefault(\"action\", \"action_context_validator\")\n        context_validation.setdefault(\"max_switches\", 5)\n        \n        session_config = context_data.get(\"session_config\", {})\n        session_config.setdefault(\"session_expiration_time\", 180)\n        session_config.setdefault(\"carry_over_slots_to_new_session\", True)\n        \n        fallback = context_data.get(\"fallback\", {})\n        fallback.setdefault(\"action\", \"action_fallback\")\n        fallback.setdefault(\"response\", \"Perdón, no entendí lo que qui...",
+    "manage.py": "#!/usr/bin/env python3\n\"\"\"\nGestor de tareas PompIA con menú interactivo y acceso rápido\n-----------------------------------------------------------\nUso:\n    python manage.py            # Muestra menú principal\n    python manage.py local      # Abre menú Bot Local\n    python manage.py docker     # Abre menú Docker\n    python manage.py deps       # Abre menú Dependencias\n    python manage.py clean      # Abre menú Limpieza\n    python manage.py snapshot   # Ejecuta snapshot directamente\n\"\"\"\n\nimport subprocess\nimport sys\nimport os\n\ntry:\n    sys.stdout.reconfigure(encoding=\"utf-8\")\nexcept Exception:\n    pass\n\ndef run(cmd, shell=False, cwd=None):\n    pretty_cmd = \" \".join(cmd) if isinstance(cmd, list) else cmd\n    print(f\"\\n⚙️  Ejecutando: {pretty_cmd} (cwd: {cwd or os.getcwd()})\\n\")\n    try:\n        subprocess.run(cmd, shell=shell, check=True, cwd=cwd)\n        print(\"✅ Comando ejecutado correctamente.\\n\")\n    except subprocess.CalledProcessError as e:\n        print(f\"❌ Error ejecutando: {pretty_cmd}\")\n        try:\n            if e.stdout:\n                print(e.stdout)\n            if e.stderr:\n                print(e.stderr)\n        except Exception:\n            pass\n        sys.exit(e.returncode)\n\n# --- Funciones Docker ---\ndef docker_up(): run([\"docker\", \"compose\", \"up\"])\ndef docker_build(): run([\"docker\", \"compose\", \"build\"])\ndef docker_restart(): run(\"docker compose down && docker compose up --build\", shell=True)\ndef docker_logs(): run([\"docker\", \"compose\", \"logs\", \"-f\"])\ndef docker_shell_rasa(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"bash\"])\ndef docker_run_agent(): run([\"docker\", \"compose\", \"up\", \"rasa\", \"actions\",\"--actions\",\"actions.actions\"])\ndef docker_train_container(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"rasa\", \"train\"])\n\n# --- Dependencias Contenedor ---\ndef update_deps_container_rasa(): run([\"docker\", \"compose\", \"exec\", \"rasa\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef update_deps_container_actions(): run([\"docker\", \"compose\", \"exec\", \"rasa_actions\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"actions\", \"--without\", \"dev\"])\ndef update_deps_container_trainer(): run([\"docker\", \"compose\", \"exec\", \"rasa_trainer\", \"poetry\", \"install\", \"--no-root\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef update_deps_all_containers():\n    update_deps_container_rasa()\n    update_deps_container_actions()\n    update_deps_container_trainer()\n\n# --- Dependencias Local ---\ndef install_deps_bot_local(): run([\"poetry\", \"install\", \"--only\", \"bot\", \"--without\", \"dev\"])\ndef install_deps_actions_local(): run([\"poetry\", \"install\", \"--only\", \"actions\", \"--without\", \"dev\"])\n\n# --- Bot Local ---\ndef train_local_nlu():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"python\", \"entrenador/train.py\"], cwd=\"bot\")\ndef train_local():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"rasa\", \"train\"], cwd=\"bot\")\ndef run_bot_local():\n    install_deps_bot_local()\n    run([\"poetry\", \"run\", \"python\", \"main.py\"], cwd=\"bot\")\ndef r...",
     "savecontext.py": "import os\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom datetime import datetime\nimport sys\nsys.stdout.reconfigure(encoding='utf-8')\nimport tomli\nimport yaml\n\n# --- Agrego imports para Rasa ---\nfrom rasa.core.agent import Agent\n\nBASE_DIR = Path.cwd()\nCONTEXT_FILE = BASE_DIR / \"project_context.json\"\n\n\ndef get_file_structure_summary(base_dir, max_depth=3):\n    \"\"\"Recorre la estructura de archivos hasta max_depth y devuelve un árbol resumido.\"\"\"\n    def helper(path, depth):\n        if depth > max_depth:\n            return {\"note\": \"max depth reached\"}\n        try:\n            files = [\n                f for f in os.listdir(path)\n                if os.path.isfile(os.path.join(path, f)) and not f.endswith('.pyc')\n            ]\n            dirs = [\n                d for d in os.listdir(path)\n                if os.path.isdir(os.path.join(path, d))\n                and d != '__pycache__'\n                and not d.startswith('.git')\n            ]\n            return {\n                \"num_files\": len(files),\n                \"num_dirs\": len(dirs),\n                \"files\": files,\n                \"dirs\": {d: helper(os.path.join(path, d), depth+1) for d in dirs}\n            }\n        except Exception:\n            return {\"error\": \"no access\"}\n    return helper(base_dir, 0)\n\n\ndef get_poetry_groups_dependencies(pyproject_path):\n    \"\"\"Lee las dependencias generales y por grupos desde pyproject.toml.\"\"\"\n    try:\n        with open(pyproject_path, \"rb\") as f:\n            data = tomli.load(f)\n        tool_poetry = data.get(\"tool\", {}).get(\"poetry\", {})\n        groups = tool_poetry.get(\"group\", {})\n\n        groups_deps = {\n            group_name: group_data.get(\"dependencies\", {})\n            for group_name, group_data in groups.items()\n        }\n        general_deps = tool_poetry.get(\"dependencies\", {})\n\n        return {\"general\": general_deps, \"groups\": groups_deps}\n    except Exception as e:\n        return {\"error\": f\"No se pudo leer pyproject.toml: {e}\"}\n\n\ndef read_file_if_exists(path, max_chars=3000):\n    \"\"\"Lee un archivo si existe, recortando a max_chars para evitar sobrecarga.\"\"\"\n    p = Path(path)\n    if p.exists():\n        text = p.read_text(encoding=\"utf-8\", errors=\"ignore\")\n        return text[:max_chars] + (\"...\" if len(text) > max_chars else \"\")\n    return None\n\n\ndef get_docker_info():\n    \"\"\"Extrae configuración de docker-compose.yml y Dockerfiles.\"\"\"\n    info = {}\n    docker_compose_path = BASE_DIR / \"docker-compose.yml\"\n    if docker_compose_path.exists():\n        try:\n            with open(docker_compose_path, \"r\", encoding=\"utf-8\") as f:\n                info[\"docker_compose\"] = yaml.safe_load(f)\n        except Exception as e:\n            info[\"docker_compose_error\"] = str(e)\n    # Buscar Dockerfiles\n    dockerfiles = list(BASE_DIR.glob(\"Dockerfile*\"))\n    dockerfile_contents = {}\n    for df in dockerfiles:\n        dockerfile_contents[df.name] = read_file_if_exists(df, max_chars=3000)\n    if dockerfile_contents:\n        info[\"dockerfile...",
     "__init__.py": ""
   },

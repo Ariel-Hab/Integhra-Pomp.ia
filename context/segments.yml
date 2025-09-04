@@ -1,0 +1,82 @@
+version: "3.1"
+
+nlu:
+
+# ---------------------------
+# 🔹 SEGMENTOS DE CONVERSACIÓN
+# ---------------------------
+
+- synonym: inicio
+  examples: |
+    - hola
+    - buenas
+    - buen día
+    - qué tal
+    - cómo va?
+    - che
+    - disculpá
+    - perdón
+
+- synonym: cierre
+  examples: |
+    - gracias
+    - por favor
+    - si podés
+    - si no es molestia
+    - te agradezco
+    - genial
+    - dale
+    - joya
+
+- synonym: solicitud_de_ayuda
+  examples: |
+    - me podrías ayudar
+    - necesito
+    - me das una mano
+    - ayudame
+    - dame una mano
+    - me pasás
+    - me mostrás
+    - podrías decirme
+
+- synonym: duda
+  examples: |
+    - tenés idea
+    - sabés si
+    - che, sabés
+    - por casualidad
+    - te consulto
+    - no estoy seguro
+    - no sé si
+
+- synonym: urgencia
+  examples: |
+    - urgente
+    - lo necesito ya
+    - apurate
+    - es para hoy
+    - cuanto antes
+    - rápido
+    - lo más pronto posible
+    - me corre el tiempo
+
+- synonym: muletilla
+  examples: |
+    - viste
+    - entendés
+    - digamos
+    - ponele
+    - o sea
+    - bah
+    - digo
+
+- synonym: afectivo
+  examples: |
+    - che
+    - maestro
+    - genio
+    - loco
+    - capo
+    - máquina
+    - crack
+    - campeón

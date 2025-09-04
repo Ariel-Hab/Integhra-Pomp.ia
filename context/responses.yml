@@ -1,0 +1,67 @@
+version: "3.1"
+
+responses:
+  utter_saludo:
+  - text: ¡Hola! ¿Qué necesitas? 🐶
+  - text: Buenas, un gusto saludarte 🐾¿Necesitas algo? 
+  - text: ¡Hola! Encantado de verte por acá 🐾¿Queres buscar algun producto? 
+
+  utter_responder_como_estoy:
+  - text: Espectacular!
+  - text: Guau! Me alegro 🐶
+  - text: ¡Sigue así! 💪
+  - text: ¡Eres un campeón! 🏆
+
+  utter_reirse_chiste:
+  - text: 😄 Me alegra que te haya sacado una sonrisa
+  - text: 😂 jajaja, buenísimo
+
+  utter_preguntar_como_estas:
+  - text: ¡Todo bien! ¿Y vos?
+
+  utter_responder_estoy_bien:
+  - text: Espectacular! Necesitas buscar algo?
+  - text: Buenisimoo! Necesitas ayuda?
+  - text: Genial! Estoy aquí por si necesitas algo
+
+  utter_pedir_chiste:
+  - text: "Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué hizo? —Vendí la bicicleta."
+  - text: "Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene miedo al *ratón*."
+  - text: "Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre da el primer *click* del día."
+  - text: "Aquí va uno: ¿Qué hace una vaca cuando escucha música? ¡Da leche condensada!"
+  - text: "Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en *escuela*."
+  - text: "Aquí va uno: ¿Qué hace un perro con un taladro? ¡Hace agujeros a lo *guau*!"
+  - text: "Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía está en blanco y negro."
+  - text: "Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas emocionales*."
+  - text: "Aquí va uno: ¿Qué hace un conejo cuando se aburre? ¡Ve *zanahorias* películas!"
+  - text: "Aquí va uno: ¿Cómo se despiden dos pulgas? ‘Nos vemos en el perro’."
+  - text: "Aquí va uno: ¿Cuál es el animal más ordenado? El perro pastor, siempre pone todo en fila."
+  - text: "Aquí va uno: ¿Por qué el loro nunca aprueba exámenes? Porque siempre repite."
+  - text: "Aquí va uno: ¿Qué le dijo el gato al veterinario? ‘¡Hoy vengo por curiosidad!’"
+  - text: "Aquí va uno: ¿Cuál es el pez más gracioso? El *pez payaso*... pero siempre hace chistes *de mal gusto*."
+  - text: "Aquí va uno: ¿Qué hace un perro frente al aire acondicionado? ¡Esperar que le dé un poco de *fres-canis*!"
+  - text: "Aquí va uno: ¿Cómo llaman a un perro que sabe cantar? ¡Un *can-tante* profesional!"
+  - text: "Aquí va uno: ¿Por qué los pollitos no usan Facebook? Porque ya tienen *pío-pío*."
+  - text: "Aquí va uno: ¿Qué le dice una oveja presumida a otra? ‘¡Soy la oveja más *cool-la* del rebaño!’"
+  - text: "Aquí va uno: ¿Cómo se llama el gato que hace magia? ¡Miau-dini!"
+  - text: "Aquí va uno: ¿Por qué la vaca fue astronauta? Porque quería ver la *Vía Láctea* desde arriba."
+
+  utter_despedida:
+  - text: ¡Adiós! Que tengas un gran día ✨
+  - text: Hasta luego, nos vemos pronto 🐾
+  - text: Chao, cuidate mucho
+
+  utter_denegar:
+  - text: Está bien, lo respeto 👍
+  - text: Perfecto, no hay problema
+  - text: De acuerdo, entendido
+
+  utter_agradecimiento:
+  - text: ¡De nada! 😊
+  - text: Siempre a disposición 🙌
+  - text: Me alegra poder ayudarte
+
+  utter_afirmar:
+  - text: ¡Perfecto!
+  - text: Genial, entendido 👍
+  - text: Claro que sí

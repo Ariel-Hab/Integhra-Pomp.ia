@@ -10,261 +10,117 @@ stories:
   steps:
   - *id001
   - *id002
-  - &id003
-    intent: afirmar
-  - &id004
-    action: action_conf_neg_agradecer
+  - intent: afirmar
+  - action: action_conf_neg_agradecer
 - story: story_buscar_oferta_3
   steps:
   - *id001
   - *id002
-  - *id003
-  - *id004
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_buscar_oferta_4
-  steps:
-  - *id001
-  - *id002
-  - &id005
-    intent: denegar
-  - &id006
-    action: action_conf_neg_agradecer
-- story: story_buscar_oferta_5
-  steps:
-  - *id001
-  - *id002
-  - *id005
-  - *id006
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_buscar_oferta_6
-  steps:
-  - *id001
-  - *id002
-  - &id007
-    intent: responder_como_estoy
-  - &id008
-    action: action_smalltalk_situacion
-- story: story_buscar_oferta_7
-  steps:
-  - *id001
-  - *id002
-  - *id007
-  - *id008
-  - intent: responder_estoy_bien
-  - action: action_smalltalk_situacion
-- story: story_buscar_oferta_8
-  steps:
-  - *id001
-  - *id002
-  - &id009
-    intent: responder_estoy_bien
-  - &id010
-    action: action_smalltalk_situacion
-- story: story_buscar_oferta_9
-  steps:
-  - *id001
-  - *id002
-  - *id009
-  - *id010
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_buscar_oferta_10
-  steps:
-  - *id001
-  - *id002
-  - intent: despedida
-  - action: action_smalltalk_situacion
+  - intent: completar_pedido
+  - action: action_busqueda_situacion
 - story: story_buscar_producto_1
   steps:
-  - &id011
+  - &id003
     intent: buscar_producto
-  - &id012
+  - &id004
     action: action_busqueda_situacion
 - story: story_buscar_producto_2
   steps:
-  - *id011
-  - *id012
-  - &id013
-    intent: afirmar
-  - &id014
-    action: action_conf_neg_agradecer
+  - *id003
+  - *id004
+  - intent: completar_pedido
+  - action: action_busqueda_situacion
 - story: story_buscar_producto_3
   steps:
-  - *id011
-  - *id012
-  - *id013
-  - *id014
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_buscar_producto_4
+  - *id003
+  - *id004
+  - intent: afirmar
+  - action: action_conf_neg_agradecer
+- story: story_consultar_novedades_oferta_1
+  steps:
+  - &id005
+    intent: consultar_novedades_oferta
+  - &id006
+    action: action_generica
+- story: story_consultar_novedades_oferta_2
+  steps:
+  - *id005
+  - *id006
+  - intent: buscar_oferta
+  - action: action_busqueda_situacion
+- story: story_consultar_novedades_oferta_3
+  steps:
+  - *id005
+  - *id006
+  - intent: consultar_recomendaciones_oferta
+  - action: action_generica
+- story: story_consultar_novedades_producto_1
+  steps:
+  - &id007
+    intent: consultar_novedades_producto
+  - &id008
+    action: action_generica
+- story: story_consultar_novedades_producto_2
+  steps:
+  - *id007
+  - *id008
+  - intent: buscar_producto
+  - action: action_busqueda_situacion
+- story: story_consultar_novedades_producto_3
+  steps:
+  - *id007
+  - *id008
+  - intent: buscar_oferta
+  - action: action_busqueda_situacion
+- story: story_consultar_recomendaciones_oferta_1
+  steps:
+  - &id009
+    intent: consultar_recomendaciones_oferta
+  - &id010
+    action: action_generica
+- story: story_consultar_recomendaciones_oferta_2
+  steps:
+  - *id009
+  - *id010
+  - intent: buscar_oferta
+  - action: action_busqueda_situacion
+- story: story_consultar_recomendaciones_producto_1
+  steps:
+  - &id011
+    intent: consultar_recomendaciones_producto
+  - &id012
+    action: action_generica
+- story: story_consultar_recomendaciones_producto_2
   steps:
   - *id011
   - *id012
-  - &id015
-    intent: responder_como_estoy
-  - &id016
-    action: action_smalltalk_situacion
-- story: story_buscar_producto_5
+  - intent: buscar_producto
+  - action: action_busqueda_situacion
+- story: story_consultar_recomendaciones_producto_3
   steps:
   - *id011
   - *id012
-  - *id015
-  - *id016
-  - intent: responder_estoy_bien
-  - action: action_smalltalk_situacion
-- story: story_buscar_producto_6
-  steps:
-  - *id011
-  - *id012
-  - &id017
-    intent: responder_estoy_bien
-  - &id018
-    action: action_smalltalk_situacion
-- story: story_buscar_producto_7
-  steps:
-  - *id011
-  - *id012
-  - *id017
-  - *id018
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_buscar_producto_8
-  steps:
-  - *id011
-  - *id012
-  - intent: despedida
-  - action: action_smalltalk_situacion
-- story: story_buscar_producto_9
-  steps:
-  - *id011
-  - *id012
-  - &id019
-    intent: reirse_chiste
-  - &id020
-    action: action_smalltalk_situacion
-- story: story_buscar_producto_10
-  steps:
-  - *id011
-  - *id012
-  - *id019
-  - *id020
-  - intent: despedida
-  - action: action_smalltalk_situacion
-- story: story_completar_pedido_1
-  steps:
-  - &id021
-    intent: completar_pedido
-  - &id022
-    action: action_busqueda_situacion
-- story: story_completar_pedido_2
-  steps:
-  - *id021
-  - *id022
-  - &id023
-    intent: afirmar
-  - &id024
-    action: action_conf_neg_agradecer
-- story: story_completar_pedido_3
-  steps:
-  - *id021
-  - *id022
-  - *id023
-  - *id024
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_completar_pedido_4
-  steps:
-  - *id021
-  - *id022
-  - &id025
-    intent: denegar
-  - &id026
-    action: action_conf_neg_agradecer
-- story: story_completar_pedido_5
-  steps:
-  - *id021
-  - *id022
-  - *id025
-  - *id026
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_completar_pedido_6
-  steps:
-  - *id021
-  - *id022
-  - &id027
-    intent: responder_como_estoy
-  - &id028
-    action: action_smalltalk_situacion
-- story: story_completar_pedido_7
-  steps:
-  - *id021
-  - *id022
-  - *id027
-  - *id028
-  - intent: responder_estoy_bien
-  - action: action_smalltalk_situacion
-- story: story_completar_pedido_8
-  steps:
-  - *id021
-  - *id022
-  - &id029
-    intent: responder_estoy_bien
-  - &id030
-    action: action_smalltalk_situacion
-- story: story_completar_pedido_9
-  steps:
-  - *id021
-  - *id022
-  - *id029
-  - *id030
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_completar_pedido_10
-  steps:
-  - *id021
-  - *id022
-  - intent: despedida
-  - action: action_smalltalk_situacion
+  - intent: buscar_oferta
+  - action: action_busqueda_situacion
 - story: story_despedida
   steps:
   - intent: despedida
   - action: action_smalltalk_situacion
-- story: story_pedir_chiste_1
+- story: story_modificar_busqueda_1
   steps:
-  - &id031
-    intent: pedir_chiste
-  - &id032
-    action: action_smalltalk_situacion
-- story: story_pedir_chiste_2
+  - &id013
+    intent: modificar_busqueda
+  - &id014
+    action: action_generic_intent_reporter
+- story: story_modificar_busqueda_2
   steps:
-  - *id031
-  - *id032
-  - intent: reirse_chiste
-  - action: action_smalltalk_situacion
-- story: story_preguntar_como_estas_1
+  - *id013
+  - *id014
+  - intent: buscar_producto
+  - action: action_busqueda_situacion
+- story: story_modificar_busqueda_3
   steps:
-  - &id033
-    intent: preguntar_como_estas
-  - &id034
-    action: action_smalltalk_situacion
-- story: story_preguntar_como_estas_2
-  steps:
-  - *id033
-  - *id034
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- story: story_saludo_1
-  steps:
-  - &id035
-    intent: saludo
-  - &id036
-    action: action_smalltalk_situacion
-- story: story_saludo_2
-  steps:
-  - *id035
-  - *id036
-  - intent: despedida
-  - action: action_smalltalk_situacion
+  - *id013
+  - *id014
+  - intent: buscar_oferta
+  - action: action_busqueda_situacion

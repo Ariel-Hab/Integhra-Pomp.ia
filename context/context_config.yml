@@ -1,0 +1,634 @@
+# context_config
+version: "1.3"
+
+# 🔹 Definición de entidades globales
+entities:
+  producto:
+    type: text
+    patterns: []
+    lookup_table: true
+  proveedor:
+    type: text  
+    patterns: []
+    lookup_table: true
+  categoria:
+    type: text
+    patterns: []
+    lookup_table: true
+  ingrediente_activo:
+    type: text
+    patterns: []
+    lookup_table: true
+  compuesto:
+    type: text
+    patterns: []
+    lookup_table: true
+  animal:
+    type: text
+    patterns: []
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  dosis:
+    type: text
+    patterns: ["mg", "ml", "g", "comprimidos", "cápsulas"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  cantidad:
+    type: text
+    patterns: ["caja", "blister", "ampolla", "frasco"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  dia:
+    type: text
+    patterns: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  fecha:
+    type: text
+    patterns: []
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  cantidad_stock:
+    type: text
+    patterns: ["pocas unidades", "stock limitado", "sin stock", "mucho stock"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  cantidad_descuento:
+    type: text
+    patterns: []
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  sentimiento_positivo:
+    type: text
+    patterns: ["genial", "perfecto", "excelente", "buenísimo", "me gusta", "está bien"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  sentimiento_negativo:
+    type: text
+    patterns: ["malo", "terrible", "pésimo", "inútil", "no sirve", "frustrado", "molesto", "enojado"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  rechazo_total:
+    type: text
+    patterns: ["nada", "no quiero nada", "déjame", "basta", "ya no", "stop"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  intencion_buscar:
+    type: text
+    patterns: ["buscar", "encontrar", "necesito", "quiero", "me hace falta"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  solicitud_ayuda:
+    type: text
+    patterns: ["ayuda", "help", "no entiendo", "cómo", "explícame"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+
+# 🔹 Configuración de patterns para generación NLU
+entity_patterns_config:
+  patterns_file: "entidades.yml"
+  pattern_entities:
+    - dosis
+    - cantidad
+    - sentimiento_positivo
+    - sentimiento_negativo
+    - rechazo_total
+    - intencion_buscar
+    - solicitud_ayuda
+  dynamic_entities:
+    - cantidad_descuento
+    - cantidad_stock
+    - fecha
+    - dia
+  generation_config:
+    max_attempts_per_template: 100
+    avoid_duplicates: true
+    min_examples_per_intent: 20
+    max_examples_per_intent: 100
+
+# 🔹 Definición de slots globales
+slots:
+  producto:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: producto
+  proveedor:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: proveedor
+  categoria:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: categoria
+  ingrediente_activo:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: ingrediente_activo
+  compuesto:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: compuesto
+      - type: from_entity
+        entity: ingrediente_activo
+  dosis:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: dosis
+  cantidad:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad
+  animal:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: animal
+  user_sentiment:
+    type: categorical
+    values: ["positive", "negative", "neutral", "rejection"]
+    initial_value: "neutral"
+    influence_conversation: false
+    mappings:
+      - type: custom
+  last_intent_flow:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  pending_search_data:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+  search_history:
+    type: list
+    initial_value: []
+    influence_conversation: false
+    mappings:
+      - type: custom
+  context_decision_pending:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+  user_engagement_level:
+    type: categorical
+    values: ["neutral", "engaged", "needs_help", "confused", "friendly", 
+             "collaborative", "reset", "disengaged", "interested", "needs_guidance", "satisfied"]
+    influence_conversation: false
+    mappings:
+      - type: custom
+  pedido_incompleto:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+      - type: custom
+  dia:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: dia
+  fecha:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: fecha
+  cantidad_stock:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad_stock
+  cantidad_descuento:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad_descuento
+  conversation_started:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+      - type: custom
+  awaiting_completion:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+      - type: custom
+  last_completed_action:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  conversation_turn:
+    type: float
+    initial_value: 0
+    influence_conversation: false
+    mappings:
+      - type: custom
+  pending_suggestion:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  suggestion_context:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+# 🔹 Patrones de detección contextual
+detection_patterns:
+  sentiment_analysis:
+    positive_indicators: ["genial", "perfecto", "excelente", "buenísimo", "me gusta", "está bien", "gracias", "bien"]
+    negative_indicators: ["malo", "terrible", "pésimo", "inútil", "no sirve", "frustrado", "molesto", "enojado", "odio"]
+    rejection_indicators: ["nada", "no quiero nada", "déjame", "basta", "ya no", "stop", "cancelar"]
+  implicit_intentions:
+    search_intentions: ["buscar", "encontrar", "necesito", "quiero", "me hace falta", "tengo que conseguir"]
+    help_requests: ["ayuda", "help", "no entiendo", "cómo", "explícame", "no sé"]
+    continuation_signals: ["sí", "si", "continuar", "seguir", "ok", "dale", "perfecto"]
+  conversation_flow:
+    search_completion_signals: ["completar", "información adicional", "agregar", "más datos"]
+    context_switch_signals: ["ahora quiero", "cambio", "mejor", "en lugar de"]
+
+# 🔹 Intents, flow_groups, story_starters, follow_up_only, context_validation, session_config, archivos, fallback
+# (Se mantienen igual que tu versión original, solo revisados los mapeos de entidades y patrones)
+
+
+
+# 🔹 Definición de intents
+intents:
+  # ----------- Small Talk -----------
+  saludo:
+    tipo: template
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_saludo
+    context_switch: false
+    entities: []
+    detection_patterns: ["implicit_intentions.help_requests"]
+    next_intents:
+      - preguntar_como_estas
+      - busqueda
+      - pedir_chiste
+
+  preguntar_como_estas:
+    tipo: ejemplos
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_preguntar_como_estas
+    context_switch: false
+    entities: []
+    detection_patterns: []
+    next_intents:
+      - responder_como_estoy
+      - responder_estoy_bien
+
+  responder_como_estoy:
+    tipo: template
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_responder_como_estoy
+    context_switch: false
+    entities: ["sentimiento_positivo", "sentimiento_negativo"]
+    detection_patterns: ["sentiment_analysis.positive_indicators", "sentiment_analysis.negative_indicators"]
+    next_intents:
+      - busqueda
+      - small_talk
+
+  responder_estoy_bien:
+    tipo: ejemplos
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_responder_estoy_bien
+    context_switch: false
+    entities: ["sentimiento_positivo"]
+    detection_patterns: ["sentiment_analysis.positive_indicators"]
+    next_intents:
+      - busqueda
+      - small_talk
+
+  despedida:
+    tipo: ejemplos
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_despedida
+    context_switch: false
+    entities: ["sentimiento_positivo", "sentimiento_negativo"]
+    detection_patterns: ["sentiment_analysis.positive_indicators", "sentiment_analysis.negative_indicators"]
+    next_intents: []
+
+  pedir_chiste:
+    tipo: ejemplos
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_pedir_chiste
+    context_switch: false
+    entities: []
+    detection_patterns: []
+    next_intents:
+      - utter_reirse_chiste
+      - busqueda
+      - agradecimiento
+      - small_talk
+
+  reirse_chiste:
+    tipo: template
+    grupo: small_talk
+    action: action_smalltalk_situacion
+    response: utter_reirse_chiste
+    context_switch: false
+    entities: ["sentimiento_positivo"]
+    detection_patterns: ["sentiment_analysis.positive_indicators"]
+    next_intents:
+      - busqueda
+      - small_talk
+
+  # ----------- Busqueda / Funcionalidades -----------
+  buscar_producto:
+    tipo: template
+    grupo: busqueda
+    action: action_busqueda_situacion
+    response: utter_buscar_producto
+    context_switch: false
+    # CORREGIDO: Ahora incluye ingrediente_activo en la lista
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "animal"]
+    detection_patterns: ["implicit_intentions.search_intentions"]
+    validation_rules:
+      # CORREGIDO: ingrediente_activo incluido en requires_at_least_one
+      requires_at_least_one: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto"]
+      optional: ["dosis", "cantidad"]
+    next_intents:
+      - completar_pedido
+      - confirmacion
+      - busqueda
+
+  buscar_oferta:
+    tipo: template
+    grupo: busqueda
+    action: action_busqueda_situacion
+    response: utter_buscar_oferta
+    context_switch: false
+    # CORREGIDO: Ahora incluye ingrediente_activo
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "animal"]
+    detection_patterns: ["implicit_intentions.search_intentions"]
+    validation_rules:
+      # CORREGIDO: ingrediente_activo incluido
+      requires_at_least_one: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto"]
+      optional: ["dosis"]
+    next_intents:
+      - confirmacion
+      - completar_pedido
+      - busqueda
+
+  completar_pedido:
+    tipo: template
+    grupo: busqueda
+    action: action_busqueda_situacion
+    response: utter_completar_pedido
+    context_switch: false
+    # CORREGIDO: Ahora incluye ingrediente_activo
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad"]
+    detection_patterns: ["conversation_flow.search_completion_signals", "implicit_intentions.search_intentions"]
+    next_intents:
+      - confirmacion
+      - busqueda
+      - agradecimiento
+  # ----------- Novedades -----------
+  consultar_novedades_producto:
+    tipo: template
+    grupo: busqueda
+    action: action_generica
+    response: utter_consultar_novedades_producto
+    context_switch: false
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    detection_patterns: ["implicit_intentions.search_intentions", "novedad_intentions"]
+    next_intents:
+      - buscar_producto
+      - buscar_oferta
+      - consultar_recomendaciones_producto
+      - agradecimiento
+
+  consultar_novedades_oferta:
+    tipo: template
+    grupo: busqueda
+    action: action_generica
+    response: utter_consultar_novedades_oferta
+    context_switch: false
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    detection_patterns: ["implicit_intentions.search_intentions", "novedad_intentions"]
+    next_intents:
+      - buscar_oferta
+      - consultar_recomendaciones_oferta
+      - agradecimiento
+
+# ----------- Recomendaciones -----------
+  consultar_recomendaciones_producto:
+    tipo: template
+    grupo: busqueda
+    action: action_generica
+    response: utter_consultar_recomendaciones_producto
+    context_switch: false
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    detection_patterns: ["implicit_intentions.search_intentions", "recomendacion_intentions"]
+    next_intents:
+      - buscar_producto
+      - buscar_oferta
+      - agradecimiento
+
+  consultar_recomendaciones_oferta:
+    tipo: template
+    grupo: busqueda
+    action: action_generica
+    response: utter_consultar_recomendaciones_oferta
+    context_switch: false
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    detection_patterns: ["implicit_intentions.search_intentions", "recomendacion_intentions"]
+    next_intents:
+      - buscar_oferta
+      - agradecimiento
+
+# ----------- Modificación de búsqueda -----------
+  modificar_busqueda:
+    tipo: template
+    grupo: busqueda
+    action: action_generic_intent_reporter
+    response: utter_modificar_busqueda
+    context_switch: true
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "cantidad"]
+    detection_patterns: ["conversation_flow.context_switch_signals"]
+    next_intents:
+      - buscar_producto
+      - buscar_oferta
+      - completar_pedido
+
+
+  # ----------- Confirmación / Negación / Agradecimiento -----------
+  afirmar:
+    tipo: template
+    grupo: confirmacion
+    action: action_conf_neg_agradecer
+    response: utter_afirmar
+    context_switch: false
+    entities: ["sentimiento_positivo"]
+    detection_patterns: ["implicit_intentions.continuation_signals", "sentiment_analysis.positive_indicators"]
+    next_intents: 
+      - busqueda
+      - small_talk
+
+  denegar:
+    tipo: template
+    grupo: negacion
+    action: action_conf_neg_agradecer
+    response: utter_denegar
+    context_switch: false
+    entities: ["sentimiento_negativo", "rechazo_total"]
+    detection_patterns: ["sentiment_analysis.negative_indicators", "sentiment_analysis.rejection_indicators"]
+    next_intents: 
+      - busqueda
+      - small_talk
+
+  agradecimiento:
+    tipo: template
+    grupo: agradecimiento
+    action: action_conf_neg_agradecer
+    response: utter_agradecimiento
+    context_switch: false
+    entities: ["sentimiento_positivo"]
+    detection_patterns: ["sentiment_analysis.positive_indicators"]
+    next_intents: 
+      - busqueda
+      - small_talk
+
+  # ----------- Interrupciones / Off-Flow -----------
+  off_topic:
+    tipo: template
+    grupo: off_topic
+    action: action_fallback
+    response: utter_off_topic
+    context_switch: true
+    entities: ["solicitud_ayuda", "sentimiento_negativo", "rechazo_total"]
+    detection_patterns: ["implicit_intentions.help_requests", "sentiment_analysis.negative_indicators"]
+    next_intents: 
+      - busqueda
+      - small_talk
+
+# 🔹 Flow groups extendidos
+flow_groups:
+  small_talk:
+    - saludo
+    - preguntar_como_estas
+    - responder_como_estoy
+    - responder_estoy_bien
+    - pedir_chiste
+    - reirse_chiste
+    - despedida
+    - agradecimiento
+
+  busqueda:
+    - buscar_producto
+    - buscar_oferta
+    - completar_pedido
+    - consultar_novedades_producto
+    - consultar_novedades_oferta
+    - consultar_recomendaciones_producto
+    - consultar_recomendaciones_oferta
+    - modificar_busqueda
+
+  confirmacion:
+    - afirmar
+
+  negacion:
+    - denegar
+
+  agradecimiento:
+    - agradecer
+
+  interruptions:
+    - off_topic
+
+
+# 🔹 Story starters extendidos
+story_starters:
+  # Small talk
+  - saludo
+  - preguntar_como_estas
+  - pedir_chiste
+  - despedida
+
+  # Busquedas
+  - buscar_producto
+  - buscar_oferta
+  - consultar_novedades_producto
+  - consultar_novedades_oferta
+  - consultar_recomendaciones_producto
+  - consultar_recomendaciones_oferta
+  - modificar_busqueda
+
+
+# 🔹 Follow-up only
+follow_up_only:
+  - responder_como_estoy
+  - responder_estoy_bien
+  - reirse_chiste
+  - afirmar
+  - denegar
+  - agradecimiento
+  - completar_pedido
+  - off_topic
+
+# 🔹 Configuración de validación de contexto
+context_validation:
+  enabled: true
+  action: action_context_validator
+  max_switches: 5
+  skip_intents:
+    - saludo
+    - preguntar_como_estas
+    - despedida
+    - buscar_producto
+    - buscar_oferta
+    - completar_pedido
+    - responder_como_estoy
+    - responder_estoy_bien
+    - pedir_chiste
+    - reirse_chiste
+
+# 🔹 Configuración de sesión
+session_config:
+  session_expiration_time: 300
+  carry_over_slots_to_new_session: true
+
+# 🔹 Archivos
+synonyms: synonyms.yml
+responses: responses.yml
+segments: segments.yml
+templates: templates.yml
+examples: examples.yml
+
+# 🔹 Fallback genérico
+fallback:
+  action: action_fallback
+  response: "Perdón, no entendí lo que quisiste decir."
+  threshold: 0.6
+  ambiguity_threshold: 0.15

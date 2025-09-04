@@ -1,59 +1,229 @@
+# importer.py - Versión mejorada con extracción automática de entidades desde config
 import os
 import re
 import csv
 import random
 import unicodedata
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Dict, Any, Optional
 
 import pandas as pd
 from utils import formatear_nombre, generar_fecha_random, limpiar_texto, extraer_nombre_y_dosis
 
-# -------------------------
-# ANOTACIÓN DE ENTIDADES
-# -------------------------
-def anotar_entidades(texto, producto, proveedor, cantidad, dosis, compuesto, categoria,
-                     dia=None, fecha=None, cantidad_stock=None, cantidad_descuento=None):
+# Cache para configuración para evitar recargar en cada llamada
+_CONFIG_CACHE = None
 
+def cargar_config_entities():
+    """
+    Carga la configuración de entidades desde el ConfigLoader.
+    Utiliza cache para evitar recargas innecesarias.
+    """
+    global _CONFIG_CACHE
+    
+    if _CONFIG_CACHE is None:
+        try:
+            # Importar dinámicamente para evitar dependencias circulares
+            from scripts.config_loader import ConfigLoader
+            
+            config = ConfigLoader.cargar_config()
+            entities_config = config.get("entities", {})
+            
+            # Extraer nombres de todas las entidades definidas en el config
+            entity_names = list(entities_config.keys())
+            
+            _CONFIG_CACHE = {
+                "entity_names": entity_names,
+                "entities_config": entities_config
+            }
+            
+            print(f"[Importer] Entidades cargadas desde config: {entity_names}")
+            
+        except ImportError as e:
+            print(f"[Importer] Error importando ConfigLoader: {e}")
+            # Fallback a entidades básicas
+            _CONFIG_CACHE = {
+                "entity_names": [
+                    "producto", "proveedor", "cantidad", "dosis", "compuesto", 
+                    "ingrediente_activo", "categoria", "dia", "fecha", 
+                    "cantidad_stock", "cantidad_descuento", "animal",
+                    "sentimiento_positivo", "sentimiento_negativo", 
+                    "rechazo_total", "intencion_buscar", "solicitud_ayuda"
+                ],
+                "entities_config": {}
+            }
+        except Exception as e:
+            print(f"[Importer] Error cargando config: {e}")
+            # Usar fallback
+            _CONFIG_CACHE = {
+                "entity_names": [
+                    "producto", "proveedor", "cantidad", "dosis", "compuesto", 
+                    "ingrediente_activo", "categoria", "animal"
+                ],
+                "entities_config": {}
+            }
+    
+    return _CONFIG_CACHE
+
+def invalidar_cache_config():
+    """Invalida el cache de configuración para forzar recarga."""
+    global _CONFIG_CACHE
+    _CONFIG_CACHE = None
+
+def anotar_entidades(texto: str, **kwargs) -> str:
+    """
+    Anota entidades en el texto basándose automáticamente en la configuración.
+    Acepta cualquier entidad definida en el config como parámetro nombrado.
+    
+    Args:
+        texto: El texto a anotar
+        **kwargs: Entidades como parámetros nombrados (producto=valor, proveedor=valor, etc.)
+    
+    Returns:
+        str: Texto con entidades anotadas en formato [valor](entidad)
+    
+    Example:
+        texto_anotado = anotar_entidades(
+            texto="necesito paracetamol para mi perro",
+            producto="paracetamol",
+            animal="perro"
+        )
+    """
+    
+    # Cargar configuración de entidades
+    config_data = cargar_config_entities()
+    entity_names = config_data["entity_names"]
+    entities_config = config_data["entities_config"]
+    
     def limpiar_valor(valor):
+        """Limpia y valida un valor de entidad."""
         if not valor:
             return None
-        valor = valor.strip()
+        valor = str(valor).strip()
         valor = re.sub(r"[\[\]\(\)]", "", valor)
-        return valor
+        return valor if valor else None
 
-    def anotar(valor, label, texto_actual):
+    def anotar_valor(valor, label: str, texto_actual: str) -> str:
+        """Anota un valor específico en el texto con mejor alineación de tokens."""
+        # Manejar listas de valores
         if isinstance(valor, Iterable) and not isinstance(valor, str):
             for v in valor:
-                texto_actual = anotar(v, label, texto_actual)
+                texto_actual = anotar_valor(v, label, texto_actual)
             return texto_actual
 
         valor = limpiar_valor(valor)
-        if valor and valor in texto_actual:
-            pattern = re.escape(valor)
-            return re.sub(pattern, f"[{valor}]({label})", texto_actual, count=1)
+        if not valor or valor not in texto_actual:
+            return texto_actual
+            
+        # Solo anotar si no está ya anotado
+        if f"[{valor}]" in texto_actual:
+            return texto_actual
+        
+        # MEJORADO: Manejar entidades con espacios y puntos (ej: "konig s.a.")
+        # Buscar coincidencias exactas respetando límites de palabra
+        import re
+        
+        # Escapar caracteres especiales pero mantener estructura
+        valor_escaped = re.escape(valor)
+        # Pero permitir que los puntos sean opcionales para mejor matching
+        valor_pattern = valor_escaped.replace(r'\.', r'\.?')
+        
+        # Buscar con límites de palabra flexibles
+        pattern = r'\b' + valor_pattern + r'\b'
+        match = re.search(pattern, texto_actual, re.IGNORECASE)
+        
+        if match:
+            matched_text = match.group(0)
+            # Reemplazar la coincidencia exacta encontrada
+            return texto_actual.replace(matched_text, f"[{matched_text}]({label})", 1)
+        
         return texto_actual
 
-    texto = anotar(producto, "producto", texto)
-    texto = anotar(proveedor, "proveedor", texto)
-    texto = anotar(cantidad, "cantidad", texto)
-    texto = anotar(dosis, "dosis", texto)
-    texto = anotar(compuesto, "ingrediente_activo", texto)
-    texto = anotar(categoria, "categoria", texto)
-    texto = anotar(dia, "tiempo", texto)
-    texto = anotar(fecha, "fecha", texto)
-    texto = anotar(cantidad_stock, "cantidad_stock", texto)
-    texto = anotar(cantidad_descuento, "cantidad_descuento", texto)
-    return texto
+    def determinar_etiqueta_entidad(entity_name: str) -> str:
+        """
+        Determina la etiqueta correcta para una entidad.
+        Maneja casos especiales y aliases.
+        """
+        # Casos especiales para compatibilidad
+        if entity_name == "compuesto":
+            return "ingrediente_activo"  # Mapear compuesto a ingrediente_activo
+        elif entity_name == "ingrediente_activo":
+            return "ingrediente_activo"
+        elif entity_name == "dia":
+            return "tiempo"  # Mantener compatibilidad con etiqueta tiempo
+        else:
+            return entity_name
+
+    # Procesar todas las entidades pasadas como kwargs
+    texto_resultado = texto
+    
+    # Procesar entidades en orden de prioridad (entidades principales primero)
+    entidades_prioritarias = [
+        "producto", "proveedor", "cantidad", "dosis", 
+        "ingrediente_activo", "compuesto", "categoria", "animal"
+    ]
+    
+    # Primero procesar entidades prioritarias
+    for entity_name in entidades_prioritarias:
+        if entity_name in kwargs:
+            valor = kwargs[entity_name]
+            etiqueta = determinar_etiqueta_entidad(entity_name)
+            texto_resultado = anotar_valor(valor, etiqueta, texto_resultado)
+    
+    # Luego procesar el resto de entidades
+    for entity_name, valor in kwargs.items():
+        if entity_name not in entidades_prioritarias:
+            # Verificar si la entidad está definida en el config
+            if entity_name in entity_names:
+                etiqueta = determinar_etiqueta_entidad(entity_name)
+                texto_resultado = anotar_valor(valor, etiqueta, texto_resultado)
+            else:
+                print(f"[Importer] Advertencia: Entidad '{entity_name}' no está definida en config")
+    
+    return texto_resultado
+
+def obtener_entidades_disponibles() -> Dict[str, Any]:
+    """
+    Devuelve información sobre las entidades disponibles desde el config.
+    
+    Returns:
+        dict: Información de entidades con sus tipos y configuraciones
+    """
+    config_data = cargar_config_entities()
+    return {
+        "entity_names": config_data["entity_names"],
+        "entities_config": config_data["entities_config"],
+        "total_entities": len(config_data["entity_names"])
+    }
+
+def validar_entidades_kwargs(**kwargs) -> Dict[str, str]:
+    """
+    Valida que las entidades pasadas existan en la configuración.
+    
+    Returns:
+        dict: Mapa de errores/advertencias por entidad
+    """
+    config_data = cargar_config_entities()
+    entity_names = config_data["entity_names"]
+    
+    issues = {}
+    
+    for entity_name, valor in kwargs.items():
+        if entity_name not in entity_names:
+            issues[entity_name] = f"Entidad no definida en config"
+        elif not valor:
+            issues[entity_name] = f"Valor vacío para entidad"
+    
+    return issues
 
 # -------------------------
-# LECTURA DE CSV
+# RESTO DE FUNCIONES SIN CAMBIOS (mantener compatibilidad)
 # -------------------------
 def leer_entidades_csv(ruta_csv):
+    """Mantener función original para compatibilidad."""
     entidades = []
     ruta = Path(ruta_csv)
     if not ruta.exists():
-        print(f"❌ El archivo {ruta_csv} no existe.")
+        print(f"El archivo {ruta_csv} no existe.")
         return entidades
 
     with ruta.open(encoding="utf-8") as f:
@@ -65,10 +235,8 @@ def leer_entidades_csv(ruta_csv):
                     entidades.append(valor)
     return entidades
 
-# -------------------------
-# GENERACIÓN DE LOOKUP TABLES
-# -------------------------
 def generar_lookup_tables(data_dir="data"):
+    """Mantener función original con mejora para ingrediente_activo."""
     lookup_tables = {}
 
     PALABRAS_IRRELEVANTES = [
@@ -146,23 +314,14 @@ def generar_lookup_tables(data_dir="data"):
     lookup_tables["categoria"] = cargar_lista("category.csv", "title", tipo="categoria")
     lookup_tables["proveedor"] = cargar_lista("enterprise.csv", "title", tipo="proveedor")
     lookup_tables["compuesto"] = cargar_lista("product.csv", "active_ingredient", tipo="compuesto")
+    
+    # MEJORADO: Agregar ingrediente_activo como alias de compuesto para compatibilidad total
+    lookup_tables["ingrediente_activo"] = lookup_tables["compuesto"]
 
     return lookup_tables
 
-# -------------------------
-# GENERACIÓN DE ENTIDADES POR PRODUCTO
-# -------------------------
-def generar_cantidad_descuento():
-    return random.randint(5, 80)
-    # tipo = random.choice(["porcentaje", "monto"])
-    # if tipo == "porcentaje":
-    #     valor = random.randint(5, 80)  # Descuento entre 5% y 50%
-    #     return f"{valor}"
-    # else:
-    #     valor = random.choice([100, 200, 500, 1000, 1500])  # Montos en $ arbitrarios
-    #     return f"{valor}"
-
 def generar_entidades_por_producto(lookup):
+    """Mantener función original sin cambios."""
     productos = lookup.get("producto", [])
     proveedores = lookup.get("proveedor", [])
     categorias = lookup.get("categoria", [])
@@ -180,7 +339,7 @@ def generar_entidades_por_producto(lookup):
         fecha = generar_fecha_random()
         dia = random.choice(["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"])
         cantidad_stock = random.choice(["10 unidades", "50 productos", "pocas unidades", "stock limitado"])
-        cantidad_descuento = generar_cantidad_descuento()
+        cantidad_descuento = random.randint(5, 80)
 
         entidades_por_producto[nombre] = {
             "nombre": nombre,
@@ -197,10 +356,8 @@ def generar_entidades_por_producto(lookup):
 
     return entidades_por_producto
 
-# -------------------------
-# GENERACIÓN DE REGEX ENTITIES
-# -------------------------
 def generar_regex_yml(path="data/regex_entities.yml"):
+    """Mantener función original sin cambios."""
     import yaml
     regex_data = {
         "version": "3.1",
@@ -217,46 +374,74 @@ def generar_regex_yml(path="data/regex_entities.yml"):
     with path.open("w", encoding="utf-8") as f:
         yaml.dump(regex_data, f, allow_unicode=True)
 
-    print(f"✅ Archivo regex generado en {path}")
+    print(f"Archivo regex generado en {path}")
 
-# -------------------------
-# PIPELINE COMPLETO
-# -------------------------
 def generar_imports(data_dir="data"):
+    """Pipeline completo manteniendo compatibilidad."""
     Path(data_dir).mkdir(exist_ok=True)
 
-    # 1️⃣ Generar lookup tables
+    # 1. Generar lookup tables
     lookup = generar_lookup_tables(data_dir)
-    print("✅ Lookup tables generadas")
+    print("Lookup tables generadas")
 
-    # 2️⃣ Generar entidades por producto
+    # 2. Generar entidades por producto
     entidades = generar_entidades_por_producto(lookup)
-    print(f"✅ Entidades generadas para {len(entidades)} productos")
+    print(f"Entidades generadas para {len(entidades)} productos")
 
-    # 3️⃣ Exportar lookup tables
+    # 3. Exportar lookup tables
     for key, valores in lookup.items():
-        path = Path(data_dir) / f"{key}_lookup.csv"
-        with path.open("w", encoding="utf-8") as f:
-            for v in sorted(set(valores)):
-                f.write(f"{v}\n")
-    print(f"✅ Lookup tables exportadas a {data_dir}")
+        if key != "ingrediente_activo":  # Evitar duplicar el archivo compuesto
+            path = Path(data_dir) / f"{key}_lookup.csv"
+            with path.open("w", encoding="utf-8") as f:
+                for v in sorted(set(valores)):
+                    f.write(f"{v}\n")
+    print(f"Lookup tables exportadas a {data_dir}")
 
-    # 4️⃣ Generar regex entities
+    # 4. Generar regex entities
     generar_regex_yml(Path(data_dir) / "regex_entities.yml")
 
     return lookup, entidades
 
 # -------------------------
-# EJECUCIÓN DIRECTA
+# TESTING Y EJEMPLOS
 # -------------------------
 if __name__ == "__main__":
+    # Mostrar entidades disponibles
+    entidades_info = obtener_entidades_disponibles()
+    print(f"\nEntidades disponibles: {entidades_info['entity_names']}")
+    print(f"Total: {entidades_info['total_entities']}")
+    
+    # Ejemplo básico con validación
+    ejemplo_kwargs = {
+        "producto": "paracetamol",
+        "animal": "perro",
+        "proveedor": "bayer",
+        "entidad_inexistente": "valor"  # Esto debería generar advertencia
+    }
+    
+    # Validar antes de anotar
+    issues = validar_entidades_kwargs(**ejemplo_kwargs)
+    if issues:
+        print(f"\nAdvertencias: {issues}")
+    
+    # Anotar con las entidades válidas
+    texto_ejemplo = "necesito paracetamol de bayer para mi perro"
+    texto_anotado = anotar_entidades(texto_ejemplo, **ejemplo_kwargs)
+    print(f"\nEjemplo: '{texto_ejemplo}'")
+    print(f"Anotado: '{texto_anotado}'")
+    
+    # Ejemplo con entidades emocionales (si están en config)
+    ejemplo_emocional = "estoy genial, necesito ayuda con algo"
+    texto_emocional = anotar_entidades(
+        texto=ejemplo_emocional,
+        sentimiento_positivo="genial",
+        solicitud_ayuda="ayuda"
+    )
+    print(f"\nEjemplo emocional: '{ejemplo_emocional}'")
+    print(f"Anotado: '{texto_emocional}'")
+    
+    # Generar imports si se ejecuta directamente
+    print("\n" + "="*50)
+    print("Generando imports...")
     lookup, entidades = generar_imports()
-    ejemplo_texto = "Tomar Paracetamol 500 mg de Laboratorios XYZ cada lunes"
-    producto = "paracetamol"
-    proveedor = "laboratorios xyz"
-    cantidad = "500 mg"
-    dosis = "500 mg"
-    compuesto = "paracetamol"
-    categoria = "analgésico"
-    texto_anotado = anotar_entidades(ejemplo_texto, producto, proveedor, cantidad, dosis, compuesto, categoria, dia="lunes")
-    print("Ejemplo anotado:", texto_anotado)
+    print("Proceso completado.")

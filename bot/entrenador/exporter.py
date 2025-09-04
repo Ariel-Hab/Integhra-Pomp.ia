@@ -47,6 +47,12 @@ def exportar_yaml(ejemplos, output_path="data/nlu.yml"):
     """
     intents = defaultdict(list)
     for texto, intent in ejemplos:
+        # Forzar texto a str (evita problemas con bool, int, None, etc.)
+        if texto is None:
+            continue
+        texto = str(texto).strip()
+        if not texto:
+            continue
         intents[intent].append(texto)
 
     with open(output_path, "w", encoding="utf-8") as f:
@@ -54,9 +60,10 @@ def exportar_yaml(ejemplos, output_path="data/nlu.yml"):
         for intent, ejemplos_intent in intents.items():
             f.write(f'- intent: {intent}\n  examples: |\n')
             for ejemplo in ejemplos_intent:
-                clean = limpiar_yaml(ejemplo)
+                clean = limpiar_yaml(str(ejemplo))
                 f.write(f'    - "{clean}"\n')
             f.write("\n")
+
 
 def exportar_lookup_tables(lookup_tables, output_path="data/lookup_tables.yml"):
     """
