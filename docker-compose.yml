@@ -1,35 +1,31 @@
 version: "3.9"
 
 services:
-  rasa:
+  rasa_bot:
     build:
       context: .
-      target: rasa
-    container_name: rasa_server
-    volumes:
-      - ./bot/data:/app/bot/data
-      - ./bot/models:/app/bot/models
+      dockerfile: Dockerfile
+    container_name: rasa_bot
+    environment:
+      - PORT=8000
+      - ACTION_SERVER_URL=http://rasa_actions:5055/webhook
+      - RASA_MODEL_PATH=models
     ports:
-      - "5005:5005"
-    depends_on:
-      - action_server
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: sh -c "poetry install && poetry run manage bot"
 
-  action_server:
+  rasa_actions:
     build:
       context: .
-      target: actions
+      dockerfile: Dockerfile
     container_name: rasa_actions
-    volumes:
-      - ./actions:/app/actions
+    environment:
+      - PORT=5055
     ports:
       - "5055:5055"
-
-  trainer:
-    build:
-      context: .
-      target: rasa
-    container_name: rasa_trainer
     volumes:
-      - ./bot/data:/app/bot/data
-      - ./bot/models:/app/bot/models
-    entrypoint: ["poetry", "run", "python", "entrenador/train.py"]
+      - .:/app
+    command: sh -c "poetry install && poetry run manage actions"
+ 

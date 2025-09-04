@@ -1,46 +1,29 @@
-# ----------------------
-# Etapa base
-# ----------------------
-FROM python:3.10-slim AS base
+# Base Python 3.10 slim
+FROM python:3.10-slim
 
+# Set working directory
 WORKDIR /app
 
-# Evitar prompts y mejorar cacheo
-ENV POETRY_VIRTUALENVS_CREATE=false \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_NO_CACHE_DIR=on
+# System dependencies (if needed for Rasa/Poetry)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Install Poetry
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Copiamos dependencias primero para aprovechar cache
-COPY pyproject.toml poetry.lock ./
-RUN pip install --upgrade pip && pip install poetry
+# Copy your repo (you can mount instead with volumes if you want dynamic updates)
+COPY . /app
 
+# Install dependencies for bot or actions; you can override later
+# RUN poetry install --only bot --without dev
 
-# ----------------------
-# Etapa Bot (Rasa)
-# ----------------------
-FROM base AS rasa
-RUN poetry install --only bot --no-root --without dev
+# Expose ports for bot or actions (default ports)
+EXPOSE 8000 5055
 
-# Clonamos solo la carpeta "bot"
-RUN git clone --depth 1 --filter=blob:none --sparse https://github.com/Ariel-Hab/Integhra-Pomp.ia.git /app/repo \
-    && cd /app/repo && git sparse-checkout set bot
-
-WORKDIR /app/repo/bot
-CMD ["poetry", "run", "rasa", "run", "--enable-api", "--cors", "*"]
-
-
-# ----------------------
-# Etapa Actions
-# ----------------------
-FROM base AS actions
-RUN poetry install --only actions --no-root --without dev
-
-# Clonamos solo la carpeta "actions"
-RUN git clone --depth 1 --filter=blob:none --sparse https://github.com/Ariel-Hab/Integhra-Pomp.ia.git /app/repo \
-    && cd /app/repo && git sparse-checkout set actions
-
-WORKDIR /app/repo/actions
-CMD ["poetry", "run", "rasa", "run", "actions"]
+# Default command: override when running container
+# CMD ["poetry", "run", "python", "main.py"]
