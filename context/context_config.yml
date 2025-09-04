@@ -55,7 +55,23 @@ entities:
     pattern_source: "entidades.yml"
   cantidad_descuento:
     type: text
-    patterns: []
+    patterns: ["10% de descuento", "2x1", "50% off", "descuento especial", "precio rebajado"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  # NUEVAS ENTIDADES AGREGADAS
+  cantidad_bonificacion:
+    type: text
+    patterns: ["10% de bonificación", "2x1 bonificación", "bonificación especial", "bonus", "regalo"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  estado:
+    type: text
+    patterns: ["nuevo", "en oferta", "con descuento", "con bonificación", "con poco stock", "disponible", "agotado"]
+    lookup_table: false
+    pattern_source: "entidades.yml"
+  indicador_temporal:
+    type: text
+    patterns: ["nuevo", "reciente", "hace poco", "esta semana", "este mes", "últimamente", "ahora", "hoy"]
     lookup_table: false
     pattern_source: "entidades.yml"
   sentimiento_positivo:
@@ -90,6 +106,9 @@ entity_patterns_config:
   pattern_entities:
     - dosis
     - cantidad
+    - estado
+    - indicador_temporal
+    - cantidad_bonificacion
     - sentimiento_positivo
     - sentimiento_negativo
     - rechazo_total
@@ -158,6 +177,25 @@ slots:
     mappings:
       - type: from_entity
         entity: animal
+  # NUEVOS SLOTS AGREGADOS
+  estado:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: estado
+  indicador_temporal:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: indicador_temporal
+  cantidad_bonificacion:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad_bonificacion
   user_sentiment:
     type: categorical
     values: ["positive", "negative", "neutral", "rejection"]
@@ -271,11 +309,6 @@ detection_patterns:
     search_completion_signals: ["completar", "información adicional", "agregar", "más datos"]
     context_switch_signals: ["ahora quiero", "cambio", "mejor", "en lugar de"]
 
-# 🔹 Intents, flow_groups, story_starters, follow_up_only, context_validation, session_config, archivos, fallback
-# (Se mantienen igual que tu versión original, solo revisados los mapeos de entidades y patrones)
-
-
-
 # 🔹 Definición de intents
 intents:
   # ----------- Small Talk -----------
@@ -371,13 +404,11 @@ intents:
     action: action_busqueda_situacion
     response: utter_buscar_producto
     context_switch: false
-    # CORREGIDO: Ahora incluye ingrediente_activo en la lista
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "animal"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "animal", "estado", "indicador_temporal", "cantidad_stock", "cantidad_bonificacion"]
     detection_patterns: ["implicit_intentions.search_intentions"]
     validation_rules:
-      # CORREGIDO: ingrediente_activo incluido en requires_at_least_one
       requires_at_least_one: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto"]
-      optional: ["dosis", "cantidad"]
+      optional: ["dosis", "cantidad", "estado", "indicador_temporal", "cantidad_stock", "cantidad_bonificacion"]
     next_intents:
       - completar_pedido
       - confirmacion
@@ -389,13 +420,11 @@ intents:
     action: action_busqueda_situacion
     response: utter_buscar_oferta
     context_switch: false
-    # CORREGIDO: Ahora incluye ingrediente_activo
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "animal"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "animal", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
     detection_patterns: ["implicit_intentions.search_intentions"]
     validation_rules:
-      # CORREGIDO: ingrediente_activo incluido
       requires_at_least_one: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto"]
-      optional: ["dosis"]
+      optional: ["dosis", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
     next_intents:
       - confirmacion
       - completar_pedido
@@ -407,13 +436,13 @@ intents:
     action: action_busqueda_situacion
     response: utter_completar_pedido
     context_switch: false
-    # CORREGIDO: Ahora incluye ingrediente_activo
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
     detection_patterns: ["conversation_flow.search_completion_signals", "implicit_intentions.search_intentions"]
     next_intents:
       - confirmacion
       - busqueda
       - agradecimiento
+
   # ----------- Novedades -----------
   consultar_novedades_producto:
     tipo: template
@@ -421,7 +450,7 @@ intents:
     action: action_generica
     response: utter_consultar_novedades_producto
     context_switch: false
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "indicador_temporal"]
     detection_patterns: ["implicit_intentions.search_intentions", "novedad_intentions"]
     next_intents:
       - buscar_producto
@@ -435,21 +464,21 @@ intents:
     action: action_generica
     response: utter_consultar_novedades_oferta
     context_switch: false
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "indicador_temporal"]
     detection_patterns: ["implicit_intentions.search_intentions", "novedad_intentions"]
     next_intents:
       - buscar_oferta
       - consultar_recomendaciones_oferta
       - agradecimiento
 
-# ----------- Recomendaciones -----------
+  # ----------- Recomendaciones -----------
   consultar_recomendaciones_producto:
     tipo: template
     grupo: busqueda
     action: action_generica
     response: utter_consultar_recomendaciones_producto
     context_switch: false
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "estado", "indicador_temporal", "cantidad_stock"]
     detection_patterns: ["implicit_intentions.search_intentions", "recomendacion_intentions"]
     next_intents:
       - buscar_producto
@@ -462,26 +491,25 @@ intents:
     action: action_generica
     response: utter_consultar_recomendaciones_oferta
     context_switch: false
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
     detection_patterns: ["implicit_intentions.search_intentions", "recomendacion_intentions"]
     next_intents:
       - buscar_oferta
       - agradecimiento
 
-# ----------- Modificación de búsqueda -----------
+  # ----------- Modificación de búsqueda -----------
   modificar_busqueda:
     tipo: template
     grupo: busqueda
     action: action_generic_intent_reporter
     response: utter_modificar_busqueda
     context_switch: true
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "cantidad"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "cantidad", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
     detection_patterns: ["conversation_flow.context_switch_signals"]
     next_intents:
       - buscar_producto
       - buscar_oferta
       - completar_pedido
-
 
   # ----------- Confirmación / Negación / Agradecimiento -----------
   afirmar:
@@ -567,7 +595,6 @@ flow_groups:
   interruptions:
     - off_topic
 
-
 # 🔹 Story starters extendidos
 story_starters:
   # Small talk
@@ -584,7 +611,6 @@ story_starters:
   - consultar_recomendaciones_producto
   - consultar_recomendaciones_oferta
   - modificar_busqueda
-
 
 # 🔹 Follow-up only
 follow_up_only:

@@ -67,10 +67,10 @@ nlu:
     - {duda}, qué descuentos tienen de {producto} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}?
     - buscá ofertas de {proveedor} con {estado}, {cantidad_stock}, {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
     - quiero {producto} de {categoria} en promoción con {cantidad_descuento}, {cantidad_bonificacion}, {estado} y {indicador_temporal}
-    - muéstramelas con {dosis}, {cantidad_stock}, {cantidad_bonificacion} y {indicador_temporal}
+    - muéstrame ofertas con {dosis}, {cantidad_stock}, {cantidad_bonificacion} y {indicador_temporal}
 
 # ---------------------------
-# 🔹 NOVEDADES PRODUCTOS (solo casos borde)
+# 🔹 NOVEDADES PRODUCTOS
 # ---------------------------
 - intent: consultar_novedades_producto
   examples: |
@@ -80,7 +80,7 @@ nlu:
     - novedades de productos difíciles de ubicar {indicador_temporal}
 
 # ---------------------------
-# 🔹 NOVEDADES OFERTAS (solo casos borde)
+# 🔹 NOVEDADES OFERTAS
 # ---------------------------
 - intent: consultar_novedades_oferta
   examples: |
@@ -131,78 +131,171 @@ nlu:
     - prefiero ofertas con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
 
 # ---------------------------
-# 🔹 COMPLETAR PEDIDO
+# 🔹 COMPLETAR PEDIDO (FORMATO CORREGIDO)
 # ---------------------------
-completar_pedido:  
-  # Con producto
-  - '{producto}'
-  - 'el producto sería {producto}'
-  - 'lo que necesito es {producto}'
-  - 'sumá {producto} al pedido'
-  
-  # Con proveedor
-  - 'de {proveedor}'
-  - 'laboratorio {proveedor}'
-  - 'marca {proveedor}'
+- intent: completar_pedido
+  examples: |
+    # Con producto
+    - {producto}
+    - el producto sería {producto}
+    - lo que necesito es {producto}
+    - sumá {producto} al pedido
+    
+    # Con proveedor
+    - de {proveedor}
+    - laboratorio {proveedor}
+    - marca {proveedor}
 
-  # Con categoría
-  - '{categoria}'
-  - 'es de la categoría {categoria}'
-  - 'va en {categoria}'
-  
-  # Con ingrediente activo
-  - 'que tenga {ingrediente_activo}'
-  - 'con principio activo {ingrediente_activo}'
-  - 'que contenga {ingrediente_activo}'
+    # Con categoría
+    - {categoria}
+    - es de la categoría {categoria}
+    - va en {categoria}
+    
+    # Con ingrediente activo
+    - que tenga {ingrediente_activo}
+    - con principio activo {ingrediente_activo}
+    - que contenga {ingrediente_activo}
 
-  # Con compuesto
-  - 'con {compuesto}'
-  - 'que traiga {compuesto}'
+    # Con compuesto
+    - con {compuesto}
+    - que traiga {compuesto}
 
-  # Con dosis
-  - 'de {dosis}'
-  - 'en presentación {dosis}'
-  - 'formato {dosis}'
+    # Con dosis
+    - de {dosis}
+    - en presentación {dosis}
+    - formato {dosis}
 
-  # Con cantidad
-  - 'necesito {cantidad} unidades'
-  - 'por {cantidad}'
-  - 'sumá {cantidad}'
+    # Con cantidad
+    - necesito {cantidad} unidades
+    - por {cantidad}
+    - sumá {cantidad}
 
-  # Con estado
-  - 'nuevo'
-  - 'en oferta'
-  - 'con descuento'
-  - 'con bonificación'
-  - 'con poco stock'
-  
-  # Con cantidad_stock
-  - 'pocas unidades'
-  - 'stock limitado'
-  - 'disponible'
-  - 'últimas unidades'
+    # Con estado
+    - {estado}
+    - que esté {estado}
+    - preferiblemente {estado}
+    
+    # Con cantidad_stock
+    - {cantidad_stock}
+    - que tenga {cantidad_stock}
+    
+    # Con cantidad_descuento
+    - {cantidad_descuento}
+    - con {cantidad_descuento}
 
-  # Con cantidad_descuento
-  - '10% de descuento'
-  - '2x1'
-  - '50% off'
+    # Con cantidad_bonificacion
+    - {cantidad_bonificacion}
+    - que traiga {cantidad_bonificacion}
 
-  # Con cantidad_bonificacion
-  - '10% de bonificación'
-  - '2x1 bonificación'
-  - 'bonificación especial'
+    # Con indicador temporal
+    - {indicador_temporal}
+    - que sea {indicador_temporal}
 
-  # Con indicador temporal
-  - 'nuevo'
-  - 'reciente'
-  - 'hace poco'
-  - 'esta semana'
-  - 'este mes'
+    # Combinados básicos
+    - {producto} de {proveedor}
+    - {producto} con {ingrediente_activo}
+    - {producto} en {dosis}
+    - {producto} {estado}
+    - {cantidad} de {producto}
+    
+    # Combinados complejos
+    - {producto} de {proveedor} con {estado}, {cantidad_stock} y {indicador_temporal}
+    - {producto} con {ingrediente_activo} y {cantidad_bonificacion}, {indicador_temporal}
+    - {producto} en {dosis} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
+    - {cantidad} de {producto} de {categoria} con {estado} y {indicador_temporal}
+    - {producto} de {proveedor} en {dosis} con {cantidad_descuento} y {indicador_temporal}
+    - {cantidad} unidades con {ingrediente_activo} y {cantidad_bonificacion}, {indicador_temporal}
 
-  # Combinados
-  - '{producto} de {proveedor} con {estado}, {cantidad_stock} y {indicador_temporal}'
-  - '{producto} con {ingrediente_activo} y {cantidad_bonificacion}, {indicador_temporal}'
-  - '{producto} en {dosis} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}'
-  - '{cantidad} de {producto} de {categoria} con {estado} y {indicador_temporal}'
-  - '{producto} de {proveedor} en {dosis} con {cantidad_descuento} y {indicador_temporal}'
-  - '{cantidad} unidades con {ingrediente_activo} y {cantidad_bonificacion}, {indicador_temporal}' 
+# ---------------------------
+# 🔹 TEMPLATES PARA INTENTS SIN TEMPLATES DEFINIDOS
+# ---------------------------
+
+- intent: preguntar_como_estas
+  examples: |
+    - cómo estás?
+    - cómo andás?
+    - todo bien?
+    - qué tal?
+    - cómo va?
+    - {afectivo}, cómo estás?
+    - {afectivo}, qué tal todo?
+
+- intent: responder_como_estoy
+  examples: |
+    - bien, {sentimiento_positivo}
+    - todo {sentimiento_positivo}
+    - {sentimiento_positivo}, gracias
+    - acá andamos, {sentimiento_positivo}
+    - {sentimiento_negativo}, pero bueno
+    - medio {sentimiento_negativo}
+    - {solicitud_de_ayuda}, estoy {sentimiento_positivo}
+
+- intent: responder_estoy_bien
+  examples: |
+    - todo bien
+    - perfecto
+    - excelente
+    - muy bien
+    - genial, gracias
+    - bárbaro
+    - {sentimiento_positivo}
+    - todo {sentimiento_positivo}
+    - {sentimiento_positivo}, {cierre}
+
+- intent: despedida
+  examples: |
+    - chau
+    - nos vemos
+    - hasta luego
+    - adiós
+    - que estés bien
+    - {cierre} por todo
+    - {sentimiento_positivo}, nos vemos
+    - {sentimiento_positivo}, {cierre}
+
+- intent: pedir_chiste
+  examples: |
+    - contame un chiste
+    - decime algo gracioso
+    - haceme reír
+    - tenés algún chiste?
+    - {afectivo}, contame algo divertido
+    - {solicitud_de_ayuda} con un chiste
+
+- intent: reirse_chiste
+  examples: |
+    - jajaja {sentimiento_positivo}
+    - {sentimiento_positivo}, muy bueno
+    - {cierre}, {sentimiento_positivo}
+    - {muletilla}, {sentimiento_positivo}
+    - {afectivo}, {sentimiento_positivo}
+
+- intent: afirmar
+  examples: |
+    - {sentimiento_positivo}
+    - {cierre}, {sentimiento_positivo}
+    - {muletilla}, sí
+    - {afectivo}, dale
+    - perfecto, {solicitud_de_ayuda}
+
+- intent: denegar
+  examples: |
+    - {sentimiento_negativo}
+    - {rechazo_total}
+    - {sentimiento_negativo}, {rechazo_total}
+    - no, {sentimiento_negativo}
+
+- intent: agradecimiento
+  examples: |
+    - {cierre}
+    - {sentimiento_positivo}, {cierre}
+    - {afectivo}, {cierre}
+    - {muletilla}, {cierre}
+
+- intent: off_topic
+  examples: |
+    - qué hora es?
+    - cómo está el clima?
+    - {solicitud_ayuda}, no entiendo nada
+    - {sentimiento_negativo}, esto no funciona
+    - {rechazo_total}, {sentimiento_negativo}

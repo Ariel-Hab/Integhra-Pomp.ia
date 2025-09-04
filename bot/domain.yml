@@ -70,6 +70,9 @@ entities:
 - fecha
 - cantidad_stock
 - cantidad_descuento
+- cantidad_bonificacion
+- estado
+- indicador_temporal
 - sentimiento_positivo
 - sentimiento_negativo
 - rechazo_total
@@ -152,6 +155,24 @@ slots:
     mappings:
     - type: from_entity
       entity: cantidad_descuento
+  cantidad_bonificacion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad_bonificacion
+  estado:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: estado
+  indicador_temporal:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: indicador_temporal
   sentimiento_positivo:
     type: text
     influence_conversation: false
