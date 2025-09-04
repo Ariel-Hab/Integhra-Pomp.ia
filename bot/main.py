@@ -3,43 +3,109 @@ import threading
 import uvicorn
 import asyncio
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware  # ✅ CORS import
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rasa.core.agent import Agent
 from rasa.core.utils import EndpointConfig
 from rasa.core.channels.channel import CollectingOutputChannel, UserMessage
+import glob
 
-# ---------- Configuración con variables de entorno ----------
+# ---------- Configuración ----------
 ACTION_SERVER_URL = os.getenv("ACTION_SERVER_URL", "http://localhost:5055/webhook")
-MODEL_PATH = os.getenv("RASA_MODEL_PATH", "models")
-PORT = int(os.getenv("PORT", "8000"))
+MODEL_FOLDER = os.getenv("RASA_MODEL_PATH", "models")
+PORT = int(os.getenv("PORT", 8000))
 
 print(f"🚀 Configuración:")
 print(f"   - Action Server: {ACTION_SERVER_URL}")
-print(f"   - Modelo: {MODEL_PATH}")
+print(f"   - Carpeta de modelos: {MODEL_FOLDER}")
 print(f"   - Puerto: {PORT}")
 
-# Inicializar agente con manejo de errores
-try:
-    action_endpoint = EndpointConfig(url=ACTION_SERVER_URL)
-    agent = Agent.load(MODEL_PATH, action_endpoint=action_endpoint)
-    print("✅ Agente Rasa cargado correctamente")
-except Exception as e:
-    print(f"❌ Error cargando agente Rasa: {e}")
-    agent = None
+# ---------- Funciones para cargar/reload modelos ----------
+def get_latest_model(model_folder="models"):
+    """Return the latest model path inside the models folder"""
+    # Check if model folder exists
+    if not os.path.exists(model_folder):
+        print(f"❌ La carpeta '{model_folder}' no existe")
+        return None
+    
+    # Get all potential model files/folders
+    model_patterns = [
+        os.path.join(model_folder, "*.tar.gz"),  # Compressed models
+        os.path.join(model_folder, "*")          # Model directories
+    ]
+    
+    models = []
+    for pattern in model_patterns:
+        models.extend(glob.glob(pattern))
+    
+    # Filter to only valid models (directories or .tar.gz files)
+    models = [m for m in models if os.path.isdir(m) or m.endswith(".tar.gz")]
+    
+    if not models:
+        print(f"❌ No se encontraron modelos en '{model_folder}'")
+        print(f"💡 Archivos encontrados: {os.listdir(model_folder) if os.path.exists(model_folder) else 'carpeta no existe'}")
+        return None
+    
+    # Sort by modification time (newest first)
+    models.sort(key=os.path.getmtime, reverse=True)
+    latest_model = models[0]
+    
+    print(f"🗂 Último modelo encontrado: {latest_model}")
+    return latest_model
 
+def load_agent():
+    """Load agent safely with latest model"""
+    latest_model = get_latest_model(MODEL_FOLDER)
+    if not latest_model:
+        return None
+    try:
+        action_endpoint = EndpointConfig(url=ACTION_SERVER_URL)
+        agent = Agent.load(latest_model, action_endpoint=action_endpoint)
+        print(f"✅ Agente Rasa cargado desde: {latest_model}")
+        return agent
+    except Exception as e:
+        print(f"❌ Error cargando agente Rasa: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+# Inicializar agente
+agent = load_agent()
+
+def reload_agent():
+    global agent
+    print("🔄 Recargando agente...")
+    old_agent = agent
+    agent = load_agent()
+    success = agent is not None
+    if success:
+        print("✅ Agente recargado exitosamente")
+        # Clean up old agent if needed
+        if old_agent:
+            try:
+                # Attempt to clean up resources
+                pass  # Rasa agents don't have explicit cleanup methods
+            except Exception as e:
+                print(f"⚠️ Warning durante cleanup: {e}")
+    else:
+        print("❌ Falló la recarga del agente")
+        # Keep the old agent if reload failed
+        agent = old_agent
+    return success
+
+# ---------- FastAPI ----------
 app = FastAPI(title="Rasa Chat API", version="1.0.0")
 
-# ✅ Configurar CORS para permitir requests desde Flutter
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, especifica los dominios exactos
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Permite GET, POST, OPTIONS, etc.
-    allow_headers=["*"],  # Permite todos los headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# ---------- Modelos Pydantic ----------
+# ---------- Pydantic ----------
 class ChatRequest(BaseModel):
     message: str
     user_id: str = "default_user"
@@ -48,57 +114,21 @@ class ChatResponse(BaseModel):
     responses: list
     error: str = None
 
-# ---------- OutputChannel mejorado ----------
+# ---------- OutputChannel ----------
 class LoggingOutputChannel(CollectingOutputChannel):
     def __init__(self):
         super().__init__()
         self.error_count = 0
-        
-    async def send_text_message(self, recipient_id: str, text: str, **kwargs) -> None:
+
+    async def send_text_message(self, recipient_id, text, **kwargs):
         try:
-            # Llamar al método padre SOLO con parámetros que acepta
             await super().send_text_message(recipient_id, text)
-            print(f"💬 [OutputChannel] Texto enviado: {text[:100]}{'...' if len(text) > 100 else ''}")
-            
-            # Manejar kwargs adicionales si es necesario
-            if kwargs:
-                print(f"🔧 [OutputChannel] Kwargs ignorados: {list(kwargs.keys())}")
-                
+            print(f"💬 Texto enviado: {text[:100]}")
         except Exception as e:
-            print(f"❌ [OutputChannel] Error enviando texto: {e}")
+            print(f"❌ Error enviando texto: {e}")
             self.error_count += 1
-            # Fallback manual
             self.messages.append({"text": text, "recipient_id": recipient_id})
 
-    async def send_image_url(self, recipient_id: str, image: str, **kwargs) -> None:
-        try:
-            await super().send_image_url(recipient_id, image)
-            print(f"🖼 [OutputChannel] Imagen enviada: {image}")
-        except Exception as e:
-            print(f"❌ [OutputChannel] Error enviando imagen: {e}")
-            self.error_count += 1
-            self.messages.append({"image": image, "recipient_id": recipient_id})
-
-    async def send_custom_json(self, recipient_id: str, json_message: dict, **kwargs) -> None:
-        try:
-            await super().send_custom_json(recipient_id, json_message)
-            print(f"📦 [OutputChannel] JSON enviado: {str(json_message)[:100]}...")
-        except Exception as e:
-            print(f"❌ [OutputChannel] Error enviando JSON: {e}")
-            self.error_count += 1
-            self.messages.append({"custom": json_message, "recipient_id": recipient_id})
-
-    async def send_response(self, recipient_id: str, message: dict) -> None:
-        try:
-            await super().send_response(recipient_id, message)
-            print(f"📨 [OutputChannel] Respuesta enviada correctamente")
-        except Exception as e:
-            print(f"❌ [OutputChannel] Error enviando respuesta: {e}")
-            self.error_count += 1
-            # Fallback completo
-            if message not in self.messages:
-                self.messages.append(message)
-                
     def get_health_status(self):
         return {
             "total_messages": len(self.messages),
@@ -106,222 +136,137 @@ class LoggingOutputChannel(CollectingOutputChannel):
             "status": "healthy" if self.error_count == 0 else "degraded"
         }
 
-# ---------- Endpoints HTTP ----------
+# ---------- Endpoints ----------
 @app.get("/")
 async def root():
     return {
-        "status": "running", 
+        "status": "running",
         "agent_loaded": agent is not None,
         "action_server": ACTION_SERVER_URL,
-        "cors_enabled": True  # ✅ Indicador de CORS habilitado
+        "cors_enabled": True,
+        "model_folder": MODEL_FOLDER,
+        "latest_model": get_latest_model(MODEL_FOLDER)
     }
 
 @app.get("/health")
 async def health_check():
     if agent is None:
         raise HTTPException(status_code=503, detail="Rasa agent not loaded")
-    
     return {
-        "status": "healthy",
-        "agent": "loaded",
-        "action_server": ACTION_SERVER_URL
+        "status": "healthy", 
+        "agent": "loaded", 
+        "action_server": ACTION_SERVER_URL,
+        "model_folder": MODEL_FOLDER
     }
+
+@app.get("/models")
+async def list_models():
+    """List available models in the models directory"""
+    if not os.path.exists(MODEL_FOLDER):
+        return {"models": [], "error": f"Models folder '{MODEL_FOLDER}' does not exist"}
+    
+    models = []
+    for item in os.listdir(MODEL_FOLDER):
+        item_path = os.path.join(MODEL_FOLDER, item)
+        if os.path.isdir(item_path) or item.endswith(".tar.gz"):
+            models.append({
+                "name": item,
+                "path": item_path,
+                "modified": os.path.getmtime(item_path),
+                "is_latest": item_path == get_latest_model(MODEL_FOLDER)
+            })
+    
+    return {"models": sorted(models, key=lambda x: x["modified"], reverse=True)}
+
+@app.post("/reload_model")
+async def reload_model_endpoint():
+    if reload_agent():
+        return {
+            "status": "success", 
+            "message": "Agent reloaded with latest model",
+            "latest_model": get_latest_model(MODEL_FOLDER)
+        }
+    else:
+        raise HTTPException(
+            status_code=500, 
+            detail={
+                "message": "Failed to reload agent",
+                "model_folder": MODEL_FOLDER,
+                "models_available": len(glob.glob(os.path.join(MODEL_FOLDER, "*"))) > 0
+            }
+        )
 
 @app.post("/message", response_model=ChatResponse)
 async def chat(payload: ChatRequest):
     if agent is None:
         raise HTTPException(status_code=503, detail="Rasa agent not available")
-        
-    # ✅ Corrección: acceder a los atributos directamente
+
     user_text = payload.message.strip()
     user_id = payload.user_id
-    
+
     if not user_text:
         return ChatResponse(responses=[], error="Empty message")
-    
-    print(f"➡️ [API] Usuario {user_id}: {user_text}")
-
-    # Test de conexión
-    if user_text.lower() == "test_connection" and user_id == "health_check":
-        print(f"🏥 [API] Test de conexión recibido")
-        return ChatResponse(responses=[{"text": "Connection OK"}])
 
     output_channel = LoggingOutputChannel()
     user_msg = UserMessage(text=user_text, output_channel=output_channel, sender_id=user_id)
 
     try:
-        print(f"🔹 [API] Procesando mensaje...")
         await agent.handle_message(user_msg)
-        print(f"🔹 [API] Mensaje procesado exitosamente")
-
         if not output_channel.messages:
-            print("⚠️ [API] No se recibieron respuestas del agente")
             return ChatResponse(
-                responses=[{"text": "Lo siento, no pude procesar tu mensaje en este momento."}],
+                responses=[{"text": "Lo siento, no pude procesar tu mensaje."}],
                 error="No response from agent"
             )
-
-        print(f"📄 [API] {len(output_channel.messages)} mensajes en OutputChannel")
-        
-        # Procesar respuestas estructuradas de Rasa
-        processed_responses = []
-        
-        for message in output_channel.messages:
-            if isinstance(message, dict):
-                # Verificar si es una respuesta estructurada (JSON)
-                if "detected_intent" in message and "entities" in message:
-                    # Es una respuesta estructurada de las actions
-                    processed_responses.append({
-                        "text": message.get("message", ""),
-                        "type": "structured",
-                        "data": {
-                            "detected_intent": message.get("detected_intent"),
-                            "entities": message.get("entities", []),
-                            "timestamp": message.get("timestamp"),
-                            "confidence": getattr(message, 'confidence', None)
-                        }
-                    })
-                    print(f"🔍 [API] Respuesta estructurada: Intent={message.get('detected_intent')}, Entities={len(message.get('entities', []))}")
-                
-                elif "text" in message:
-                    # Respuesta de texto normal
-                    processed_responses.append({
-                        "text": message["text"],
-                        "type": "text"
-                    })
-                    
-                elif "image" in message:
-                    # Respuesta con imagen
-                    processed_responses.append({
-                        "image": message["image"],
-                        "type": "image"
-                    })
-                    
-                elif "custom" in message or "json_message" in message:
-                    # Respuesta JSON custom
-                    custom_data = message.get("custom") or message.get("json_message")
-                    if isinstance(custom_data, dict) and "detected_intent" in custom_data:
-                        # Es nuestra respuesta estructurada
-                        processed_responses.append({
-                            "text": custom_data.get("message", ""),
-                            "type": "structured", 
-                            "data": {
-                                "detected_intent": custom_data.get("detected_intent"),
-                                "entities": custom_data.get("entities", []),
-                                "timestamp": custom_data.get("timestamp")
-                            }
-                        })
-                    else:
-                        # JSON custom genérico
-                        processed_responses.append({
-                            "custom": custom_data,
-                            "type": "custom"
-                        })
-                else:
-                    # Fallback para otros tipos
-                    processed_responses.append(message)
-            else:
-                # Mensaje en formato string directo
-                processed_responses.append({
-                    "text": str(message),
-                    "type": "text"
-                })
-        
-        # Log del resultado procesado
-        structured_count = len([r for r in processed_responses if r.get("type") == "structured"])
-        print(f"📊 [API] {structured_count} respuestas estructuradas de {len(processed_responses)} total")
-        
-        return ChatResponse(responses=processed_responses)
-    
+        return ChatResponse(responses=output_channel.messages)
     except Exception as e:
-        print(f"❌ [API] Error procesando mensaje: {e}")
-        import traceback
-        traceback.print_exc()  # Para debug adicional
         return ChatResponse(
-            responses=[{
-                "text": "Hubo un error procesando tu mensaje. Por favor intenta de nuevo.",
-                "type": "error"
-            }], 
+            responses=[{"text": "Error procesando el mensaje.", "type": "error"}],
             error=str(e)
         )
 
-# ---------- Consola interactiva mejorada ----------
+# ---------- Consola interactiva ----------
 def consola_listener():
     if agent is None:
-        print("❌ [Consola] Agent no disponible - consola deshabilitada")
+        print("❌ Consola deshabilitada - agente no disponible")
         return
-        
+
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    
-    print("🎮 [Consola] Consola interactiva iniciada")
-    print("💡 [Consola] Escribe 'exit', 'quit' o 'salir' para cerrar")
-    print("=" * 50)
+    print("🎮 Consola interactiva iniciada")
 
     while True:
         try:
             user_text = input(">> Tú: ").strip()
             if user_text.lower() in ["exit", "quit", "salir"]:
-                print("👋 Cerrando consola...")
                 break
-                
             if not user_text:
                 continue
 
-            print(f"➡️ [Consola] Procesando: {user_text}")
             output_channel = LoggingOutputChannel()
             user_msg = UserMessage(text=user_text, output_channel=output_channel, sender_id="console_user")
+            loop.run_until_complete(agent.handle_message(user_msg))
 
-            try:
-                print(f"🔹 [Consola] Enviando a agente...")
-                loop.run_until_complete(agent.handle_message(user_msg))
-                print(f"🔹 [Consola] Respuesta recibida")
-                
-                # Mostrar respuestas del bot
-                if output_channel.messages:
-                    for i, response in enumerate(output_channel.messages):
-                        print(f"🤖 Bot ({i+1}): ", end="")
-                        
-                        if response.get("text"):
-                            print(response["text"])
-                        elif response.get("image"):
-                            print(f"[Imagen: {response['image']}]")
-                        elif response.get("custom"):
-                            print(f"[Custom: {response['custom']}]")
-                        else:
-                            print(f"[Respuesta completa: {response}]")
+            for i, msg in enumerate(output_channel.messages):
+                if "text" in msg:
+                    print(f"🤖 Bot ({i+1}): {msg['text']}")
                 else:
-                    print("🔇 [Consola] Bot no respondió")
-                    
-                # Mostrar health
-                health = output_channel.get_health_status()
-                if health["error_count"] > 0:
-                    print(f"⚠️ [Consola] Errores detectados: {health['error_count']}")
-                    
-            except Exception as e:
-                print(f"❌ [Consola] Error: {e}")
-                
-            print("-" * 50)
+                    print(f"🤖 Bot ({i+1}): {msg}")
 
         except KeyboardInterrupt:
-            print("\n👋 Cerrando consola...")
             break
         except EOFError:
-            print("\n👋 Cerrando consola...")
             break
         except Exception as e:
-            print(f"❌ [Consola] Error inesperado: {e}")
+            print(f"❌ Consola error: {e}")
 
 # ---------- Startup ----------
 if __name__ == "__main__":
-    # Iniciar consola en hilo separado solo si el agente está disponible
     if agent is not None:
         hilo_consola = threading.Thread(target=consola_listener, daemon=True)
         hilo_consola.start()
-        print("🧵 [Main] Consola iniciada en hilo separado")
+        print("🧵 Consola iniciada en hilo separado")
     else:
-        print("⚠️ [Main] Consola deshabilitada - agente no disponible")
+        print("⚠️ Consola deshabilitada - agente no disponible")
+        print("💡 Entrena un modelo primero con: poetry run rasa train")
 
-    print(f"🌐 [Main] Iniciando servidor web en puerto {PORT}")
-    print("✅ [Main] CORS habilitado para Flutter")
     uvicorn.run(app, host="0.0.0.0", port=PORT, reload=False)

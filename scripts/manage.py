@@ -1,208 +1,191 @@
 #!/usr/bin/env python3
 """
-Gestor de tareas PompIA con menú interactivo y acceso rápido
------------------------------------------------------------
-Uso:
-    python manage.py            # Muestra menú principal
-    python manage.py local      # Abre menú Bot Local
-    python manage.py docker     # Abre menú Docker
-    python manage.py deps       # Abre menú Dependencias
-    python manage.py clean      # Abre menú Limpieza
-    python manage.py snapshot   # Ejecuta snapshot directamente
+Simplified PompIA manager for running bot/actions and training
 """
 
 import subprocess
 import sys
 import os
+import urllib.request
+import urllib.parse
+import json
+import time
 
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-except Exception:
-    pass
-
-def run(cmd, shell=False, cwd=None):
-    pretty_cmd = " ".join(cmd) if isinstance(cmd, list) else cmd
-    print(f"\n⚙️  Ejecutando: {pretty_cmd} (cwd: {cwd or os.getcwd()})\n")
+def run(cmd, cwd=None):
+    """Run a command and print its output."""
+    print(f"\n⚙️  Ejecutando: {' '.join(cmd)} (cwd: {cwd or os.getcwd()})\n")
     try:
-        subprocess.run(cmd, shell=shell, check=True, cwd=cwd)
+        subprocess.run(cmd, check=True, cwd=cwd)
         print("✅ Comando ejecutado correctamente.\n")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error ejecutando: {pretty_cmd}")
-        try:
-            if e.stdout:
-                print(e.stdout)
-            if e.stderr:
-                print(e.stderr)
-        except Exception:
-            pass
+        print(f"❌ Error ejecutando: {' '.join(cmd)}")
         sys.exit(e.returncode)
 
-# --- Funciones Docker ---
-def docker_up(): run(["docker", "compose", "up"])
-def docker_build(): run(["docker", "compose", "build"])
-def docker_restart(): run("docker compose down && docker compose up --build", shell=True)
-def docker_logs(): run(["docker", "compose", "logs", "-f"])
-def docker_shell_rasa(): run(["docker", "compose", "exec", "rasa", "bash"])
-def docker_run_agent(): run(["docker", "compose", "up", "rasa", "actions","--actions","actions.actions"])
-def docker_train_container(): run(["docker", "compose", "exec", "rasa", "rasa", "train"])
+# --- Poetry commands for local development ---
+def install_deps(group):
+    """Install dependencies for a given group."""
+    run(["poetry", "install", "--only", group, "--without", "dev"])
 
-# --- Dependencias Contenedor ---
-def update_deps_container_rasa(): run(["docker", "compose", "exec", "rasa", "poetry", "install", "--no-root", "--only", "bot", "--without", "dev"])
-def update_deps_container_actions(): run(["docker", "compose", "exec", "rasa_actions", "poetry", "install", "--no-root", "--only", "actions", "--without", "dev"])
-def update_deps_container_trainer(): run(["docker", "compose", "exec", "rasa_trainer", "poetry", "install", "--no-root", "--only", "bot", "--without", "dev"])
-def update_deps_all_containers():
-    update_deps_container_rasa()
-    update_deps_container_actions()
-    update_deps_container_trainer()
-
-# --- Dependencias Local ---
-def install_deps_bot_local(): run(["poetry", "install", "--only", "bot", "--without", "dev"])
-def install_deps_actions_local(): run(["poetry", "install", "--only", "actions", "--without", "dev"])
-
-# --- Bot Local ---
-def train_local_nlu():
-    install_deps_bot_local()
-    run(["poetry", "run", "python", "entrenador/train.py"], cwd="bot")
-def train_local():
-    install_deps_bot_local()
-    run(["poetry", "run", "rasa", "train"], cwd="bot")
-def run_bot_local():
-    install_deps_bot_local()
+# --- Bot commands ---
+def run_bot():
+    install_deps("bot")
     run(["poetry", "run", "python", "main.py"], cwd="bot")
-def run_actions_local():
-    install_deps_actions_local()
-    run(["poetry", "run", "rasa", "run", "actions","--actions","actions"])
 
-# --- Limpieza ---
-def clean_down_volumes(): run(["docker", "compose", "down", "--volumes", "--remove-orphans"])
-def prune_system(): run(["docker", "system", "prune", "-af", "--volumes"])
-def clean_all_deep():
-    run(["docker", "container", "prune", "-f"])
-    run(["docker", "image", "prune", "-af"])
-    run(["docker", "volume", "prune", "-f"])
-    run(["docker", "network", "prune", "-f"])
-def reset_all():
-    clean_down_volumes()
-    docker_build()
-    docker_up()
+def train_bot_nlu():
+    install_deps("bot")
+    run(["poetry", "run", "python", "entrenador/train.py"], cwd="bot")
 
-# --- Snapshot ---
-def snapshot():
-    script_path = os.path.join("scripts", "savecontext.py")
-    python_exe = sys.executable or "python"
-    if not os.path.exists(script_path):
-        print(f"❌ No se encontró '{script_path}'. Ejecuta este script desde la raíz del proyecto.")
-        return
+def train_bot_model():
+    install_deps("bot")
+    run(["poetry", "run", "rasa", "train"], cwd="bot")
+
+def reload_bot_model():
+    """Hot reload latest Rasa model in running agent via HTTP endpoint"""
+    print("🔄 Iniciando recarga del modelo...")
+    print("⏳ Esto puede tomar varios minutos debido a la carga de TensorFlow/BERT...")
+    
     try:
-        result = subprocess.run([python_exe, script_path], capture_output=True, text=True, check=True)
-        if result.stdout:
-            print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        print("✅ Snapshot completado.\n")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error ejecutando '{script_path}':")
-        if e.stdout:
-            print(e.stdout)
-        if e.stderr:
-            print(e.stderr)
-
-# --- Menús ---
-def ejecutar_menu(titulo, opciones):
-    while True:
-        print(f"\n{titulo}")
-        print("=" * len(titulo))
-        for key, (desc, _) in opciones.items():
-            print(f"{key}) {desc}")
-        choice = input("\nSelecciona una opción: ").strip()
-        if choice in opciones:
-            accion = opciones[choice][1]
-            if accion is None:
-                break
-            try:
-                accion()
-            except KeyboardInterrupt:
-                print("\n✋ Interrumpido por el usuario.")
+        # Create POST request to reload endpoint with longer timeout
+        req = urllib.request.Request(
+            "http://localhost:8000/reload_model",
+            method='POST',
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        # Use much longer timeout for model loading (5 minutes)
+        with urllib.request.urlopen(req, timeout=300) as response:
+            if response.status == 200:
+                result = json.loads(response.read().decode())
+                print("✅ Bot model reloaded successfully")
+                print(f"Response: {result}")
+            else:
+                print(f"❌ Failed to reload bot model. Status: {response.status}")
+                error_text = response.read().decode()
+                print(f"Response: {error_text}")
+                
+    except urllib.error.URLError as e:
+        if "Connection refused" in str(e):
+            print("❌ Could not connect to bot server. Make sure the bot is running on localhost:8000")
+        elif "timed out" in str(e):
+            print("❌ Timeout while reloading model (>5 minutes)")
+            print("💡 Model loading is taking too long. This might indicate:")
+            print("   - Large model size")
+            print("   - Limited system resources") 
+            print("   - Network issues with action server")
         else:
-            print("❌ Opción no válida. Intenta de nuevo.")
+            print(f"❌ Network error: {e}")
+    except Exception as e:
+        print(f"❌ Error reloading model: {e}")
 
-def menu_docker():
-    opciones = {
-        "1": ("Levantar contenedores", docker_up),
-        "2": ("Construir imágenes", docker_build),
-        "3": ("Reiniciar con build", docker_restart),
-        "4": ("Ver logs", docker_logs),
-        "5": ("Shell en contenedor Rasa", docker_shell_rasa),
-        "6": ("Ejecutar bot + acciones (compose up)", docker_run_agent),
-        "7": ("Entrenar bot (contenedor Rasa)", docker_train_container),
-        "0": ("Volver", None),
-    }
-    ejecutar_menu("📦 Menú Docker", opciones)
+def check_bot_status():
+    """Check if bot server is running and responsive"""
+    try:
+        req = urllib.request.Request("http://localhost:8000/")
+        with urllib.request.urlopen(req, timeout=5) as response:
+            if response.status == 200:
+                result = json.loads(response.read().decode())
+                print("✅ Bot server is running")
+                print(f"Status: {result}")
+                return True
+            else:
+                print(f"⚠️ Bot server responded with status: {response.status}")
+                return False
+    except Exception as e:
+        print(f"❌ Bot server is not reachable: {e}")
+        return False
 
-def menu_dependencias():
-    opciones = {
-        "1": ("Actualizar deps en contenedor Rasa", update_deps_container_rasa),
-        "2": ("Actualizar deps en contenedor Actions", update_deps_container_actions),
-        "3": ("Actualizar deps en contenedor Trainer", update_deps_container_trainer),
-        "4": ("Actualizar deps en TODOS los contenedores", update_deps_all_containers),
-        "5": ("Instalar deps bot local", install_deps_bot_local),
-        "6": ("Instalar deps actions local", install_deps_actions_local),
-        "0": ("Volver", None),
-    }
-    ejecutar_menu("📚 Menú Dependencias", opciones)
-
-def menu_local():
-    opciones = {
-        "1": ("Entrenar bot local (entrenador/train.py)", train_local_nlu),
-        "2": ("Ejecutar bot local (main.py)", run_bot_local),
-        "3": ("Ejecutar servidor de acciones local", run_actions_local),
-        "4": ("Entrenar modelo local (rasa run train)", train_local),
-        "0": ("Volver", None),
-    }
-    ejecutar_menu("💻 Menú Bot Local", opciones)
-
-def menu_limpieza():
-    opciones = {
-        "1": ("Bajar contenedores + volúmenes", clean_down_volumes),
-        "2": ("Prune total de Docker (peligroso)", prune_system),
-        "3": ("Limpieza profunda (contenedores, imágenes, volúmenes, redes)", clean_all_deep),
-        "4": ("Reset (down + build + up)", reset_all),
-        "0": ("Volver", None),
-    }
-    ejecutar_menu("🧹 Menú Limpieza", opciones)
-
-# --- Menú principal ---
-def menu_principal():
-    opciones = {
-        "1": ("Docker", menu_docker),
-        "2": ("Dependencias", menu_dependencias),
-        "3": ("Bot Local", menu_local),
-        "4": ("Limpieza", menu_limpieza),
-        "5": ("Snapshot (guardar contexto)", snapshot),
-        "0": ("Salir", None),
-    }
-    ejecutar_menu("🚀 Gestor de tareas PompIA", opciones)
-
-# --- Main ---
-def main():
-    if len(sys.argv) == 1:
-        # Sin argumentos: menú principal
-        menu_principal()
+def check_models():
+    """Check for available models in the models directory"""
+    models_path = "bot/models" if os.path.exists("bot/models") else "models"
+    
+    if not os.path.exists(models_path):
+        print(f"❌ Models directory '{models_path}' does not exist")
+        return False
+    
+    models = []
+    for item in os.listdir(models_path):
+        item_path = os.path.join(models_path, item)
+        if os.path.isdir(item_path) or item.endswith(".tar.gz"):
+            models.append(item)
+    
+    if models:
+        print(f"✅ Found {len(models)} model(s) in '{models_path}':")
+        for model in sorted(models, key=lambda x: os.path.getmtime(os.path.join(models_path, x)), reverse=True):
+            model_path = os.path.join(models_path, model)
+            mtime = os.path.getmtime(model_path)
+            import datetime
+            time_str = datetime.datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M:%S")
+            size = os.path.getsize(model_path) if os.path.isfile(model_path) else "N/A"
+            print(f"  - {model} (modified: {time_str}, size: {size} bytes)")
+        return True
     else:
-        cmd = sys.argv[1].lower()
-        if cmd == "local":
-            menu_local()
-        elif cmd == "docker":
-            menu_docker()
-        elif cmd == "deps":
-            menu_dependencias()
-        elif cmd == "clean":
-            menu_limpieza()
-        elif cmd == "snapshot" :
-            snapshot()
-        else:
-            print(f"❌ Comando '{cmd}' no reconocido.\n")
-            menu_principal()
+        print(f"❌ No models found in '{models_path}'")
+        print("💡 Run 'python manage.py train_model' to train a new model first")
+        return False
+
+def test_chat():
+    """Test a simple chat message"""
+    if not check_bot_status():
+        print("❌ Cannot test chat - bot server not running")
+        return
+    
+    try:
+        # Test message
+        test_data = {
+            "message": "hola",
+            "user_id": "test_user"
+        }
+        
+        req = urllib.request.Request(
+            "http://localhost:8000/message",
+            data=json.dumps(test_data).encode(),
+            headers={'Content-Type': 'application/json'},
+            method='POST'
+        )
+        
+        with urllib.request.urlopen(req, timeout=30) as response:
+            if response.status == 200:
+                result = json.loads(response.read().decode())
+                print("✅ Chat test successful")
+                print(f"Bot response: {result}")
+            else:
+                print(f"❌ Chat test failed. Status: {response.status}")
+                print(f"Response: {response.read().decode()}")
+                
+    except Exception as e:
+        print(f"❌ Chat test error: {e}")
+
+# --- Actions commands ---
+def run_actions():
+    install_deps("actions")
+    run(["poetry", "run", "rasa", "run", "actions", "--actions", "actions"])
+
+# --- Main entry ---
+def main():
+    if len(sys.argv) < 2:
+        print("Uso: python manage.py [bot|actions|train_nlu|train_model|reload_model|check_models|status|test_chat]")
+        sys.exit(0)
+
+    cmd = sys.argv[1].lower()
+    if cmd == "bot":
+        run_bot()
+    elif cmd == "actions":
+        run_actions()
+    elif cmd == "train":
+        train_bot_nlu()
+    elif cmd == "rasa_train":
+        train_bot_model()
+    elif cmd == "reload_model":
+        reload_bot_model()
+    elif cmd == "check_models":
+        check_models()
+    elif cmd == "status":
+        check_bot_status()
+    elif cmd == "test_chat":
+        test_chat()
+    else:
+        print(f"❌ Comando '{cmd}' no reconocido.")
+        print("Comandos disponibles: bot, actions, train_nlu, train_model, reload_model, check_models, status, test_chat")
 
 if __name__ == "__main__":
     main()

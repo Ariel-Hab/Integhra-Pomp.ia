@@ -1,5 +1,3 @@
-#templates.yml
-
 version: "3.1"
 
 nlu:
@@ -17,76 +15,105 @@ nlu:
     - {cierre}
 
 # ---------------------------
-# 🔹 BÚSQUEDA PRODUCTOS
+# 🔹 BÚSQUEDA PRODUCTOS (INCLUYE INDICADOR TEMPORAL)
 # ---------------------------
 - intent: buscar_producto
   examples: |
+    # básicos
     - {inicio} {solicitud_de_ayuda} necesito {producto} {cierre}
-    - {inicio} me pasás info de {producto}?
     - quiero {cantidad} de {producto} de {proveedor}
-    - {solicitud_de_ayuda}, qué tienen de {categoria}?
     - hay {producto} con {ingrediente_activo} en {dosis}?
     - {duda}, se consigue {producto}?
 
+    # con indicador temporal
+    - buscá {producto} {indicador_temporal}
+    - quiero {producto} de {categoria} {indicador_temporal} en {dosis}
+    - {duda}, hay {producto} de {proveedor} {indicador_temporal} con {cantidad_stock}?
+    - buscá {producto} {indicador_temporal} con {estado} y {cantidad_bonificacion}
+
+    # combinaciones complejas
+    - necesito {producto} {dosis} {cantidad} {estado} {cantidad_stock} {indicador_temporal}
+    - {producto} de {categoria} con {ingrediente_activo}, {estado} y {indicador_temporal}
+    - quiero {producto} de {proveedor} en {dosis} con {cantidad_stock} y {indicador_temporal}
+    - buscá {producto} con {ingrediente_activo}, {estado}, {cantidad_bonificacion} y {indicador_temporal}
+    - necesito {producto} {dosis}, {cantidad} unidades, {estado}, {cantidad_bonificacion} y {indicador_temporal}
+    - {solicitud_de_ayuda} quiero {producto} de {categoria} en {dosis} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
+    - {duda}, hay {producto} de {proveedor} con {estado}, {cantidad_stock}, {cantidad_bonificacion} y {indicador_temporal}?
+    - buscá {producto} de {proveedor} con {ingrediente_activo}, {dosis}, {estado}, {cantidad_stock} y {indicador_temporal}
+
 # ---------------------------
-# 🔹 BÚSQUEDA OFERTAS
+# 🔹 BÚSQUEDA OFERTAS (INCLUYE INDICADOR TEMPORAL)
 # ---------------------------
 - intent: buscar_oferta
   examples: |
+    # básicos
     - {inicio} {solicitud_de_ayuda}, hay ofertas de {producto}?
     - qué promos tienen en {categoria}?
     - hay descuentos del laboratorio {proveedor}?
     - {producto} con {ingrediente_activo} está en promo?
-    - {duda} {solicitud_de_ayuda}, alguna oferta de {producto} en {dosis}?
+
+    # con indicador temporal
+    - buscá ofertas de {producto} {indicador_temporal}
+    - promos de {categoria} {indicador_temporal}
+    - hay descuentos de {proveedor} {indicador_temporal}?
+    - {producto} en {dosis} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
+
+    # combinaciones complejas
+    - ofertas de {producto} con {cantidad_descuento} y {cantidad_bonificacion} {indicador_temporal}
+    - promos de {categoria} con {estado}, {cantidad_stock}, {cantidad_bonificacion} y {indicador_temporal}
+    - {proveedor} ofrece {producto} con {cantidad_descuento}, {estado}, {cantidad_stock} y {indicador_temporal}
+    - hay promos de {producto} de {categoria} con {ingrediente_activo}, {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
+    - necesito {producto} con {cantidad_stock}, {estado}, {cantidad_bonificacion} y {indicador_temporal}
+    - {duda}, qué descuentos tienen de {producto} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}?
+    - buscá ofertas de {proveedor} con {estado}, {cantidad_stock}, {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
+    - quiero {producto} de {categoria} en promoción con {cantidad_descuento}, {cantidad_bonificacion}, {estado} y {indicador_temporal}
+    - muéstramelas con {dosis}, {cantidad_stock}, {cantidad_bonificacion} y {indicador_temporal}
 
 # ---------------------------
-# 🔹 NOVEDADES PRODUCTOS
+# 🔹 NOVEDADES PRODUCTOS (solo casos borde)
 # ---------------------------
 - intent: consultar_novedades_producto
   examples: |
-    - {inicio} qué productos nuevos llegaron?
-    - hay novedades para {animal}?
-    - lo último en {categoria} qué es?
     - entró algo nuevo de {proveedor}?
     - hay algo nuevo con {ingrediente_activo}?
-    - {duda} novedades de {producto} en {dosis}?
+    - {animal} necesita {producto} nuevo
+    - novedades de productos difíciles de ubicar {indicador_temporal}
 
 # ---------------------------
-# 🔹 NOVEDADES OFERTAS
+# 🔹 NOVEDADES OFERTAS (solo casos borde)
 # ---------------------------
 - intent: consultar_novedades_oferta
   examples: |
-    - {inicio} {solicitud_de_ayuda}, qué ofertas nuevas hay de {producto}?
-    - promos recientes en {categoria}?
-    - hay promociones nuevas para mi {animal}?
     - descuentos nuevos del laboratorio {proveedor}?
-    - {duda}, novedades de ofertas con {ingrediente_activo}?
     - qué promos nuevas hay de {producto} en {dosis}?
+    - novedades de ofertas difíciles de ubicar {indicador_temporal}
 
 # ---------------------------
 # 🔹 RECOMENDACIONES PRODUCTOS
 # ---------------------------
 - intent: consultar_recomendaciones_producto
   examples: |
-    - {inicio} qué me recomendás de {producto}?
+    - qué me recomendás de {producto}?
     - cuál {producto} es mejor?
     - qué conviene para mi {animal}?
     - me sugerís algo de {categoria}?
-    - {solicitud_de_ayuda}, qué producto recomendás del laboratorio {proveedor}?
-    - {duda}, me conviene {producto} en {dosis}?
+    - recomiéndame {producto} con {estado}, {cantidad_stock} y {indicador_temporal}
+    - me conviene {producto} con {ingrediente_activo} y {cantidad_bonificacion}?
+    - {animal} necesita algo nuevo de {categoria} con {estado}, {cantidad_stock} y {indicador_temporal}
 
 # ---------------------------
 # 🔹 RECOMENDACIONES OFERTAS
 # ---------------------------
 - intent: consultar_recomendaciones_oferta
   examples: |
-    - {inicio} qué oferta me recomendás de {producto}?
+    - qué oferta me recomendás de {producto}?
     - cuál promo de {producto} es mejor?
     - qué oferta conviene para un {animal}?
     - promos recomendadas en {categoria}?
     - me sugerís descuentos de {proveedor}?
-    - {solicitud_de_ayuda}, qué promos con {ingrediente_activo} me recomendás?
-    - {duda}, ofertas recomendadas de {producto} en {dosis}?
+    - oferta de {producto} con {cantidad_descuento}, {cantidad_bonificacion}, {estado} y {indicador_temporal}
+    - promos de {categoria} con {estado}, {cantidad_stock}, {cantidad_bonificacion} y {indicador_temporal}
+    - {proveedor} recomienda {producto} con {estado}, {cantidad_stock} y {indicador_temporal}
 
 # ---------------------------
 # 🔹 MODIFICAR BÚSQUEDA
@@ -100,7 +127,12 @@ nlu:
     - mostrame {producto} con {ingrediente_activo}
     - {duda}, en vez de {proveedor}, buscá {categoria}
     - {solicitud_de_ayuda} cambiemos a ofertas de {producto}
+    - cambiemos a {producto} con {estado} y {cantidad_stock}
+    - prefiero ofertas con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}
 
+# ---------------------------
+# 🔹 COMPLETAR PEDIDO
+# ---------------------------
 completar_pedido:  
   # Con producto
   - '{producto}'
@@ -137,12 +169,40 @@ completar_pedido:
   - 'por {cantidad}'
   - 'sumá {cantidad}'
 
+  # Con estado
+  - 'nuevo'
+  - 'en oferta'
+  - 'con descuento'
+  - 'con bonificación'
+  - 'con poco stock'
+  
+  # Con cantidad_stock
+  - 'pocas unidades'
+  - 'stock limitado'
+  - 'disponible'
+  - 'últimas unidades'
+
+  # Con cantidad_descuento
+  - '10% de descuento'
+  - '2x1'
+  - '50% off'
+
+  # Con cantidad_bonificacion
+  - '10% de bonificación'
+  - '2x1 bonificación'
+  - 'bonificación especial'
+
+  # Con indicador temporal
+  - 'nuevo'
+  - 'reciente'
+  - 'hace poco'
+  - 'esta semana'
+  - 'este mes'
+
   # Combinados
-  - '{producto} de {proveedor}'
-  - '{producto} con {ingrediente_activo}'
-  - '{producto} en {dosis}'
-  - '{cantidad} de {producto}'
-  - '{producto} de {categoria}'
-  - '{producto} con {compuesto}'
-  - '{producto} de {proveedor} en {dosis}'
-  - '{cantidad} unidades con {ingrediente_activo}'
+  - '{producto} de {proveedor} con {estado}, {cantidad_stock} y {indicador_temporal}'
+  - '{producto} con {ingrediente_activo} y {cantidad_bonificacion}, {indicador_temporal}'
+  - '{producto} en {dosis} con {cantidad_descuento}, {cantidad_bonificacion} y {indicador_temporal}'
+  - '{cantidad} de {producto} de {categoria} con {estado} y {indicador_temporal}'
+  - '{producto} de {proveedor} en {dosis} con {cantidad_descuento} y {indicador_temporal}'
+  - '{cantidad} unidades con {ingrediente_activo} y {cantidad_bonificacion}, {indicador_temporal}' 
