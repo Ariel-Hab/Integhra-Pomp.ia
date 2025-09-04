@@ -326,6 +326,18 @@ entity_patterns:
     - "oferta"
     - "promoción"
 
+  cantidad_bonificacion:
+    - "10%"
+    - "15%"
+    - "20%"
+    - "25%"
+    - "30%"
+    - "50%"
+    - "2x1"
+    - "3x2"
+    - "bonificación especial"
+    - "bonificación extra"
+
 # Valores aleatorios dinámicos
 dynamic_values:
   cantidad_descuento:
@@ -354,4 +366,15 @@ dynamic_values:
       - "viernes"
       - "sábado"
       - "domingo"
-  
+      
+  indicador_temporal:
+  - "novedad"
+  - "nuevo"
+  - "reciente"
+  - "hace poco"
+  - "esta semana"
+  - "este mes"
+  - "última semana"
+  - "último mes"
+  - "recién llegado"
+  - "recién lanzado"

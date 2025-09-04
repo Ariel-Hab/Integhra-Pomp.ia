@@ -1,313 +1,396 @@
 import yaml
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Tuple
+
+class ConfigLoadError(Exception):
+    """Excepción específica para errores de carga de configuración"""
+    pass
+
+class ValidationResult:
+    """Resultado de validación con detalles específicos"""
+    def __init__(self):
+        self.errors: List[str] = []
+        self.warnings: List[str] = []
+        self.info: List[str] = []
+        
+    def add_error(self, message: str) -> None:
+        self.errors.append(message)
+        
+    def add_warning(self, message: str) -> None:
+        self.warnings.append(message)
+        
+    def add_info(self, message: str) -> None:
+        self.info.append(message)
+        
+    def has_errors(self) -> bool:
+        return len(self.errors) > 0
+        
+    def print_summary(self, component: str) -> None:
+        """Imprime un resumen claro del resultado de validación"""
+        if self.errors:
+            print(f"❌ ERRORES en {component}:")
+            for error in self.errors:
+                print(f"   • {error}")
+                
+        if self.warnings:
+            print(f"⚠️  ADVERTENCIAS en {component}:")
+            for warning in self.warnings:
+                print(f"   • {warning}")
+                
+        if self.info and not self.errors:
+            print(f"✅ {component} cargado correctamente:")
+            for info in self.info:
+                print(f"   • {info}")
 
 class ConfigLoader:
     @staticmethod
-    def _load_yaml(path: Path) -> Dict[str, Any]:
-        """Carga un YAML y devuelve un diccionario vacío si no existe."""
+    def _safe_load_yaml(path: Path, component_name: str) -> Tuple[Dict[str, Any], ValidationResult]:
+        """Carga un YAML de forma segura con validación completa"""
+        result = ValidationResult()
+        
         if not path.exists():
-            return {}
-        with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
+            result.add_error(f"Archivo no encontrado: {path}")
+            return {}, result
+            
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f) or {}
+                
+            if not isinstance(data, dict):
+                result.add_error(f"El archivo debe contener un diccionario válido")
+                return {}, result
+                
+            result.add_info(f"Archivo cargado desde {path}")
+            return data, result
+            
+        except yaml.YAMLError as e:
+            result.add_error(f"Error de sintaxis YAML: {e}")
+            return {}, result
+        except UnicodeDecodeError as e:
+            result.add_error(f"Error de codificación (debe ser UTF-8): {e}")
+            return {}, result
+        except Exception as e:
+            result.add_error(f"Error inesperado: {e}")
+            return {}, result
+
+    @staticmethod
+    def _validate_intent_structure(intent_name: str, intent_data: Any) -> ValidationResult:
+        """Valida la estructura de un intent específico"""
+        result = ValidationResult()
+        
+        if not isinstance(intent_data, dict):
+            result.add_error(f"Intent '{intent_name}' debe ser un diccionario")
+            return result
+            
+        # Validar campos requeridos
+        required_fields = ["tipo"]
+        for field in required_fields:
+            if field not in intent_data:
+                result.add_warning(f"Intent '{intent_name}' sin campo '{field}' (usando default)")
+                
+        # Validar tipos de datos
+        tipo = intent_data.get("tipo", "template")
+        if tipo not in ["template", "fixed", "hybrid"]:
+            result.add_warning(f"Intent '{intent_name}' tiene tipo desconocido '{tipo}'")
+            
+        # Validar entidades
+        entities = intent_data.get("entities", [])
+        if entities and not isinstance(entities, list):
+            result.add_error(f"Intent '{intent_name}': 'entities' debe ser una lista")
+        elif isinstance(entities, list):
+            for i, entity in enumerate(entities):
+                if not isinstance(entity, str):
+                    result.add_error(f"Intent '{intent_name}': entidad {i} debe ser string")
+                    
+        return result
+
+    @staticmethod
+    def _validate_examples_structure(intent_name: str, examples_data: Any) -> Tuple[List[str], ValidationResult]:
+        """Valida y normaliza la estructura de ejemplos"""
+        result = ValidationResult()
+        examples = []
+        
+        if not examples_data:
+            result.add_warning(f"Intent '{intent_name}' sin ejemplos definidos")
+            return examples, result
+            
+        # Manejar diferentes formatos
+        if isinstance(examples_data, list):
+            # Formato: ["ejemplo1", "ejemplo2"]
+            for i, example in enumerate(examples_data):
+                if isinstance(example, str) and example.strip():
+                    examples.append(example.strip())
+                else:
+                    result.add_warning(f"Intent '{intent_name}': ejemplo {i} inválido o vacío")
+                    
+        elif isinstance(examples_data, dict):
+            # Formato: {"examples": ["ejemplo1", "ejemplo2"]}
+            raw_examples = examples_data.get("examples", [])
+            if isinstance(raw_examples, list):
+                for i, example in enumerate(raw_examples):
+                    if isinstance(example, str) and example.strip():
+                        examples.append(example.strip())
+                    else:
+                        result.add_warning(f"Intent '{intent_name}': ejemplo {i} inválido o vacío")
+            else:
+                result.add_error(f"Intent '{intent_name}': 'examples' debe ser una lista")
+        else:
+            result.add_error(f"Intent '{intent_name}': ejemplos en formato desconocido")
+            
+        if examples:
+            result.add_info(f"Cargados {len(examples)} ejemplos válidos")
+        else:
+            result.add_warning(f"No se encontraron ejemplos válidos")
+            
+        return examples, result
+
+    @staticmethod
+    def _validate_templates_structure(intent_name: str, templates_data: Any) -> Tuple[List[str], ValidationResult]:
+        """Valida y extrae templates desde múltiples formatos"""
+        result = ValidationResult()
+        templates = []
+        
+        if not templates_data:
+            result.add_warning(f"Intent '{intent_name}' sin templates definidos")
+            return templates, result
+        
+        # Formato 1: Lista directa ["template1", "template2"]
+        if isinstance(templates_data, list):
+            for i, template in enumerate(templates_data):
+                if isinstance(template, str) and template.strip():
+                    templates.append(template.strip())
+                else:
+                    result.add_warning(f"Template {i} inválido o vacío")
+                    
+        # Formato 2: Diccionario {"templates": [...]}
+        elif isinstance(templates_data, dict):
+            raw_templates = templates_data.get("templates", [])
+            if isinstance(raw_templates, list):
+                for i, template in enumerate(raw_templates):
+                    if isinstance(template, str) and template.strip():
+                        templates.append(template.strip())
+                    else:
+                        result.add_warning(f"Template {i} inválido o vacío")
+            else:
+                result.add_error(f"'templates' debe ser una lista")
+        else:
+            result.add_error(f"Templates en formato desconocido")
+            
+        if templates:
+            result.add_info(f"Cargados {len(templates)} templates válidos")
+        else:
+            result.add_warning(f"No se encontraron templates válidos")
+            
+        return templates, result
+
+    @staticmethod
+    def _extract_nlu_templates(templates_data: Dict[str, Any], intent_name: str) -> Tuple[List[str], ValidationResult]:
+        """Extrae templates del formato NLU de Rasa"""
+        result = ValidationResult()
+        templates = []
+        
+        nlu_data = templates_data.get("nlu", [])
+        if not isinstance(nlu_data, list):
+            result.add_warning("Formato NLU inválido: 'nlu' debe ser una lista")
+            return templates, result
+            
+        for item in nlu_data:
+            if not isinstance(item, dict):
+                continue
+                
+            if item.get("intent") == intent_name:
+                examples_text = item.get("examples", "")
+                if not isinstance(examples_text, str):
+                    result.add_error(f"'examples' debe ser string en formato NLU")
+                    continue
+                    
+                # Parsear líneas con formato "- template"
+                for line_num, line in enumerate(examples_text.split('\n'), 1):
+                    line = line.strip()
+                    if line.startswith('- '):
+                        template_text = line[2:].strip()
+                        # Remover comillas si existen
+                        if template_text.startswith('"') and template_text.endswith('"'):
+                            template_text = template_text[1:-1]
+                        if template_text:
+                            templates.append(template_text)
+                        else:
+                            result.add_warning(f"Template vacío en línea {line_num}")
+                            
+                break  # Solo procesar el primer match
+                
+        if templates:
+            result.add_info(f"Extraídos {len(templates)} templates desde formato NLU")
+        else:
+            result.add_warning("No se encontraron templates en formato NLU")
+            
+        return templates, result
 
     @staticmethod
     def cargar_config(
         context_path="context/context_config.yml",
-        ejemplos_path="context/examples.yml",
+        ejemplos_path="context/examples.yml", 
         templates_path="context/templates.yml",
         responses_path="context/responses.yml",
-        segments_path="context/segments.yml"  # NUEVO: soporte para segments
+        segments_path="context/segments.yml"
     ) -> Dict[str, Any]:
-        """Carga la configuración completa de intents, entidades, slots y responses."""
+        """Carga la configuración completa con validación exhaustiva"""
+        
         base_path = Path(__file__).parent.parent
-        context_file = (base_path / context_path).resolve()
-        ejemplos_file = (base_path / ejemplos_path).resolve()
-        templates_file = (base_path / templates_path).resolve()
-        responses_file = (base_path / responses_path).resolve()
-        segments_file = (base_path / segments_path).resolve()  # NUEVO
-
-        # Verificar archivos requeridos
-        required_files = [context_file, ejemplos_file, templates_file, responses_file]
-        for f in required_files:
-            if not f.exists():
-                raise FileNotFoundError(f"No se encontró el archivo: {f}")
-
-        # Cargar todos los archivos
-        context_data = ConfigLoader._load_yaml(context_file)
-        ejemplos_data = ConfigLoader._load_yaml(ejemplos_file)
-        templates_data = ConfigLoader._load_yaml(templates_file)
-        responses_data = ConfigLoader._load_yaml(responses_file)
-        segments_data = ConfigLoader._load_yaml(segments_file)  # NUEVO
-
-        # Extraer configuraciones principales
+        files_info = {
+            "context": (base_path / context_path).resolve(),
+            "ejemplos": (base_path / ejemplos_path).resolve(), 
+            "templates": (base_path / templates_path).resolve(),
+            "responses": (base_path / responses_path).resolve(),
+            "segments": (base_path / segments_path).resolve()
+        }
+        
+        print("="*60)
+        print("INICIANDO CARGA DE CONFIGURACIÓN")
+        print("="*60)
+        
+        # Cargar archivos con validación
+        loaded_data = {}
+        overall_errors = []
+        
+        for component, file_path in files_info.items():
+            print(f"\n📂 Cargando {component}...")
+            data, validation = ConfigLoader._safe_load_yaml(file_path, component)
+            loaded_data[component] = data
+            validation.print_summary(component)
+            
+            if validation.has_errors():
+                if component in ["context", "examples", "templates"]:  # Archivos críticos
+                    overall_errors.extend(validation.errors)
+                    
+        # Verificar errores críticos
+        if overall_errors:
+            print(f"\n❌ ERRORES CRÍTICOS ENCONTRADOS:")
+            for error in overall_errors:
+                print(f"   • {error}")
+            raise ConfigLoadError("No se puede continuar con errores críticos en archivos requeridos")
+            
+        # Procesar datos cargados
+        context_data = loaded_data["context"]
+        ejemplos_data = loaded_data["ejemplos"] 
+        templates_data = loaded_data["templates"]
+        responses_data = loaded_data["responses"]
+        segments_data = loaded_data["segments"]
+        
+        print(f"\n🔧 Procesando configuración...")
+        
+        # Extraer configuraciones base
         intents_raw = context_data.get("intents", {})
         entities_config = context_data.get("entities", {})
         slots_config = context_data.get("slots", {})
-        detection_patterns = context_data.get("detection_patterns", {})
-        flow_groups = context_data.get("flow_groups", {})
-        story_starters = context_data.get("story_starters", [])
-        follow_up_only = context_data.get("follow_up_only", [])
         
-        # Configuraciones con defaults mejorados
-        context_validation = context_data.get("context_validation", {})
-        context_validation.setdefault("enabled", False)
-        context_validation.setdefault("action", "action_context_validator")
-        context_validation.setdefault("max_switches", 5)
+        if not intents_raw:
+            raise ConfigLoadError("No se encontraron intents en context_config.yml")
+            
+        print(f"   • Encontrados {len(intents_raw)} intents base")
+        print(f"   • Configuradas {len(entities_config)} entidades")
+        print(f"   • Configurados {len(slots_config)} slots")
         
-        session_config = context_data.get("session_config", {})
-        session_config.setdefault("session_expiration_time", 180)
-        session_config.setdefault("carry_over_slots_to_new_session", True)
+        # Procesar cada intent con validación
+        intents = {}
+        processing_errors = []
+        processing_warnings = []
         
-        fallback = context_data.get("fallback", {})
-        fallback.setdefault("action", "action_fallback")
-        fallback.setdefault("response", "Perdón, no entendí lo que quisiste decir.")
-        fallback.setdefault("threshold", 0.6)
-
-        intents: Dict[str, Any] = {}
-        grupos: Dict[str, List[str]] = {}
-
-        # Procesar cada intent
         for intent_name, intent_data in intents_raw.items():
-            tipo = intent_data.get("tipo", "template")
-            action = intent_data.get("action")
-            grupo = intent_data.get("grupo")
-            next_intents_raw = intent_data.get("next_intents", [])
-            story_starter = intent_data.get("story_starter", True)
-            entities = intent_data.get("entities", [])
-            detection_patterns_refs = intent_data.get("detection_patterns", [])
-            validation_rules = intent_data.get("validation_rules", {})
-            context_switch = intent_data.get("context_switch", False)  # NUEVO
-
-            # Clasificar automáticamente si no está explícito
-            if intent_name not in story_starters and intent_name not in follow_up_only:
-                if story_starter:
-                    story_starters.append(intent_name)
-                else:
-                    follow_up_only.append(intent_name)
-
-            # Cargar ejemplos con formato mejorado
-            ejemplos_raw = ejemplos_data.get(intent_name, [])
-            if isinstance(ejemplos_raw, dict):
-                ejemplos = ejemplos_raw.get("examples", [])
-            elif isinstance(ejemplos_raw, list):
-                ejemplos = ejemplos_raw
-            else:
-                ejemplos = []
-
-            # Cargar templates con soporte para múltiples formatos
+            print(f"\n🎯 Procesando intent '{intent_name}'...")
+            
+            # Validar estructura del intent
+            intent_validation = ConfigLoader._validate_intent_structure(intent_name, intent_data)
+            if intent_validation.has_errors():
+                processing_errors.extend(intent_validation.errors)
+                continue
+                
+            # Cargar ejemplos
+            ejemplos, ejemplos_validation = ConfigLoader._validate_examples_structure(
+                intent_name, ejemplos_data.get(intent_name)
+            )
+            ejemplos_validation.print_summary(f"ejemplos para '{intent_name}'")
+            
+            # Cargar templates (múltiples formatos)
             templates = []
             
-            # Formato 1: Direct key-value (templates.yml estándar)
-            templates_raw = templates_data.get(intent_name, [])
-            if isinstance(templates_raw, list):
-                templates = templates_raw
-            elif isinstance(templates_raw, dict):
-                templates = templates_raw.get("templates", [])
+            # Intentar formato directo primero
+            direct_templates, direct_validation = ConfigLoader._validate_templates_structure(
+                intent_name, templates_data.get(intent_name)
+            )
+            templates.extend(direct_templates)
             
-            # Formato 2: NLU format (si templates.yml tiene formato NLU como el tuyo)
-            if not templates and "nlu" in templates_data:
-                for nlu_item in templates_data["nlu"]:
-                    if isinstance(nlu_item, dict) and nlu_item.get("intent") == intent_name:
-                        examples_text = nlu_item.get("examples", "")
-                        # Parsear ejemplos de formato "- ejemplo"
-                        for line in examples_text.split('\n'):
-                            line = line.strip()
-                            if line.startswith('- '):
-                                template_text = line[2:].strip()
-                                # Remover comillas si existen
-                                if template_text.startswith('"') and template_text.endswith('"'):
-                                    template_text = template_text[1:-1]
-                                templates.append(template_text)
-
+            # Si no encontró templates, intentar formato NLU
+            if not templates:
+                nlu_templates, nlu_validation = ConfigLoader._extract_nlu_templates(
+                    templates_data, intent_name
+                )
+                templates.extend(nlu_templates)
+                
+                if not direct_templates and not nlu_templates:
+                    processing_warnings.append(f"Intent '{intent_name}': sin templates en ningún formato")
+            
             # Cargar responses
             responses = responses_data.get("responses", {}).get(f"utter_{intent_name}", [])
-
-            print(f"Intent '{intent_name}': {len(ejemplos)} ejemplos, {len(templates)} templates, {len(responses)} responses")
-
+            if not responses:
+                processing_warnings.append(f"Intent '{intent_name}': sin responses configuradas")
+                
             # Crear objeto intent
-            intent_obj = {
-                "tipo": tipo,
+            intents[intent_name] = {
+                "tipo": intent_data.get("tipo", "template"),
                 "ejemplos": ejemplos,
                 "templates": templates,
                 "responses": responses,
-                "action": action,
-                "entities": entities,
-                "detection_patterns": ConfigLoader._resolve_detection_patterns(detection_patterns_refs, detection_patterns),
-                "validation_rules": validation_rules,
-                "grupo": grupo,
-                "story_starter": story_starter,
-                "context_switch": context_switch,  # NUEVO
-                "next_intents_raw": next_intents_raw
+                "action": intent_data.get("action"),
+                "entities": intent_data.get("entities", []),
+                "grupo": intent_data.get("grupo"),
+                "story_starter": intent_data.get("story_starter", True),
+                "context_switch": intent_data.get("context_switch", False),
+                "next_intents": intent_data.get("next_intents", [])
             }
-
-            intents[intent_name] = intent_obj
-
-            # Agrupar por grupo
-            if grupo:
-                grupos.setdefault(grupo, []).append(intent_name)
-
-        # Expandir next_intents con mejor lógica
-        def expand_next_intents(next_list: List[str], visited: set = None) -> List[str]:
-            if visited is None:
-                visited = set()
-            expanded = []
-            for n in next_list:
-                if n in visited:
-                    continue
-                if n in flow_groups:
-                    visited.add(n)
-                    expanded.extend(expand_next_intents(flow_groups[n], visited))
-                elif n in grupos:
-                    visited.add(n)
-                    expanded.extend(grupos[n])
-                else:
-                    expanded.append(n)
-            # Remover duplicados manteniendo orden
-            seen = set()
-            return [x for x in expanded if not (x in seen or seen.add(x))]
-
-        # Aplicar expansión de next_intents
-        for intent_name, intent_obj in intents.items():
-            expanded_next = expand_next_intents(intent_obj.get("next_intents_raw", []))
-            intent_obj["next_intents"] = expanded_next
-            del intent_obj["next_intents_raw"]
-
-        print(f"ConfigLoader: cargados {len(intents)} intents, {len(story_starters)} story_starters, {len(follow_up_only)} follow_up_only")
+            
+            print(f"   ✅ {len(ejemplos)} ejemplos, {len(templates)} templates, {len(responses)} responses")
         
-        # NUEVO: Procesar segments para sinónimos
+        # Procesar segments/sinónimos
         segments = {}
         if segments_data.get("nlu"):
             for item in segments_data["nlu"]:
-                if item.get("synonym"):
+                if isinstance(item, dict) and item.get("synonym"):
                     synonym_name = item["synonym"]
                     examples_text = item.get("examples", "")
-                    # Parsear ejemplos de formato "- ejemplo"
                     examples_list = []
                     for line in examples_text.split('\n'):
                         line = line.strip()
                         if line.startswith('- '):
                             examples_list.append(line[2:])
-                    segments[synonym_name] = examples_list
+                    if examples_list:
+                        segments[synonym_name] = examples_list
+        
+        # Mostrar resumen final
+        print(f"\n📊 RESUMEN DE CARGA:")
+        print(f"   ✅ Intents procesados: {len(intents)}")
+        print(f"   ✅ Entidades configuradas: {len(entities_config)}")
+        print(f"   ✅ Segments/sinónimos: {len(segments)}")
+        
+        if processing_warnings:
+            print(f"   ⚠️  Advertencias: {len(processing_warnings)}")
+            for warning in processing_warnings[:3]:  # Mostrar solo las primeras 3
+                print(f"      • {warning}")
+            if len(processing_warnings) > 3:
+                print(f"      • ... y {len(processing_warnings) - 3} más")
+                
+        if processing_errors:
+            print(f"   ❌ Errores no críticos: {len(processing_errors)}")
+            
+        print("="*60)
         
         return {
             "intents": intents,
             "entities": entities_config,
             "slots": slots_config,
-            "detection_patterns": detection_patterns,
-            "fallback": fallback,
-            "flow_groups": flow_groups,
-            "story_starters": sorted(set(story_starters)),
-            "follow_up_only": sorted(set(follow_up_only)),
-            "context_validation": context_validation,
-            "session_config": session_config,
+            "segments": segments,
             "all_responses": responses_data.get("responses", {}),
-            "segments": segments  # NUEVO: incluir segmentos/sinónimos
-        }
-
-    @staticmethod
-    def _resolve_detection_patterns(pattern_refs: List[str], patterns_config: Dict[str, Any]) -> List[str]:
-        """Resuelve referencias a patrones de detección."""
-        resolved = []
-        for ref in pattern_refs:
-            if "." in ref:
-                parts = ref.split(".")
-                if len(parts) == 2:
-                    category, key = parts
-                    if category in patterns_config and key in patterns_config[category]:
-                        resolved.extend(patterns_config[category][key])
-            else:
-                if ref in patterns_config:
-                    resolved.extend(patterns_config[ref])
-        return resolved
-
-    # ===== MÉTODOS DE UTILIDAD EXTENDIDOS =====
-    
-    @staticmethod
-    def get_entities_for_intent(config: Dict[str, Any], intent_name: str) -> List[str]:
-        """Obtiene las entidades válidas para un intent específico"""
-        return config.get("intents", {}).get(intent_name, {}).get("entities", [])
-
-    @staticmethod
-    def get_detection_patterns_for_intent(config: Dict[str, Any], intent_name: str) -> List[str]:
-        """Obtiene los patrones de detección para un intent específico"""
-        return config.get("intents", {}).get(intent_name, {}).get("detection_patterns", [])
-
-    @staticmethod
-    def get_validation_rules_for_intent(config: Dict[str, Any], intent_name: str) -> Dict[str, Any]:
-        """Obtiene las reglas de validación para un intent específico"""
-        return config.get("intents", {}).get(intent_name, {}).get("validation_rules", {})
-
-    @staticmethod
-    def detect_sentiment_in_message(config: Dict[str, Any], message: str) -> str:
-        """Detecta el sentimiento en un mensaje usando los patrones configurados"""
-        message_lower = message.lower()
-        patterns = config.get("detection_patterns", {}).get("sentiment_analysis", {})
-        
-        # Verificar rechazo total primero (más específico)
-        rejection_indicators = patterns.get("rejection_indicators", [])
-        if any(indicator in message_lower for indicator in rejection_indicators):
-            return "rejection"
-        
-        # Verificar sentimientos negativos
-        negative_indicators = patterns.get("negative_indicators", [])
-        if any(indicator in message_lower for indicator in negative_indicators):
-            return "negative"
-        
-        # Verificar sentimientos positivos
-        positive_indicators = patterns.get("positive_indicators", [])
-        if any(indicator in message_lower for indicator in positive_indicators):
-            return "positive"
-        
-        return "neutral"
-
-    @staticmethod
-    def detect_implicit_intentions(config: Dict[str, Any], message: str) -> List[str]:
-        """Detecta intenciones implícitas en un mensaje"""
-        message_lower = message.lower()
-        patterns = config.get("detection_patterns", {}).get("implicit_intentions", {})
-        detected = []
-        
-        for intention_type, indicators in patterns.items():
-            if any(indicator in message_lower for indicator in indicators):
-                detected.append(intention_type)
-        
-        return detected
-
-    @staticmethod
-    def get_conversation_flow_stats(config: Dict[str, Any]) -> Dict[str, Any]:
-        """Analiza el flujo de conversación y devuelve estadísticas útiles."""
-        intents = config.get("intents", {})
-        story_starters = config.get("story_starters", [])
-        follow_up_only = config.get("follow_up_only", [])
-        flow_groups = config.get("flow_groups", {})
-        entities = config.get("entities", {})
-
-        connections = {}
-        for intent_name, intent_data in intents.items():
-            next_intents = intent_data.get("next_intents", [])
-            connections[intent_name] = len(next_intents)
-
-        terminal_intents = [name for name, count in connections.items() if count == 0]
-        most_connected = max(connections.items(), key=lambda x: x[1]) if connections else None
-
-        # Estadísticas de entidades
-        entity_stats = {
-            "total_entities": len(entities),
-            "lookup_entities": len([e for e in entities.values() if isinstance(e, dict) and e.get("lookup_table", False)]),
-            "pattern_entities": len([e for e in entities.values() if isinstance(e, dict) and e.get("patterns", [])])
-        }
-
-        return {
-            "total_intents": len(intents),
-            "story_starters_count": len(story_starters),
-            "follow_up_only_count": len(follow_up_only),
-            "flow_groups_count": len(flow_groups),
-            "terminal_intents": terminal_intents,
-            "most_connected_intent": most_connected[0] if most_connected else None,
-            "max_connections": most_connected[1] if most_connected else 0,
-            "average_connections": sum(connections.values()) / len(connections) if connections else 0,
-            "context_validation_enabled": config.get("context_validation", {}).get("enabled", False),
-            "entity_stats": entity_stats,
-            "segments_count": len(config.get("segments", {}))  # NUEVO
+            # Agregar configuraciones adicionales del context
+            **{k: v for k, v in context_data.items() 
+               if k not in ["intents", "entities", "slots"]}
         }

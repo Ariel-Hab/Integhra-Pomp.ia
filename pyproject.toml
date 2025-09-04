@@ -36,6 +36,8 @@ rasa = "^3.6.21"
 # Scripts para llamar directamente a manage.py desde poetry
 [tool.poetry.scripts]
 manage = "scripts.manage:main"
+docker = "scripts.docker_helper:menu"
+chat = "scripts.chat_console:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -1,126 +1,132 @@
 version: '3.1'
 stories:
-- story: story_buscar_oferta_1
+- story: story_saludo_1
   steps:
   - &id001
-    intent: buscar_oferta
+    intent: saludo
   - &id002
-    action: action_busqueda_situacion
-- story: story_buscar_oferta_2
+    action: action_smalltalk_situacion
+- story: story_saludo_2
   steps:
   - *id001
   - *id002
-  - intent: afirmar
-  - action: action_conf_neg_agradecer
-- story: story_buscar_oferta_3
+  - intent: preguntar_como_estas
+  - action: action_smalltalk_situacion
+- story: story_saludo_3
   steps:
   - *id001
   - *id002
-  - intent: completar_pedido
+  - intent: buscar_producto
   - action: action_busqueda_situacion
-- story: story_buscar_producto_1
+- story: story_preguntar_como_estas_1
   steps:
   - &id003
-    intent: buscar_producto
+    intent: preguntar_como_estas
   - &id004
-    action: action_busqueda_situacion
-- story: story_buscar_producto_2
+    action: action_smalltalk_situacion
+- story: story_preguntar_como_estas_2
   steps:
   - *id003
   - *id004
-  - intent: completar_pedido
-  - action: action_busqueda_situacion
-- story: story_buscar_producto_3
+  - intent: responder_como_estoy
+  - action: action_smalltalk_situacion
+- story: story_preguntar_como_estas_3
   steps:
   - *id003
   - *id004
-  - intent: afirmar
-  - action: action_conf_neg_agradecer
-- story: story_consultar_novedades_oferta_1
+  - intent: responder_estoy_bien
+  - action: action_smalltalk_situacion
+- story: story_pedir_chiste_1
   steps:
   - &id005
-    intent: consultar_novedades_oferta
+    intent: pedir_chiste
   - &id006
-    action: action_generica
-- story: story_consultar_novedades_oferta_2
+    action: action_smalltalk_situacion
+- story: story_pedir_chiste_2
   steps:
   - *id005
   - *id006
-  - intent: buscar_oferta
+  - intent: buscar_producto
   - action: action_busqueda_situacion
-- story: story_consultar_novedades_oferta_3
+- story: story_pedir_chiste_3
   steps:
   - *id005
   - *id006
-  - intent: consultar_recomendaciones_oferta
-  - action: action_generica
-- story: story_consultar_novedades_producto_1
-  steps:
-  - &id007
-    intent: consultar_novedades_producto
-  - &id008
-    action: action_generica
-- story: story_consultar_novedades_producto_2
-  steps:
-  - *id007
-  - *id008
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-- story: story_consultar_novedades_producto_3
-  steps:
-  - *id007
-  - *id008
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-- story: story_consultar_recomendaciones_oferta_1
-  steps:
-  - &id009
-    intent: consultar_recomendaciones_oferta
-  - &id010
-    action: action_generica
-- story: story_consultar_recomendaciones_oferta_2
-  steps:
-  - *id009
-  - *id010
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-- story: story_consultar_recomendaciones_producto_1
-  steps:
-  - &id011
-    intent: consultar_recomendaciones_producto
-  - &id012
-    action: action_generica
-- story: story_consultar_recomendaciones_producto_2
-  steps:
-  - *id011
-  - *id012
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-- story: story_consultar_recomendaciones_producto_3
-  steps:
-  - *id011
-  - *id012
   - intent: buscar_oferta
   - action: action_busqueda_situacion
 - story: story_despedida
   steps:
   - intent: despedida
   - action: action_smalltalk_situacion
-- story: story_modificar_busqueda_1
+- story: story_buscar_producto_1
   steps:
-  - &id013
-    intent: modificar_busqueda
-  - &id014
-    action: action_generic_intent_reporter
-- story: story_modificar_busqueda_2
+  - &id007
+    intent: buscar_producto
+  - &id008
+    action: action_busqueda_situacion
+- story: story_buscar_producto_2
   steps:
-  - *id013
-  - *id014
+  - *id007
+  - *id008
+  - intent: completar_pedido
+  - action: action_busqueda_situacion
+- story: story_buscar_producto_3
+  steps:
+  - *id007
+  - *id008
+  - intent: afirmar
+  - action: action_conf_neg_agradecer
+- story: story_buscar_oferta_1
+  steps:
+  - &id009
+    intent: buscar_oferta
+  - &id010
+    action: action_busqueda_situacion
+- story: story_buscar_oferta_2
+  steps:
+  - *id009
+  - *id010
+  - intent: afirmar
+  - action: action_conf_neg_agradecer
+- story: story_buscar_oferta_3
+  steps:
+  - *id009
+  - *id010
+  - intent: completar_pedido
+  - action: action_busqueda_situacion
+- story: story_consultar_novedades_producto_1
+  steps:
+  - &id011
+    intent: consultar_novedades_producto
+  - &id012
+    action: action_generica
+- story: story_consultar_novedades_producto_2
+  steps:
+  - *id011
+  - *id012
   - intent: buscar_producto
   - action: action_busqueda_situacion
-- story: story_modificar_busqueda_3
+- story: story_consultar_novedades_producto_3
+  steps:
+  - *id011
+  - *id012
+  - intent: buscar_oferta
+  - action: action_busqueda_situacion
+- story: story_consultar_novedades_oferta_1
+  steps:
+  - &id013
+    intent: consultar_novedades_oferta
+  - &id014
+    action: action_generica
+- story: story_consultar_novedades_oferta_2
   steps:
   - *id013
   - *id014
   - intent: buscar_oferta
   - action: action_busqueda_situacion
+- story: story_consultar_novedades_oferta_3
+  steps:
+  - *id013
+  - *id014
+  - intent: consultar_recomendaciones_oferta
+  - action: action_generica
