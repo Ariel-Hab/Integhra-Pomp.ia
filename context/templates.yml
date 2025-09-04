@@ -1,0 +1,148 @@
+#templates.yml
+
+version: "3.1"
+
+nlu:
+
+# ---------------------------
+# 🔹 SALUDO Y SOCIALES
+# ---------------------------
+- intent: saludo
+  examples: |
+    - {inicio}
+    - {inicio} {cierre}
+
+- intent: agradecer
+  examples: |
+    - {cierre}
+
+# ---------------------------
+# 🔹 BÚSQUEDA PRODUCTOS
+# ---------------------------
+- intent: buscar_producto
+  examples: |
+    - {inicio} {solicitud_de_ayuda} necesito {producto} {cierre}
+    - {inicio} me pasás info de {producto}?
+    - quiero {cantidad} de {producto} de {proveedor}
+    - {solicitud_de_ayuda}, qué tienen de {categoria}?
+    - hay {producto} con {ingrediente_activo} en {dosis}?
+    - {duda}, se consigue {producto}?
+
+# ---------------------------
+# 🔹 BÚSQUEDA OFERTAS
+# ---------------------------
+- intent: buscar_oferta
+  examples: |
+    - {inicio} {solicitud_de_ayuda}, hay ofertas de {producto}?
+    - qué promos tienen en {categoria}?
+    - hay descuentos del laboratorio {proveedor}?
+    - {producto} con {ingrediente_activo} está en promo?
+    - {duda} {solicitud_de_ayuda}, alguna oferta de {producto} en {dosis}?
+
+# ---------------------------
+# 🔹 NOVEDADES PRODUCTOS
+# ---------------------------
+- intent: consultar_novedades_producto
+  examples: |
+    - {inicio} qué productos nuevos llegaron?
+    - hay novedades para {animal}?
+    - lo último en {categoria} qué es?
+    - entró algo nuevo de {proveedor}?
+    - hay algo nuevo con {ingrediente_activo}?
+    - {duda} novedades de {producto} en {dosis}?
+
+# ---------------------------
+# 🔹 NOVEDADES OFERTAS
+# ---------------------------
+- intent: consultar_novedades_oferta
+  examples: |
+    - {inicio} {solicitud_de_ayuda}, qué ofertas nuevas hay de {producto}?
+    - promos recientes en {categoria}?
+    - hay promociones nuevas para mi {animal}?
+    - descuentos nuevos del laboratorio {proveedor}?
+    - {duda}, novedades de ofertas con {ingrediente_activo}?
+    - qué promos nuevas hay de {producto} en {dosis}?
+
+# ---------------------------
+# 🔹 RECOMENDACIONES PRODUCTOS
+# ---------------------------
+- intent: consultar_recomendaciones_producto
+  examples: |
+    - {inicio} qué me recomendás de {producto}?
+    - cuál {producto} es mejor?
+    - qué conviene para mi {animal}?
+    - me sugerís algo de {categoria}?
+    - {solicitud_de_ayuda}, qué producto recomendás del laboratorio {proveedor}?
+    - {duda}, me conviene {producto} en {dosis}?
+
+# ---------------------------
+# 🔹 RECOMENDACIONES OFERTAS
+# ---------------------------
+- intent: consultar_recomendaciones_oferta
+  examples: |
+    - {inicio} qué oferta me recomendás de {producto}?
+    - cuál promo de {producto} es mejor?
+    - qué oferta conviene para un {animal}?
+    - promos recomendadas en {categoria}?
+    - me sugerís descuentos de {proveedor}?
+    - {solicitud_de_ayuda}, qué promos con {ingrediente_activo} me recomendás?
+    - {duda}, ofertas recomendadas de {producto} en {dosis}?
+
+# ---------------------------
+# 🔹 MODIFICAR BÚSQUEDA
+# ---------------------------
+- intent: modificar_busqueda
+  examples: |
+    - mejor mostrame {producto}
+    - en realidad quiero {producto} de {proveedor}
+    - prefiero {producto} en {dosis}
+    - cambiá a {cantidad} de {producto}
+    - mostrame {producto} con {ingrediente_activo}
+    - {duda}, en vez de {proveedor}, buscá {categoria}
+    - {solicitud_de_ayuda} cambiemos a ofertas de {producto}
+
+completar_pedido:  
+  # Con producto
+  - '{producto}'
+  - 'el producto sería {producto}'
+  - 'lo que necesito es {producto}'
+  - 'sumá {producto} al pedido'
+  
+  # Con proveedor
+  - 'de {proveedor}'
+  - 'laboratorio {proveedor}'
+  - 'marca {proveedor}'
+
+  # Con categoría
+  - '{categoria}'
+  - 'es de la categoría {categoria}'
+  - 'va en {categoria}'
+  
+  # Con ingrediente activo
+  - 'que tenga {ingrediente_activo}'
+  - 'con principio activo {ingrediente_activo}'
+  - 'que contenga {ingrediente_activo}'
+
+  # Con compuesto
+  - 'con {compuesto}'
+  - 'que traiga {compuesto}'
+
+  # Con dosis
+  - 'de {dosis}'
+  - 'en presentación {dosis}'
+  - 'formato {dosis}'
+
+  # Con cantidad
+  - 'necesito {cantidad} unidades'
+  - 'por {cantidad}'
+  - 'sumá {cantidad}'
+
+  # Combinados
+  - '{producto} de {proveedor}'
+  - '{producto} con {ingrediente_activo}'
+  - '{producto} en {dosis}'
+  - '{cantidad} de {producto}'
+  - '{producto} de {categoria}'
+  - '{producto} con {compuesto}'
+  - '{producto} de {proveedor} en {dosis}'
+  - '{cantidad} unidades con {ingrediente_activo}'

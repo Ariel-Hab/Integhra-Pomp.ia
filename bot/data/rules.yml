@@ -40,6 +40,26 @@ rules:
   steps:
   - intent: completar_pedido
   - action: action_busqueda_situacion
+- rule: rule_consultar_novedades_producto
+  steps:
+  - intent: consultar_novedades_producto
+  - action: action_generica
+- rule: rule_consultar_novedades_oferta
+  steps:
+  - intent: consultar_novedades_oferta
+  - action: action_generica
+- rule: rule_consultar_recomendaciones_producto
+  steps:
+  - intent: consultar_recomendaciones_producto
+  - action: action_generica
+- rule: rule_consultar_recomendaciones_oferta
+  steps:
+  - intent: consultar_recomendaciones_oferta
+  - action: action_generica
+- rule: rule_modificar_busqueda
+  steps:
+  - intent: modificar_busqueda
+  - action: action_generic_intent_reporter
 - rule: rule_afirmar
   steps:
   - intent: afirmar
@@ -52,3 +72,11 @@ rules:
   steps:
   - intent: agradecimiento
   - action: action_conf_neg_agradecer
+- rule: rule_off_topic
+  steps:
+  - intent: off_topic
+  - action: action_fallback
+- rule: rule_default_fallback
+  steps:
+  - intent: nlu_fallback
+  - action: action_default_fallback
