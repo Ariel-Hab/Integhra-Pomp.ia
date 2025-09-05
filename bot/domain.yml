@@ -237,12 +237,6 @@ slots:
     influence_conversation: false
     mappings:
     - type: custom
-  pedido_incompleto:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-    - type: custom
   user_engagement_level:
     type: categorical
     values:
@@ -257,9 +251,62 @@ slots:
     - interested
     - needs_guidance
     - satisfied
+    - awaiting_confirmation
+    - awaiting_parameters
+    initial_value: neutral
     influence_conversation: false
     mappings:
     - type: custom
+  pending_suggestion:
+    type: any
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: custom
+    description: Almacena sugerencias pendientes (entity_correction, type_correction, missing_parameters)
+  suggestion_context:
+    type: any
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: custom
+    description: Contexto adicional para el sistema de sugerencias
+  search_history:
+    type: any
+    initial_value: []
+    influence_conversation: false
+    mappings:
+    - type: custom
+    description: Historial de búsquedas realizadas en la sesión
+  context_decision_pending:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+    - type: custom
+    description: Indica si hay una decisión de contexto pendiente
+  current_search_params:
+    type: any
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: custom
+    description: Parámetros de búsqueda actuales siendo procesados
+  validation_errors:
+    type: any
+    initial_value: []
+    influence_conversation: false
+    mappings:
+    - type: custom
+    description: Errores de validación temporales
+  pedido_incompleto:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+    - type: custom
+    deprecated: true
+    description: 'OBSOLETO: Reemplazado por sistema unificado de sugerencias'
 responses:
   utter_saludo:
   - text: ¡Hola!🐶
