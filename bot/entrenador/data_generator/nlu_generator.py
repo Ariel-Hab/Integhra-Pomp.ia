@@ -3,73 +3,91 @@ import re
 import yaml
 from typing import Any, Dict, List, Tuple, Optional
 from pathlib import Path
-from bot.entrenador.importer import anotar_entidades
+from dataclasses import dataclass
+from enum import Enum
+from bot.entrenador.importer import UnifiedEntityManager
 from bot.entrenador.utils import aplicar_perturbacion
 
 class GenerationError(Exception):
     """Excepción específica para errores de generación NLU"""
     pass
 
-class GenerationResult:
-    """Resultado de generación con métricas detalladas"""
-    def __init__(self, intent_name: str):
-        self.intent_name = intent_name
-        self.fixed_examples = 0
-        self.generated_examples = 0
-        self.skipped_templates = 0
-        self.failed_generations = 0
-        self.entity_errors = 0
-        self.warnings: List[str] = []
-        self.errors: List[str] = []
-        
-    def add_warning(self, message: str) -> None:
-        self.warnings.append(message)
-        
-    def add_error(self, message: str) -> None:
-        self.errors.append(message)
-        
+@dataclass
+class IntentResult:
+    """Resultado simplificado por intent"""
+    name: str
+    fixed_examples: int = 0
+    generated_examples: int = 0
+    errors: List[str] = None
+    
+    def __post_init__(self):
+        if self.errors is None:
+            self.errors = []
+    
     def total_examples(self) -> int:
         return self.fixed_examples + self.generated_examples
-        
-    def has_issues(self) -> bool:
-        return len(self.warnings) > 0 or len(self.errors) > 0
-        
-    def print_summary(self) -> None:
-        """Imprime un resumen claro de la generación"""
-        total = self.total_examples()
-        
-        if total > 0:
-            print(f"✅ '{self.intent_name}': {total} ejemplos "
-                  f"({self.fixed_examples} fijos + {self.generated_examples} generados)")
-        else:
-            print(f"❌ '{self.intent_name}': 0 ejemplos generados")
-            
-        if self.skipped_templates > 0:
-            print(f"   ⏭️ {self.skipped_templates} templates omitidos (sin entidades)")
-            
-        if self.failed_generations > 0:
-            print(f"   ⚠️ {self.failed_generations} generaciones fallidas")
-            
-        if self.entity_errors > 0:
-            print(f"   🔍 {self.entity_errors} errores de anotación de entidades")
-            
-        for warning in self.warnings:
-            print(f"   ⚠️ {warning}")
-            
-        for error in self.errors:
-            print(f"   ❌ {error}")
+    
+    def has_errors(self) -> bool:
+        return len(self.errors) > 0
+    
+    def add_error(self, message: str):
+        self.errors.append(message)
 
-class TrainingLimitsLoader:
-    """Carga límites de entrenamiento con mejor manejo de errores"""
+class SimpleLogger:
+    """Sistema de logging simplificado para generación NLU"""
     
     @staticmethod
-    def load_limits(limits_file: str = "training_limits.yml") -> Tuple[Dict[str, int], List[str]]:
-        """
-        Carga límites desde archivo de configuración
-        Returns: (limits_dict, error_messages)
-        """
-        errors = []
+    def log_intents_to_process(intents: List[str], with_templates: List[str], only_fixed: List[str]):
+        """Log inicial de intents a procesar"""
+        print("=" * 80)
+        print("🚀 GENERACIÓN NLU - INTENTS A PROCESAR")
+        print("=" * 80)
+        print(f"📋 Total intents: {len(intents)}")
         
+        if with_templates:
+            print(f"🔧 Con templates ({len(with_templates)}): {', '.join(with_templates)}")
+        
+        if only_fixed:
+            print(f"📝 Solo ejemplos fijos ({len(only_fixed)}): {', '.join(only_fixed)}")
+        
+        print()
+    
+    @staticmethod
+    def log_final_results(results: List[IntentResult], total_examples: int):
+        """Log final de resultados"""
+        print("=" * 80)
+        print("📊 RESUMEN FINAL")
+        print("=" * 80)
+        
+        successful = [r for r in results if not r.has_errors() and r.total_examples() > 0]
+        failed = [r for r in results if r.has_errors()]
+        empty = [r for r in results if not r.has_errors() and r.total_examples() == 0]
+        
+        print(f"✅ Ejemplos generados: {total_examples}")
+        print(f"🎯 Intents exitosos: {len(successful)}")
+        if empty:
+            print(f"⚪ Intents sin ejemplos: {len(empty)}")
+        if failed:
+            print(f"❌ Intents fallidos: {len(failed)}")
+        
+        # Mostrar intents fallidos con sus errores
+        if failed:
+            print(f"\n❌ INTENTS CON ERRORES:")
+            for result in failed:
+                print(f"   • {result.name}:")
+                for error in result.errors[:2]:  # Solo mostrar los primeros 2 errores
+                    print(f"     - {error}")
+                if len(result.errors) > 2:
+                    print(f"     ... y {len(result.errors) - 2} errores más")
+        
+        print("=" * 80)
+
+class TrainingLimitsLoader:
+    """Carga límites de entrenamiento simplificada"""
+    
+    @staticmethod
+    def load_limits(limits_file: str = "training_limits.yml") -> Dict[str, int]:
+        """Carga límites desde archivo de configuración"""
         try:
             # Buscar archivo en múltiples ubicaciones
             search_paths = [
@@ -86,38 +104,30 @@ class TrainingLimitsLoader:
                     break
                     
             if not limits_path:
-                errors.append(f"Archivo {limits_file} no encontrado en: {[str(p) for p in search_paths]}")
-                return {}, errors
+                return {}
             
             with open(limits_path, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f) or {}
                 
             if not isinstance(config, dict):
-                errors.append("El archivo de límites debe contener un diccionario válido")
-                return {}, errors
-            
-            # Validar estructura básica
-            expected_sections = ['intent_limits', 'group_limits', 'profiles']
-            missing_sections = [s for s in expected_sections if s not in config]
-            if missing_sections:
-                errors.append(f"Secciones faltantes en límites: {missing_sections}")
+                return {}
             
             # Combinar límites por intent y grupo
             limits = {}
             
             # Límites específicos por intent (prioritario)
             intent_limits = config.get('intent_limits', {})
-            if not isinstance(intent_limits, dict):
-                errors.append("'intent_limits' debe ser un diccionario")
-            else:
-                limits.update(intent_limits)
+            if isinstance(intent_limits, dict):
+                for intent, limit in intent_limits.items():
+                    if isinstance(limit, (int, float)) and limit >= 0:
+                        limits[intent] = int(limit)
             
             # Límites por grupo (fallback)
             group_limits = config.get('group_limits', {})
-            if not isinstance(group_limits, dict):
-                errors.append("'group_limits' debe ser un diccionario")
-            else:
-                limits.update(group_limits)
+            if isinstance(group_limits, dict):
+                for group, limit in group_limits.items():
+                    if isinstance(limit, (int, float)) and limit >= 0:
+                        limits[group] = int(limit)
             
             # Aplicar perfil activo
             active_profile = config.get('active_profile', 'balanced')
@@ -125,13 +135,9 @@ class TrainingLimitsLoader:
             
             if active_profile in profiles:
                 profile = profiles[active_profile]
-                if not isinstance(profile, dict):
-                    errors.append(f"El perfil '{active_profile}' debe ser un diccionario")
-                else:
+                if isinstance(profile, dict):
                     multiplier = profile.get('multiplier', 1.0)
-                    if not isinstance(multiplier, (int, float)) or multiplier < 0:
-                        errors.append(f"Multiplicador inválido en perfil '{active_profile}': {multiplier}")
-                    else:
+                    if isinstance(multiplier, (int, float)) and multiplier > 0:
                         # Aplicar multiplicador
                         for key, value in limits.items():
                             if isinstance(value, (int, float)) and value > 0:
@@ -141,35 +147,22 @@ class TrainingLimitsLoader:
                         profile_overrides = profile.get('intent_overrides', {})
                         if isinstance(profile_overrides, dict):
                             limits.update(profile_overrides)
-            else:
-                if active_profile != 'balanced':  # Solo advertir si no es el default
-                    errors.append(f"Perfil '{active_profile}' no encontrado")
             
-            print(f"✅ Límites cargados desde {limits_path} (perfil: {active_profile})")
-            return limits, errors
+            return limits
             
-        except yaml.YAMLError as e:
-            errors.append(f"Error de sintaxis YAML: {e}")
-            return {}, errors
-        except Exception as e:
-            errors.append(f"Error inesperado cargando límites: {e}")
-            return {}, errors
+        except Exception:
+            return {}
 
 class PatternLoader:
-    """Carga patterns con mejor validación"""
+    """Carga patterns simplificada"""
     
     _patterns_cache = {}
     
     @staticmethod
-    def load_patterns(patterns_file: str = "entidades.yml") -> Tuple[Dict[str, List[str]], List[str]]:
-        """
-        Carga patterns desde archivo YAML
-        Returns: (patterns_dict, error_messages)
-        """
+    def load_patterns(patterns_file: str = "entidades.yml") -> Dict[str, List[str]]:
+        """Carga patterns desde archivo YAML"""
         if patterns_file in PatternLoader._patterns_cache:
-            return PatternLoader._patterns_cache[patterns_file], []
-        
-        errors = []
+            return PatternLoader._patterns_cache[patterns_file]
         
         try:
             # Buscar en múltiples ubicaciones
@@ -187,44 +180,33 @@ class PatternLoader:
                     break
                     
             if not patterns_path:
-                errors.append(f"Archivo {patterns_file} no encontrado")
-                return {}, errors
+                return {}
             
             with open(patterns_path, 'r', encoding='utf-8') as f:
                 data = yaml.safe_load(f) or {}
                 
             if not isinstance(data, dict):
-                errors.append("El archivo de patterns debe contener un diccionario")
-                return {}, errors
+                return {}
             
             patterns = data.get('entity_patterns', {})
             if not isinstance(patterns, dict):
-                errors.append("'entity_patterns' debe ser un diccionario")
-                return {}, errors
+                return {}
                 
-            # Validar que los patterns sean listas
-            invalid_patterns = []
+            # Filtrar patterns válidos
+            valid_patterns = {}
             for entity, pattern_list in patterns.items():
-                if not isinstance(pattern_list, list):
-                    invalid_patterns.append(entity)
-                elif not pattern_list:  # Lista vacía
-                    errors.append(f"Entidad '{entity}' tiene lista de patterns vacía")
-                    
-            if invalid_patterns:
-                errors.append(f"Patterns con formato inválido: {invalid_patterns}")
-                # Filtrar patterns inválidos
-                patterns = {k: v for k, v in patterns.items() 
-                          if isinstance(v, list)}
+                if isinstance(pattern_list, list) and pattern_list:
+                    valid_items = [item for item in pattern_list if isinstance(item, str) and item.strip()]
+                    if valid_items:
+                        valid_patterns[entity] = valid_items
+                        
+            PatternLoader._patterns_cache[patterns_file] = valid_patterns
+            return valid_patterns
             
-            PatternLoader._patterns_cache[patterns_file] = patterns
-            print(f"✅ Patterns cargados: {list(patterns.keys())}")
-            return patterns, errors
-            
-        except Exception as e:
-            errors.append(f"Error cargando patterns: {e}")
-            return {}, errors
+        except Exception:
+            return {}
 
-# Valores aleatorios con validación
+# Configuración de entidades y valores
 VALORES_ALEATORIOS = {
     "cantidad": lambda: str(random.randint(1, 20)),
     "dosis": lambda: random.choice([
@@ -247,152 +229,169 @@ ENTIDADES_LOOKUP = {
 }
 
 class NLUGenerator:
-
+    
     @staticmethod
-    def _validate_template(template: str, campos: Dict[str, Any]) -> Tuple[bool, str]:
-        """Valida si un template puede ser procesado con los campos disponibles"""
-        if not template or not isinstance(template, str):
-            return False, "Template vacío o inválido"
+    def _load_segments_manually() -> Dict[str, List[str]]:
+        """Carga segments manualmente desde segments.yml como fallback"""
+        try:
+            # Buscar segments.yml en múltiples ubicaciones
+            search_paths = [
+                Path("context/segments.yml"),
+                Path("segments.yml"),
+                Path.cwd() / "context" / "segments.yml",
+                Path.cwd() / "segments.yml"
+            ]
             
-        # Extraer placeholders del template
-        placeholders = set(re.findall(r'\{(\w+)\}', template))
-        
-        if not placeholders:
-            return True, "Template sin placeholders (texto fijo)"
+            segments_path = None
+            for path in search_paths:
+                if path.exists():
+                    segments_path = path
+                    break
             
-        # Verificar que tenemos valores para todos los placeholders
-        missing_fields = []
-        for placeholder in placeholders:
-            if placeholder not in campos or not campos[placeholder]:
-                missing_fields.append(placeholder)
+            if not segments_path:
+                return {}
                 
-        if missing_fields:
-            return False, f"Faltan campos requeridos: {missing_fields}"
+            with open(segments_path, 'r', encoding='utf-8') as f:
+                segments_data = yaml.safe_load(f)
             
-        return True, "Template válido"
+            if not isinstance(segments_data, dict):
+                return {}
+            
+            nlu_data = segments_data.get("nlu", [])
+            if not isinstance(nlu_data, list):
+                return {}
+            
+            segments = {}
+            
+            for item in nlu_data:
+                if not isinstance(item, dict) or not item.get("synonym"):
+                    continue
+                    
+                synonym_name = item["synonym"]
+                examples_text = item.get("examples", "")
+                
+                if not isinstance(examples_text, str):
+                    continue
+                
+                examples_list = []
+                for line in examples_text.split('\n'):
+                    line = line.strip()
+                    if line.startswith('- '):
+                        example = line[2:].strip()
+                        if example:
+                            examples_list.append(example)
+                
+                if examples_list:
+                    segments[synonym_name] = examples_list
+            
+            return segments
+            
+        except Exception:
+            return {}
 
     @staticmethod
-    def generar_frase(template: str, campos: dict, segments: dict = None) -> Tuple[Optional[str], List[str]]:
-        """
-        Genera una frase a partir de un template reemplazando placeholders.
-        Returns: (frase_generada, lista_de_errores)
-        """
+    def generar_frase(template: str, campos: dict, segments: dict = None) -> Optional[str]:
+        """Genera una frase a partir de un template"""
+        if not template or not isinstance(template, str):
+            return None
+            
         if segments is None:
             segments = {}
             
-        errors = []
         resultado = template
         
-        # Validar template básico
-        if not template or not isinstance(template, str):
-            errors.append("Template vacío o inválido")
-            return None, errors
-        
         try:
-            # Primero reemplazar segments/sinónimos
+            # Reemplazar segments/sinónimos
             for segment_name, segment_values in segments.items():
                 pattern = f"{{{segment_name}}}"
-                if pattern in resultado:
-                    if not segment_values or not isinstance(segment_values, list):
-                        errors.append(f"Segment '{segment_name}' vacío o inválido")
-                        continue
+                if pattern in resultado and segment_values and isinstance(segment_values, list):
                     valor_random = random.choice(segment_values)
                     resultado = resultado.replace(pattern, valor_random)
             
-            # Luego reemplazar entidades específicas
-            placeholders_procesados = 0
+            # Reemplazar entidades específicas
             for m in re.finditer(r"\{(\w+)\}", template):
                 key = m.group(1)
                 valores = campos.get(key)
                 
                 if not valores:
-                    errors.append(f"Falta valor para '{key}'")
-                    return None, errors
+                    return None
                     
                 if isinstance(valores, list):
                     if not valores:
-                        errors.append(f"Lista vacía para '{key}'")
-                        return None, errors
-                    valor_str = " y ".join(str(v) for v in valores if v)
+                        return None
+                    valores_validos = [str(v) for v in valores if v and str(v).strip()]
+                    if not valores_validos:
+                        return None
+                    valor_str = " y ".join(valores_validos)
                 else:
                     valor_str = str(valores)
                     
                 if not valor_str.strip():
-                    errors.append(f"Valor vacío para '{key}'")
-                    return None, errors
+                    return None
                     
                 resultado = resultado.replace(f"{{{key}}}", valor_str, 1)
-                placeholders_procesados += 1
             
             # Limpiar resultado
             resultado = re.sub(r"\?{2,}", "?", resultado)
             resultado = re.sub(r"\.{2,}", ".", resultado)
             resultado = re.sub(r"\s+", " ", resultado).strip()
             
-            if not resultado:
-                errors.append("Resultado vacío después del procesamiento")
-                return None, errors
-                
-            return resultado, errors
+            return resultado if resultado else None
             
-        except Exception as e:
-            errors.append(f"Error procesando template: {e}")
-            return None, errors
+        except Exception:
+            return None
 
     @staticmethod
     def _prepare_entity_fields(entidades_requeridas: List[str], lookup: Dict[str, List[str]], 
-                              entity_patterns: Dict[str, List[str]]) -> Tuple[Dict[str, Any], List[str]]:
-        """Prepara campos de entidades con validación exhaustiva"""
+                              entity_patterns: Dict[str, List[str]], segments: Dict[str, List[str]]) -> Dict[str, Any]:
+        """Prepara campos de entidades"""
         campos = {}
-        errors = []
         
-        # Siempre incluir producto base
-        productos = lookup.get("producto", [])
-        if not productos:
-            productos = ["producto_generico"]
-            errors.append("No hay productos en lookup, usando genérico")
-        campos["producto"] = [random.choice(productos)]
-        
-        # Procesar entidades requeridas
         for entidad in entidades_requeridas:
-            if entidad == "producto":
-                continue  # Ya procesado
-                
             valor_asignado = False
             
-            # Estrategia 1: Entidades con lookup tables
-            if entidad in ENTIDADES_LOOKUP:
-                posibles = lookup.get(entidad, [])
-                if posibles:
-                    campos[entidad] = [random.choice(posibles)]
-                    valor_asignado = True
-                else:
-                    errors.append(f"Lookup vacío para entidad '{entidad}'")
+            # Estrategia 1: Buscar en segments
+            if entidad in segments:
+                valores = segments[entidad]
+                if valores and isinstance(valores, list):
+                    valores_validos = [v for v in valores if v and str(v).strip()]
+                    if valores_validos:
+                        campos[entidad] = [random.choice(valores_validos)]
+                        valor_asignado = True
             
-            # Estrategia 2: Fallback a patterns si lookup falló
+            # Estrategia 2: Entidades con lookup tables
+            if not valor_asignado and entidad in ENTIDADES_LOOKUP:
+                posibles = lookup.get(entidad, [])
+                if posibles and isinstance(posibles, list):
+                    posibles_validos = [p for p in posibles if p and str(p).strip()]
+                    if posibles_validos:
+                        campos[entidad] = [random.choice(posibles_validos)]
+                        valor_asignado = True
+            
+            # Estrategia 3: Fallback a patterns
             if not valor_asignado and entidad in entity_patterns:
                 pattern_values = entity_patterns[entidad]
-                if pattern_values:
-                    campos[entidad] = [random.choice(pattern_values)]
-                    valor_asignado = True
-                else:
-                    errors.append(f"Patterns vacíos para entidad '{entidad}'")
+                if pattern_values and isinstance(pattern_values, list):
+                    pattern_validos = [p for p in pattern_values if p and str(p).strip()]
+                    if pattern_validos:
+                        campos[entidad] = [random.choice(pattern_validos)]
+                        valor_asignado = True
             
-            # Estrategia 3: Valores generados dinámicamente
+            # Estrategia 4: Valores generados dinámicamente
             if not valor_asignado and entidad in VALORES_ALEATORIOS:
                 try:
                     valor_generado = VALORES_ALEATORIOS[entidad]()
-                    campos[entidad] = [valor_generado]
-                    valor_asignado = True
-                except Exception as e:
-                    errors.append(f"Error generando valor para '{entidad}': {e}")
+                    if valor_generado and str(valor_generado).strip():
+                        campos[entidad] = [valor_generado]
+                        valor_asignado = True
+                except Exception:
+                    pass
             
-            # Si no se pudo asignar valor, reportar error
+            # Si no se pudo asignar valor, usar lista vacía
             if not valor_asignado:
-                errors.append(f"No se pudo obtener valor para entidad '{entidad}'")
-                campos[entidad] = []  # Lista vacía para evitar errores posteriores
+                campos[entidad] = []
         
-        return campos, errors
+        return campos
 
     @staticmethod
     def generar_ejemplos(
@@ -404,11 +403,8 @@ class NLUGenerator:
         use_limits_file: bool = True
     ) -> List[Tuple[str, str]]:
         """
-        Genera ejemplos NLU con validación exhaustiva y reporte detallado
+        Genera ejemplos NLU con logging simplificado
         """
-        print("="*70)
-        print("INICIANDO GENERACIÓN DE EJEMPLOS NLU")
-        print("="*70)
         
         # Validar parámetros de entrada
         if not config or not isinstance(config, dict):
@@ -422,92 +418,104 @@ class NLUGenerator:
         if custom_limits is None:
             custom_limits = {}
 
-        # Cargar límites desde archivo
-        file_limits = {}
-        limits_errors = []
-        if use_limits_file:
-            file_limits, limits_errors = TrainingLimitsLoader.load_limits()
-            if limits_errors:
-                print("⚠️ ADVERTENCIAS EN LÍMITES:")
-                for error in limits_errors:
-                    print(f"   • {error}")
-        
-        # Combinar límites con prioridad
-        combined_limits = {**file_limits, **custom_limits}
+        # Analizar estructura del config
+        if "intents" in config:
+            intents_data = config["intents"]
+        else:
+            exclude_keys = {"segments", "entities", "slots", "all_responses", "session_config", 
+                        "flow_groups", "story_starters", "follow_up_only", "context_validation", "_load_stats"}
+            intents_data = {k: v for k, v in config.items() if k not in exclude_keys}
 
-        # Límites por defecto más inteligentes
+        # Procesar segments
+        segments_raw = config.get("segments", {})
+        segments_from_config = segments_raw if isinstance(segments_raw, dict) else {}
+        segments_from_synonyms = synonyms if isinstance(synonyms, dict) else {}
+        segments = {**segments_from_config, **segments_from_synonyms}
+        
+        # Cargar segments manualmente si es necesario
+        if not segments:
+            manual_segments = NLUGenerator._load_segments_manually()
+            segments.update(manual_segments)
+        
+        # Crear segments de emergencia si aún faltan
+        if not segments:
+            segments = {
+                "inicio": ["hola", "buenas", "qué tal", "che", "disculpá"],
+                "cierre": ["gracias", "por favor", "dale", "joya", "perfecto"],
+                "solicitud_de_ayuda": ["me podrías ayudar", "necesito", "me das una mano", "ayudame"],
+                "duda": ["tenés idea", "sabés si", "por casualidad", "te consulto"],
+                "afectivo": ["che", "maestro", "genio", "loco", "capo"],
+                "muletilla": ["viste", "entendés", "digamos", "ponele"],
+                "urgencia": ["urgente", "lo necesito ya", "rápido", "cuanto antes"]
+            }
+
+        # Cargar límites y patterns
+        file_limits = {}
+        if use_limits_file:
+            file_limits = TrainingLimitsLoader.load_limits()
+        
+        combined_limits = {**file_limits, **custom_limits}
+        
+        # Límites por defecto
         default_limits = {
-            # Intents principales de búsqueda (alta generación)
-            "buscar_producto": 250,
-            "buscar_oferta": 200, 
-            "completar_pedido": 150,
-            "consultar_novedades_producto": 100,
-            "consultar_novedades_oferta": 100,
-            "consultar_recomendaciones_producto": 100,
-            "consultar_recomendaciones_oferta": 100,
-            "modificar_busqueda": 80,
-            
-            # Intents de confirmación/interacción (generación media)
-            "afirmar": 60,
-            "denegar": 60,
-            "agradecimiento": 40,
-            "off_topic": 30,
-            
-            # Small talk (solo ejemplos fijos, generación mínima)
-            "saludo": 0,
-            "preguntar_como_estas": 0,
-            "responder_estoy_bien": 0,
-            "despedida": 0,
-            "pedir_chiste": 0,
-            "responder_como_estoy": 20,
-            "reirse_chiste": 15,
-            
-            # Fallbacks especializados
-            "low_confidence_fallback": 0,
-            "ambiguity_fallback": 0,
-            "out_of_scope_fallback": 0
+            "buscar_producto": 250, "buscar_oferta": 200, "completar_pedido": 150,
+            "consultar_novedades_producto": 100, "consultar_novedades_oferta": 100,
+            "consultar_recomendaciones_producto": 100, "consultar_recomendaciones_oferta": 100,
+            "modificar_busqueda": 80, "afirmar": 60, "denegar": 60, "agradecimiento": 40,
+            "off_topic": 30, "responder_como_estoy": 20, "reirse_chiste": 15,
+            "saludo": 0, "preguntar_como_estas": 0, "responder_estoy_bien": 0,
+            "despedida": 0, "pedir_chiste": 0
         }
 
-        # Cargar patterns para entidades
-        entity_patterns, pattern_errors = PatternLoader.load_patterns("entidades.yml")
-        if pattern_errors:
-            print("⚠️ ADVERTENCIAS EN PATTERNS:")
-            for error in pattern_errors:
-                print(f"   • {error}")
+        entity_patterns = PatternLoader.load_patterns("entidades.yml")
+
+        # Clasificar intents por tipo de procesamiento
+        intents_with_templates = []
+        intents_only_fixed = []
+        all_intents = list(intents_data.keys())
         
-        # Obtener segments desde config
-        segments = config.get("segments", {})
-        print(f"🔹 Segments disponibles: {list(segments.keys())}")
-
-        # Validar lookup básico
-        productos_disponibles = len(lookup.get("producto", []))
-        if productos_disponibles == 0:
-            print("❌ ADVERTENCIA CRÍTICA: No hay productos en lookup")
-        else:
-            print(f"✅ Productos disponibles en lookup: {productos_disponibles}")
-
-        # Procesar cada intent
-        ejemplos = []
-        intent_results = []
-        total_errors = 0
-        total_warnings = 0
-
-        for intent_name, intent_data in config.items():
-            if intent_name == "segments":  # Saltar la clave segments
+        for intent_name, intent_data in intents_data.items():
+            if not isinstance(intent_data, dict):
                 continue
                 
-            result = GenerationResult(intent_name)
+            tipo = intent_data.get("tipo", "template")
+            templates = intent_data.get("templates", [])
+            ejemplos = intent_data.get("ejemplos", [])
             
-            # Validar estructura del intent
+            # Determinar límite
+            if intent_name in combined_limits:
+                limit = combined_limits[intent_name]
+            elif intent_data.get("grupo") in combined_limits:
+                limit = combined_limits[intent_data.get("grupo")]
+            elif intent_name in default_limits:
+                limit = default_limits[intent_name]
+            else:
+                limit = n_por_intent
+            
+            if tipo == "template" and templates and limit > 0:
+                intents_with_templates.append(intent_name)
+            elif ejemplos:  # Solo tiene ejemplos fijos
+                intents_only_fixed.append(intent_name)
+
+        # Log inicial
+        SimpleLogger.log_intents_to_process(all_intents, intents_with_templates, intents_only_fixed)
+
+        # Procesar intents
+        ejemplos = []
+        results = []
+
+        for intent_name, intent_data in intents_data.items():
+            result = IntentResult(intent_name)
+            
             if not isinstance(intent_data, dict):
-                result.add_error("Intent data debe ser un diccionario")
-                intent_results.append(result)
+                result.add_error("Estructura inválida")
+                results.append(result)
                 continue
                 
             tipo = intent_data.get("tipo", "template")
             grupo = intent_data.get("grupo", "")
             
-            # Determinar límite para este intent
+            # Determinar límite
             if intent_name in combined_limits:
                 limit = combined_limits[intent_name]
             elif grupo in combined_limits:
@@ -517,44 +525,27 @@ class NLUGenerator:
             else:
                 limit = n_por_intent
             
-            print(f"\n🎯 Procesando '{intent_name}' (tipo: {tipo}, límite: {limit})")
-
-            # Manejar ejemplos fijos
+            # Procesar ejemplos fijos
             fijos = intent_data.get("ejemplos", [])
-            if fijos:
-                if not isinstance(fijos, list):
-                    result.add_error("'ejemplos' debe ser una lista")
-                else:
-                    for i, ejemplo in enumerate(fijos):
-                        if isinstance(ejemplo, str) and ejemplo.strip():
-                            ejemplos.append((ejemplo.strip(), intent_name))
-                            result.fixed_examples += 1
-                        else:
-                            result.add_warning(f"Ejemplo fijo {i} inválido o vacío")
-                            
-                print(f"   📌 Agregados {result.fixed_examples} ejemplos fijos")
+            if fijos and isinstance(fijos, list):
+                for ejemplo in fijos:
+                    if isinstance(ejemplo, str) and ejemplo.strip():
+                        ejemplos.append((ejemplo.strip(), intent_name))
+                        result.fixed_examples += 1
             
-            # Generar desde templates solo si hay límite > 0
+            # Generar desde templates
             if limit > 0 and tipo == "template":
                 templates = intent_data.get("templates", [])
                 
-                if not templates:
-                    result.add_warning("Sin templates definidos para generación")
-                elif not isinstance(templates, list):
-                    result.add_error("'templates' debe ser una lista")
+                if not templates or not isinstance(templates, list):
+                    if not fijos:  # Solo reportar error si tampoco tiene ejemplos fijos
+                        result.add_error("Sin templates ni ejemplos definidos")
                 else:
-                    # Validar templates
-                    valid_templates = []
-                    for i, template in enumerate(templates):
-                        if isinstance(template, str) and template.strip():
-                            valid_templates.append(template.strip())
-                        else:
-                            result.add_warning(f"Template {i} inválido o vacío")
+                    valid_templates = [t for t in templates if isinstance(t, str) and t.strip()]
                     
                     if not valid_templates:
-                        result.add_error("No hay templates válidos para procesar")
+                        result.add_error("No hay templates válidos")
                     else:
-                        # Procesar generación de templates
                         entidades_requeridas = intent_data.get("entities", [])
                         
                         if not isinstance(entidades_requeridas, list):
@@ -563,6 +554,7 @@ class NLUGenerator:
                             generation_count = 0
                             max_attempts = limit * 3
                             attempts = 0
+                            failed_attempts = 0
                             
                             while generation_count < limit and attempts < max_attempts:
                                 for template in valid_templates:
@@ -573,33 +565,32 @@ class NLUGenerator:
                                     if attempts >= max_attempts:
                                         break
                                     
-                                    # Preparar entidades con validación
-                                    campos, entity_errors = NLUGenerator._prepare_entity_fields(
-                                        entidades_requeridas, lookup, entity_patterns
+                                    # Preparar entidades
+                                    campos = NLUGenerator._prepare_entity_fields(
+                                        entidades_requeridas, lookup, entity_patterns, segments
                                     )
                                     
-                                    if entity_errors:
-                                        result.entity_errors += len(entity_errors)
+                                    # Verificar que todas las entidades tienen valores
+                                    missing_entities = [e for e, v in campos.items() if not v]
+                                    if missing_entities:
+                                        failed_attempts += 1
                                         continue
                                     
                                     # Generar frase
-                                    texto, gen_errors = NLUGenerator.generar_frase(template, campos, segments)
-                                    
-                                    if gen_errors:
-                                        result.failed_generations += 1
-                                        continue
+                                    texto = NLUGenerator.generar_frase(template, campos, segments)
                                     
                                     if not texto:
-                                        result.failed_generations += 1
+                                        failed_attempts += 1
                                         continue
                                     
-                                    # Anotar entidades con validación
+                                    # Anotar entidades y aplicar perturbación
                                     try:
-                                        # Filtrar entidades críticas
                                         entidades_criticas = [
-                                            "producto", "proveedor", "categoria", 
-                                            "ingrediente_activo", "compuesto", "animal", 
-                                            "dosis", "cantidad"
+                                            "producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", 
+                                            "animal", "dosis", "cantidad", "estado", "indicador_temporal", 
+                                            "cantidad_bonificacion", "cantidad_descuento", "cantidad_stock", 
+                                            "sentimiento_positivo", "sentimiento_negativo", "rechazo_total",
+                                            "intencion_buscar", "solicitud_ayuda", "dia", "fecha"
                                         ]
                                         
                                         entidades_anotacion = {}
@@ -609,20 +600,15 @@ class NLUGenerator:
                                                     cleaned_values = []
                                                     for v in value:
                                                         v_str = str(v).strip()
-                                                        # Validar que no sea problemático
-                                                        if (len(v_str) <= 50 and 
-                                                            '"' not in v_str and 
-                                                            '[' not in v_str and 
-                                                            v_str):
+                                                        if (len(v_str) <= 50 and '"' not in v_str and 
+                                                            '[' not in v_str and v_str):
                                                             cleaned_values.append(v_str)
                                                     if cleaned_values:
                                                         entidades_anotacion[key] = cleaned_values
                                         
-                                        # Anotar si hay entidades válidas
                                         if entidades_anotacion:
                                             texto = anotar_entidades(texto=texto, **entidades_anotacion)
                                         
-                                        # Aplicar perturbación
                                         texto = aplicar_perturbacion(texto)
                                         
                                         ejemplos.append((texto, intent_name))
@@ -630,145 +616,133 @@ class NLUGenerator:
                                         result.generated_examples += 1
                                         
                                     except Exception as e:
-                                        result.add_error(f"Error en anotación: {e}")
-                                        result.failed_generations += 1
+                                        failed_attempts += 1
                             
-                            print(f"   ⚡ Generados {result.generated_examples} ejemplos desde templates")
-                            
-                            if result.failed_generations > 0:
-                                print(f"   ⚠️ {result.failed_generations} generaciones fallidas")
-                                
-                            if result.entity_errors > 0:
-                                print(f"   🔍 {result.entity_errors} errores de entidades")
+                            # Reportar si no se pudo generar suficientes ejemplos
+                            if generation_count == 0:
+                                result.add_error("No se pudo generar ningún ejemplo")
+                            elif generation_count < limit * 0.5:  # Menos del 50% esperado
+                                result.add_error(f"Generación insuficiente: {generation_count}/{limit} ejemplos")
             
-            elif limit == 0:
-                print(f"   ⏭️ Límite 0: solo ejemplos fijos")
-            else:
-                result.add_warning(f"Tipo '{tipo}' no soporta generación automática")
-            
-            # Agregar resultado
-            intent_results.append(result)
-            
-            if result.has_issues():
-                total_warnings += len(result.warnings)
-                total_errors += len(result.errors)
+            results.append(result)
 
-        # Mostrar resumen final
-        print(f"\n" + "="*70)
-        print("RESUMEN DE GENERACIÓN")
-        print("="*70)
+        # Log final
+        SimpleLogger.log_final_results(results, len(ejemplos))
         
-        total_examples = len(ejemplos)
-        successful_intents = len([r for r in intent_results if r.total_examples() > 0])
-        failed_intents = len([r for r in intent_results if r.total_examples() == 0])
-        
-        print(f"📊 ESTADÍSTICAS GENERALES:")
-        print(f"   • Total ejemplos generados: {total_examples}")
-        print(f"   • Intents procesados exitosamente: {successful_intents}")
-        print(f"   • Intents sin ejemplos: {failed_intents}")
-        print(f"   • Total advertencias: {total_warnings}")
-        print(f"   • Total errores: {total_errors}")
-        
-        # Mostrar resumen por intent
-        print(f"\n📋 DETALLE POR INTENT:")
-        for result in intent_results:
-            result.print_summary()
-        
-        # Mostrar intents problemáticos
-        problematic_intents = [r for r in intent_results if r.has_issues()]
-        if problematic_intents:
-            print(f"\n⚠️ INTENTS CON PROBLEMAS ({len(problematic_intents)}):")
-            for result in problematic_intents[:5]:  # Mostrar solo los primeros 5
-                print(f"   • {result.intent_name}: {len(result.errors)} errores, {len(result.warnings)} advertencias")
-        
-        print("="*70)
         return ejemplos
+    
 
-    @staticmethod
-    def guardar_nlu(
-        ejemplos: List[Tuple[str, str]], 
-        config: Dict[str, Any],
-        output_path: Optional[str] = None
-    ) -> None:
-        """
-        Guarda ejemplos NLU en formato YAML con validación de salida
-        """
-        print(f"\n💾 Guardando ejemplos NLU...")
-        
-        if output_path is None:
-            output_path = Path.cwd() / "data" / "nlu.yml"
-        else:
-            output_path = Path(output_path)
+def anotar_entidades(texto: str, **kwargs) -> str:
+    """
+    Anota entidades en el texto usando configuración unificada.
+    """
+    config = UnifiedEntityManager.cargar_entities_config()
+    
+    # Obtener todos los nombres de entidades disponibles
+    lookup_entities = list(config.get("lookup_entities", {}).keys())
+    pattern_entities = list(config.get("pattern_entities", {}).keys())
+    dynamic_entities = list(config.get("dynamic_entities", {}).keys())
+    
+    all_entity_names = lookup_entities + pattern_entities + dynamic_entities
+
+    def limpiar_valor(valor):
+        """Limpia y valida un valor de entidad"""
+        if not valor:
+            return None
+        valor = str(valor).strip()
+        valor = re.sub(r"[\[\]\(\)]", "", valor)  # Remover anotaciones existentes
+        return valor if valor else None
+
+    def anotar_valor_robusto(valor, label: str, texto_actual: str) -> str:
+        """Anota un valor con múltiples estrategias de matching"""
+        # Manejar listas de valores
+        if isinstance(valor, list):
+            for v in valor:
+                texto_actual = anotar_valor_robusto(v, label, texto_actual)
+            return texto_actual
+
+        valor = limpiar_valor(valor)
+        if not valor:
+            return texto_actual
             
-        if not ejemplos:
-            print("❌ No hay ejemplos para guardar")
-            return
-            
-        try:
-            nlu_data = {"version": "3.1", "nlu": []}
-            
-            # Agregar segments/sinónimos si existen
-            segments = config.get("segments", {})
-            segments_added = 0
-            if segments:
-                print(f"🔹 Procesando {len(segments)} segments...")
-                for segment_name, segment_values in segments.items():
-                    if segment_values and isinstance(segment_values, list):
-                        examples_text = "\n".join(f"    - {value}" for value in segment_values if value)
-                        if examples_text:
-                            segment_block = {
-                                "synonym": segment_name,
-                                "examples": f"|\n{examples_text}"
-                            }
-                            nlu_data["nlu"].append(segment_block)
-                            segments_added += 1
-            
-            # Agrupar ejemplos por intent
-            por_intent = {}
-            ejemplos_validos = 0
-            ejemplos_invalidos = 0
-            
-            for texto, intent in ejemplos:
-                if isinstance(texto, str) and texto.strip() and isinstance(intent, str) and intent.strip():
-                    if intent not in por_intent:
-                        por_intent[intent] = []
-                    por_intent[intent].append(texto.strip())
-                    ejemplos_validos += 1
-                else:
-                    ejemplos_invalidos += 1
-            
-            if ejemplos_invalidos > 0:
-                print(f"⚠️ Se omitieron {ejemplos_invalidos} ejemplos inválidos")
-            
-            # Agregar ejemplos agrupados por intent
-            intents_added = 0
-            for intent_name, textos in por_intent.items():
-                if textos:  # Solo agregar si hay ejemplos válidos
-                    intent_block = {
-                        "intent": intent_name,
-                        "examples": "|\n" + "\n".join(f"    - {texto}" for texto in textos)
-                    }
-                    nlu_data["nlu"].append(intent_block)
-                    intents_added += 1
-            
-            # Crear directorio si no existe
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            # Guardar archivo
-            with open(output_path, "w", encoding="utf-8") as f:
-                yaml.dump(nlu_data, f, allow_unicode=True, sort_keys=False, default_flow_style=False)
-            
-            print(f"✅ NLU guardado exitosamente:")
-            print(f"   📄 Archivo: {output_path}")
-            print(f"   📊 Segments incluidos: {segments_added}")
-            print(f"   📊 Intents generados: {intents_added}")
-            print(f"   📊 Total ejemplos válidos: {ejemplos_validos}")
-            
-            # Mostrar distribución por intent
-            print(f"\n📊 DISTRIBUCIÓN POR INTENT:")
-            for intent, textos in sorted(por_intent.items()):
-                print(f"   • {intent}: {len(textos)} ejemplos")
+        # Búsqueda case-insensitive básica
+        if valor.lower() in texto_actual.lower():
+            start = texto_actual.lower().find(valor.lower())
+            if start != -1:
+                end = start + len(valor)
+                valor_original = texto_actual[start:end]
                 
-        except Exception as e:
-            print(f"❌ Error guardando NLU: {e}")
-            raise GenerationError(f"No se pudo guardar el archivo NLU: {e}")
+                # Solo anotar si no está ya anotado
+                if f"[{valor_original}]" not in texto_actual:
+                    texto_actual = (texto_actual[:start] + 
+                                  f"[{valor_original}]({label})" + 
+                                  texto_actual[end:])
+                return texto_actual
+        
+        # Búsqueda con regex para casos complejos
+        try:
+            valor_escaped = re.escape(valor)
+            patterns = [
+                r'\b' + valor_escaped + r'\b',  # Con límites de palabra
+                valor_escaped,  # Sin límites
+                valor_escaped.replace(r'\ ', r'\s+'),  # Espacios flexibles
+            ]
+            
+            for pattern in patterns:
+                matches = list(re.finditer(pattern, texto_actual, re.IGNORECASE))
+                if matches:
+                    match = matches[0]
+                    matched_text = match.group(0)
+                    
+                    if f"[{matched_text}]" not in texto_actual:
+                        return (texto_actual[:match.start()] + 
+                               f"[{matched_text}]({label})" + 
+                               texto_actual[match.end():])
+                    return texto_actual
+                    
+        except re.error:
+            pass
+        
+        return texto_actual
+
+    def determinar_etiqueta_entidad(entity_name: str) -> str:
+        """Determina la etiqueta correcta para una entidad"""
+        # Mapeos especiales para compatibilidad
+        if entity_name == "compuesto":
+            return "ingrediente_activo"
+        elif entity_name == "dia":
+            return "tiempo"  
+        else:
+            return entity_name
+
+    # Procesar anotaciones
+    texto_resultado = texto
+    
+    # Orden de prioridad para anotaciones
+    entidades_prioritarias = [
+        "producto", "proveedor", "categoria", "ingrediente_activo", 
+        "compuesto", "dosis", "cantidad", "animal"
+    ]
+    
+    # Primero entidades prioritarias
+    for entity_name in entidades_prioritarias:
+        if entity_name in kwargs and entity_name in all_entity_names:
+            valor = kwargs[entity_name]
+            if valor:
+                etiqueta = determinar_etiqueta_entidad(entity_name)
+                try:
+                    texto_resultado = anotar_valor_robusto(valor, etiqueta, texto_resultado)
+                except Exception:
+                    continue
+    
+    # Luego el resto de entidades
+    for entity_name, valor in kwargs.items():
+        if entity_name not in entidades_prioritarias and entity_name in all_entity_names:
+            if valor:
+                etiqueta = determinar_etiqueta_entidad(entity_name)
+                try:
+                    texto_resultado = anotar_valor_robusto(valor, etiqueta, texto_resultado)
+                except Exception:
+                    continue
+    
+    return texto_resultado

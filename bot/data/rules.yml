@@ -48,6 +48,10 @@ rules:
   steps:
   - intent: consultar_novedades_oferta
   - action: action_generica
+- rule: rule_consultar_novedades_generales
+  steps:
+  - intent: consultar_novedades_generales
+  - action: action_generica
 - rule: rule_consultar_recomendaciones_producto
   steps:
   - intent: consultar_recomendaciones_producto
@@ -76,6 +80,18 @@ rules:
   steps:
   - intent: off_topic
   - action: action_fallback
+- rule: rule_out_of_scope
+  steps:
+  - intent: out_of_scope
+  - action: action_out_of_scope
+- rule: rule_ambiguity_fallback
+  steps:
+  - intent: ambiguity_fallback
+  - action: action_clarify_ambiguous
+- rule: rule_low_confidence_fallback
+  steps:
+  - intent: low_confidence_fallback
+  - action: action_low_confidence
 - rule: rule_default_fallback
   steps:
   - intent: nlu_fallback

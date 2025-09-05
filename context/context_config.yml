@@ -3,6 +3,9 @@ version: "1.3"
 
 # 🔹 Definición de entidades globales
 entities:
+  # ============================================================================
+  # 🔹 CORE BUSINESS ENTITIES (Lookup Tables desde CSV)
+  # ============================================================================
   producto:
     type: text
     patterns: []
@@ -23,110 +26,170 @@ entities:
     type: text
     patterns: []
     lookup_table: true
+  
+  # ============================================================================
+  # 🔹 STATIC ENTITIES (Patterns en entidades.yml)
+  # ============================================================================
   animal:
     type: text
     patterns: []
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   dosis:
     type: text
     patterns: ["mg", "ml", "g", "comprimidos", "cápsulas"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   cantidad:
     type: text
     patterns: ["caja", "blister", "ampolla", "frasco"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   dia:
     type: text
     patterns: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   fecha:
     type: text
     patterns: []
     lookup_table: false
     pattern_source: "entidades.yml"
-  cantidad_stock:
-    type: text
-    patterns: ["pocas unidades", "stock limitado", "sin stock", "mucho stock"]
-    lookup_table: false
-    pattern_source: "entidades.yml"
-  cantidad_descuento:
-    type: text
-    patterns: ["10% de descuento", "2x1", "50% off", "descuento especial", "precio rebajado"]
-    lookup_table: false
-    pattern_source: "entidades.yml"
-  # NUEVAS ENTIDADES AGREGADAS
-  cantidad_bonificacion:
-    type: text
-    patterns: ["10% de bonificación", "2x1 bonificación", "bonificación especial", "bonus", "regalo"]
-    lookup_table: false
-    pattern_source: "entidades.yml"
+    entity_category: "static"
   estado:
     type: text
     patterns: ["nuevo", "en oferta", "con descuento", "con bonificación", "con poco stock", "disponible", "agotado"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   indicador_temporal:
     type: text
     patterns: ["nuevo", "reciente", "hace poco", "esta semana", "este mes", "últimamente", "ahora", "hoy"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   sentimiento_positivo:
     type: text
     patterns: ["genial", "perfecto", "excelente", "buenísimo", "me gusta", "está bien"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   sentimiento_negativo:
     type: text
     patterns: ["malo", "terrible", "pésimo", "inútil", "no sirve", "frustrado", "molesto", "enojado"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   rechazo_total:
     type: text
     patterns: ["nada", "no quiero nada", "déjame", "basta", "ya no", "stop"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   intencion_buscar:
     type: text
     patterns: ["buscar", "encontrar", "necesito", "quiero", "me hace falta"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
   solicitud_ayuda:
     type: text
     patterns: ["ayuda", "help", "no entiendo", "cómo", "explícame"]
     lookup_table: false
     pattern_source: "entidades.yml"
+    entity_category: "static"
+
+  # ============================================================================
+  # 🔹 DYNAMIC ENTITIES (Patrones numéricos/regex)
+  # ============================================================================
+  cantidad_descuento:
+    type: text
+    patterns: []
+    lookup_table: false
+    regex_pattern: true
+    entity_category: "dynamic"
+    value_range: "1-99"
+    description: "Porcentajes, ofertas tipo 2x1, 3x2"
+  cantidad_bonificacion:
+    type: text
+    patterns: []
+    lookup_table: false
+    regex_pattern: true
+    entity_category: "dynamic"
+    value_range: "1-99"
+    description: "Bonificaciones, regalos, ofertas múltiples"
+  cantidad_stock:
+    type: text
+    patterns: []
+    lookup_table: false
+    regex_pattern: true
+    entity_category: "dynamic"
+    value_range: "descriptive"
+    description: "Estados de stock, cantidades disponibles"
 
 # 🔹 Configuración de patterns para generación NLU
 entity_patterns_config:
   patterns_file: "entidades.yml"
-  pattern_entities:
+  
+  # Solo entidades estáticas van en entidades.yml
+  static_entities:
+    - animal
     - dosis
     - cantidad
     - estado
     - indicador_temporal
-    - cantidad_bonificacion
     - sentimiento_positivo
     - sentimiento_negativo
     - rechazo_total
     - intencion_buscar
     - solicitud_ayuda
+    - dia
+    - fecha
+  
+  # Entidades dinámicas se manejan por regex o rangos
   dynamic_entities:
     - cantidad_descuento
+    - cantidad_bonificacion
     - cantidad_stock
-    - fecha
-    - dia
+  
   generation_config:
     max_attempts_per_template: 100
     avoid_duplicates: true
     min_examples_per_intent: 20
     max_examples_per_intent: 100
+    dynamic_entity_handling: "regex"
+
+# 🔹 Configuración de entidades dinámicas
+dynamic_entities_config:
+  cantidad_descuento:
+    regex_patterns:
+      - r'\d{1,2}%\s?(de\s?)?descuento'
+      - r'\d{1,2}%\s?off'
+      - r'\d+x\d+'
+      - r'(\d{1,2})?\s?%'
+    example_values: ["10%", "20%", "50%", "2x1", "3x2"]
+    
+  cantidad_bonificacion:
+    regex_patterns:
+      - r'\d{1,2}%\s?(de\s?)?bonificación'
+      - r'\d+x\d+\s?bonificación'
+      - r'lleva\s?\d+\s?paga\s?\d+'
+    example_values: ["10%", "2x1", "3x2", "lleva 2 paga 1"]
+    
+  cantidad_stock:
+    regex_patterns:
+      - r'\d+\s?unidades?'
+      - r'stock\s?(limitado|agotado|disponible)'
+      - r'(pocas?|muchas?|últimas?)\s?unidades?'
+    example_values: ["10 unidades", "pocas unidades", "stock limitado"]
 
 # 🔹 Definición de slots globales
 slots:
+  # Slots para entidades detectadas
   producto:
     type: text
     influence_conversation: false
@@ -177,7 +240,6 @@ slots:
     mappings:
       - type: from_entity
         entity: animal
-  # NUEVOS SLOTS AGREGADOS
   estado:
     type: text
     influence_conversation: false
@@ -190,53 +252,6 @@ slots:
     mappings:
       - type: from_entity
         entity: indicador_temporal
-  cantidad_bonificacion:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: cantidad_bonificacion
-  user_sentiment:
-    type: categorical
-    values: ["positive", "negative", "neutral", "rejection"]
-    initial_value: "neutral"
-    influence_conversation: false
-    mappings:
-      - type: custom
-  last_intent_flow:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: custom
-  pending_search_data:
-    type: any
-    influence_conversation: false
-    mappings:
-      - type: custom
-  search_history:
-    type: list
-    initial_value: []
-    influence_conversation: false
-    mappings:
-      - type: custom
-  context_decision_pending:
-    type: any
-    influence_conversation: false
-    mappings:
-      - type: custom
-  user_engagement_level:
-    type: categorical
-    values: ["neutral", "engaged", "needs_help", "confused", "friendly", 
-             "collaborative", "reset", "disengaged", "interested", "needs_guidance", "satisfied"]
-    influence_conversation: false
-    mappings:
-      - type: custom
-  pedido_incompleto:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-      - type: custom
   dia:
     type: text
     influence_conversation: false
@@ -249,65 +264,53 @@ slots:
     mappings:
       - type: from_entity
         entity: fecha
-  cantidad_stock:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: cantidad_stock
+        
+  # Slots para entidades dinámicas
   cantidad_descuento:
     type: text
     influence_conversation: false
     mappings:
       - type: from_entity
         entity: cantidad_descuento
-  conversation_started:
+  cantidad_bonificacion:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad_bonificacion
+  cantidad_stock:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad_stock
+  
+  # Slots de control de conversación
+  user_sentiment:
+    type: categorical
+    values: ["positive", "negative", "neutral", "rejection"]
+    initial_value: "neutral"
+    influence_conversation: false
+    mappings:
+      - type: custom
+  last_intent_flow:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  pedido_incompleto:
     type: bool
     initial_value: false
     influence_conversation: false
     mappings:
       - type: custom
-  awaiting_completion:
-    type: bool
-    initial_value: false
+  user_engagement_level:
+    type: categorical
+    values: ["neutral", "engaged", "needs_help", "confused", "friendly", 
+             "collaborative", "reset", "disengaged", "interested", "needs_guidance", "satisfied"]
     influence_conversation: false
     mappings:
       - type: custom
-  last_completed_action:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: custom
-  conversation_turn:
-    type: float
-    initial_value: 0
-    influence_conversation: false
-    mappings:
-      - type: custom
-  pending_suggestion:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: custom
-  suggestion_context:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: custom
-
-# 🔹 Patrones de detección contextual
-detection_patterns:
-  sentiment_analysis:
-    positive_indicators: ["genial", "perfecto", "excelente", "buenísimo", "me gusta", "está bien", "gracias", "bien"]
-    negative_indicators: ["malo", "terrible", "pésimo", "inútil", "no sirve", "frustrado", "molesto", "enojado", "odio"]
-    rejection_indicators: ["nada", "no quiero nada", "déjame", "basta", "ya no", "stop", "cancelar"]
-  implicit_intentions:
-    search_intentions: ["buscar", "encontrar", "necesito", "quiero", "me hace falta", "tengo que conseguir"]
-    help_requests: ["ayuda", "help", "no entiendo", "cómo", "explícame", "no sé"]
-    continuation_signals: ["sí", "si", "continuar", "seguir", "ok", "dale", "perfecto"]
-  conversation_flow:
-    search_completion_signals: ["completar", "información adicional", "agregar", "más datos"]
-    context_switch_signals: ["ahora quiero", "cambio", "mejor", "en lugar de"]
 
 # 🔹 Definición de intents
 intents:
@@ -319,7 +322,6 @@ intents:
     response: utter_saludo
     context_switch: false
     entities: []
-    detection_patterns: ["implicit_intentions.help_requests"]
     next_intents:
       - preguntar_como_estas
       - busqueda
@@ -332,7 +334,6 @@ intents:
     response: utter_preguntar_como_estas
     context_switch: false
     entities: []
-    detection_patterns: []
     next_intents:
       - responder_como_estoy
       - responder_estoy_bien
@@ -344,7 +345,6 @@ intents:
     response: utter_responder_como_estoy
     context_switch: false
     entities: ["sentimiento_positivo", "sentimiento_negativo"]
-    detection_patterns: ["sentiment_analysis.positive_indicators", "sentiment_analysis.negative_indicators"]
     next_intents:
       - busqueda
       - small_talk
@@ -356,7 +356,6 @@ intents:
     response: utter_responder_estoy_bien
     context_switch: false
     entities: ["sentimiento_positivo"]
-    detection_patterns: ["sentiment_analysis.positive_indicators"]
     next_intents:
       - busqueda
       - small_talk
@@ -368,7 +367,6 @@ intents:
     response: utter_despedida
     context_switch: false
     entities: ["sentimiento_positivo", "sentimiento_negativo"]
-    detection_patterns: ["sentiment_analysis.positive_indicators", "sentiment_analysis.negative_indicators"]
     next_intents: []
 
   pedir_chiste:
@@ -378,9 +376,8 @@ intents:
     response: utter_pedir_chiste
     context_switch: false
     entities: []
-    detection_patterns: []
     next_intents:
-      - utter_reirse_chiste
+      - reirse_chiste
       - busqueda
       - agradecimiento
       - small_talk
@@ -392,7 +389,6 @@ intents:
     response: utter_reirse_chiste
     context_switch: false
     entities: ["sentimiento_positivo"]
-    detection_patterns: ["sentiment_analysis.positive_indicators"]
     next_intents:
       - busqueda
       - small_talk
@@ -404,8 +400,7 @@ intents:
     action: action_busqueda_situacion
     response: utter_buscar_producto
     context_switch: false
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "animal", "estado", "indicador_temporal", "cantidad_stock", "cantidad_bonificacion"]
-    detection_patterns: ["implicit_intentions.search_intentions"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "animal", "estado", "indicador_temporal", "cantidad_stock", "cantidad_bonificacion", "intencion_buscar"]
     validation_rules:
       requires_at_least_one: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto"]
       optional: ["dosis", "cantidad", "estado", "indicador_temporal", "cantidad_stock", "cantidad_bonificacion"]
@@ -420,8 +415,7 @@ intents:
     action: action_busqueda_situacion
     response: utter_buscar_oferta
     context_switch: false
-    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "animal", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
-    detection_patterns: ["implicit_intentions.search_intentions"]
+    entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "animal", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion", "intencion_buscar"]
     validation_rules:
       requires_at_least_one: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto"]
       optional: ["dosis", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
@@ -437,7 +431,6 @@ intents:
     response: utter_completar_pedido
     context_switch: false
     entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "compuesto", "dosis", "cantidad", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
-    detection_patterns: ["conversation_flow.search_completion_signals", "implicit_intentions.search_intentions"]
     next_intents:
       - confirmacion
       - busqueda
@@ -451,7 +444,6 @@ intents:
     response: utter_consultar_novedades_producto
     context_switch: false
     entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "indicador_temporal"]
-    detection_patterns: ["implicit_intentions.search_intentions", "novedad_intentions"]
     next_intents:
       - buscar_producto
       - buscar_oferta
@@ -465,11 +457,23 @@ intents:
     response: utter_consultar_novedades_oferta
     context_switch: false
     entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "indicador_temporal"]
-    detection_patterns: ["implicit_intentions.search_intentions", "novedad_intentions"]
     next_intents:
       - buscar_oferta
       - consultar_recomendaciones_oferta
       - agradecimiento
+
+  consultar_novedades_generales:
+    tipo: ejemplos
+    grupo: busqueda
+    action: action_generica
+    response: utter_consultar_novedades_generales
+    context_switch: false
+    entities: ["indicador_temporal"]
+    next_intents:
+      - consultar_novedades_producto
+      - consultar_novedades_oferta
+      - buscar_producto
+      - buscar_oferta
 
   # ----------- Recomendaciones -----------
   consultar_recomendaciones_producto:
@@ -479,7 +483,6 @@ intents:
     response: utter_consultar_recomendaciones_producto
     context_switch: false
     entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "estado", "indicador_temporal", "cantidad_stock"]
-    detection_patterns: ["implicit_intentions.search_intentions", "recomendacion_intentions"]
     next_intents:
       - buscar_producto
       - buscar_oferta
@@ -492,7 +495,6 @@ intents:
     response: utter_consultar_recomendaciones_oferta
     context_switch: false
     entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
-    detection_patterns: ["implicit_intentions.search_intentions", "recomendacion_intentions"]
     next_intents:
       - buscar_oferta
       - agradecimiento
@@ -505,7 +507,6 @@ intents:
     response: utter_modificar_busqueda
     context_switch: true
     entities: ["producto", "proveedor", "categoria", "ingrediente_activo", "animal", "compuesto", "dosis", "cantidad", "estado", "indicador_temporal", "cantidad_stock", "cantidad_descuento", "cantidad_bonificacion"]
-    detection_patterns: ["conversation_flow.context_switch_signals"]
     next_intents:
       - buscar_producto
       - buscar_oferta
@@ -519,7 +520,6 @@ intents:
     response: utter_afirmar
     context_switch: false
     entities: ["sentimiento_positivo"]
-    detection_patterns: ["implicit_intentions.continuation_signals", "sentiment_analysis.positive_indicators"]
     next_intents: 
       - busqueda
       - small_talk
@@ -531,7 +531,6 @@ intents:
     response: utter_denegar
     context_switch: false
     entities: ["sentimiento_negativo", "rechazo_total"]
-    detection_patterns: ["sentiment_analysis.negative_indicators", "sentiment_analysis.rejection_indicators"]
     next_intents: 
       - busqueda
       - small_talk
@@ -543,7 +542,6 @@ intents:
     response: utter_agradecimiento
     context_switch: false
     entities: ["sentimiento_positivo"]
-    detection_patterns: ["sentiment_analysis.positive_indicators"]
     next_intents: 
       - busqueda
       - small_talk
@@ -551,17 +549,50 @@ intents:
   # ----------- Interrupciones / Off-Flow -----------
   off_topic:
     tipo: template
-    grupo: off_topic
+    grupo: interruptions
     action: action_fallback
     response: utter_off_topic
     context_switch: true
     entities: ["solicitud_ayuda", "sentimiento_negativo", "rechazo_total"]
-    detection_patterns: ["implicit_intentions.help_requests", "sentiment_analysis.negative_indicators"]
     next_intents: 
       - busqueda
       - small_talk
 
-# 🔹 Flow groups extendidos
+  out_of_scope:
+    tipo: ejemplos
+    grupo: interruptions
+    action: action_out_of_scope
+    response: utter_out_of_scope
+    context_switch: true
+    entities: []
+    next_intents: 
+      - busqueda
+      - small_talk
+
+  ambiguity_fallback:
+    tipo: ejemplos
+    grupo: interruptions
+    action: action_clarify_ambiguous
+    response: utter_clarify_ambiguous
+    context_switch: false
+    entities: ["solicitud_ayuda"]
+    next_intents:
+      - buscar_producto
+      - buscar_oferta
+      - consultar_novedades_generales
+
+  low_confidence_fallback:
+    tipo: ejemplos
+    grupo: interruptions
+    action: action_low_confidence
+    response: utter_low_confidence
+    context_switch: false
+    entities: ["solicitud_ayuda"]
+    next_intents:
+      - busqueda
+      - small_talk
+
+# 🔹 Flow groups
 flow_groups:
   small_talk:
     - saludo
@@ -579,6 +610,7 @@ flow_groups:
     - completar_pedido
     - consultar_novedades_producto
     - consultar_novedades_oferta
+    - consultar_novedades_generales
     - consultar_recomendaciones_producto
     - consultar_recomendaciones_oferta
     - modificar_busqueda
@@ -590,24 +622,25 @@ flow_groups:
     - denegar
 
   agradecimiento:
-    - agradecer
+    - agradecimiento
 
   interruptions:
     - off_topic
+    - out_of_scope
+    - ambiguity_fallback
+    - low_confidence_fallback
 
-# 🔹 Story starters extendidos
+# 🔹 Story starters
 story_starters:
-  # Small talk
   - saludo
   - preguntar_como_estas
   - pedir_chiste
   - despedida
-
-  # Busquedas
   - buscar_producto
   - buscar_oferta
   - consultar_novedades_producto
   - consultar_novedades_oferta
+  - consultar_novedades_generales
   - consultar_recomendaciones_producto
   - consultar_recomendaciones_oferta
   - modificar_busqueda
@@ -622,6 +655,9 @@ follow_up_only:
   - agradecimiento
   - completar_pedido
   - off_topic
+  - out_of_scope
+  - ambiguity_fallback
+  - low_confidence_fallback
 
 # 🔹 Configuración de validación de contexto
 context_validation:

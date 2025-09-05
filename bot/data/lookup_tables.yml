@@ -3,4460 +3,1879 @@ version: "3.1"
 nlu:
 - lookup: producto
   examples: |
-    - kensol
-    - acederm
-    - Adaptil
-    - Bucal
-    - enroplus
-    - Totalvet
-    - kothrina
-    - legend
-    - pimobendan
-    - kuraderm
-    - Cetfur
-    - Tripackprotech
-    - Pimocard
-    - Comfortis
-    - Trivermex
-    - cidar
-    - semintra
-    - advantix
-    - moxidex
-    - Pimocard
     - Acedan
-    - ecthol
-    - espuma
-    - vetscan
-    - kothrina
-    - enroplus
+    - Acederm
+    - Adaptil
+    - Advantage
+    - Advantix
+    - Advocate
+    - Algicam
     - Algidol
-    - tripackprotech
-    - ciclosporina
+    - Antiverrugas
+    - Apetil
+    - Aplonal
+    - Artrin
+    - Artroglycan
+    - Artrosan
+    - Artrovet
+    - Atriben
+    - Atropina
+    - Aurix
+    - Azitromicina
+    - Bactroflay
+    - Bactroprofen
+    - Bactrovet
+    - Bagogard
+    - Bagovac
+    - Barbitol
+    - Basken
+    - Baycox
+    - Baytril
+    - Bio
+    - Biochip
+    - Block
+    - Btk
+    - Bucal
+    - Cae
+    - Calcificante
+    - Calcio
+    - Canis
+    - Cardial
+    - Carprodol
+    - Cefalexina
+    - Cefalong
+    - Cestodan
+    - Cetfur
+    - Ciclar
+    - Ciclosporina
+    - Cidar
+    - Clamoxyl
+    - Clavamox
+    - Clorhex
+    - Clorhexidina
+    - Coagulante
+    - Colotrin
+    - Comfortis
+    - Cortidural
+    - Credelio
+    - Cumepina
+    - Curavet
+    - Cytopoint
+    - Dectomax
+    - Dermodene
+    - Dermomax
+    - Dexa
+    - Dexametasona
+    - Dexashock
+    - Diafin
+    - Diazepet
+    - Dipirona
+    - Diurene
+    - Dominal
+    - Doxilina
+    - Doxivit
+    - Dozilam
+    - Drontal
     - Duosecretina
+    - Dynamide
+    - Ecp
+    - Ecthol
+    - Ecthonil
+    - Endectocida
+    - Endospot
+    - Energia
+    - Enrofloxacina
+    - Enroplus
+    - Enroxina
+    - Entero
+    - Enteroplus
+    - Enzimax
+    - Episol
+    - Epitelizante
+    - Estreptocarbocaftiazol
+    - Eutanasico
+    - Feline
+    - Feliway
+    - Fenobarbital
+    - Fip
+    - Fipro
+    - Fleegard
+    - Flexapet
+    - Floxaday
+    - Fluido
+    - Fortekor
+    - Fortepen
+    - Full
+    - Furocal
+    - Giacoccide
+    - Hialurina
+    - Idocarb12
+    - Injection
+    - Integhra
+    - Itraconazol
+    - Ivermex
+    - Ivomec
+    - Kensol
+    - Ketamid
+    - Ketamina
+    - Kil
+    - Kothrina
+    - Kuraderm
+    - Kuramicina
+    - Labyderm
+    - Laxavet
+    - Legend
+    - Librela
+    - Linco
+    - Meloxivet
+    - Meltra
+    - Multivit
     - Mv
     - Neo
-    - pets
-    - Ecthonil
-    - Colirama
-    - Feliway
-    - advantix
-    - Terramicina
+    - Neovita
+    - Neuroalivio
     - Nogastrol
-    - Simparica
-    - comfortis
-    - Injection
-    - Giacoccide
-    - baytril
-    - ecthonil
-    - ol
-    - Oxisol
-    - Simparica
-    - simparica
-    - advantix
-    - pragma
-    - Ecthol
-    - power
-    - mv
-    - Adaptil
-    - Euthanyle
-    - Eutanasico
-    - Vcc
-    - Comfortis
-    - Convenia
-    - Tripackprotech
-    - Mv
-    - pets
-    - ecthonil
-    - mv
-    - neovita
-    - toltrazol
-    - convenia
-    - fenobarbital
-    - Seresto
-    - Azitromicina
-    - full
-    - Tripackprotech
-    - Simparica
-    - dectomax
-    - tratam
-    - Entero
-    - mv
-    - Comfortis
-    - Carprodol
-    - Mv
-    - power
-    - Bactrovet
-    - Tripackprotech
-    - basken
-    - credelio
-    - toracard
-    - sosten
-    - Ketamina
-    - Adaptil
-    - pets
-    - Ecthonil
-    - Seresto
-    - tau
-    - Vita
-    - Simparica
-    - dectomax
-    - Power
-    - Credelio
-    - dominal
-    - baytril
-    - Cumepina
-    - azitromicina
-    - Otiflex
-    - Nogastrol
-    - nomat
-    - Carprodol
-    - oxisol
-    - Pets
-    - itraconazol
-    - simparica
-    - dectomax
-    - mv
-    - Pro
-    - power
-    - Credelio
-    - Prednisol
-    - Ioduro
-    - ol
-    - vilisinh
-    - Adaptil
-    - baytril
-    - Tripackprotech
-    - Trocoxil
-    - Trocoxil
-    - mv
-    - Mv
-    - mv
-    - power
-    - comfortis
-    - vetscan
-    - ecthol
-    - baytril
-    - tau
-    - otiflex
-    - Sosten
-    - nogastrol
-    - adaptil
-    - oxitetraciclina
-    - pets
-    - trocoxil
-    - Apoquel
-    - Mv
-    - Enroxina
-    - Kil
-    - credelio
-    - Tonico
-    - advocate
-    - ecthonil
-    - otiflex
-    - Enroplus
-    - artrovet
-    - proteliv
-    - Condroitin
-    - Cae
-    - algicam
-    - Rimadyl
-    - Bagogard
-    - Mv
-    - Diazepet
-    - Proteliv
-    - credelio
-    - Laxavet
-    - tramadol
-    - Anti
-    - Fipro
-    - dominal
-    - ocladerm
-    - enroplus
-    - Advocate
-    - Algidol
-    - tobramax
-    - Cae
-    - Rimadyl
-    - Mv
-    - Mv
-    - enroxina
-    - meltra
-    - tipertox
-    - Credelio
-    - Ivomec
-    - Advocate
-    - Tears
-    - fipro
-    - Tratam
-    - sincelar
-    - Trivermex
-    - apetil
-    - Cefalong
-    - Enteroplus
-    - revol
-    - Mv
-    - Sh
-    - advocate
-    - bio
-    - ivomec
-    - algicam
-    - Credelio
-    - cardial
-    - crema
-    - Fipro
-    - sosten
-    - tratam
-    - Spinomax
-    - Atb
-    - Tiu
-    - revol
-    - viviramv
-    - Mv
-    - Pf
-    - Fipro
-    - enroplus
-    - Colotrin
-    - advocate
-    - Idocarb12
-    - Aplonal
-    - Fider
-    - Griseofulvina
-    - Credelio
-    - amoxivet
-    - apoquel
-    - Virbac
-    - calcificante
-    - Sh
-    - Eqvalan
-    - Pf
-    - Pf
-    - fleegard
-    - fider
-    - Baycox
-    - ocladerm
-    - fip
-    - Idocarb12
-    - Epitelizante
-    - ecthol
-    - Barbitol
-    - ivermex
-    - apoquel
-    - fortepen
-    - librela
-    - credelio
-    - advantage
-    - fider
-    - Fipro
-    - Albex
-    - eutanasico
-    - Linco
-    - barbitol
-    - fluido
-    - Simparica
-    - kil
-    - Eqvalan
-    - Enteroplus
-    - Credelio
-    - total
-    - basken
-    - Fider
-    - Rochy
-    - ocubiotic
-    - Fip
-    - kothrina
-    - Feliway
-    - barbitol
-    - simparica
-    - fenobarbital
-    - pf
-    - Total
-    - Dozilam
-    - Ranitidina
-    - ocubiotic
-    - Tonico
-    - pip
-    - Ciclar
-    - Ohm
-    - ivermex
-    - Coagulante
-    - pantoliv
-    - drontal
-    - feline
-    - simparica
-    - meltra
-    - librela
-    - bagovac
-    - multivit
-    - Pigatoperro
-    - Cytopoint
-    - power
-    - Librela
-    - Bactroflay
-    - Colotrin
-    - Seniorline
-    - Baytril
-    - power
-    - duosecretina
-    - Atriben
-    - drontal
-    - Pip
-    - Pileran
-    - vita
-    - Feline
-    - meltra
-    - terpan
-    - doxivit
-    - Bagogard
-    - vita
-    - Driptol
-    - artrin
-    - hepatoprotector
-    - meltra
-    - tratam
-    - Pf
-    - revol
-    - Drontal
-    - Protech
-    - Ectocan
-    - ciproplus
-    - Pentabiotico
-    - Fortekor
-    - Ecthonil
-    - bactrovet
-    - Uv
-    - pimocard
-    - Advantage
-    - Prednovet
-    - itraconazol
-    - feline
-    - Pets
-    - Algicam
-    - Algicam
-    - virbac
-    - Artrin
-    - librela
-    - Solubron
-    - Dermodene
-    - Shampoo
-    - puppyline
-    - silihepatic
-    - Basken
-    - Cefalong
-    - Dexa
-    - protech
-    - rochy
-    - virbac
-    - neuroalivio
-    - Pf
-    - virbac
-    - rochy
-    - Bagogard
-    - atropina
-    - terramicina
-    - Tolzuril
-    - Bactrovet
-    - Shampoo
-    - clorhexidina
-    - Doxin
-    - dipirona
-    - albex
-    - Power
-    - Seniorline
-    - virbac
-    - pets
-    - floxaday
-    - basken
-    - revol
-    - Protech
-    - Integhra
-    - Prednisolona
-    - shampoo
-    - Eutanasico
-    - antiverrugas
-    - cidar
-    - cidar
-    - bucal
-    - endospot
-    - Rochy
-    - Virbac
-    - kil
-    - librela
-    - integhra
-    - power
-    - Shampoo
-    - Shampoo
-    - Ivermectina
-    - tramadol
-    - Itraconazol
-    - Diafin
-    - endospot
-    - rochy
-    - Virbac
-    - dynamide
-    - power
-    - Pf
-    - isiquick
-    - itraconazol
-    - sincelar
-    - cefalong
-    - Ecthol
-    - Btk
-    - protech
-    - Dexa
-    - Vaquero
-    - Virbac
-    - Power
-    - Pf
-    - dexaflox
-    - tratam
-    - aurix
-    - endospot
-    - sincelar
-    - Trivermex
-    - Diazepam
-    - pets
-    - vaquero
-    - Artroglycan
-    - power
-    - pf
-    - Aurix
-    - Genabil
-    - sincelar
-    - Protech
-    - pets
-    - clavamox
-    - artroglycan
-    - bagogard
-    - power
-    - Pf
-    - Cloralen
-    - Sincelar
-    - pets
-    - full
-    - revol
-    - Meloxivet
-    - dominal
-    - Tea
-    - Labyderm
-    - prednisolona
-    - Doloalivio
-    - Pf
-    - power
-    - Fauna
-    - tratam
-    - Sincelar
-    - Tea
-    - Labyderm
-    - coagulante
-    - pets
-    - Doxivit
-    - Clamoxyl
-    - lectora
-    - Prius
-    - Vetscan
-    - Rochy
-    - mayor
-    - ciclosporina
-    - bactroprofen
-    - Fip
-    - enzimax
-    - Vermiplex
-    - Terramicina
-    - vetscan
-    - Vetscan
-    - biochip
-    - ecthonil
-    - labyderm
-    - totalvet
-    - opter
-    - Pimocard
-    - pets
-    - vetscan
-    - Bactroflay
-    - terramicina
-    - Artrosan
-    - totalvet
-    - ranitidina
-    - aplonal
-    - Ecthol
-    - Bagogard
-    - relay
-    - Voren
-    - Terpan
-    - Dominal
-    - Meltra
-    - feliway
-    - Shampoo
-    - Simparica
-    - Vetscan
-    - trihepat
-    - Virbac
-    - vetscan
-    - Galmetrin
-    - medroxiprogesterona
-    - Ecthol
-    - block
-    - Protech
-    - Block
-    - anfotropina
-    - Power
-    - sosten
-    - ursomarina
-    - vetscan
-    - flexapet
-    - Cidar
-    - Dominal
-    - glypondin
-    - cortidural
-    - Kobra
-    - Power
-    - Pro
-    - Ol
-    - pragma
-    - Ecthol
-    - ofloxacina
-    - Virbac
-    - novotioc
-    - Rochy
-    - Dexashock
-    - aplonal
-    - pimocard
-    - dominal
-    - protech
-    - bromhexina
-    - Acedan
-    - Atropina
-    - Dominal
     - Novotioc
-    - Virbac
-    - Tramadol
-    - block
-    - Ecthonil
-    - Aminolite
-    - endectocida
-    - Energia
-    - Protech
-    - diazepam
-    - Prednisolona
-    - tonico
-    - Ranitidina
-    - Block
-    - ecthol
-    - Kuramicina
-    - driptol
-    - power
-    - Plano
-    - shampoo
-    - furocal
-    - block
-    - virbac
-    - Ecthol
-    - Pimocard
-    - Bactroprofen
-    - Canis
-    - promafine
-    - ecthol
-    - enroplus
-    - Pip
-    - Virbac
-    - Previcox
-    - labyderm
-    - cefalexina
-    - Previcox
-    - Ketafine
-    - Power
-    - kil
-    - diurene
-    - ketamid
-    - Giacoccide
-    - Floxaday
-    - floxaday
-    - Cardial
-    - Novotioc
-    - Bactrovet
-    - Cidar
-    - Repexxin
-    - dominal
-    - Cidar
-    - Protech
-    - Flurbiprofeno
-    - Prednisolona
-    - hialurina
-    - pregabaliv
+    - Nutripet
+    - Ocladerm
+    - Ocubiotic
     - Ocuflox
-    - rochy
-    - clorhex
-    - Grupo
-    - Tramadol
-    - super
-    - repexxin
-    - dominal
-    - Moxidex
-    - giacoccide
-    - Pip
-    - bactrovet
-    - dominal
-    - Canis
-    - pimocard
-    - Furocal
-    - colotrin
-    - Sosten
-    - doxilina
-    - toltrazol
-    - pregabaliv
-    - Bactrovet
-    - total
-    - total
-    - Total
-    - basken
-    - vermkon
-    - dominal
-    - Serenex
-    - ziflor
-    - Dexametasona
-    - Aplonal
-    - Bactrovet
-    - kuramicina
-    - canis
-    - ocladerm
-    - rolenal
-    - pimobendan
-    - Power
-    - proteliv
-    - Tratam
-    - power
-    - Totalvet
-    - sedomin
-    - ohm
-    - pimocard
-    - diurene
-    - Power
-    - prednisolona
-    - block
-    - bactrovet
-    - butormin
-    - endectocida
-    - Singestar
-    - doxilina
-    - Dermoxil
-    - serenex
-    - serenex
-    - Canis
-    - Ascaricida
-    - shampoo
-    - mayor
-    - Block
-    - total
-    - dermodene
-    - total
-    - block
-    - Tonico
-    - Dexametasona
-    - ranitidina
-    - tramadol
-    - Singestar
-    - display
-    - canis
-    - Doxilina
-    - Total
-    - Basken
-    - Poten
-    - oxisol
-    - terramicina
-    - Complejo
-    - Canis
-    - Meltra
-    - Felilax
-    - Sosten
-    - Ecthol
-    - Nutripet
-    - dexa
-    - Estreptocarbocaftiazol
-    - biox
-    - Osurnia
-    - Singestar
-    - tea
-    - serenex
-    - Feliway
-    - Meloxivet
-    - neo
     - Ohm
-    - Cidar
-    - Serenex
-    - Canis
-    - Doxilina
-    - giacoccide
-    - Spinomax
-    - Pro
-    - pileran
-    - ohm
-    - Basken
-    - Basken
-    - Aurix
-    - Bagomectina
-    - Serenex
-    - canis
-    - Power
-    - dermomax
-    - ivomec
-    - seraquin
-    - vetscan
-    - cetfur
-    - Giacoccide
-    - Itraconazol
-    - Canis
-    - Cefalexina
-    - Clorhex
-    - Block
-    - Tramadol
-    - Kuraderm
-    - Basken
-    - Aurix
-    - power
-    - Dermomax
-    - Giacoccide
-    - Enroplus
-    - Artrovet
+    - Osurnia
+    - Otiflex
     - Oxisol
-    - serenex
-    - Serenex
-    - block
-    - Curavet
-    - ursomarina
-    - Nutripet
-    - Basken
-    - Tea
-    - dominal
-    - Tea
-    - Canis
-    - pruricilona
-    - totalvet
-    - Floxaday
-    - Cardial
-    - griseofulvina
-    - ecthol
-    - block
-    - Vitamina
-    - ursoliv
-    - Basken
-    - tea
-    - Gerioox
-    - Prius
+    - Oxitetraciclina
+    - Pantoliv
+    - Pets
+    - Pf
     - Pigatoperro
-    - spinomax
-    - triavet
-    - rimadyl
-    - algicam
-    - block
-    - Meloxivet
-    - tea
-    - rolenal
-    - Meltra
-    - Toltrazol
-    - toltrazol
-    - Rochy
-    - rochy
-    - meloxivet
-    - basken
-    - Tea
-    - osteo
-    - power
-    - proderma
-    - toltrazol
-    - Trivermex
-    - Pro
-    - Block
-    - Cardial
-    - ecthol
-    - Cestodan
-    - Tea
-    - Ecthol
-    - Osteo
-    - power
+    - Pimobendan
+    - Pimocard
+    - Pip
+    - Plano
     - Power
-    - Toltrazol
+    - Pragma
+    - Prednisol
+    - Prednisolona
+    - Prednovet
+    - Pregabaliv
+    - Previcox
+    - Prius
+    - Pro
+    - Proderma
+    - Promafine
+    - Protech
+    - Proteliv
+    - Puppyline
+    - Ranitidina
+    - Repexxin
+    - Revol
+    - Rimadyl
+    - Rochy
+    - Rolenal
+    - Serenex
+    - Seresto
+    - Sh
+    - Shampoo
+    - Simparica
+    - Sincelar
+    - Singestar
+    - Sosten
     - Spinomax
     - Sulfavet
-    - Nogastrol
-    - algicam
-    - ecthol
-    - block
-    - cephilexine
-    - Pip
-    - Cestodan
-    - Enrofloxacina
-    - Diafin
     - Tea
-    - tea
-    - spinomax
+    - Tears
+    - Terpan
+    - Terramicina
+    - Tipertox
+    - Tobramax
+    - Toltrazol
+    - Tonico
+    - Toracard
+    - Total
+    - Totalvet
+    - Tramadol
+    - Tratam
+    - Trihepat
     - Tripackprotech
-    - vitaminico
-    - crema
-    - tea
-    - Dominal
-    - methiovertan
-    - Pragma
-    - pimobendan
-    - Bagogard
-    - dominal
-    - ecp
-    - tea
-    - tea
-    - tea
-    - Tea
-    - Artrosan
-    - Enteroplus
-    - Calcio
-    - energomag
-    - bactroflay
-    - Tea
-    - Crema
-    - proderma
-    - Cefalexina
     - Trivermex
-    - duosecretina
-    - colotrin
-    - Fip
-    - Dominal
-    - nutrical
-    - Tea
+    - Trocoxil
+    - Ursoliv
+    - Ursomarina
+    - Uv
+    - Vaquero
+    - Vetanarcol
+    - Vetscan
+    - Vilisinh
+    - Virbac
+    - Vita
+    - Vitamina
+    - Vitaminico
+    - Viviramv
+    - adaptil
+    - advantage
+    - advantix
+    - advocate
+    - albex
+    - algicam
+    - aminolite
+    - amoxivet
+    - anfotropina
+    - anti
     - aplonal
-    - episol
-    - vetanarcol
-    - trivermex
-    - Tripackprotech
-    - Feliway
-    - terramicina
-    - terramicina
-    - Revol
-    - Simparica
-    - Simparica
-    - Cerenia
+    - apoquel
+    - artroglycan
+    - ascaricida
+    - atb
+    - atropina
+    - aurix
+    - azitromicina
+    - bactroprofen
+    - bactrovet
+    - bagogard
+    - bagomectina
+    - barbitol
+    - basken
+    - baytril
+    - biox
+    - block
+    - bromhexina
+    - bucal
+    - butormin
+    - canis
+    - cardial
+    - cefalong
+    - cephilexine
+    - cerenia
+    - cetfur
+    - ciclosporina
+    - cidar
+    - ciproplus
+    - cloralen
+    - clorhex
+    - colirama
+    - colotrin
+    - comfortis
+    - complejo
+    - condroitin
+    - convenia
+    - credelio
+    - crema
     - cytopoint
-    - Mv
+    - dectomax
+    - dermodene
+    - dermomax
+    - dermoxil
+    - dexa
+    - dexaflox
+    - dexametasona
+    - diafin
+    - diazepam
+    - display
+    - diurene
+    - doloalivio
+    - dominal
+    - doxilina
+    - doxin
+    - driptol
+    - drontal
+    - duosecretina
+    - ecthol
+    - ecthonil
+    - ectocan
+    - endectocida
+    - energomag
+    - enroplus
+    - enteroplus
+    - eqvalan
+    - espuma
+    - eutanasico
+    - euthanyle
+    - fauna
+    - felilax
+    - feline
+    - feliway
+    - fenobarbital
+    - fider
+    - fip
+    - fipro
+    - flurbiprofeno
+    - full
+    - furocal
+    - galmetrin
+    - genabil
+    - gerioox
+    - giacoccide
+    - glypondin
+    - griseofulvina
+    - grupo
+    - hepatoprotector
+    - integhra
+    - ioduro
+    - isiquick
+    - itraconazol
+    - ivermectina
+    - ketafine
+    - kil
+    - kobra
+    - kothrina
+    - kuraderm
+    - kuramicina
+    - labyderm
+    - lectora
+    - librela
+    - mayor
+    - medroxiprogesterona
+    - meloxivet
     - meltra
+    - methiovertan
+    - moxidex
+    - mv
+    - neo
+    - nogastrol
+    - nomat
+    - nutrical
+    - ocladerm
+    - ocubiotic
+    - ofloxacina
+    - ohm
+    - ol
+    - opter
+    - osteo
+    - otiflex
+    - oxisol
+    - pentabiotico
+    - pets
+    - pf
+    - pigatoperro
+    - pileran
+    - pimobendan
+    - pimocard
+    - pip
+    - poten
+    - power
+    - pragma
+    - prednisolona
+    - pregabaliv
+    - previcox
+    - prius
+    - pro
+    - proderma
+    - protech
+    - proteliv
+    - pruricilona
+    - ranitidina
+    - relay
+    - revol
+    - rimadyl
+    - rochy
+    - rolenal
+    - sedomin
+    - semintra
+    - seniorline
+    - seraquin
+    - serenex
+    - shampoo
+    - silihepatic
+    - simparica
+    - sincelar
+    - singestar
+    - solubron
+    - sosten
+    - spinomax
+    - super
+    - tau
+    - tea
+    - terpan
+    - terramicina
+    - tiu
+    - toltrazol
+    - tolzuril
+    - total
+    - totalvet
+    - tramadol
+    - tratam
+    - triavet
+    - tripackprotech
+    - trivermex
+    - trocoxil
+    - ursomarina
+    - vcc
+    - vermiplex
+    - vermkon
     - vetscan
-
-- lookup: categoria
-  examples: |
-    - farmacos
-    - clinico
-    - antiparasitario interno
-    - antiparasitario externo
-    - higiene y belleza
-    - antiartrosico
-    - cardiologico
-    - higiene y belleza odontologico
-    - sin categoria
-    - alimento
-    - biologico
-    - accesorio
+    - virbac
+    - vita
+    - voren
+    - ziflor
 
 - lookup: proveedor
   examples: |
-    - integhra-proveedor
-    - konig s.a.
-    - konig
-    - brouwer
-    - zoetis
-    - ceva
-    - holliday scott s.a.
-    - holliday
-    - boehringer ingelheim
-    - boehringer
-    - John martin
-    - John
-    - Biogenesis bago
     - Biogenesis
-    - suizo argentina
-    - suizo
+    - Biogenesis bago
+    - Integhra-proveedor
+    - John
+    - John martin
+    - Konig
+    - Konig s.a.
     - Labyes
+    - Suizo
+    - Suizo argentina
+    - Zoetis
+    - boehringer
+    - boehringer ingelheim
+    - brouwer
+    - ceva
+    - holliday
+    - holliday scott s.a.
 
-- lookup: compuesto
+- lookup: categoria
   examples: |
-    - xilacina
-    - hidrocortisona aceponato
-    - feromona
-    - xylitol
-    - enrofloxacina
-    - etc
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - acido hialuronico
-    - pimobendan
-    - gramos
-    - neomicina base
-    - sulfadiazina de plata
-    - ceftiofur clorhidrato
-    - ketoprofeno
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - pimobendan
-    - spinosad
-    - fenbendazol
-    - pirantel pamoato
-    - praziquantel
-    - selamectina
-    - spinosad
-    - imidacloprid
-    - permetrina
-    - moxidectina
-    - praziquantel
-    - acepromazina maleato
-    - clorpirifos
-    - acido estearico
-    - benzoato de sodio
-    - lauril sulfato de trietanolamina
-    - enrofloxacina
-    - tramadol clorhidrato
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - ciclosporina a
-    - acido tioctico
-    - menbutona
-    - calcio
-    - fibras
-    - grasas
-    - humedad
-    - materia mineral
-    - n omega
-    - omega
-    - proteina bruta
-    - relaci
-    - sforo
-    - buspirona
-    - fipronil
-    - metopreno
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - clorhidrato de nafazolina
-    - cloruro de benzalconio
-    - con hidroxipropilmetilcelulosa
-    - fenazona
-    - idoxuridina
-    - feromonas
-    - imidacloprid
-    - permetrina
-    - oxitetraciclina
-    - sarolaner moxidectina pirantel
-    - spinosad
-    - ivermectina
-    - dimetridazol
-    - sulfadimetoxina
-    - enrofloxacina
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - acido ascorbico
-    - glucosamina sulfato
-    - manganeso gluconato
-    - metilsulfonilmetano
-    - oxitetraciclina clorhidrato
-    - sarolaner moxidectina pirantel
-    - imidacloprid
-    - permetrina
-    - benazepril clorhidrato
-    - espironolactona
-    - cipermetrina
-    - clorpirifos
-    - imidacloprid
-    - metopreno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - feromona
-    - difenilhidantoina sod
-    - pentobarbital sodico
-    - cafeina
-    - clorfeniramina maleato
-    - cloruro de magnesio hexahidrato
-    - cloruro de sodio
-    - gluconato de calcio
-    - glucosa anhidra
-    - spinosad
-    - cefovecin
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - calcio
-    - fibras
-    - grasas
-    - humedad
-    - materia mineral
-    - n omega
-    - omega
-    - proteina bruta
-    - relaci
-    - sforo
-    - fipronil
-    - metopreno
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - ajo
-    - curcuma
-    - espirulina
-    - gluconato de zinc
-    - l arginina clorhidrato
-    - l glutamina
-    - vitamina a palmitato
-    - vitamina c recubierta
-    - vitamina e
-    - cefovecin
-    - fenobarbital
-    - flumetrina
-    - imidacloprid
-    - azitromicina base
-    - acido ursodesoxicolico
-    - silimarina
-    - imidacloprid
-    - piriproxifeno
-    - sarolaner moxidectina pirantel
-    - doramectina
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - flunixin meglumine
-    - hioscina butilbromuro
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - l carnitina
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - taurina
-    - spinosad
-    - carprofeno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - aluminio
-    - cipermetrina
-    - ddvp
-    - gramos
-    - sulfadiazina de plata
-    - imidacloprid
-    - piriproxifeno
-    - lotilaner
-    - torasemida
-    - condroitin sulfato
-    - glucosamina sulfato
-    - manganeso
-    - saborizante
-    - sulfato
-    - ketamina base
-    - feromona
-    - fipronil
-    - metopreno
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - flumetrina
-    - imidacloprid
-    - cloranfenicol
-    - hidrocortisona
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - tiamina clorhidrato
-    - sarolaner moxidectina pirantel
-    - doramectina
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - lotilaner
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - enrofloxacina
-    - dimetil
-    - fenil
-    - metilaminomet
-    - mgr
-    - mgr nipagin sodico
-    - n butil bromuro de hioscina
-    - pirazolona
-    - azitromicina base
-    - ciprofloxacina base
-    - ketoconazol
-    - prednisolona
-    - omeprazol
-    - pasta cuprosodica de clorofila
-    - carprofeno
-    - oxitetraciclina clorhidrato
-    - fipronil
-    - metopreno
-    - itraconazol
-    - sarolaner moxidectina pirantel
-    - doramectina
-    - calcio
-    - fibras
-    - fosofro
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - lotilaner
-    - de solucion oral
-    - gr de prenisolona
-    - ioduro de sodio al
-    - acido folico
-    - calcio
-    - ciaanocolabamina
-    - colina
-    - l cistina
-    - l metionina
-    - trisosfato de adenosina
-    - l lisina al
-    - feromona
-    - enrofloxacina
-    - imidacloprid
-    - piriproxifeno
-    - mavacoxib
-    - mavacoxib
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - hum
-    - l carnitina
-    - materia mineral
-    - omega
-    - prot bruta
-    - relacion omega
-    - sodio
-    - taurina
-    - calcio
-    - extracto etereo
-    - fibra cruda
-    - fosforo
-    - humedad
-    - minerales totales
-    - proteina bruta
-    - mejora y mantiene la salud gastrointestina
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - spinosad
-    - cifenotrina
-    - imidacloprid
-    - enrofloxacina
-    - cloranfenicol
-    - acido borico
-    - acido salicilico
-    - borax
-    - dimetilsulfoxido
-    - laurilsulfato de sodio
-    - idem
-    - feromona
-    - oxitetraciclina clorhidrato
-    - u i
-    - u i vitamina e
-    - u vitamina d
-    - vitamina a
-    - fipronil
-    - metopreno
-    - mavacoxib
-    - oclacitinib
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - enrofloxacina
-    - amitraz
-    - lotilaner
-    - vitaminico mineral aminoacidico
-    - imidacloprid
-    - moxidectin
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - acido borico
-    - acido salicilico
-    - borax
-    - dimetilsulfoxido
-    - laurilsulfato de sodio
-    - en comprimidos
-    - enrofloxacina
-    - condroitin sulfato
-    - acido alfalipoico
-    - betaina clorhidrato
-    - colina bitartrato
-    - curcuma longa l extracto seco
-    - cynara scolymus l extracto seco
-    - metionina
-    - n acetil cisteina
-    - silybum marianum extracto seco
-    - vitamina b
-    - zinc gluconato
-    - condroitin sulfato a al
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - meloxicam
-    - carprofeno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - diazepan
-    - acido ursodesoxicolico
-    - colina
-    - extracto en polvo de cardo mariano
-    - n acetilcisteina
-    - lotilaner
-    - aceite mineral denso
-    - extracto de malta
-    - tramadol clorhidrato
-    - fipronil
-    - idem
-    - fosfato diacido de potasio
-    - en comprimidos
-    - enrofloxacina
-    - imidacloprid
-    - moxidectin
-    - tramadol clorhidrato
-    - cloruro de benzalconio
-    - condroitin sulfato
-    - tobramicina
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - carprofeno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - calcio
-    - extracto etereo
-    - fibra cruda
-    - fosforo
-    - humedad
-    - minerales totales
-    - proteina bruta
-    - enrofloxacina
-    - ivermectina
-    - toltrazuril
-    - lotilaner
-    - ivermectina merial
-    - imidacloprid
-    - moxidectin
-    - cloruro de sodio
-    - condroitin sulfato
-    - fipronil
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - medroxiprogesterona acetato
-    - fenbendazol
-    - praziquantel
-    - pyrantel pamoato
-    - ciproheptadina clorhidrato
-    - dl carnitina clorhidrato
-    - stanozolol
-    - vehiculo
-    - cefalexina
-    - carbon activado
-    - enrofloxacina
-    - ftalilsulfatiazol
-    - selamectina
-    - calcio
-    - carnitina
-    - e m
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - kcal
-    - kg tal cual se sirve
-    - materia mineral
-    - omega
-    - ppm relacion omega
-    - proteina bruta
-    - azitromicina
-    - imidacloprid
-    - moxidectin
-    - xilitol
-    - ivermectina al
-    - y clorsulon al
-    - lotilaner
-    - benazepril
-    - espironolactona
-    - bacitracina
-    - benzoca
-    - dexametasona
-    - neomicina
-    - y griseofulvina
-    - fipronil
-    - idem
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - kg y lufenuron
-    - spinosad
-    - dihidroestreptomicina
-    - penicilina benzatinica
-    - penicilina procainica
-    - u i
-    - vehiculo
-    - selamectina
-    - doxapram clorhidrato
-    - calcio
-    - fibras
-    - fosofro
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - adenovirus
-    - parainfluenza y leptospira caninos
-    - virus de moquillo
-    - fipronil
-    - en comprimidos
-    - enrofloxacina
-    - condroitin sulfato
-    - glucosamina clorhidrato
-    - metilsulfonilmetano
-    - imidacloprid
-    - moxidectin
-    - cianocobalamina
-    - imidocarb dipropionato
-    - flunixin base
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - griseofulvina micronizada
-    - lotilaner
-    - amoxicilina
-    - oclacitinib
-    - leishmaniasis
-    - a palmitato
-    - carbonato de calcio
-    - iodato de calcio
-    - minerales
-    - oxido de cobre
-    - oxido de manganeso
-    - sulfato de magnesio
-    - vitaminas
-    - peroxido de benzoilo
-    - ivermectina
-    - adenovirus
-    - corona y leptospira caninos
-    - parainfluenza
-    - parvo
-    - virus de distemper
-    - virus de parvo y corona caninos
-    - ccyfluthrin
-    - piriproxifen
-    - propelentes
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - grs
-    - toltrazuril
-    - d l metionina
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - cianocobalamina
-    - imidocarb dipropionato
-    - caseina hidrolizada
-    - vitamina a palmitato
-    - vitamina e acetato
-    - cifenotrina
-    - imidacloprid
-    - fenobarbital
-    - ivermectina
-    - praziquantel
-    - oclacitinib
-    - bencilpenicilina benzatinica
-    - bencilpenicilina proc
-    - dihidroestreptomicina sulf
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - lotilaner
-    - imidacloprid
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - fipronil
-    - albendazol
-    - praziquantel
-    - difenilhidantoina
-    - pentobarbital sodico
-    - lincomicina
-    - fenobarbital
-    - sarolaner
-    - carbaryl
-    - ivermectina
-    - praziquantel
-    - carbon de cafe
-    - dextrosa
-    - dimetilpolisiloxano activado
-    - enrofloxacina
-    - ftalilsulfatiazol
-    - lotilaner
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - clorhexidina acetato
-    - fipronil
-    - bacitracina
-    - benzocaina
-    - hidrocortisona
-    - neomicina
-    - polimixina b
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - feromonas
-    - fenobarbital
-    - sarolaner
-    - fenobarbital
-    - trofozoitos inactivados de giardia lamblia
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - midazolam
-    - ranitidina
-    - bacitracina
-    - benzocaina
-    - neomicina
-    - polimixina b
-    - aminoacidos y minerales
-    - vitaminas
-    - imidacloprid
-    - permetrina
-    - cloprostenol sodico
-    - extracto de raiz de valeriana
-    - teanina
-    - triptofano
-    - ivermectina
-    - praziquantel
-    - febantel
-    - praziquantel
-    - pyrantel embonato
-    - imidacloprid
-    - ivermectina
-    - praziquantel
-    - sarolaner
-    - azitromicina
-    - metronidazol
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - suspension inactivada de virus rabico desarrollado en celulas bhk
-    - imidacloprid
-    - canina
-    - imidacloprid
-    - permetrina
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - cipermetrina
-    - etion
-    - aceite de higado de bacalao
-    - acido hialuronico
-    - clorhidrato
-    - condroitin
-    - glucosamina
-    - heptahidrato
-    - hexahidrato
-    - magnesio cloruro
-    - metilsulfonilmetano
-    - sal sodica
-    - sulfato sodico
-    - zinc sulfato
-    - acido folico
-    - arandano
-    - pared celular de levadura
-    - vitaminas
-    - enrofloxacina
-    - grs
-    - fluralaner
-    - acido tioctico
-    - membutona
-    - triamcinolona
-    - vehiculo
-    - emboato
-    - febantel
-    - praziquantel
-    - pyrantel
-    - imidacloprid
-    - permetrina
-    - metroclopramida clorhidrato
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - tiamina clorhidrato
-    - imidacloprid
-    - ivermectina
-    - praziquantel
-    - ivermectina
-    - cipermetrina
-    - diazinon
-    - acido folico
-    - cianocobalamina
-    - doxiciclina
-    - piridoxina clorhidrato
-    - tiamina clorhidrato
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - tiamina clorhidrato
-    - carprofeno
-    - condroitin sulfato
-    - glucosamina sulfato
-    - manganeso sulfato
-    - bitartrato de colina
-    - d l metionina
-    - extracto de cynara scolymus
-    - extracto de peumus boldus
-    - extracto de rhamnus prushiana
-    - metilbromuro de homatropina
-    - oxbendazol
-    - praziquantel
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - calcivirosis felinos
-    - parvo
-    - rinotraqueitis
-    - virus vivos modificados de
-    - selamectina
-    - pirantel
-    - praziquantel
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - cipermetrina
-    - clorpirifos
-    - ciprofloxacina
-    - ketoconazol
-    - lidocaina clorhidrato
-    - prednisolona
-    - estreptomicina
-    - penicilina
-    - benazepryl
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - aluminio
-    - cipermetrina
-    - gramos
-    - imidacloprid
-    - sulfadiazina de plata
-    - pimobendan
-    - imidacloprid
-    - carbinoxamina maleato
-    - prednisolona
-    - itraconazol
-    - imidacloprid
-    - ivermectina
-    - praziquantel
-    - fluralaner
-    - meloxicam
-    - febantel
-    - ivermectina
-    - pamoato de pirantel
-    - praziquantel
-    - carprofeno
-    - condroitin sulfato
-    - glucosamina sulfato
-    - manganeso sulfato
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - bromhexina
-    - acido salicilico
-    - alcanfor
-    - mercaptobenzotiazol
-    - butoxido de piperonilo
-    - cipermetrina
-    - minerales
-    - dl metionina
-    - l colina bitartrato
-    - same
-    - silibina
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - cefalexina monohidrato
-    - dexametasona fosfato sodico
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - clorhexidina acetato
-    - fipronil
-    - febantel
-    - ivermectina
-    - pamoato de pirantel
-    - praziquantel
-    - condroitin sulfato
-    - hialuronato de sodio
-    - ofloxacina
-    - cultivados en celulas de rinon de hamster lactante
-    - inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
-    - virus rabico cepa paris
-    - xilitol
-    - clorhexidina acetato
-    - fipronil
-    - atropina sulfato
-    - oxitetraciclina
-    - toltrazuril
-    - aluminio
-    - cipermetrina
-    - ddvp
-    - sulfadiazina de plata
-    - clorhexidina digluconato
-    - clorhexidina digluconato
-    - veh o
-    - doxiciclina hiclato
-    - albendazol
-    - praziquantel
-    - imidacloprid
-    - metopreno
-    - c y e
-    - condroitina
-    - ginkgo biloba
-    - glucosamina
-    - vitaminas b
-    - acido lactico
-    - acido salicilico
-    - microcapsulas
-    - fipronil
-    - metopreno
-    - levofloxacina
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - selamectina
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - active ingredient
-    - prednisolona saborizada
-    - difenilhidantoina
-    - pentobarbital sodico
-    - clorobutanol
-    - selamectina
-    - spinosad
-    - selamectina
-    - spinosad
-    - xylitol
-    - ivermectina
-    - praziquantel
-    - clorhexidina acetato
-    - fipronil
-    - frasco fraccion liofilizada
-    - virus atenuado
-    - aluminio micronizado
-    - cipermetrina
-    - clorpirifos
-    - sulfadiazina de plata
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - active ingredient
-    - fluralaner
-    - betaina cocoamida
-    - lauril sulfato de sodio
-    - betaina cocoamida
-    - lauril sulfato de sodio
-    - ivermectina
-    - clorhidrato
-    - tramadol
-    - itraconazol
-    - clorhidrato de bencetimida
-    - enrofloxacina
-    - ivermectina
-    - praziquantel
-    - clorhexidina acetato
-    - fipronil
-    - hepatitis
-    - parvovirosis y tos de las perreras fraccion liofilizada
-    - vacuna contra el moquillo
-    - virus moquillo atenuado
-    - condroitin sulfato
-    - ginseng
-    - glucosamina
-    - vitaminas y minerales
-    - acepromacina maleato
-    - adenovirus
-    - parainfluenza y parvo caninos
-    - virus de distemper
-    - alumbre
-    - oxido ferrico
-    - silicato de aluminio y magnesio
-    - itraconazol
-    - medroxiprogesterona acetato
-    - cefalexina monohidrato
-    - imidacloprid
-    - acetato de hidrocortisona
-    - gramos
-    - oxitetraciclina
-    - sulfadiazina de plata
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - dexametasona fosfato sodico
-    - fipronil
-    - ivermectina
-    - atenuada
-    - atenuado
-    - calicivirus cepa f
-    - dicp
-    - virus de la panleucopenia atenuado
-    - virus de la rinotraqueitis cepa fvr f
-    - imidacloprid
-    - adenovirus
-    - parainfluenza
-    - parvo y corona caninos
-    - virus de distemper
-    - dexametasona fosfato
-    - ofloxacina
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - acido acetico glacial
-    - acido borico
-    - glicerol
-    - sal de aluminio de alantoina
-    - ivermectina
-    - praziquantel
-    - medroxiprogesterona acetato
-    - fenbendazol
-    - praziquantel
-    - pyrantel pamoato
-    - diazepam
-    - fipronil
-    - metopreno
-    - fipronil
-    - ivermectina
-    - condroitin sulfato
-    - fipronil
-    - adenovirus
-    - parainfluenza
-    - parvo y leptospira caninos
-    - virus de distemper
-    - acido acetico glacial
-    - acido borico
-    - glicerol
-    - sal de aluminio de alantoina
-    - acido edetico
-    - clorocresol metabisulfito sodico
-    - dietanolamina
-    - icteryl o acido genabilico
-    - medroxiprogesterona acetato
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - comprimidos
-    - fluralaner
-    - acido clavulanico
-    - amoxicilina
-    - condroitin de bajo peso molecular
-    - condroitin sulfato
-    - glucosamina
-    - manganeso
-    - sodio
-    - imidacloprid
-    - virus de parvo canino
-    - nicotinamida
-    - palmitato de cloranfenicol
-    - pantotenato de calcio
-    - vitamina b
-    - medroxiprogesterona acetato
-    - comprimidos
-    - fluralaner
-    - acido ursodesoxicolico
-    - silimarina
-    - selamectina
-    - meloxicam
-    - fenoxicarb
-    - imidacloprid
-    - propoxur
-    - ddvp
-    - diazinon
-    - hipoalergenicos de origen natural
-    - prednisolona saborizada
-    - etodolac
-    - antigeno de bordetella bronchiseptica
-    - fluralaner
-    - amitraz
-    - azufre
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - clormadinona acetato
-    - propoxur
-    - hipoalergenicos de origen natural
-    - comprimidos
-    - fluralaner
-    - acido folico
-    - cianocobalamina
-    - doxiciclina
-    - piridoxina clorhidrato
-    - tiamina clorhidrato
-    - amoxicilina
-    - doramectina
-    - clorhexidina acetato
-    - fipronil
-    - d l metionina
-    - cloranfenicol
-    - prednisolona base
-    - tetraciclina clorhidrato
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - betaina hcl
-    - bromelina
-    - gr y closantel
-    - mebendazol
-    - oxitetraciclina
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - hipoalergenicos de origen natural
-    - etc
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - spinosad
-    - pimobendan
-    - comprimidos
-    - fluralaner
-    - etion
-    - oxitetraciclina
-    - pentosan polisulfato sodico
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - ranitidina
-    - flunixin base
-    - cipermetrina
-    - clorpirifos
-    - cabergolina
-    - diclorvos
-    - fenoxicarb
-    - imidacloprid
-    - propoxur
-    - ivermectina
-    - praziquantel
-    - feromonas
-    - sarolaner
-    - colina
-    - metionina
-    - silimarina
-    - febantel
-    - ivermectina
-    - pamoato de pirantel
-    - praziquantel
-    - butanos
-    - cipermetrina
-    - gr de concentrado
-    - imidacloprid
-    - propano
-    - propelente
-    - sulfadiazina de plata
-    - medroxiprogesterona acetato
-    - deltametrina
-    - imidacloprid
-    - fipronil
-    - imidacloprid
-    - piriproxifeno
-    - fipronil
-    - acido canforico
-    - hexametilentetramina
-    - fluralaner
-    - condroitin sulfato
-    - glucosamina sulfato
-    - selamectina
-    - spinosad
-    - fenoxicarb
-    - imidacloprid
-    - cobre como etilenodinitrilo de calcio y cobre
-    - metilprednisolona acetato
-    - cipermetrina
-    - ddvp
-    - fluralaner
-    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
-    - acido ascorbico
-    - gluconato
-    - glucosamina sulfato
-    - manganeso
-    - metilsulfonilmetano
-    - benazepril clorhidrato
-    - espironolactona
-    - clorpirifos
-    - ofloxacina
-    - glicerina
-    - microcapsulas
-    - peroxido de benzoilo
-    - acido tioctico
-    - clorhexidina acetato
-    - fipronil
-    - dexametasona sodio fosfato
-    - flunixin base
-    - pimobendan
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - imidacloprid
-    - piriproxifeno
-    - bromhexina
-    - clorhidrato
-    - acepromazina maleato
-    - atropina sulfato
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - acido tioctico
-    - vitamina b
-    - acido lactico
-    - g microesferas
-    - glicerina
-    - urea
-    - clorhidrato
-    - tramadol
-    - spinosad
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - como fuente de energia complejo vitamina b
-    - dextrosa al
-    - ivermectina
-    - neurotrofico fisiologico
-    - imidacloprid
-    - piriproxifeno
-    - diazepam
-    - prednisolona base
-    - aminoacidos y minerales
-    - vitaminas
-    - ranitidina
-    - fipronil
-    - clorpirifos
-    - oxitetraciclina base anfoterica
-    - carprofeno
-    - fluralaner
-    - ketamina
-    - clorhexidina digluconato
-    - spinosad
-    - bencilpenicilanato de benzatina
-    - bencilpenicilanato de procaina
-    - sulfato de dihidroestreptomicina
-    - imidacloprid
-    - pimobendan
-    - cloranfenicol
-    - prednisolona base
-    - tetraciclina clorhidrato
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - acepromacina maleato
-    - excip
-    - cipermetrina
-    - clorpirifos
-    - en comprimidos
-    - enrofloxacina
-    - imidacloprid
-    - permetrina
-    - acido salicilico
-    - azufre
-    - g alquitran
-    - microesferas
-    - firocoxib
-    - hipoalergenicos de origen natural
-    - cefalexina monohidrato
-    - firocoxib
-    - ketamina
-    - fluralaner
-    - acido
-    - clorpirifos
-    - dimetilciclopropanocarboxilico
-    - metopreno
-    - permetrina
-    - furosemida
-    - ketamina base
-    - midazolam base
-    - dimetridazol
-    - sulfadimetoxina
-    - levofloxacina
-    - levofloxacina
-    - enapril
-    - espironolactona
-    - acido tioctico
-    - vitamina b
-    - etofenprox
-    - imidacloprid
-    - sulfadiazina de plata
-    - selamectina
-    - spinosad
-    - deltametrina
-    - propoxur
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - selamectina
-    - spinosad
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - flurbiprofeno sodico
-    - prednisolona
-    - hialuronato de sodio
-    - pregabalina comprimidos
-    - betametasona
-    - clotrimazol
-    - enrofloxacina
-    - ivermectina
-    - clorhexidina acetato
-    - fipronil
-    - clorhexidina digluconato
-    - veh
-    - nicotinamida
-    - vitamina b
-    - tramadol clorhidrato
-    - but
-    - g n octyl bicicloheptene dicarboximida
-    - piretrinas naturales
-    - xido de piperonilo
-    - deltametrina
-    - propoxur
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - moxidectina
-    - praziquantel
-    - dimetridazol
-    - sulfadimetoxina
-    - imidacloprid
-    - permetrina
-    - aluminio
-    - cipermetrina
-    - ddvp
-    - gramos
-    - sulfadiazina de plata
-    - fenoxicarb
-    - imidacloprid
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - pimobendan
-    - aceite de higado de bacalao
-    - acido hialuronico
-    - clorhidrato
-    - condroitin
-    - glucosamina
-    - heptahidrato
-    - hexahidrato
-    - magnesio cloruro
-    - metilsulfonilmetano
-    - sal sodica
-    - sulfato sodico
-    - zinc sulfato
-    - d glucosamina
-    - d l calcio
-    - d l metionina
-    - l arginina
-    - l glutamina
-    - l lisina
-    - l prolina
-    - manganesio
-    - pantotenato
-    - sulfato
-    - vitamina a
-    - vitamina b
-    - vitamina e
-    - doxiciclina
-    - toltrazuril
-    - pregabalina comprimidos
-    - doramectina
-    - fenbendazol
-    - toltrazuril
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - naftalofos
-    - fenoxicarb
-    - imidacloprid
-    - feromona m
-    - bencidamina clorhidrato
-    - cloruro de benzalconio
-    - difenhidramina clorhidrato
-    - florfenicol
-    - lidocaina clorhidrato
-    - dexametasona
-    - fosfato
-    - flunixin base
-    - etofenprox
-    - imidacloprid
-    - sulfadiazina de plata
-    - oxitetraciclina base anfoterica
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - coaltar
-    - pimobendan
-    - fluralaner
-    - bitartrato de colina
-    - dehidrocolato de sodio
-    - desoxicolato de sodio
-    - extracto diluido de alcachofa
-    - metilbromuro de homatropina
-    - nicotinamida
-    - vehiculo
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - fipronil
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - xilazina
-    - extracto de valeriana
-    - triptofano
-    - pimobendan
-    - furosemida
-    - fluralaner
-    - prednisolona base
-    - fipronil
-    - aluminio
-    - cipermetrina
-    - gramos
-    - imidacloprid
-    - sulfadiazina de plata
-    - butorfanol
-    - ivermectina
-    - neomicina base
-    - tiabendazol
-    - triamcinolona acetonida
-    - doxiciclina
-    - peroxido de benzoilo
-    - feromona m
-    - feromona m
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - biclorhidrato de piperazina
-    - metil bromuro de homatropina
-    - butoxido de piperonilo
-    - cipermetrina
-    - d l metionina
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - fenbendazol
-    - toltrazuril
-    - alcanfor
-    - alcohol isopropilico
-    - mercaptobenzotiazol
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - vitaminico mineral aminoacidico
-    - dexametasona
-    - ranitidina
-    - tramadol clorhidrato
-    - acetato de medroxiprogesterona
-    - selamectina
-    - spinosad
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - doxiciclina
-    - fenbend
-    - pirantel base
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - base
-    - metionina dl
-    - mg taurina
-    - mg vitamina b
-    - nicotinamida
-    - vitamina b
-    - oxitetraciclina clorhidrato
-    - oxitetraciclina
-    - grupo b
-    - vit a
-    - moxidectina
-    - praziquantel
-    - ivermectina
-    - acido benzoico
-    - lecitina de soja
-    - vaselina
-    - condroitin sulfato
-    - glucosamina sulfato
-    - cipermetrina
-    - clorpirifos
-    - vitamina a
-    - dexametasona fosfato sodico
-    - acetato de megestrol
-    - propoxur
-    - feromona m
-    - feromonas
-    - meloxicam
-    - azitromicina
-    - metronidazol
-    - analogo semioquimico de la feromona de apaciguamiento canino
-    - selamectina
-    - spinosad
-    - feromona m
-    - moxidectina
-    - praziquantel
-    - doxiciclina
-    - dimetridazol
-    - sulfadimetoxina
-    - kg y lufenuron
-    - spinosad
-    - ac folico
-    - biotina
-    - carbonato de ca
-    - d pantotenato de ca
-    - maltodextrina
-    - nicotinamida
-    - oxido de zn
-    - sulfato de
-    - u i vitamina b
-    - u i vitamina e
-    - vit a
-    - vitamina b
-    - metroclopramida clorhidrato
-    - analogo semioquimico de la fraccion f
-    - de feromona facial felina
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - acetonida de triamcinolona
-    - neomicina base
-    - tiabendazol
-    - feromona m
-    - moxidectina
-    - praziquantel
-    - spinosad
-    - betametasona
-    - clotrimazol
-    - gentamicina
-    - lidocaina
-    - valerato
-    - vitamina a palmitato
-    - ivemectina
-    - clorhidrato de glucosamina
-    - condroitin sulfato sodico
-    - extracto tumerico
-    - ceftiofur clorhidrato
-    - dimetridazol
-    - sulfadimetoxina
-    - itraconazol
-    - moxidectina
-    - praziquantel
-    - cefalexina monohidrato
-    - clorhexidina digluconato
-    - veh
-    - spinosad
-    - tramadol clorhidrato
-    - aluminio
-    - neomicina base
-    - sulfadiazina de plata
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - ivermectina
-    - levoflaxacina base
-    - propionato de clobetasol
-    - sulfadiazina argentica
-    - spinosad
-    - betametasona
-    - clotrimazol
-    - gentamicina
-    - lidocaina
-    - valerato
-    - vitamina a palmitato
-    - dimetridazol
-    - sulfadimetoxina
-    - en comprimidos
-    - enrofloxacina
-    - condroitin sulfato
-    - oxitetraciclina clorhidrato
-    - feromona m
-    - feromona m
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - aluminio
-    - clorhexidina diacetato
-    - fenitrotion
-    - vitamina e
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - propoxur
-    - imidacloprid
-    - propoxur
-    - moxidectina
-    - praziquantel
-    - fluocinolona acetonida
-    - etc
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - levofloxacina
-    - benazepril
-    - espironolactona
-    - griseofulvina micronizada
-    - benzocaina
-    - cl de benzalconio
-    - cloranfenicol
-    - dexametasona
-    - gramicidina
-    - nistatina
-    - papaina
-    - spinosad
-    - vitamina k
-    - acido ursodesoxicolico
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - propoxur
-    - idem
-    - doramectina
-    - imidacloprid
-    - kg y lufenuron
-    - spinosad
-    - acetonida de triamcinolona
-    - carprofeno
-    - meloxicam
-    - fipronil
-    - meloxicam
-    - propoxur
-    - tramadol
-    - oxbendazol
-    - praziquantel
-    - toltrazuril
-    - toltrazuril
-    - clorhexidina acetato
-    - fipronil
-    - clorhexidina acetato
-    - fipronil
-    - meloxicam
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - propoxur
-    - betaina
-    - dl metionina
-    - glicinato de cobre
-    - gluconato de magnesio
-    - gluconato de manganeso
-    - gluconato de zinc
-    - glucosamina
-    - histidina
-    - l cisteina
-    - selenito de sodio
-    - vitamina b
-    - vitamina e
-    - fluralaner
-    - febantel
-    - pamoato de pirantel
-    - toltrazuril
-    - febendazol
-    - pirantel pamoato
-    - praziquantel
-    - gluconato de mag
-    - taurina
-    - vitaminas coenzima
-    - spinosad
-    - benazepril
-    - espironolactona
-    - cifenotrina
-    - imidacloprid
-    - praziquantel
-    - ddvp
-    - g butoxido de piperonilo
-    - metoprene
-    - piretrinas naturales
-    - propoxur
-    - cifenotrina
-    - imidacloprid
-    - betaina
-    - dl metionina
-    - glicinato de cobre
-    - gluconato de magnesio
-    - gluconato de manganeso
-    - gluconato de zinc
-    - glucosamina
-    - histidina
-    - l cisteina
-    - selenito de sodio
-    - vitamina b
-    - vitamina e
-    - spinosad
-    - spinosad
-    - febantel
-    - pamoato de pirantel
-    - toltrazuril
-    - kg y lufenuron
-    - spinosad
-    - sulfametazina sodica
-    - trimetoprim
-    - omeprazol
-    - meloxicam
-    - deltametrina
-    - imidacloprid
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - cefalexina
-    - imidacloprid
-    - permetrina
-    - praziquantel
-    - enrofloxacina
-    - clorhidrato de bencetimida
-    - propoxur
-    - fenoxicarb
-    - kg y lufenuron
-    - spinosad
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - u i vitamina d
-    - u i vitamina e
-    - vitamina a
-    - vitamina k
-    - bacitracina
-    - benzoca
-    - dexametasona
-    - neomicina
-    - y griseofulvina
-    - cipermetrina
-    - ddvp
-    - butoxido de piperonil
-    - fenoxycarb
-    - imidacloprid
-    - permetrina
-    - acetil metionina
-    - metionina
-    - sorbitol
-    - benazepril clorhidrato
-    - espironolactona
-    - pimobendan
-    - butoxido de piperonil
-    - fenoxycarb
-    - imidacloprid
-    - permetrina
-    - estradiol
-    - ddvp
-    - diazinon
-    - propoxur
-    - propoxur
-    - propoxur
-    - pentosan polisulfato sodico
-    - carbon activado
-    - dimetilpolisiloxano activado
-    - enrofloxacina
-    - ftalilsulfatiazol
-    - cloruro de calcio
-    - cloruro de magnesio
-    - fluoruro de sodio
-    - gluconato de calcio
-    - l lisina monoclorhidrato
-    - vit a
-    - pirrolidon carboxilato de magnesio monohidrato
-    - cipermetrina
-    - etion
-    - propoxur
-    - bacitracina
-    - dexametasona
-    - neomicina
-    - y griseofulvina
-    - betametasona
-    - sulfadiazina de plata
-    - vitamina a
-    - cefalexina monohidrato
-    - fenbendazol
-    - pirantel pamoato
-    - y praziquantel
-    - acido tioctico
-    - membutona
-    - aceite de higado de bacalao
-    - acido hialuronico
-    - clorhidrato
-    - condroitin
-    - glucosamina
-    - heptahidrato
-    - hexahidrato
-    - magnesio cloruro
-    - metilsulfonilmetano
-    - sal sodica
-    - sulfato sodico
-    - zinc sulfato
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - imidacloprid
-    - lauril etoxisulfato de sodio
-    - propoxur
-    - carbonato de calcio
-    - propoxur
-    - flunixin base
-    - diazepam
-    - difenilhidantoinato sodico
-    - ketamina base
-    - fenbendazol
-    - pirantel pamoato
-    - y praziquantel
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - feromonas
-    - oxitetraciclina
-    - oxitetraciclina
-    - selamectina
-    - sarolaner
-    - sarolaner
-    - maropitant citrato monohidrato
-    - canina
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - hum
-    - mat mineral
-    - omega
-    - prot bruta
-    - relacion omega
-    - albendazol
+    - accesorio
+    - alimento
+    - antiartrosico
+    - antiparasitario externo
+    - antiparasitario interno
+    - biologico
+    - cardiologico
+    - clinico
+    - farmacos
+    - higiene y belleza
+    - higiene y belleza odontologico
+    - sin categoria
 
 - lookup: ingrediente_activo
   examples: |
-    - xilacina
-    - hidrocortisona aceponato
-    - feromona
-    - xylitol
-    - enrofloxacina
-    - etc
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - acido hialuronico
-    - pimobendan
-    - gramos
-    - neomicina base
-    - sulfadiazina de plata
-    - ceftiofur clorhidrato
-    - ketoprofeno
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - pimobendan
-    - spinosad
-    - fenbendazol
-    - pirantel pamoato
-    - praziquantel
-    - selamectina
-    - spinosad
-    - imidacloprid
-    - permetrina
-    - moxidectina
-    - praziquantel
-    - acepromazina maleato
-    - clorpirifos
-    - acido estearico
-    - benzoato de sodio
-    - lauril sulfato de trietanolamina
-    - enrofloxacina
-    - tramadol clorhidrato
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - ciclosporina a
-    - acido tioctico
-    - menbutona
-    - calcio
-    - fibras
-    - grasas
-    - humedad
-    - materia mineral
-    - n omega
-    - omega
-    - proteina bruta
-    - relaci
-    - sforo
-    - buspirona
-    - fipronil
-    - metopreno
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - clorhidrato de nafazolina
-    - cloruro de benzalconio
-    - con hidroxipropilmetilcelulosa
-    - fenazona
-    - idoxuridina
-    - feromonas
-    - imidacloprid
-    - permetrina
-    - oxitetraciclina
-    - sarolaner moxidectina pirantel
-    - spinosad
-    - ivermectina
-    - dimetridazol
-    - sulfadimetoxina
-    - enrofloxacina
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - acido ascorbico
-    - glucosamina sulfato
-    - manganeso gluconato
-    - metilsulfonilmetano
-    - oxitetraciclina clorhidrato
-    - sarolaner moxidectina pirantel
-    - imidacloprid
-    - permetrina
-    - benazepril clorhidrato
-    - espironolactona
-    - cipermetrina
-    - clorpirifos
-    - imidacloprid
-    - metopreno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - feromona
-    - difenilhidantoina sod
-    - pentobarbital sodico
-    - cafeina
-    - clorfeniramina maleato
-    - cloruro de magnesio hexahidrato
-    - cloruro de sodio
-    - gluconato de calcio
-    - glucosa anhidra
-    - spinosad
-    - cefovecin
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - calcio
-    - fibras
-    - grasas
-    - humedad
-    - materia mineral
-    - n omega
-    - omega
-    - proteina bruta
-    - relaci
-    - sforo
-    - fipronil
-    - metopreno
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - ajo
-    - curcuma
-    - espirulina
-    - gluconato de zinc
-    - l arginina clorhidrato
-    - l glutamina
-    - vitamina a palmitato
-    - vitamina c recubierta
-    - vitamina e
-    - cefovecin
-    - fenobarbital
-    - flumetrina
-    - imidacloprid
-    - azitromicina base
-    - acido ursodesoxicolico
-    - silimarina
-    - imidacloprid
-    - piriproxifeno
-    - sarolaner moxidectina pirantel
-    - doramectina
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - flunixin meglumine
-    - hioscina butilbromuro
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - l carnitina
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - taurina
-    - spinosad
-    - carprofeno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - sodio
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - aluminio
-    - cipermetrina
-    - ddvp
-    - gramos
-    - sulfadiazina de plata
-    - imidacloprid
-    - piriproxifeno
-    - lotilaner
-    - torasemida
-    - condroitin sulfato
-    - glucosamina sulfato
-    - manganeso
-    - saborizante
-    - sulfato
-    - ketamina base
-    - feromona
-    - fipronil
-    - metopreno
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - flumetrina
-    - imidacloprid
-    - cloranfenicol
-    - hidrocortisona
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - tiamina clorhidrato
-    - sarolaner moxidectina pirantel
-    - doramectina
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - lotilaner
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - enrofloxacina
-    - dimetil
-    - fenil
-    - metilaminomet
-    - mgr
-    - mgr nipagin sodico
-    - n butil bromuro de hioscina
-    - pirazolona
-    - azitromicina base
-    - ciprofloxacina base
-    - ketoconazol
-    - prednisolona
-    - omeprazol
-    - pasta cuprosodica de clorofila
-    - carprofeno
-    - oxitetraciclina clorhidrato
-    - fipronil
-    - metopreno
-    - itraconazol
-    - sarolaner moxidectina pirantel
-    - doramectina
-    - calcio
-    - fibras
-    - fosofro
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - lotilaner
-    - de solucion oral
-    - gr de prenisolona
-    - ioduro de sodio al
-    - acido folico
-    - calcio
-    - ciaanocolabamina
-    - colina
-    - l cistina
-    - l metionina
-    - trisosfato de adenosina
-    - l lisina al
-    - feromona
-    - enrofloxacina
-    - imidacloprid
-    - piriproxifeno
-    - mavacoxib
-    - mavacoxib
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - hum
-    - l carnitina
-    - materia mineral
-    - omega
-    - prot bruta
-    - relacion omega
-    - sodio
-    - taurina
-    - calcio
-    - extracto etereo
-    - fibra cruda
-    - fosforo
-    - humedad
-    - minerales totales
-    - proteina bruta
-    - mejora y mantiene la salud gastrointestina
-    - g butoxido de piper
-    - g permetrina
-    - imidacloprid
-    - spinosad
-    - cifenotrina
-    - imidacloprid
-    - enrofloxacina
-    - cloranfenicol
-    - acido borico
-    - acido salicilico
-    - borax
-    - dimetilsulfoxido
-    - laurilsulfato de sodio
-    - idem
-    - feromona
-    - oxitetraciclina clorhidrato
-    - u i
-    - u i vitamina e
-    - u vitamina d
-    - vitamina a
-    - fipronil
-    - metopreno
-    - mavacoxib
-    - oclacitinib
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - enrofloxacina
-    - amitraz
-    - lotilaner
-    - vitaminico mineral aminoacidico
-    - imidacloprid
-    - moxidectin
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - acido borico
-    - acido salicilico
-    - borax
-    - dimetilsulfoxido
-    - laurilsulfato de sodio
-    - en comprimidos
-    - enrofloxacina
-    - condroitin sulfato
-    - acido alfalipoico
-    - betaina clorhidrato
-    - colina bitartrato
-    - curcuma longa l extracto seco
-    - cynara scolymus l extracto seco
-    - metionina
-    - n acetil cisteina
-    - silybum marianum extracto seco
-    - vitamina b
-    - zinc gluconato
-    - condroitin sulfato a al
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - meloxicam
-    - carprofeno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - diazepan
-    - acido ursodesoxicolico
-    - colina
-    - extracto en polvo de cardo mariano
-    - n acetilcisteina
-    - lotilaner
-    - aceite mineral denso
-    - extracto de malta
-    - tramadol clorhidrato
-    - fipronil
-    - idem
-    - fosfato diacido de potasio
-    - en comprimidos
-    - enrofloxacina
-    - imidacloprid
-    - moxidectin
-    - tramadol clorhidrato
-    - cloruro de benzalconio
-    - condroitin sulfato
-    - tobramicina
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - carprofeno
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - calcio
-    - extracto etereo
-    - fibra cruda
-    - fosforo
-    - humedad
-    - minerales totales
-    - proteina bruta
-    - enrofloxacina
-    - ivermectina
-    - toltrazuril
-    - lotilaner
-    - ivermectina merial
-    - imidacloprid
-    - moxidectin
-    - cloruro de sodio
-    - condroitin sulfato
-    - fipronil
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - medroxiprogesterona acetato
-    - fenbendazol
-    - praziquantel
-    - pyrantel pamoato
-    - ciproheptadina clorhidrato
-    - dl carnitina clorhidrato
-    - stanozolol
-    - vehiculo
-    - cefalexina
-    - carbon activado
-    - enrofloxacina
-    - ftalilsulfatiazol
-    - selamectina
-    - calcio
-    - carnitina
-    - e m
-    - fibras
-    - fosforo
-    - grasas
-    - humedad
-    - kcal
-    - kg tal cual se sirve
-    - materia mineral
-    - omega
-    - ppm relacion omega
-    - proteina bruta
-    - azitromicina
-    - imidacloprid
-    - moxidectin
-    - xilitol
-    - ivermectina al
-    - y clorsulon al
-    - lotilaner
-    - benazepril
-    - espironolactona
-    - bacitracina
-    - benzoca
-    - dexametasona
-    - neomicina
-    - y griseofulvina
-    - fipronil
-    - idem
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - kg y lufenuron
-    - spinosad
-    - dihidroestreptomicina
-    - penicilina benzatinica
-    - penicilina procainica
-    - u i
-    - vehiculo
-    - selamectina
-    - doxapram clorhidrato
-    - calcio
-    - fibras
-    - fosofro
-    - grasas
-    - humedad
-    - materia mineral
-    - omega
-    - proteina bruta
-    - relacion omega
-    - adenovirus
-    - parainfluenza y leptospira caninos
-    - virus de moquillo
-    - fipronil
-    - en comprimidos
-    - enrofloxacina
-    - condroitin sulfato
-    - glucosamina clorhidrato
-    - metilsulfonilmetano
-    - imidacloprid
-    - moxidectin
-    - cianocobalamina
-    - imidocarb dipropionato
-    - flunixin base
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - griseofulvina micronizada
-    - lotilaner
-    - amoxicilina
-    - oclacitinib
-    - leishmaniasis
     - a palmitato
-    - carbonato de calcio
-    - iodato de calcio
-    - minerales
-    - oxido de cobre
-    - oxido de manganeso
-    - sulfato de magnesio
-    - vitaminas
-    - peroxido de benzoilo
-    - ivermectina
-    - adenovirus
-    - corona y leptospira caninos
-    - parainfluenza
-    - parvo
-    - virus de distemper
-    - virus de parvo y corona caninos
-    - ccyfluthrin
-    - piriproxifen
-    - propelentes
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - grs
-    - toltrazuril
-    - d l metionina
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - cianocobalamina
-    - imidocarb dipropionato
-    - caseina hidrolizada
-    - vitamina a palmitato
-    - vitamina e acetato
-    - cifenotrina
-    - imidacloprid
-    - fenobarbital
-    - ivermectina
-    - praziquantel
-    - oclacitinib
-    - bencilpenicilina benzatinica
-    - bencilpenicilina proc
-    - dihidroestreptomicina sulf
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - lotilaner
-    - imidacloprid
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - fipronil
-    - albendazol
-    - praziquantel
-    - difenilhidantoina
-    - pentobarbital sodico
-    - lincomicina
-    - fenobarbital
-    - sarolaner
-    - carbaryl
-    - ivermectina
-    - praziquantel
-    - carbon de cafe
-    - dextrosa
-    - dimetilpolisiloxano activado
-    - enrofloxacina
-    - ftalilsulfatiazol
-    - lotilaner
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - imidacloprid
-    - permetrina
-    - piperonil butoxido
-    - clorhexidina acetato
-    - fipronil
-    - bacitracina
-    - benzocaina
-    - hidrocortisona
-    - neomicina
-    - polimixina b
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - feromonas
-    - fenobarbital
-    - sarolaner
-    - fenobarbital
-    - trofozoitos inactivados de giardia lamblia
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - midazolam
-    - ranitidina
-    - bacitracina
-    - benzocaina
-    - neomicina
-    - polimixina b
-    - aminoacidos y minerales
-    - vitaminas
-    - imidacloprid
-    - permetrina
-    - cloprostenol sodico
-    - extracto de raiz de valeriana
-    - teanina
-    - triptofano
-    - ivermectina
-    - praziquantel
-    - febantel
-    - praziquantel
-    - pyrantel embonato
-    - imidacloprid
-    - ivermectina
-    - praziquantel
-    - sarolaner
-    - azitromicina
-    - metronidazol
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - suspension inactivada de virus rabico desarrollado en celulas bhk
-    - imidacloprid
-    - canina
-    - imidacloprid
-    - permetrina
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - cipermetrina
-    - etion
+    - ac folico
+    - aceite con alto de acidos grasos
     - aceite de higado de bacalao
+    - aceite mineral denso
+    - acepromacina maleato
+    - acepromazina maleato
+    - acetato de hidrocortisona
+    - acetato de medroxiprogesterona
+    - acetato de megestrol
+    - acetil metionina
+    - acetonida de triamcinolona
+    - acido
+    - acido acetico glacial
+    - acido alfalipoico
+    - acido ascorbico
+    - acido benzoico
+    - acido borico
+    - acido canforico
+    - acido clavulanico
+    - acido edetico
+    - acido estearico
+    - acido folico
     - acido hialuronico
-    - clorhidrato
-    - condroitin
-    - glucosamina
-    - heptahidrato
-    - hexahidrato
-    - magnesio cloruro
-    - metilsulfonilmetano
-    - sal sodica
-    - sulfato sodico
-    - zinc sulfato
-    - acido folico
-    - arandano
-    - pared celular de levadura
-    - vitaminas
-    - enrofloxacina
-    - grs
-    - fluralaner
-    - acido tioctico
-    - membutona
-    - triamcinolona
-    - vehiculo
-    - emboato
-    - febantel
-    - praziquantel
-    - pyrantel
-    - imidacloprid
-    - permetrina
-    - metroclopramida clorhidrato
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - tiamina clorhidrato
-    - imidacloprid
-    - ivermectina
-    - praziquantel
-    - ivermectina
-    - cipermetrina
-    - diazinon
-    - acido folico
-    - cianocobalamina
-    - doxiciclina
-    - piridoxina clorhidrato
-    - tiamina clorhidrato
-    - aceite con alto de acidos grasos
-    - adenosin trifosfato
-    - arandano
-    - gingko biloba
-    - ginseng
-    - omega
-    - tiamina clorhidrato
-    - carprofeno
-    - condroitin sulfato
-    - glucosamina sulfato
-    - manganeso sulfato
-    - bitartrato de colina
-    - d l metionina
-    - extracto de cynara scolymus
-    - extracto de peumus boldus
-    - extracto de rhamnus prushiana
-    - metilbromuro de homatropina
-    - oxbendazol
-    - praziquantel
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - calcivirosis felinos
-    - parvo
-    - rinotraqueitis
-    - virus vivos modificados de
-    - selamectina
-    - pirantel
-    - praziquantel
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - cipermetrina
-    - clorpirifos
-    - ciprofloxacina
-    - ketoconazol
-    - lidocaina clorhidrato
-    - prednisolona
-    - estreptomicina
-    - penicilina
-    - benazepryl
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - aluminio
-    - cipermetrina
-    - gramos
-    - imidacloprid
-    - sulfadiazina de plata
-    - pimobendan
-    - imidacloprid
-    - carbinoxamina maleato
-    - prednisolona
-    - itraconazol
-    - imidacloprid
-    - ivermectina
-    - praziquantel
-    - fluralaner
-    - meloxicam
-    - febantel
-    - ivermectina
-    - pamoato de pirantel
-    - praziquantel
-    - carprofeno
-    - condroitin sulfato
-    - glucosamina sulfato
-    - manganeso sulfato
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - bromhexina
-    - acido salicilico
-    - alcanfor
-    - mercaptobenzotiazol
-    - butoxido de piperonilo
-    - cipermetrina
-    - minerales
-    - dl metionina
-    - l colina bitartrato
-    - same
-    - silibina
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - cefalexina monohidrato
-    - dexametasona fosfato sodico
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - clorhexidina acetato
-    - fipronil
-    - febantel
-    - ivermectina
-    - pamoato de pirantel
-    - praziquantel
-    - condroitin sulfato
-    - hialuronato de sodio
-    - ofloxacina
-    - cultivados en celulas de rinon de hamster lactante
-    - inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
-    - virus rabico cepa paris
-    - xilitol
-    - clorhexidina acetato
-    - fipronil
-    - atropina sulfato
-    - oxitetraciclina
-    - toltrazuril
-    - aluminio
-    - cipermetrina
-    - ddvp
-    - sulfadiazina de plata
-    - clorhexidina digluconato
-    - clorhexidina digluconato
-    - veh o
-    - doxiciclina hiclato
-    - albendazol
-    - praziquantel
-    - imidacloprid
-    - metopreno
-    - c y e
-    - condroitina
-    - ginkgo biloba
-    - glucosamina
-    - vitaminas b
     - acido lactico
     - acido salicilico
-    - microcapsulas
-    - fipronil
-    - metopreno
-    - levofloxacina
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - selamectina
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
+    - acido tioctico
+    - acido ursodesoxicolico
     - active ingredient
-    - prednisolona saborizada
-    - difenilhidantoina
-    - pentobarbital sodico
-    - clorobutanol
-    - selamectina
-    - spinosad
-    - selamectina
-    - spinosad
-    - xylitol
-    - ivermectina
-    - praziquantel
-    - clorhexidina acetato
-    - fipronil
-    - frasco fraccion liofilizada
-    - virus atenuado
-    - aluminio micronizado
-    - cipermetrina
-    - clorpirifos
-    - sulfadiazina de plata
-    - analgesico monoclonal
-    - bedinvetmab antiinflamatorio
-    - active ingredient
-    - fluralaner
-    - betaina cocoamida
-    - lauril sulfato de sodio
-    - betaina cocoamida
-    - lauril sulfato de sodio
-    - ivermectina
-    - clorhidrato
-    - tramadol
-    - itraconazol
-    - clorhidrato de bencetimida
-    - enrofloxacina
-    - ivermectina
-    - praziquantel
-    - clorhexidina acetato
-    - fipronil
-    - hepatitis
-    - parvovirosis y tos de las perreras fraccion liofilizada
-    - vacuna contra el moquillo
-    - virus moquillo atenuado
-    - condroitin sulfato
-    - ginseng
-    - glucosamina
-    - vitaminas y minerales
-    - acepromacina maleato
+    - adenosin trifosfato
     - adenovirus
-    - parainfluenza y parvo caninos
-    - virus de distemper
+    - ajo
+    - albendazol
+    - alcanfor
+    - alcohol isopropilico
     - alumbre
-    - oxido ferrico
-    - silicato de aluminio y magnesio
-    - itraconazol
-    - medroxiprogesterona acetato
-    - cefalexina monohidrato
-    - imidacloprid
-    - acetato de hidrocortisona
-    - gramos
-    - oxitetraciclina
-    - sulfadiazina de plata
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - dexametasona fosfato sodico
-    - fipronil
-    - ivermectina
+    - aluminio
+    - aluminio micronizado
+    - aminoacidos y minerales
+    - amitraz
+    - amoxicilina
+    - analgesico monoclonal
+    - analogo semioquimico de la feromona de apaciguamiento canino
+    - analogo semioquimico de la fraccion f
+    - antigeno de bordetella bronchiseptica
+    - arandano
     - atenuada
     - atenuado
-    - calicivirus cepa f
-    - dicp
-    - virus de la panleucopenia atenuado
-    - virus de la rinotraqueitis cepa fvr f
-    - imidacloprid
-    - adenovirus
-    - parainfluenza
-    - parvo y corona caninos
-    - virus de distemper
-    - dexametasona fosfato
-    - ofloxacina
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - acido acetico glacial
-    - acido borico
-    - glicerol
-    - sal de aluminio de alantoina
-    - ivermectina
-    - praziquantel
-    - medroxiprogesterona acetato
-    - fenbendazol
-    - praziquantel
-    - pyrantel pamoato
-    - diazepam
-    - fipronil
-    - metopreno
-    - fipronil
-    - ivermectina
-    - condroitin sulfato
-    - fipronil
-    - adenovirus
-    - parainfluenza
-    - parvo y leptospira caninos
-    - virus de distemper
-    - acido acetico glacial
-    - acido borico
-    - glicerol
-    - sal de aluminio de alantoina
-    - acido edetico
-    - clorocresol metabisulfito sodico
-    - dietanolamina
-    - icteryl o acido genabilico
-    - medroxiprogesterona acetato
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - comprimidos
-    - fluralaner
-    - acido clavulanico
-    - amoxicilina
-    - condroitin de bajo peso molecular
-    - condroitin sulfato
-    - glucosamina
-    - manganeso
-    - sodio
-    - imidacloprid
-    - virus de parvo canino
-    - nicotinamida
-    - palmitato de cloranfenicol
-    - pantotenato de calcio
-    - vitamina b
-    - medroxiprogesterona acetato
-    - comprimidos
-    - fluralaner
-    - acido ursodesoxicolico
-    - silimarina
-    - selamectina
-    - meloxicam
-    - fenoxicarb
-    - imidacloprid
-    - propoxur
-    - ddvp
-    - diazinon
-    - hipoalergenicos de origen natural
-    - prednisolona saborizada
-    - etodolac
-    - antigeno de bordetella bronchiseptica
-    - fluralaner
-    - amitraz
-    - azufre
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - clormadinona acetato
-    - propoxur
-    - hipoalergenicos de origen natural
-    - comprimidos
-    - fluralaner
-    - acido folico
-    - cianocobalamina
-    - doxiciclina
-    - piridoxina clorhidrato
-    - tiamina clorhidrato
-    - amoxicilina
-    - doramectina
-    - clorhexidina acetato
-    - fipronil
-    - d l metionina
-    - cloranfenicol
-    - prednisolona base
-    - tetraciclina clorhidrato
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - betaina hcl
-    - bromelina
-    - gr y closantel
-    - mebendazol
-    - oxitetraciclina
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - hipoalergenicos de origen natural
-    - etc
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - spinosad
-    - pimobendan
-    - comprimidos
-    - fluralaner
-    - etion
-    - oxitetraciclina
-    - pentosan polisulfato sodico
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - ranitidina
-    - flunixin base
-    - cipermetrina
-    - clorpirifos
-    - cabergolina
-    - diclorvos
-    - fenoxicarb
-    - imidacloprid
-    - propoxur
-    - ivermectina
-    - praziquantel
-    - feromonas
-    - sarolaner
-    - colina
-    - metionina
-    - silimarina
-    - febantel
-    - ivermectina
-    - pamoato de pirantel
-    - praziquantel
-    - butanos
-    - cipermetrina
-    - gr de concentrado
-    - imidacloprid
-    - propano
-    - propelente
-    - sulfadiazina de plata
-    - medroxiprogesterona acetato
-    - deltametrina
-    - imidacloprid
-    - fipronil
-    - imidacloprid
-    - piriproxifeno
-    - fipronil
-    - acido canforico
-    - hexametilentetramina
-    - fluralaner
-    - condroitin sulfato
-    - glucosamina sulfato
-    - selamectina
-    - spinosad
-    - fenoxicarb
-    - imidacloprid
-    - cobre como etilenodinitrilo de calcio y cobre
-    - metilprednisolona acetato
-    - cipermetrina
-    - ddvp
-    - fluralaner
-    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
-    - acido ascorbico
-    - gluconato
-    - glucosamina sulfato
-    - manganeso
-    - metilsulfonilmetano
-    - benazepril clorhidrato
-    - espironolactona
-    - clorpirifos
-    - ofloxacina
-    - glicerina
-    - microcapsulas
-    - peroxido de benzoilo
-    - acido tioctico
-    - clorhexidina acetato
-    - fipronil
-    - dexametasona sodio fosfato
-    - flunixin base
-    - pimobendan
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - imidacloprid
-    - piriproxifeno
-    - bromhexina
-    - clorhidrato
-    - acepromazina maleato
     - atropina sulfato
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - acido tioctico
-    - vitamina b
-    - acido lactico
-    - g microesferas
-    - glicerina
-    - urea
-    - clorhidrato
-    - tramadol
-    - spinosad
-    - etofenprox
-    - fipronil
-    - imidacloprid
-    - piriproxifen
-    - como fuente de energia complejo vitamina b
-    - dextrosa al
-    - ivermectina
-    - neurotrofico fisiologico
-    - imidacloprid
-    - piriproxifeno
-    - diazepam
-    - prednisolona base
-    - aminoacidos y minerales
-    - vitaminas
-    - ranitidina
-    - fipronil
-    - clorpirifos
-    - oxitetraciclina base anfoterica
-    - carprofeno
-    - fluralaner
-    - ketamina
-    - clorhexidina digluconato
-    - spinosad
+    - azitromicina
+    - azitromicina base
+    - azufre
+    - bacitracina
+    - base
+    - bedinvetmab antiinflamatorio
+    - benazepril
+    - benazepril clorhidrato
+    - benazepryl
+    - bencidamina clorhidrato
     - bencilpenicilanato de benzatina
     - bencilpenicilanato de procaina
-    - sulfato de dihidroestreptomicina
-    - imidacloprid
-    - pimobendan
-    - cloranfenicol
-    - prednisolona base
-    - tetraciclina clorhidrato
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - acepromacina maleato
-    - excip
-    - cipermetrina
-    - clorpirifos
-    - en comprimidos
-    - enrofloxacina
-    - imidacloprid
-    - permetrina
-    - acido salicilico
-    - azufre
-    - g alquitran
-    - microesferas
-    - firocoxib
-    - hipoalergenicos de origen natural
-    - cefalexina monohidrato
-    - firocoxib
-    - ketamina
-    - fluralaner
-    - acido
-    - clorpirifos
-    - dimetilciclopropanocarboxilico
-    - metopreno
-    - permetrina
-    - furosemida
-    - ketamina base
-    - midazolam base
-    - dimetridazol
-    - sulfadimetoxina
-    - levofloxacina
-    - levofloxacina
-    - enapril
-    - espironolactona
-    - acido tioctico
-    - vitamina b
-    - etofenprox
-    - imidacloprid
-    - sulfadiazina de plata
-    - selamectina
-    - spinosad
-    - deltametrina
-    - propoxur
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - selamectina
-    - spinosad
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - flurbiprofeno sodico
-    - prednisolona
-    - hialuronato de sodio
-    - pregabalina comprimidos
+    - bencilpenicilina benzatinica
+    - bencilpenicilina proc
+    - benzoato de sodio
+    - benzoca
+    - benzocaina
+    - betaina
+    - betaina clorhidrato
+    - betaina cocoamida
+    - betaina hcl
     - betametasona
-    - clotrimazol
-    - enrofloxacina
-    - ivermectina
-    - clorhexidina acetato
-    - fipronil
-    - clorhexidina digluconato
-    - veh
-    - nicotinamida
-    - vitamina b
-    - tramadol clorhidrato
+    - biclorhidrato de piperazina
+    - biotina
+    - bitartrato de colina
+    - borax
+    - bromelina
+    - bromhexina
+    - buspirona
     - but
-    - g n octyl bicicloheptene dicarboximida
-    - piretrinas naturales
-    - xido de piperonilo
-    - deltametrina
-    - propoxur
-    - fenoxicarb
-    - imidacloprid
-    - permetrina
-    - moxidectina
-    - praziquantel
-    - dimetridazol
-    - sulfadimetoxina
-    - imidacloprid
-    - permetrina
-    - aluminio
+    - butanos
+    - butorfanol
+    - butoxido de piperonil
+    - butoxido de piperonilo
+    - c y e
+    - cabergolina
+    - cafeina
+    - calcio
+    - calcivirosis felinos
+    - calicivirus cepa f
+    - canina
+    - carbaryl
+    - carbinoxamina maleato
+    - carbon activado
+    - carbon de cafe
+    - carbonato de ca
+    - carbonato de calcio
+    - carnitina
+    - carprofeno
+    - caseina hidrolizada
+    - ccyfluthrin
+    - cefalexina
+    - cefalexina monohidrato
+    - cefovecin
+    - ceftiofur clorhidrato
+    - ciaanocolabamina
+    - cianocobalamina
+    - ciclosporina a
+    - cifenotrina
     - cipermetrina
-    - ddvp
-    - gramos
-    - sulfadiazina de plata
-    - fenoxicarb
-    - imidacloprid
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - pimobendan
-    - aceite de higado de bacalao
-    - acido hialuronico
+    - ciprofloxacina
+    - ciprofloxacina base
+    - ciproheptadina clorhidrato
+    - cl de benzalconio
+    - cloprostenol sodico
+    - cloranfenicol
+    - clorfeniramina maleato
+    - clorhexidina acetato
+    - clorhexidina diacetato
+    - clorhexidina digluconato
     - clorhidrato
+    - clorhidrato de bencetimida
+    - clorhidrato de glucosamina
+    - clorhidrato de nafazolina
+    - clormadinona acetato
+    - clorobutanol
+    - clorocresol metabisulfito sodico
+    - clorpirifos
+    - cloruro de benzalconio
+    - cloruro de calcio
+    - cloruro de magnesio
+    - cloruro de magnesio hexahidrato
+    - cloruro de sodio
+    - clotrimazol
+    - coaltar
+    - cobre como etilenodinitrilo de calcio y cobre
+    - colina
+    - colina bitartrato
+    - como fuente de energia complejo vitamina b
+    - comprimidos
+    - con hidroxipropilmetilcelulosa
     - condroitin
-    - glucosamina
-    - heptahidrato
-    - hexahidrato
-    - magnesio cloruro
-    - metilsulfonilmetano
-    - sal sodica
-    - sulfato sodico
-    - zinc sulfato
+    - condroitin de bajo peso molecular
+    - condroitin sulfato
+    - condroitin sulfato a al
+    - condroitin sulfato sodico
+    - condroitina
+    - corona y leptospira caninos
+    - cultivados en celulas de rinon de hamster lactante
+    - curcuma
+    - curcuma longa l extracto seco
+    - cynara scolymus l extracto seco
     - d glucosamina
     - d l calcio
     - d l metionina
-    - l arginina
-    - l glutamina
-    - l lisina
-    - l prolina
-    - manganesio
-    - pantotenato
-    - sulfato
-    - vitamina a
-    - vitamina b
-    - vitamina e
-    - doxiciclina
-    - toltrazuril
-    - pregabalina comprimidos
-    - doramectina
-    - fenbendazol
-    - toltrazuril
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - naftalofos
-    - fenoxicarb
-    - imidacloprid
-    - feromona m
-    - bencidamina clorhidrato
-    - cloruro de benzalconio
-    - difenhidramina clorhidrato
-    - florfenicol
-    - lidocaina clorhidrato
-    - dexametasona
-    - fosfato
-    - flunixin base
-    - etofenprox
-    - imidacloprid
-    - sulfadiazina de plata
-    - oxitetraciclina base anfoterica
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - coaltar
-    - pimobendan
-    - fluralaner
-    - bitartrato de colina
+    - d pantotenato de ca
+    - ddvp
+    - de feromona facial felina
+    - de solucion oral
     - dehidrocolato de sodio
+    - deltametrina
     - desoxicolato de sodio
-    - extracto diluido de alcachofa
-    - metilbromuro de homatropina
-    - nicotinamida
-    - vehiculo
-    - fluazuron
-    - imidacloprid
-    - lufenuron
-    - permetrina
-    - fipronil
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - xilazina
-    - extracto de valeriana
-    - triptofano
-    - pimobendan
-    - furosemida
-    - fluralaner
-    - prednisolona base
-    - fipronil
-    - aluminio
-    - cipermetrina
-    - gramos
-    - imidacloprid
-    - sulfadiazina de plata
-    - butorfanol
-    - ivermectina
-    - neomicina base
-    - tiabendazol
-    - triamcinolona acetonida
-    - doxiciclina
-    - peroxido de benzoilo
-    - feromona m
-    - feromona m
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - biclorhidrato de piperazina
-    - metil bromuro de homatropina
-    - butoxido de piperonilo
-    - cipermetrina
-    - d l metionina
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - fenbendazol
-    - toltrazuril
-    - alcanfor
-    - alcohol isopropilico
-    - mercaptobenzotiazol
-    - fenbendazol
-    - pirantel base
-    - praziquantel
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - vitaminico mineral aminoacidico
     - dexametasona
-    - ranitidina
-    - tramadol clorhidrato
-    - acetato de medroxiprogesterona
-    - selamectina
-    - spinosad
-    - imidacloprid
-    - moxidectina
-    - praziquantel
-    - doxiciclina
-    - fenbend
-    - pirantel base
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - base
-    - metionina dl
-    - mg taurina
-    - mg vitamina b
-    - nicotinamida
-    - vitamina b
-    - oxitetraciclina clorhidrato
-    - oxitetraciclina
-    - grupo b
-    - vit a
-    - moxidectina
-    - praziquantel
-    - ivermectina
-    - acido benzoico
-    - lecitina de soja
-    - vaselina
-    - condroitin sulfato
-    - glucosamina sulfato
-    - cipermetrina
-    - clorpirifos
-    - vitamina a
+    - dexametasona fosfato
     - dexametasona fosfato sodico
-    - acetato de megestrol
-    - propoxur
+    - dexametasona sodio fosfato
+    - dextrosa
+    - dextrosa al
+    - diazepam
+    - diazepan
+    - diazinon
+    - diclorvos
+    - dicp
+    - dietanolamina
+    - difenhidramina clorhidrato
+    - difenilhidantoina
+    - difenilhidantoina sod
+    - difenilhidantoinato sodico
+    - dihidroestreptomicina
+    - dihidroestreptomicina sulf
+    - dimetil
+    - dimetilciclopropanocarboxilico
+    - dimetilpolisiloxano activado
+    - dimetilsulfoxido
+    - dimetridazol
+    - dl carnitina clorhidrato
+    - dl metionina
+    - doramectina
+    - doxapram clorhidrato
+    - doxiciclina
+    - doxiciclina hiclato
+    - e m
+    - emboato
+    - en comprimidos
+    - enapril
+    - enrofloxacina
+    - espironolactona
+    - espirulina
+    - estradiol
+    - estreptomicina
+    - etc
+    - etion
+    - etodolac
+    - etofenprox
+    - excip
+    - extracto de cynara scolymus
+    - extracto de malta
+    - extracto de peumus boldus
+    - extracto de raiz de valeriana
+    - extracto de rhamnus prushiana
+    - extracto de valeriana
+    - extracto diluido de alcachofa
+    - extracto en polvo de cardo mariano
+    - extracto etereo
+    - extracto tumerico
+    - febantel
+    - febendazol
+    - fenazona
+    - fenbend
+    - fenbendazol
+    - fenil
+    - fenitrotion
+    - fenobarbital
+    - fenoxicarb
+    - fenoxycarb
+    - feromona
     - feromona m
     - feromonas
-    - meloxicam
-    - azitromicina
-    - metronidazol
-    - analogo semioquimico de la feromona de apaciguamiento canino
-    - selamectina
-    - spinosad
-    - feromona m
-    - moxidectina
-    - praziquantel
-    - doxiciclina
-    - dimetridazol
-    - sulfadimetoxina
-    - kg y lufenuron
-    - spinosad
-    - ac folico
-    - biotina
-    - carbonato de ca
-    - d pantotenato de ca
-    - maltodextrina
-    - nicotinamida
-    - oxido de zn
-    - sulfato de
-    - u i vitamina b
-    - u i vitamina e
-    - vit a
-    - vitamina b
-    - metroclopramida clorhidrato
-    - analogo semioquimico de la fraccion f
-    - de feromona facial felina
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - acetonida de triamcinolona
-    - neomicina base
-    - tiabendazol
-    - feromona m
-    - moxidectina
-    - praziquantel
-    - spinosad
-    - betametasona
-    - clotrimazol
-    - gentamicina
-    - lidocaina
-    - valerato
-    - vitamina a palmitato
-    - ivemectina
-    - clorhidrato de glucosamina
-    - condroitin sulfato sodico
-    - extracto tumerico
-    - ceftiofur clorhidrato
-    - dimetridazol
-    - sulfadimetoxina
-    - itraconazol
-    - moxidectina
-    - praziquantel
-    - cefalexina monohidrato
-    - clorhexidina digluconato
-    - veh
-    - spinosad
-    - tramadol clorhidrato
-    - aluminio
-    - neomicina base
-    - sulfadiazina de plata
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - ivermectina
-    - levoflaxacina base
-    - propionato de clobetasol
-    - sulfadiazina argentica
-    - spinosad
-    - betametasona
-    - clotrimazol
-    - gentamicina
-    - lidocaina
-    - valerato
-    - vitamina a palmitato
-    - dimetridazol
-    - sulfadimetoxina
-    - en comprimidos
-    - enrofloxacina
-    - condroitin sulfato
-    - oxitetraciclina clorhidrato
-    - feromona m
-    - feromona m
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - aluminio
-    - clorhexidina diacetato
-    - fenitrotion
-    - vitamina e
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - propoxur
-    - imidacloprid
-    - propoxur
-    - moxidectina
-    - praziquantel
+    - fibra cruda
+    - fibras
+    - fipronil
+    - firocoxib
+    - florfenicol
+    - fluazuron
+    - flumetrina
+    - flunixin base
+    - flunixin meglumine
     - fluocinolona acetonida
-    - etc
-    - sulfato de cobre
-    - sulfato de manganeso
-    - sulfato de zinc
-    - sulfato ferroso
-    - vitamina a
-    - vitamina b
-    - vitamina d
-    - vitamina e
-    - levofloxacina
-    - benazepril
-    - espironolactona
-    - griseofulvina micronizada
-    - benzocaina
-    - cl de benzalconio
-    - cloranfenicol
-    - dexametasona
-    - gramicidina
-    - nistatina
-    - papaina
-    - spinosad
-    - vitamina k
-    - acido ursodesoxicolico
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - propoxur
-    - idem
-    - doramectina
-    - imidacloprid
-    - kg y lufenuron
-    - spinosad
-    - acetonida de triamcinolona
-    - carprofeno
-    - meloxicam
-    - fipronil
-    - meloxicam
-    - propoxur
-    - tramadol
-    - oxbendazol
-    - praziquantel
-    - toltrazuril
-    - toltrazuril
-    - clorhexidina acetato
-    - fipronil
-    - clorhexidina acetato
-    - fipronil
-    - meloxicam
-    - gramos
-    - oxfendazol
-    - pamoato de oxantel
-    - pamoato de pirantel
-    - praziquantel
-    - propoxur
-    - betaina
-    - dl metionina
-    - glicinato de cobre
-    - gluconato de magnesio
-    - gluconato de manganeso
-    - gluconato de zinc
-    - glucosamina
-    - histidina
-    - l cisteina
-    - selenito de sodio
-    - vitamina b
-    - vitamina e
-    - fluralaner
-    - febantel
-    - pamoato de pirantel
-    - toltrazuril
-    - febendazol
-    - pirantel pamoato
-    - praziquantel
-    - gluconato de mag
-    - taurina
-    - vitaminas coenzima
-    - spinosad
-    - benazepril
-    - espironolactona
-    - cifenotrina
-    - imidacloprid
-    - praziquantel
-    - ddvp
-    - g butoxido de piperonilo
-    - metoprene
-    - piretrinas naturales
-    - propoxur
-    - cifenotrina
-    - imidacloprid
-    - betaina
-    - dl metionina
-    - glicinato de cobre
-    - gluconato de magnesio
-    - gluconato de manganeso
-    - gluconato de zinc
-    - glucosamina
-    - histidina
-    - l cisteina
-    - selenito de sodio
-    - vitamina b
-    - vitamina e
-    - spinosad
-    - spinosad
-    - febantel
-    - pamoato de pirantel
-    - toltrazuril
-    - kg y lufenuron
-    - spinosad
-    - sulfametazina sodica
-    - trimetoprim
-    - omeprazol
-    - meloxicam
-    - deltametrina
-    - imidacloprid
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - cefalexina
-    - imidacloprid
-    - permetrina
-    - praziquantel
-    - enrofloxacina
-    - clorhidrato de bencetimida
-    - propoxur
-    - fenoxicarb
-    - kg y lufenuron
-    - spinosad
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - u i vitamina d
-    - u i vitamina e
-    - vitamina a
-    - vitamina k
-    - bacitracina
-    - benzoca
-    - dexametasona
-    - neomicina
-    - y griseofulvina
-    - cipermetrina
-    - ddvp
-    - butoxido de piperonil
-    - fenoxycarb
-    - imidacloprid
-    - permetrina
-    - acetil metionina
-    - metionina
-    - sorbitol
-    - benazepril clorhidrato
-    - espironolactona
-    - pimobendan
-    - butoxido de piperonil
-    - fenoxycarb
-    - imidacloprid
-    - permetrina
-    - estradiol
-    - ddvp
-    - diazinon
-    - propoxur
-    - propoxur
-    - propoxur
-    - pentosan polisulfato sodico
-    - carbon activado
-    - dimetilpolisiloxano activado
-    - enrofloxacina
-    - ftalilsulfatiazol
-    - cloruro de calcio
-    - cloruro de magnesio
     - fluoruro de sodio
+    - fluralaner
+    - flurbiprofeno sodico
+    - fosfato
+    - fosfato diacido de potasio
+    - fosforo
+    - fosofro
+    - frasco fraccion liofilizada
+    - ftalilsulfatiazol
+    - furosemida
+    - g alquitran
+    - g butoxido de piper
+    - g butoxido de piperonilo
+    - g microesferas
+    - g n octyl bicicloheptene dicarboximida
+    - g permetrina
+    - gentamicina
+    - gingko biloba
+    - ginkgo biloba
+    - ginseng
+    - glicerina
+    - glicerol
+    - glicinato de cobre
+    - gluconato
     - gluconato de calcio
-    - l lisina monoclorhidrato
-    - vit a
-    - pirrolidon carboxilato de magnesio monohidrato
-    - cipermetrina
-    - etion
-    - propoxur
-    - bacitracina
-    - dexametasona
-    - neomicina
-    - y griseofulvina
-    - betametasona
-    - sulfadiazina de plata
-    - vitamina a
-    - cefalexina monohidrato
-    - fenbendazol
-    - pirantel pamoato
-    - y praziquantel
-    - acido tioctico
-    - membutona
-    - aceite de higado de bacalao
-    - acido hialuronico
-    - clorhidrato
-    - condroitin
+    - gluconato de mag
+    - gluconato de magnesio
+    - gluconato de manganeso
+    - gluconato de zinc
+    - glucosa anhidra
     - glucosamina
+    - glucosamina clorhidrato
+    - glucosamina sulfato
+    - gr de concentrado
+    - gr de prenisolona
+    - gr y closantel
+    - gramicidina
+    - gramos
+    - grasas
+    - griseofulvina micronizada
+    - grs
+    - grupo b
+    - hepatitis
     - heptahidrato
     - hexahidrato
-    - magnesio cloruro
-    - metilsulfonilmetano
-    - sal sodica
-    - sulfato sodico
-    - zinc sulfato
-    - fluazuron
-    - imidacloprid
-    - permetrina
-    - imidacloprid
-    - lauril etoxisulfato de sodio
-    - propoxur
-    - carbonato de calcio
-    - propoxur
-    - flunixin base
-    - diazepam
-    - difenilhidantoinato sodico
-    - ketamina base
-    - fenbendazol
-    - pirantel pamoato
-    - y praziquantel
-    - butoxido de piperonilo
-    - imidacloprid
-    - permetrina
-    - piriproxifeno
-    - feromonas
-    - oxitetraciclina
-    - oxitetraciclina
-    - selamectina
-    - sarolaner
-    - sarolaner
-    - maropitant citrato monohidrato
-    - canina
-    - calcio
-    - fibras
-    - fosforo
-    - grasas
+    - hexametilentetramina
+    - hialuronato de sodio
+    - hidrocortisona
+    - hidrocortisona aceponato
+    - hioscina butilbromuro
+    - hipoalergenicos de origen natural
+    - histidina
     - hum
+    - humedad
+    - icteryl o acido genabilico
+    - idem
+    - idoxuridina
+    - imidacloprid
+    - imidocarb dipropionato
+    - inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
+    - iodato de calcio
+    - ioduro de sodio al
+    - itraconazol
+    - ivemectina
+    - ivermectina
+    - ivermectina al
+    - ivermectina merial
+    - kcal
+    - ketamina
+    - ketamina base
+    - ketoconazol
+    - ketoprofeno
+    - kg tal cual se sirve
+    - kg y lufenuron
+    - l arginina
+    - l arginina clorhidrato
+    - l carnitina
+    - l cisteina
+    - l cistina
+    - l colina bitartrato
+    - l glutamina
+    - l lisina
+    - l lisina al
+    - l lisina monoclorhidrato
+    - l metionina
+    - l prolina
+    - lauril etoxisulfato de sodio
+    - lauril sulfato de sodio
+    - lauril sulfato de trietanolamina
+    - laurilsulfato de sodio
+    - lecitina de soja
+    - leishmaniasis
+    - levoflaxacina base
+    - levofloxacina
+    - lidocaina
+    - lidocaina clorhidrato
+    - lincomicina
+    - lotilaner
+    - lufenuron
+    - magnesio cloruro
+    - maltodextrina
+    - manganesio
+    - manganeso
+    - manganeso gluconato
+    - manganeso sulfato
+    - maropitant citrato monohidrato
     - mat mineral
+    - materia mineral
+    - mavacoxib
+    - mebendazol
+    - medroxiprogesterona acetato
+    - mejora y mantiene la salud gastrointestina
+    - meloxicam
+    - membutona
+    - menbutona
+    - mercaptobenzotiazol
+    - metil bromuro de homatropina
+    - metilaminomet
+    - metilbromuro de homatropina
+    - metilprednisolona acetato
+    - metilsulfonilmetano
+    - metionina
+    - metionina dl
+    - metoprene
+    - metopreno
+    - metroclopramida clorhidrato
+    - metronidazol
+    - mg taurina
+    - mg vitamina b
+    - mgr
+    - mgr nipagin sodico
+    - microcapsulas
+    - microesferas
+    - midazolam
+    - midazolam base
+    - minerales
+    - minerales totales
+    - moxidectin
+    - moxidectina
+    - n acetil cisteina
+    - n acetilcisteina
+    - n butil bromuro de hioscina
+    - n omega
+    - naftalofos
+    - neomicina
+    - neomicina base
+    - neurotrofico fisiologico
+    - nicotinamida
+    - nistatina
+    - oclacitinib
+    - ofloxacina
     - omega
+    - omeprazol
+    - oxbendazol
+    - oxfendazol
+    - oxido de cobre
+    - oxido de manganeso
+    - oxido de zn
+    - oxido ferrico
+    - oxitetraciclina
+    - oxitetraciclina base anfoterica
+    - oxitetraciclina clorhidrato
+    - palmitato de cloranfenicol
+    - pamoato de oxantel
+    - pamoato de pirantel
+    - pantotenato
+    - pantotenato de calcio
+    - papaina
+    - parainfluenza
+    - parainfluenza y leptospira caninos
+    - parainfluenza y parvo caninos
+    - pared celular de levadura
+    - parvo
+    - parvo y corona caninos
+    - parvo y leptospira caninos
+    - parvovirosis y tos de las perreras fraccion liofilizada
+    - pasta cuprosodica de clorofila
+    - penicilina
+    - penicilina benzatinica
+    - penicilina procainica
+    - pentobarbital sodico
+    - pentosan polisulfato sodico
+    - permetrina
+    - peroxido de benzoilo
+    - pimobendan
+    - piperonil butoxido
+    - pirantel
+    - pirantel base
+    - pirantel pamoato
+    - pirazolona
+    - piretrinas naturales
+    - piridoxina clorhidrato
+    - piriproxifen
+    - piriproxifeno
+    - pirrolidon carboxilato de magnesio monohidrato
+    - polimixina b
+    - ppm relacion omega
+    - praziquantel
+    - prednisolona
+    - prednisolona base
+    - prednisolona saborizada
+    - pregabalina comprimidos
+    - propano
+    - propelente
+    - propelentes
+    - propionato de clobetasol
+    - propoxur
     - prot bruta
+    - proteina bruta
+    - pyrantel
+    - pyrantel embonato
+    - pyrantel pamoato
+    - ranitidina
+    - relaci
     - relacion omega
+    - rinotraqueitis
+    - saborizante
+    - sal de aluminio de alantoina
+    - sal sodica
+    - same
+    - sarolaner
+    - sarolaner moxidectina pirantel
+    - selamectina
+    - selenito de sodio
+    - sforo
+    - silibina
+    - silicato de aluminio y magnesio
+    - silimarina
+    - silybum marianum extracto seco
+    - sodio
+    - sorbitol
+    - spinosad
+    - stanozolol
+    - sulfadiazina argentica
+    - sulfadiazina de plata
+    - sulfadimetoxina
+    - sulfametazina sodica
+    - sulfato
+    - sulfato de
+    - sulfato de cobre
+    - sulfato de dihidroestreptomicina
+    - sulfato de magnesio
+    - sulfato de manganeso
+    - sulfato de zinc
+    - sulfato ferroso
+    - sulfato sodico
+    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
+    - suspension inactivada de virus rabico desarrollado en celulas bhk
+    - taurina
+    - teanina
+    - tetraciclina clorhidrato
+    - tiabendazol
+    - tiamina clorhidrato
+    - tobramicina
+    - toltrazuril
+    - torasemida
+    - tramadol
+    - tramadol clorhidrato
+    - triamcinolona
+    - triamcinolona acetonida
+    - trimetoprim
+    - triptofano
+    - trisosfato de adenosina
+    - trofozoitos inactivados de giardia lamblia
+    - u i
+    - u i vitamina b
+    - u i vitamina d
+    - u i vitamina e
+    - u vitamina d
+    - urea
+    - vacuna contra el moquillo
+    - valerato
+    - vaselina
+    - veh
+    - veh o
+    - vehiculo
+    - virus atenuado
+    - virus de distemper
+    - virus de la panleucopenia atenuado
+    - virus de la rinotraqueitis cepa fvr f
+    - virus de moquillo
+    - virus de parvo canino
+    - virus de parvo y corona caninos
+    - virus moquillo atenuado
+    - virus rabico cepa paris
+    - virus vivos modificados de
+    - vit a
+    - vitamina a
+    - vitamina a palmitato
+    - vitamina b
+    - vitamina c recubierta
+    - vitamina d
+    - vitamina e
+    - vitamina e acetato
+    - vitamina k
+    - vitaminas
+    - vitaminas b
+    - vitaminas coenzima
+    - vitaminas y minerales
+    - vitaminico mineral aminoacidico
+    - xido de piperonilo
+    - xilacina
+    - xilazina
+    - xilitol
+    - xylitol
+    - y clorsulon al
+    - y griseofulvina
+    - y praziquantel
+    - zinc gluconato
+    - zinc sulfato
+
+- lookup: compuesto
+  examples: |
+    - a palmitato
+    - ac folico
+    - aceite con alto de acidos grasos
+    - aceite de higado de bacalao
+    - aceite mineral denso
+    - acepromacina maleato
+    - acepromazina maleato
+    - acetato de hidrocortisona
+    - acetato de medroxiprogesterona
+    - acetato de megestrol
+    - acetil metionina
+    - acetonida de triamcinolona
+    - acido
+    - acido acetico glacial
+    - acido alfalipoico
+    - acido ascorbico
+    - acido benzoico
+    - acido borico
+    - acido canforico
+    - acido clavulanico
+    - acido edetico
+    - acido estearico
+    - acido folico
+    - acido hialuronico
+    - acido lactico
+    - acido salicilico
+    - acido tioctico
+    - acido ursodesoxicolico
+    - active ingredient
+    - adenosin trifosfato
+    - adenovirus
+    - ajo
     - albendazol
+    - alcanfor
+    - alcohol isopropilico
+    - alumbre
+    - aluminio
+    - aluminio micronizado
+    - aminoacidos y minerales
+    - amitraz
+    - amoxicilina
+    - analgesico monoclonal
+    - analogo semioquimico de la feromona de apaciguamiento canino
+    - analogo semioquimico de la fraccion f
+    - antigeno de bordetella bronchiseptica
+    - arandano
+    - atenuada
+    - atenuado
+    - atropina sulfato
+    - azitromicina
+    - azitromicina base
+    - azufre
+    - bacitracina
+    - base
+    - bedinvetmab antiinflamatorio
+    - benazepril
+    - benazepril clorhidrato
+    - benazepryl
+    - bencidamina clorhidrato
+    - bencilpenicilanato de benzatina
+    - bencilpenicilanato de procaina
+    - bencilpenicilina benzatinica
+    - bencilpenicilina proc
+    - benzoato de sodio
+    - benzoca
+    - benzocaina
+    - betaina
+    - betaina clorhidrato
+    - betaina cocoamida
+    - betaina hcl
+    - betametasona
+    - biclorhidrato de piperazina
+    - biotina
+    - bitartrato de colina
+    - borax
+    - bromelina
+    - bromhexina
+    - buspirona
+    - but
+    - butanos
+    - butorfanol
+    - butoxido de piperonil
+    - butoxido de piperonilo
+    - c y e
+    - cabergolina
+    - cafeina
+    - calcio
+    - calcivirosis felinos
+    - calicivirus cepa f
+    - canina
+    - carbaryl
+    - carbinoxamina maleato
+    - carbon activado
+    - carbon de cafe
+    - carbonato de ca
+    - carbonato de calcio
+    - carnitina
+    - carprofeno
+    - caseina hidrolizada
+    - ccyfluthrin
+    - cefalexina
+    - cefalexina monohidrato
+    - cefovecin
+    - ceftiofur clorhidrato
+    - ciaanocolabamina
+    - cianocobalamina
+    - ciclosporina a
+    - cifenotrina
+    - cipermetrina
+    - ciprofloxacina
+    - ciprofloxacina base
+    - ciproheptadina clorhidrato
+    - cl de benzalconio
+    - cloprostenol sodico
+    - cloranfenicol
+    - clorfeniramina maleato
+    - clorhexidina acetato
+    - clorhexidina diacetato
+    - clorhexidina digluconato
+    - clorhidrato
+    - clorhidrato de bencetimida
+    - clorhidrato de glucosamina
+    - clorhidrato de nafazolina
+    - clormadinona acetato
+    - clorobutanol
+    - clorocresol metabisulfito sodico
+    - clorpirifos
+    - cloruro de benzalconio
+    - cloruro de calcio
+    - cloruro de magnesio
+    - cloruro de magnesio hexahidrato
+    - cloruro de sodio
+    - clotrimazol
+    - coaltar
+    - cobre como etilenodinitrilo de calcio y cobre
+    - colina
+    - colina bitartrato
+    - como fuente de energia complejo vitamina b
+    - comprimidos
+    - con hidroxipropilmetilcelulosa
+    - condroitin
+    - condroitin de bajo peso molecular
+    - condroitin sulfato
+    - condroitin sulfato a al
+    - condroitin sulfato sodico
+    - condroitina
+    - corona y leptospira caninos
+    - cultivados en celulas de rinon de hamster lactante
+    - curcuma
+    - curcuma longa l extracto seco
+    - cynara scolymus l extracto seco
+    - d glucosamina
+    - d l calcio
+    - d l metionina
+    - d pantotenato de ca
+    - ddvp
+    - de feromona facial felina
+    - de solucion oral
+    - dehidrocolato de sodio
+    - deltametrina
+    - desoxicolato de sodio
+    - dexametasona
+    - dexametasona fosfato
+    - dexametasona fosfato sodico
+    - dexametasona sodio fosfato
+    - dextrosa
+    - dextrosa al
+    - diazepam
+    - diazepan
+    - diazinon
+    - diclorvos
+    - dicp
+    - dietanolamina
+    - difenhidramina clorhidrato
+    - difenilhidantoina
+    - difenilhidantoina sod
+    - difenilhidantoinato sodico
+    - dihidroestreptomicina
+    - dihidroestreptomicina sulf
+    - dimetil
+    - dimetilciclopropanocarboxilico
+    - dimetilpolisiloxano activado
+    - dimetilsulfoxido
+    - dimetridazol
+    - dl carnitina clorhidrato
+    - dl metionina
+    - doramectina
+    - doxapram clorhidrato
+    - doxiciclina
+    - doxiciclina hiclato
+    - e m
+    - emboato
+    - en comprimidos
+    - enapril
+    - enrofloxacina
+    - espironolactona
+    - espirulina
+    - estradiol
+    - estreptomicina
+    - etc
+    - etion
+    - etodolac
+    - etofenprox
+    - excip
+    - extracto de cynara scolymus
+    - extracto de malta
+    - extracto de peumus boldus
+    - extracto de raiz de valeriana
+    - extracto de rhamnus prushiana
+    - extracto de valeriana
+    - extracto diluido de alcachofa
+    - extracto en polvo de cardo mariano
+    - extracto etereo
+    - extracto tumerico
+    - febantel
+    - febendazol
+    - fenazona
+    - fenbend
+    - fenbendazol
+    - fenil
+    - fenitrotion
+    - fenobarbital
+    - fenoxicarb
+    - fenoxycarb
+    - feromona
+    - feromona m
+    - feromonas
+    - fibra cruda
+    - fibras
+    - fipronil
+    - firocoxib
+    - florfenicol
+    - fluazuron
+    - flumetrina
+    - flunixin base
+    - flunixin meglumine
+    - fluocinolona acetonida
+    - fluoruro de sodio
+    - fluralaner
+    - flurbiprofeno sodico
+    - fosfato
+    - fosfato diacido de potasio
+    - fosforo
+    - fosofro
+    - frasco fraccion liofilizada
+    - ftalilsulfatiazol
+    - furosemida
+    - g alquitran
+    - g butoxido de piper
+    - g butoxido de piperonilo
+    - g microesferas
+    - g n octyl bicicloheptene dicarboximida
+    - g permetrina
+    - gentamicina
+    - gingko biloba
+    - ginkgo biloba
+    - ginseng
+    - glicerina
+    - glicerol
+    - glicinato de cobre
+    - gluconato
+    - gluconato de calcio
+    - gluconato de mag
+    - gluconato de magnesio
+    - gluconato de manganeso
+    - gluconato de zinc
+    - glucosa anhidra
+    - glucosamina
+    - glucosamina clorhidrato
+    - glucosamina sulfato
+    - gr de concentrado
+    - gr de prenisolona
+    - gr y closantel
+    - gramicidina
+    - gramos
+    - grasas
+    - griseofulvina micronizada
+    - grs
+    - grupo b
+    - hepatitis
+    - heptahidrato
+    - hexahidrato
+    - hexametilentetramina
+    - hialuronato de sodio
+    - hidrocortisona
+    - hidrocortisona aceponato
+    - hioscina butilbromuro
+    - hipoalergenicos de origen natural
+    - histidina
+    - hum
+    - humedad
+    - icteryl o acido genabilico
+    - idem
+    - idoxuridina
+    - imidacloprid
+    - imidocarb dipropionato
+    - inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
+    - iodato de calcio
+    - ioduro de sodio al
+    - itraconazol
+    - ivemectina
+    - ivermectina
+    - ivermectina al
+    - ivermectina merial
+    - kcal
+    - ketamina
+    - ketamina base
+    - ketoconazol
+    - ketoprofeno
+    - kg tal cual se sirve
+    - kg y lufenuron
+    - l arginina
+    - l arginina clorhidrato
+    - l carnitina
+    - l cisteina
+    - l cistina
+    - l colina bitartrato
+    - l glutamina
+    - l lisina
+    - l lisina al
+    - l lisina monoclorhidrato
+    - l metionina
+    - l prolina
+    - lauril etoxisulfato de sodio
+    - lauril sulfato de sodio
+    - lauril sulfato de trietanolamina
+    - laurilsulfato de sodio
+    - lecitina de soja
+    - leishmaniasis
+    - levoflaxacina base
+    - levofloxacina
+    - lidocaina
+    - lidocaina clorhidrato
+    - lincomicina
+    - lotilaner
+    - lufenuron
+    - magnesio cloruro
+    - maltodextrina
+    - manganesio
+    - manganeso
+    - manganeso gluconato
+    - manganeso sulfato
+    - maropitant citrato monohidrato
+    - mat mineral
+    - materia mineral
+    - mavacoxib
+    - mebendazol
+    - medroxiprogesterona acetato
+    - mejora y mantiene la salud gastrointestina
+    - meloxicam
+    - membutona
+    - menbutona
+    - mercaptobenzotiazol
+    - metil bromuro de homatropina
+    - metilaminomet
+    - metilbromuro de homatropina
+    - metilprednisolona acetato
+    - metilsulfonilmetano
+    - metionina
+    - metionina dl
+    - metoprene
+    - metopreno
+    - metroclopramida clorhidrato
+    - metronidazol
+    - mg taurina
+    - mg vitamina b
+    - mgr
+    - mgr nipagin sodico
+    - microcapsulas
+    - microesferas
+    - midazolam
+    - midazolam base
+    - minerales
+    - minerales totales
+    - moxidectin
+    - moxidectina
+    - n acetil cisteina
+    - n acetilcisteina
+    - n butil bromuro de hioscina
+    - n omega
+    - naftalofos
+    - neomicina
+    - neomicina base
+    - neurotrofico fisiologico
+    - nicotinamida
+    - nistatina
+    - oclacitinib
+    - ofloxacina
+    - omega
+    - omeprazol
+    - oxbendazol
+    - oxfendazol
+    - oxido de cobre
+    - oxido de manganeso
+    - oxido de zn
+    - oxido ferrico
+    - oxitetraciclina
+    - oxitetraciclina base anfoterica
+    - oxitetraciclina clorhidrato
+    - palmitato de cloranfenicol
+    - pamoato de oxantel
+    - pamoato de pirantel
+    - pantotenato
+    - pantotenato de calcio
+    - papaina
+    - parainfluenza
+    - parainfluenza y leptospira caninos
+    - parainfluenza y parvo caninos
+    - pared celular de levadura
+    - parvo
+    - parvo y corona caninos
+    - parvo y leptospira caninos
+    - parvovirosis y tos de las perreras fraccion liofilizada
+    - pasta cuprosodica de clorofila
+    - penicilina
+    - penicilina benzatinica
+    - penicilina procainica
+    - pentobarbital sodico
+    - pentosan polisulfato sodico
+    - permetrina
+    - peroxido de benzoilo
+    - pimobendan
+    - piperonil butoxido
+    - pirantel
+    - pirantel base
+    - pirantel pamoato
+    - pirazolona
+    - piretrinas naturales
+    - piridoxina clorhidrato
+    - piriproxifen
+    - piriproxifeno
+    - pirrolidon carboxilato de magnesio monohidrato
+    - polimixina b
+    - ppm relacion omega
+    - praziquantel
+    - prednisolona
+    - prednisolona base
+    - prednisolona saborizada
+    - pregabalina comprimidos
+    - propano
+    - propelente
+    - propelentes
+    - propionato de clobetasol
+    - propoxur
+    - prot bruta
+    - proteina bruta
+    - pyrantel
+    - pyrantel embonato
+    - pyrantel pamoato
+    - ranitidina
+    - relaci
+    - relacion omega
+    - rinotraqueitis
+    - saborizante
+    - sal de aluminio de alantoina
+    - sal sodica
+    - same
+    - sarolaner
+    - sarolaner moxidectina pirantel
+    - selamectina
+    - selenito de sodio
+    - sforo
+    - silibina
+    - silicato de aluminio y magnesio
+    - silimarina
+    - silybum marianum extracto seco
+    - sodio
+    - sorbitol
+    - spinosad
+    - stanozolol
+    - sulfadiazina argentica
+    - sulfadiazina de plata
+    - sulfadimetoxina
+    - sulfametazina sodica
+    - sulfato
+    - sulfato de
+    - sulfato de cobre
+    - sulfato de dihidroestreptomicina
+    - sulfato de magnesio
+    - sulfato de manganeso
+    - sulfato de zinc
+    - sulfato ferroso
+    - sulfato sodico
+    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
+    - suspension inactivada de virus rabico desarrollado en celulas bhk
+    - taurina
+    - teanina
+    - tetraciclina clorhidrato
+    - tiabendazol
+    - tiamina clorhidrato
+    - tobramicina
+    - toltrazuril
+    - torasemida
+    - tramadol
+    - tramadol clorhidrato
+    - triamcinolona
+    - triamcinolona acetonida
+    - trimetoprim
+    - triptofano
+    - trisosfato de adenosina
+    - trofozoitos inactivados de giardia lamblia
+    - u i
+    - u i vitamina b
+    - u i vitamina d
+    - u i vitamina e
+    - u vitamina d
+    - urea
+    - vacuna contra el moquillo
+    - valerato
+    - vaselina
+    - veh
+    - veh o
+    - vehiculo
+    - virus atenuado
+    - virus de distemper
+    - virus de la panleucopenia atenuado
+    - virus de la rinotraqueitis cepa fvr f
+    - virus de moquillo
+    - virus de parvo canino
+    - virus de parvo y corona caninos
+    - virus moquillo atenuado
+    - virus rabico cepa paris
+    - virus vivos modificados de
+    - vit a
+    - vitamina a
+    - vitamina a palmitato
+    - vitamina b
+    - vitamina c recubierta
+    - vitamina d
+    - vitamina e
+    - vitamina e acetato
+    - vitamina k
+    - vitaminas
+    - vitaminas b
+    - vitaminas coenzima
+    - vitaminas y minerales
+    - vitaminico mineral aminoacidico
+    - xido de piperonilo
+    - xilacina
+    - xilazina
+    - xilitol
+    - xylitol
+    - y clorsulon al
+    - y griseofulvina
+    - y praziquantel
+    - zinc gluconato
+    - zinc sulfato
+
+- lookup: indicador_temporal
+  examples: |
+    - nuevo
+    - nuevos
+    - nueva
+    - nuevas
+    - reciente
+    - recientes
+    - hace poco
+    - esta semana
+    - este mes
+    - últimamente
+    - ahora
+    - hoy
+    - ayer
+    - la semana pasada
+    - hace unos días
+    - recientemente
+    - que llegó hace poco
+    - que entró esta semana
+    - lo último
+    - lo más nuevo
+    - últimos que llegaron
+    - recién llegado
+    - recién llegados
+
+- lookup: estado
+  examples: |
+    - nuevo
+    - nuevos
+    - nueva
+    - nuevas
+    - en oferta
+    - con descuento
+    - con bonificación
+    - con poco stock
+    - disponible
+    - disponibles
+    - agotado
+    - agotados
+    - en promoción
+    - oferta especial
+    - liquidación
+    - rebajado
+    - rebajados
+    - que está en promo
+    - que tiene descuento
+    - en stock
+    - sin stock
+    - promocional
+    - promocionales
+
+- lookup: dosis
+  examples: |
+    - 500mg
+    - 250mg
+    - 100mg
+    - 50mg
+    - 25mg
+    - 1g
+    - 2g
+    - 5ml
+    - 10ml
+    - 50ml
+    - 100ml
+    - 200ml
+    - 1 comprimido
+    - 2 comprimidos
+    - 3 comprimidos
+    - 1 cápsula
+    - 2 cápsulas
+    - una pastilla
+    - dos pastillas
+    - tres pastillas
+    - una tableta
+    - dos tabletas
+    - miligramos
+    - mililitros
+    - gramos
+    - comprimidos
+    - cápsulas
+    - pastillas
+    - tabletas
+
+- lookup: cantidad
+  examples: |
+    - 1 caja
+    - 2 cajas
+    - 3 cajas
+    - 1 blister
+    - 2 blisters
+    - 1 ampolla
+    - 2 ampollas
+    - 1 frasco
+    - 2 frascos
+    - 3 frascos
+    - 1 envase
+    - 2 envases
+    - 1 tubo
+    - 2 tubos
+    - un paquete
+    - dos paquetes
+    - tres paquetes
+    - caja
+    - cajas
+    - blister
+    - blisters
+    - ampolla
+    - ampollas
+    - frasco
+    - frascos
+    - envase
+    - envases
+    - tubo
+    - tubos
+    - paquete
+    - paquetes
+    - unidades
+    - unidad
+
+- lookup: animal
+  examples: |
+    - perro
+    - perros
+    - gato
+    - gatos
+    - caballo
+    - caballos
+    - yegua
+    - yeguas
+    - vaca
+    - vacas
+    - toro
+    - toros
+    - cerdo
+    - cerdos
+    - oveja
+    - ovejas
+    - pollo
+    - pollos
+    - gallina
+    - gallinas
+    - pez
+    - peces
+    - pájaro
+    - pájaros
+    - ave
+    - aves
+    - conejo
+    - conejos
+    - hamster
+    - hamsters
+    - loro
+    - loros
+    - canario
+    - canarios
+    - mascota
+    - mascotas
+    - cachorro
+    - cachorros
+    - gatito
+    - gatitos
+    - perrito
+    - perritos
+    - ternero
+    - terneros
+    - potro
+    - potros
+    - cordero
+    - corderos
+
+- lookup: sentimiento_positivo
+  examples: |
+    - genial
+    - perfecto
+    - excelente
+    - buenísimo
+    - me gusta
+    - está bien
+    - fantástico
+    - bárbaro
+    - fenomenal
+    - espectacular
+    - joya
+    - re bien
+    - 10 puntos
+    - muy bueno
+    - bueno
+    - bien
+    - ok
+    - dale
+    - sí
+    - si
+    - claro
+    - correcto
+    - de acuerdo
+    - exacto
+    - ideal
+    - increíble
+    - maravilloso
+
+- lookup: sentimiento_negativo
+  examples: |
+    - malo
+    - terrible
+    - pésimo
+    - inútil
+    - no sirve
+    - frustrado
+    - molesto
+    - enojado
+    - horrible
+    - desastroso
+    - una porquería
+    - no me gusta
+    - mal
+    - feo
+    - incorrecto
+    - error
+    - problema
+    - desastre
+    - espantoso
+    - fatal
+
+- lookup: rechazo_total
+  examples: |
+    - nada
+    - no quiero nada
+    - déjame
+    - basta
+    - ya no
+    - stop
+    - cancelar
+    - no me interesa
+    - olvídalo
+    - mejor no
+    - dejá
+    - no quiero más
+    - nunca
+    - jamás
+    - para nada
+    - ni loco
+    - ni en pedo
+    - de ninguna manera
+
+- lookup: intencion_buscar
+  examples: |
+    - buscar
+    - encontrar
+    - necesito
+    - quiero
+    - me hace falta
+    - tengo que conseguir
+    - ando buscando
+    - preciso
+    - requiero
+    - me interesa
+    - estoy buscando
+    - buscando
+    - a ver si tienen
+    - tienen
+    - hay
+    - existe
+    - se consigue
+    - conseguir
+    - hallar
+    - ubicar
+    - dar con
+
+- lookup: solicitud_ayuda
+  examples: |
+    - ayuda
+    - help
+    - no entiendo
+    - cómo
+    - explícame
+    - ayúdame
+    - dame una mano
+    - me orientás
+    - me guiás
+    - necesito ayuda
+    - me podés ayudar
+    - me das una mano
+    - no sé
+    - me perdí
+    - estoy confundido
+    - me confundí
+    - orientame
+    - guiame
+    - asistencia
+    - apoyo
+    - socorro
+
+- lookup: dia
+  examples: |
+    - lunes
+    - martes
+    - miércoles
+    - jueves
+    - viernes
+    - sábado
+    - domingo
+    - hoy
+    - ayer
+    - mañana
+    - el lunes
+    - el martes
+    - el miércoles
+    - el jueves
+    - el viernes
+    - el sábado
+    - el domingo
+    - esta semana
+    - la semana pasada
+    - la próxima semana
+    - fin de semana
+    - entre semana
+
+- lookup: fecha
+  examples: |
+    - esta semana
+    - la semana pasada
+    - el mes que viene
+    - este mes
+    - el mes pasado
+    - el próximo mes
+    - este año
+    - el año pasado
+    - el próximo año
+    - pronto
+    - dentro de poco
+    - en unos días
+    - la próxima semana
+    - el mes próximo
 
