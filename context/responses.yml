@@ -2,9 +2,9 @@ version: "3.1"
 
 responses:
   utter_saludo:
-  - text: ¡Hola! ¿Qué necesitas? 🐶
-  - text: Buenas, un gusto saludarte 🐾¿Necesitas algo? 
-  - text: ¡Hola! Encantado de verte por acá 🐾¿Queres buscar algun producto? 
+  - text: ¡Hola!🐶
+  - text: Buenas, un gusto saludarte 🐾
+  - text: ¡Hola! Encantado de verte por acá 🐾
 
   utter_responder_como_estoy:
   - text: Espectacular!

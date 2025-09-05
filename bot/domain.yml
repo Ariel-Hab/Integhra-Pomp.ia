@@ -36,6 +36,9 @@ intents:
 - consultar_novedades_oferta:
     is_starter: true
     use_entities: true
+- consultar_novedades_generales:
+    is_starter: true
+    use_entities: true
 - consultar_recomendaciones_producto:
     is_starter: true
     use_entities: true
@@ -57,6 +60,15 @@ intents:
 - off_topic:
     follow_up_only: true
     use_entities: true
+- out_of_scope:
+    follow_up_only: true
+    use_entities: true
+- ambiguity_fallback:
+    follow_up_only: true
+    use_entities: true
+- low_confidence_fallback:
+    follow_up_only: true
+    use_entities: true
 entities:
 - producto
 - proveedor
@@ -68,9 +80,6 @@ entities:
 - cantidad
 - dia
 - fecha
-- cantidad_stock
-- cantidad_descuento
-- cantidad_bonificacion
 - estado
 - indicador_temporal
 - sentimiento_positivo
@@ -78,6 +87,9 @@ entities:
 - rechazo_total
 - intencion_buscar
 - solicitud_ayuda
+- cantidad_descuento
+- cantidad_bonificacion
+- cantidad_stock
 slots:
   producto:
     type: text
@@ -143,24 +155,6 @@ slots:
     mappings:
     - type: from_entity
       entity: fecha
-  cantidad_stock:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: cantidad_stock
-  cantidad_descuento:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: cantidad_descuento
-  cantidad_bonificacion:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: cantidad_bonificacion
   estado:
     type: text
     influence_conversation: false
@@ -203,6 +197,24 @@ slots:
     mappings:
     - type: from_entity
       entity: solicitud_ayuda
+  cantidad_descuento:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad_descuento
+  cantidad_bonificacion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad_bonificacion
+  cantidad_stock:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cantidad_stock
   context_switch:
     type: bool
     initial_value: false
@@ -225,19 +237,9 @@ slots:
     influence_conversation: false
     mappings:
     - type: custom
-  pending_search_data:
-    type: any
-    influence_conversation: false
-    mappings:
-    - type: custom
-  search_history:
-    type: list
-    initial_value: []
-    influence_conversation: false
-    mappings:
-    - type: custom
-  context_decision_pending:
-    type: any
+  pedido_incompleto:
+    type: bool
+    initial_value: false
     influence_conversation: false
     mappings:
     - type: custom
@@ -258,50 +260,11 @@ slots:
     influence_conversation: false
     mappings:
     - type: custom
-  pedido_incompleto:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-    - type: custom
-  conversation_started:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-    - type: custom
-  awaiting_completion:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-    - type: custom
-  last_completed_action:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-  conversation_turn:
-    type: float
-    initial_value: 0
-    influence_conversation: false
-    mappings:
-    - type: custom
-  pending_suggestion:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-  suggestion_context:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
 responses:
   utter_saludo:
-  - text: ¡Hola! ¿Qué necesitas? 🐶
-  - text: Buenas, un gusto saludarte 🐾¿Necesitas algo?
-  - text: ¡Hola! Encantado de verte por acá 🐾¿Queres buscar algun producto?
+  - text: ¡Hola!🐶
+  - text: Buenas, un gusto saludarte 🐾
+  - text: ¡Hola! Encantado de verte por acá 🐾
   utter_responder_como_estoy:
   - text: Espectacular!
   - text: Guau! Me alegro 🐶
@@ -363,6 +326,8 @@ responses:
   - text: Buscando información sobre consultar novedades producto...
   utter_consultar_novedades_oferta:
   - text: Buscando información sobre consultar novedades oferta...
+  utter_consultar_novedades_generales:
+  - text: Buscando información sobre consultar novedades generales...
   utter_consultar_recomendaciones_producto:
   - text: Buscando información sobre consultar recomendaciones producto...
   utter_consultar_recomendaciones_oferta:
@@ -371,16 +336,25 @@ responses:
   - text: Buscando información sobre modificar busqueda...
   utter_off_topic:
   - text: Respuesta para off topic
+  utter_out_of_scope:
+  - text: Respuesta para out of scope
+  utter_ambiguity_fallback:
+  - text: Respuesta para ambiguity fallback
+  utter_low_confidence_fallback:
+  - text: Respuesta para low confidence fallback
   utter_fallback:
   - text: Perdón, no entendí lo que quisiste decir.
 actions:
 - action_busqueda_situacion
+- action_clarify_ambiguous
 - action_conf_neg_agradecer
 - action_context_validator
 - action_despedida_limpia_contexto
 - action_fallback
 - action_generic_intent_reporter
 - action_generica
+- action_low_confidence
+- action_out_of_scope
 - action_smalltalk_situacion
 session_config:
   session_expiration_time: 300

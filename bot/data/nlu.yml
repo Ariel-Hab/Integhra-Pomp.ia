@@ -1,6 +1,10 @@
 version: "3.1"
 
 nlu:
+# ============================================================================
+# 🔹 TRAINING EXAMPLES POR INTENT
+# ============================================================================
+
 - intent: saludo
   examples: |
     - "hola"
@@ -31,31 +35,6 @@ nlu:
     - "joya"
     - "tranquilo"
     - "10 puntos"
-    - "bien, estupendo"
-    - "todo extraordinario?"
-    - "maravilloso, gracias?"
-    - "aca andamos, fantastico"
-    - "disgustado, pero bueno"
-    - "medio cansado?"
-    - "bien, brillante."
-    - "todo me gusta."
-    - "perfecto, gracias"
-    - "aca andamos, divino"
-    - "disgustado, pero bueno?"
-    - "medio aburrido"
-    - "bien, ideal"
-    - "todo súper?"
-    - "extraordinario, gracias"
-    - "acá andamos, extraordinario."
-    - "desesperado, pero bueno."
-    - "medio disgustado"
-    - "bien, genial"
-    - "todo genial."
-    - "brillante, gracias"
-    - "acá andamos, fabuloso?"
-    - "ansioso, pero bueno."
-    - "medio no sirve."
-    - "bien, magnifico"
 
 - intent: responder_estoy_bien
   examples: |
@@ -95,21 +74,6 @@ nlu:
     - "me reí"
     - "😂"
     - "sos re gracioso"
-    - "jajaja bárbaro."
-    - "muy bueno, muy bueno."
-    - "jajaja excepcional?"
-    - "excepcional, muy bueno"
-    - "jajaja divino."
-    - "impecable, muy bueno."
-    - "jajaja brillante."
-    - "increíble, muy bueno"
-    - "jajaja impecable?"
-    - "ideal, muy bueno."
-    - "jajaja maravilloso"
-    - "fantástico, muy bueno"
-    - "jajaja está bien."
-    - "fantastico, muy bueno"
-    - "jajaja súper."
 
 - intent: buscar_producto
   examples: |
@@ -129,6 +93,15 @@ nlu:
   examples: |
     - "qué productos nuevos llegaron?"
 
+- intent: consultar_novedades_generales
+  examples: |
+    - "qué hay de nuevo?"
+    - "mostrame las novedades"
+    - "tenés algo reciente para mostrar?"
+    - "qué novedades hay en general?"
+    - "lo último que llegó, mostrame"
+    - "hay algo reciente que valga la pena?"
+
 - intent: afirmar
   examples: |
     - "sí"
@@ -141,36 +114,6 @@ nlu:
     - "perfecto"
     - "de acuerdo"
     - "siii"
-    - "impecable?"
-    - "ideal"
-    - "excepcional?"
-    - "maravilloso"
-    - "magnífico"
-    - "divino"
-    - "extraordinario?"
-    - "muy bueno?"
-    - "impecable"
-    - "increíble."
-    - "estupendo?"
-    - "ideal."
-    - "estupendo"
-    - "perfecto."
-    - "ideal"
-    - "perfecto"
-    - "impecable"
-    - "magnífico"
-    - "fenomenal"
-    - "extraordinario"
-    - "genial"
-    - "muy bueno"
-    - "genial"
-    - "extraordinario?"
-    - "divino?"
-    - "fabuloso"
-    - "divino"
-    - "ideal"
-    - "buenísimo."
-    - "excelente"
 
 - intent: denegar
   examples: |
@@ -178,56 +121,6 @@ nlu:
     - "no, gracias"
     - "incorrecto"
     - "no es así"
-    - "malo?"
-    - "paso"
-    - "irritado, mejor no"
-    - "no, enojado?"
-    - "irritado"
-    - "paso"
-    - "enojado, me voy"
-    - "no, pésimo"
-    - "desesperado"
-    - "no gracias"
-    - "frustrado, no vale la pena."
-    - "no, espantoso"
-    - "terrible"
-    - "no funciona"
-    - "disgustado, stop"
-    - "no, furioso."
-    - "harto"
-    - "cancelar"
-    - "harto, chau"
-    - "no, enojado"
-    - "molesto?"
-    - "no gracias."
-    - "furioso, no me interesa"
-    - "no, irritado"
-    - "pésimo."
-    - "no me sirve"
-    - "inútil, no más"
-    - "no, confundido"
-    - "furioso?"
-    - "hasta acá llegué"
-    - "frustrado, no funciona?"
-    - "no, confundido"
-    - "nervioso"
-    - "paso"
-    - "horrible, no quiero nada"
-    - "no, irritado?"
-    - "irritado"
-    - "suficiente."
-    - "irritado, basta."
-    - "no, desesperado"
-    - "frustrado?"
-    - "stop."
-    - "inútil, déjame"
-    - "no, frustrado."
-    - "confundido"
-    - "no necesito"
-    - "malo, no me sirve?"
-    - "no, espantoso"
-    - "confundido"
-    - "hasta aca llegue"
 
 - intent: agradecimiento
   examples: |
@@ -243,24 +136,2048 @@ nlu:
     - "qué hora es"
     - "cómo está el tráfico"
     - "contame un cuento"
-    - "qué hora es?."
-    - "cómo está el clima?"
-    - "help, no entiendo nada?"
-    - "indignado, esto no funciona?"
-    - "me voy, ansioso?"
-    - "qué hora es?."
-    - "cómo está el clima?"
-    - "ayuda, no entiendo nada"
-    - "aburrido, esto no funciona."
-    - "hasta acá llegué, agobiado."
-    - "qué hora es?"
-    - "cómo está el clima"
-    - "no entiendo, no entiendo nada."
-    - "horrible, esto no funciona?"
-    - "me voy, aburrido"
-    - "que hora es?"
-    - "cómo está el clima?"
-    - "sugerencia, no entiendo nada"
-    - "estresado, esto no funciona"
-    - "no lo quiero, nervioso?"
+
+- intent: out_of_scope
+  examples: |
+    - "podés explicarme matemáticas?"
+    - "cuánto mide la Torre Eiffel?"
+    - "enseñame a cocinar pizza"
+    - "me contás la historia de Roma?"
+    - "qué significa soñar con agua?"
+    - "recomendame una canción"
+    - "quién descubrió América?"
+    - "hablame en inglés"
+    - "dame la receta de un flan"
+    - "qué películas hay en el cine?"
+    - "cómo arreglo mi auto?"
+    - "qué tiempo va a hacer mañana?"
+    - "recomendame un libro"
+    - "cómo programo en Python?"
+    - "qué opinás del bitcoin?"
+    - "enseñame a bailar salsa"
+    - "cuál es la capital de Noruega?"
+    - "decime un trabalenguas"
+    - "haceme la tarea de mate"
+    - "cómo se dice perro en japonés?"
+
+- intent: ambiguity_fallback
+  examples: |
+    - "me mostrás algo?"
+    - "tenés algo disponible?"
+    - "decime qué hay"
+    - "quiero ver más"
+    - "che, qué opciones hay?"
+    - "necesito info"
+    - "hay algo nuevo?"
+    - "qué tenés?"
+    - "mostrame lo que sea"
+    - "contame algo"
+    - "dale, pasame algo"
+    - "bueno, qué hay"
+    - "a ver qué conseguís"
+    - "enseñame opciones"
+    - "qué onda con eso?"
+    - "mostrame otra cosa"
+    - "quiero saber más"
+    - "a ver"
+    - "decime qué podés"
+
+- intent: low_confidence_fallback
+  examples: |
+    - "asdf"
+    - "kjsdhf kjashd"
+    - "ajajajajaj"
+    - "????"
+    - "mmm no sé"
+    - "bleh"
+    - "sjdjdj"
+    - "kjhjkhk"
+    - "loquesea"
+    - "qweqwe"
+    - ":/"
+    - "bla bla bla"
+    - "lalalalala"
+    - "cualquier cosa"
+    - "nop sé"
+    - "kjkjk"
+    - "kpoasjd"
+    - "🤯"
+
+# ============================================================================
+# 🔹 LOOKUP TABLES (desde CSV y entidades core)
+# ============================================================================
+
+- lookup: producto
+  examples: |
+    - Acedan
+    - Acederm
+    - Adaptil
+    - Advantage
+    - Advantix
+    - Advocate
+    - Algicam
+    - Algidol
+    - Antiverrugas
+    - Apetil
+    - Aplonal
+    - Artrin
+    - Artroglycan
+    - Artrosan
+    - Artrovet
+    - Atriben
+    - Atropina
+    - Aurix
+    - Azitromicina
+    - Bactroflay
+    - Bactroprofen
+    - Bactrovet
+    - Bagogard
+    - Bagovac
+    - Barbitol
+    - Basken
+    - Baycox
+    - Baytril
+    - Bio
+    - Biochip
+    - Block
+    - Btk
+    - Bucal
+    - Cae
+    - Calcificante
+    - Calcio
+    - Canis
+    - Cardial
+    - Carprodol
+    - Cefalexina
+    - Cefalong
+    - Cestodan
+    - Cetfur
+    - Ciclar
+    - Ciclosporina
+    - Cidar
+    - Clamoxyl
+    - Clavamox
+    - Clorhex
+    - Clorhexidina
+    - Coagulante
+    - Colotrin
+    - Comfortis
+    - Cortidural
+    - Credelio
+    - Cumepina
+    - Curavet
+    - Cytopoint
+    - Dectomax
+    - Dermodene
+    - Dermomax
+    - Dexa
+    - Dexametasona
+    - Dexashock
+    - Diafin
+    - Diazepet
+    - Dipirona
+    - Diurene
+    - Dominal
+    - Doxilina
+    - Doxivit
+    - Dozilam
+    - Drontal
+    - Duosecretina
+    - Dynamide
+    - Ecp
+    - Ecthol
+    - Ecthonil
+    - Endectocida
+    - Endospot
+    - Energia
+    - Enrofloxacina
+    - Enroplus
+    - Enroxina
+    - Entero
+    - Enteroplus
+    - Enzimax
+    - Episol
+    - Epitelizante
+    - Estreptocarbocaftiazol
+    - Eutanasico
+    - Feline
+    - Feliway
+    - Fenobarbital
+    - Fip
+    - Fipro
+    - Fleegard
+    - Flexapet
+    - Floxaday
+    - Fluido
+    - Fortekor
+    - Fortepen
+    - Full
+    - Furocal
+    - Giacoccide
+    - Hialurina
+    - Idocarb12
+    - Injection
+    - Integhra
+    - Itraconazol
+    - Ivermex
+    - Ivomec
+    - Kensol
+    - Ketamid
+    - Ketamina
+    - Kil
+    - Kothrina
+    - Kuraderm
+    - Kuramicina
+    - Labyderm
+    - Laxavet
+    - Legend
+    - Librela
+    - Linco
+    - Meloxivet
+    - Meltra
+    - Multivit
+    - Mv
+    - Neo
+    - Neovita
+    - Neuroalivio
+    - Nogastrol
+    - Novotioc
+    - Nutripet
+    - Ocladerm
+    - Ocubiotic
+    - Ocuflox
+    - Ohm
+    - Osurnia
+    - Otiflex
+    - Oxisol
+    - Oxitetraciclina
+    - Pantoliv
+    - Pets
+    - Pf
+    - Pigatoperro
+    - Pimobendan
+    - Pimocard
+    - Pip
+    - Plano
+    - Power
+    - Pragma
+    - Prednisol
+    - Prednisolona
+    - Prednovet
+    - Pregabaliv
+    - Previcox
+    - Prius
+    - Pro
+    - Proderma
+    - Promafine
+    - Protech
+    - Proteliv
+    - Puppyline
+    - Ranitidina
+    - Repexxin
+    - Revol
+    - Rimadyl
+    - Rochy
+    - Rolenal
+    - Serenex
+    - Seresto
+    - Sh
+    - Shampoo
+    - Simparica
+    - Sincelar
+    - Singestar
+    - Sosten
+    - Spinomax
+    - Sulfavet
+    - Tea
+    - Tears
+    - Terpan
+    - Terramicina
+    - Tipertox
+    - Tobramax
+    - Toltrazol
+    - Tonico
+    - Toracard
+    - Total
+    - Totalvet
+    - Tramadol
+    - Tratam
+    - Trihepat
+    - Tripackprotech
+    - Trivermex
+    - Trocoxil
+    - Ursoliv
+    - Ursomarina
+    - Uv
+    - Vaquero
+    - Vetanarcol
+    - Vetscan
+    - Vilisinh
+    - Virbac
+    - Vita
+    - Vitamina
+    - Vitaminico
+    - Viviramv
+    - adaptil
+    - advantage
+    - advantix
+    - advocate
+    - albex
+    - algicam
+    - aminolite
+    - amoxivet
+    - anfotropina
+    - anti
+    - aplonal
+    - apoquel
+    - artroglycan
+    - ascaricida
+    - atb
+    - atropina
+    - aurix
+    - azitromicina
+    - bactroprofen
+    - bactrovet
+    - bagogard
+    - bagomectina
+    - barbitol
+    - basken
+    - baytril
+    - biox
+    - block
+    - bromhexina
+    - bucal
+    - butormin
+    - canis
+    - cardial
+    - cefalong
+    - cephilexine
+    - cerenia
+    - cetfur
+    - ciclosporina
+    - cidar
+    - ciproplus
+    - cloralen
+    - clorhex
+    - colirama
+    - colotrin
+    - comfortis
+    - complejo
+    - condroitin
+    - convenia
+    - credelio
+    - crema
+    - cytopoint
+    - dectomax
+    - dermodene
+    - dermomax
+    - dermoxil
+    - dexa
+    - dexaflox
+    - dexametasona
+    - diafin
+    - diazepam
+    - display
+    - diurene
+    - doloalivio
+    - dominal
+    - doxilina
+    - doxin
+    - driptol
+    - drontal
+    - duosecretina
+    - ecthol
+    - ecthonil
+    - ectocan
+    - endectocida
+    - energomag
+    - enroplus
+    - enteroplus
+    - eqvalan
+    - espuma
+    - eutanasico
+    - euthanyle
+    - fauna
+    - felilax
+    - feline
+    - feliway
+    - fenobarbital
+    - fider
+    - fip
+    - fipro
+    - flurbiprofeno
+    - full
+    - furocal
+    - galmetrin
+    - genabil
+    - gerioox
+    - giacoccide
+    - glypondin
+    - griseofulvina
+    - grupo
+    - hepatoprotector
+    - integhra
+    - ioduro
+    - isiquick
+    - itraconazol
+    - ivermectina
+    - ketafine
+    - kil
+    - kobra
+    - kothrina
+    - kuraderm
+    - kuramicina
+    - labyderm
+    - lectora
+    - librela
+    - mayor
+    - medroxiprogesterona
+    - meloxivet
+    - meltra
+    - methiovertan
+    - moxidex
+    - mv
+    - neo
+    - nogastrol
+    - nomat
+    - nutrical
+    - ocladerm
+    - ocubiotic
+    - ofloxacina
+    - ohm
+    - ol
+    - opter
+    - osteo
+    - otiflex
+    - oxisol
+    - pentabiotico
+    - pets
+    - pf
+    - pigatoperro
+    - pileran
+    - pimobendan
+    - pimocard
+    - pip
+    - poten
+    - power
+    - pragma
+    - prednisolona
+    - pregabaliv
+    - previcox
+    - prius
+    - pro
+    - proderma
+    - protech
+    - proteliv
+    - pruricilona
+    - ranitidina
+    - relay
+    - revol
+    - rimadyl
+    - rochy
+    - rolenal
+    - sedomin
+    - semintra
+    - seniorline
+    - seraquin
+    - serenex
+    - shampoo
+    - silihepatic
+    - simparica
+    - sincelar
+    - singestar
+    - solubron
+    - sosten
+    - spinomax
+    - super
+    - tau
+    - tea
+    - terpan
+    - terramicina
+    - tiu
+    - toltrazol
+    - tolzuril
+    - total
+    - totalvet
+    - tramadol
+    - tratam
+    - triavet
+    - tripackprotech
+    - trivermex
+    - trocoxil
+    - ursomarina
+    - vcc
+    - vermiplex
+    - vermkon
+    - vetscan
+    - virbac
+    - vita
+    - voren
+    - ziflor
+
+- lookup: proveedor
+  examples: |
+    - Biogenesis
+    - Biogenesis bago
+    - Integhra-proveedor
+    - John
+    - John martin
+    - Konig
+    - Konig s.a.
+    - Labyes
+    - Suizo
+    - Suizo argentina
+    - Zoetis
+    - boehringer
+    - boehringer ingelheim
+    - brouwer
+    - ceva
+    - holliday
+    - holliday scott s.a.
+
+- lookup: categoria
+  examples: |
+    - accesorio
+    - alimento
+    - antiartrosico
+    - antiparasitario externo
+    - antiparasitario interno
+    - biologico
+    - cardiologico
+    - clinico
+    - farmacos
+    - higiene y belleza
+    - higiene y belleza odontologico
+    - sin categoria
+
+- lookup: ingrediente_activo
+  examples: |
+    - a palmitato
+    - ac folico
+    - aceite con alto de acidos grasos
+    - aceite de higado de bacalao
+    - aceite mineral denso
+    - acepromacina maleato
+    - acepromazina maleato
+    - acetato de hidrocortisona
+    - acetato de medroxiprogesterona
+    - acetato de megestrol
+    - acetil metionina
+    - acetonida de triamcinolona
+    - acido
+    - acido acetico glacial
+    - acido alfalipoico
+    - acido ascorbico
+    - acido benzoico
+    - acido borico
+    - acido canforico
+    - acido clavulanico
+    - acido edetico
+    - acido estearico
+    - acido folico
+    - acido hialuronico
+    - acido lactico
+    - acido salicilico
+    - acido tioctico
+    - acido ursodesoxicolico
+    - active ingredient
+    - adenosin trifosfato
+    - adenovirus
+    - ajo
+    - albendazol
+    - alcanfor
+    - alcohol isopropilico
+    - alumbre
+    - aluminio
+    - aluminio micronizado
+    - aminoacidos y minerales
+    - amitraz
+    - amoxicilina
+    - analgesico monoclonal
+    - analogo semioquimico de la feromona de apaciguamiento canino
+    - analogo semioquimico de la fraccion f
+    - antigeno de bordetella bronchiseptica
+    - arandano
+    - atenuada
+    - atenuado
+    - atropina sulfato
+    - azitromicina
+    - azitromicina base
+    - azufre
+    - bacitracina
+    - base
+    - bedinvetmab antiinflamatorio
+    - benazepril
+    - benazepril clorhidrato
+    - benazepryl
+    - bencidamina clorhidrato
+    - bencilpenicilanato de benzatina
+    - bencilpenicilanato de procaina
+    - bencilpenicilina benzatinica
+    - bencilpenicilina proc
+    - benzoato de sodio
+    - benzoca
+    - benzocaina
+    - betaina
+    - betaina clorhidrato
+    - betaina cocoamida
+    - betaina hcl
+    - betametasona
+    - biclorhidrato de piperazina
+    - biotina
+    - bitartrato de colina
+    - borax
+    - bromelina
+    - bromhexina
+    - buspirona
+    - but
+    - butanos
+    - butorfanol
+    - butoxido de piperonil
+    - butoxido de piperonilo
+    - c y e
+    - cabergolina
+    - cafeina
+    - calcio
+    - calcivirosis felinos
+    - calicivirus cepa f
+    - canina
+    - carbaryl
+    - carbinoxamina maleato
+    - carbon activado
+    - carbon de cafe
+    - carbonato de ca
+    - carbonato de calcio
+    - carnitina
+    - carprofeno
+    - caseina hidrolizada
+    - ccyfluthrin
+    - cefalexina
+    - cefalexina monohidrato
+    - cefovecin
+    - ceftiofur clorhidrato
+    - ciaanocolabamina
+    - cianocobalamina
+    - ciclosporina a
+    - cifenotrina
+    - cipermetrina
+    - ciprofloxacina
+    - ciprofloxacina base
+    - ciproheptadina clorhidrato
+    - cl de benzalconio
+    - cloprostenol sodico
+    - cloranfenicol
+    - clorfeniramina maleato
+    - clorhexidina acetato
+    - clorhexidina diacetato
+    - clorhexidina digluconato
+    - clorhidrato
+    - clorhidrato de bencetimida
+    - clorhidrato de glucosamina
+    - clorhidrato de nafazolina
+    - clormadinona acetato
+    - clorobutanol
+    - clorocresol metabisulfito sodico
+    - clorpirifos
+    - cloruro de benzalconio
+    - cloruro de calcio
+    - cloruro de magnesio
+    - cloruro de magnesio hexahidrato
+    - cloruro de sodio
+    - clotrimazol
+    - coaltar
+    - cobre como etilenodinitrilo de calcio y cobre
+    - colina
+    - colina bitartrato
+    - como fuente de energia complejo vitamina b
+    - comprimidos
+    - con hidroxipropilmetilcelulosa
+    - condroitin
+    - condroitin de bajo peso molecular
+    - condroitin sulfato
+    - condroitin sulfato a al
+    - condroitin sulfato sodico
+    - condroitina
+    - corona y leptospira caninos
+    - cultivados en celulas de rinon de hamster lactante
+    - curcuma
+    - curcuma longa l extracto seco
+    - cynara scolymus l extracto seco
+    - d glucosamina
+    - d l calcio
+    - d l metionina
+    - d pantotenato de ca
+    - ddvp
+    - de feromona facial felina
+    - de solucion oral
+    - dehidrocolato de sodio
+    - deltametrina
+    - desoxicolato de sodio
+    - dexametasona
+    - dexametasona fosfato
+    - dexametasona fosfato sodico
+    - dexametasona sodio fosfato
+    - dextrosa
+    - dextrosa al
+    - diazepam
+    - diazepan
+    - diazinon
+    - diclorvos
+    - dicp
+    - dietanolamina
+    - difenhidramina clorhidrato
+    - difenilhidantoina
+    - difenilhidantoina sod
+    - difenilhidantoinato sodico
+    - dihidroestreptomicina
+    - dihidroestreptomicina sulf
+    - dimetil
+    - dimetilciclopropanocarboxilico
+    - dimetilpolisiloxano activado
+    - dimetilsulfoxido
+    - dimetridazol
+    - dl carnitina clorhidrato
+    - dl metionina
+    - doramectina
+    - doxapram clorhidrato
+    - doxiciclina
+    - doxiciclina hiclato
+    - e m
+    - emboato
+    - en comprimidos
+    - enapril
+    - enrofloxacina
+    - espironolactona
+    - espirulina
+    - estradiol
+    - estreptomicina
+    - etc
+    - etion
+    - etodolac
+    - etofenprox
+    - excip
+    - extracto de cynara scolymus
+    - extracto de malta
+    - extracto de peumus boldus
+    - extracto de raiz de valeriana
+    - extracto de rhamnus prushiana
+    - extracto de valeriana
+    - extracto diluido de alcachofa
+    - extracto en polvo de cardo mariano
+    - extracto etereo
+    - extracto tumerico
+    - febantel
+    - febendazol
+    - fenazona
+    - fenbend
+    - fenbendazol
+    - fenil
+    - fenitrotion
+    - fenobarbital
+    - fenoxicarb
+    - fenoxycarb
+    - feromona
+    - feromona m
+    - feromonas
+    - fibra cruda
+    - fibras
+    - fipronil
+    - firocoxib
+    - florfenicol
+    - fluazuron
+    - flumetrina
+    - flunixin base
+    - flunixin meglumine
+    - fluocinolona acetonida
+    - fluoruro de sodio
+    - fluralaner
+    - flurbiprofeno sodico
+    - fosfato
+    - fosfato diacido de potasio
+    - fosforo
+    - fosofro
+    - frasco fraccion liofilizada
+    - ftalilsulfatiazol
+    - furosemida
+    - g alquitran
+    - g butoxido de piper
+    - g butoxido de piperonilo
+    - g microesferas
+    - g n octyl bicicloheptene dicarboximida
+    - g permetrina
+    - gentamicina
+    - gingko biloba
+    - ginkgo biloba
+    - ginseng
+    - glicerina
+    - glicerol
+    - glicinato de cobre
+    - gluconato
+    - gluconato de calcio
+    - gluconato de mag
+    - gluconato de magnesio
+    - gluconato de manganeso
+    - gluconato de zinc
+    - glucosa anhidra
+    - glucosamina
+    - glucosamina clorhidrato
+    - glucosamina sulfato
+    - gr de concentrado
+    - gr de prenisolona
+    - gr y closantel
+    - gramicidina
+    - gramos
+    - grasas
+    - griseofulvina micronizada
+    - grs
+    - grupo b
+    - hepatitis
+    - heptahidrato
+    - hexahidrato
+    - hexametilentetramina
+    - hialuronato de sodio
+    - hidrocortisona
+    - hidrocortisona aceponato
+    - hioscina butilbromuro
+    - hipoalergenicos de origen natural
+    - histidina
+    - hum
+    - humedad
+    - icteryl o acido genabilico
+    - idem
+    - idoxuridina
+    - imidacloprid
+    - imidocarb dipropionato
+    - inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
+    - iodato de calcio
+    - ioduro de sodio al
+    - itraconazol
+    - ivemectina
+    - ivermectina
+    - ivermectina al
+    - ivermectina merial
+    - kcal
+    - ketamina
+    - ketamina base
+    - ketoconazol
+    - ketoprofeno
+    - kg tal cual se sirve
+    - kg y lufenuron
+    - l arginina
+    - l arginina clorhidrato
+    - l carnitina
+    - l cisteina
+    - l cistina
+    - l colina bitartrato
+    - l glutamina
+    - l lisina
+    - l lisina al
+    - l lisina monoclorhidrato
+    - l metionina
+    - l prolina
+    - lauril etoxisulfato de sodio
+    - lauril sulfato de sodio
+    - lauril sulfato de trietanolamina
+    - laurilsulfato de sodio
+    - lecitina de soja
+    - leishmaniasis
+    - levoflaxacina base
+    - levofloxacina
+    - lidocaina
+    - lidocaina clorhidrato
+    - lincomicina
+    - lotilaner
+    - lufenuron
+    - magnesio cloruro
+    - maltodextrina
+    - manganesio
+    - manganeso
+    - manganeso gluconato
+    - manganeso sulfato
+    - maropitant citrato monohidrato
+    - mat mineral
+    - materia mineral
+    - mavacoxib
+    - mebendazol
+    - medroxiprogesterona acetato
+    - mejora y mantiene la salud gastrointestina
+    - meloxicam
+    - membutona
+    - menbutona
+    - mercaptobenzotiazol
+    - metil bromuro de homatropina
+    - metilaminomet
+    - metilbromuro de homatropina
+    - metilprednisolona acetato
+    - metilsulfonilmetano
+    - metionina
+    - metionina dl
+    - metoprene
+    - metopreno
+    - metroclopramida clorhidrato
+    - metronidazol
+    - mg taurina
+    - mg vitamina b
+    - mgr
+    - mgr nipagin sodico
+    - microcapsulas
+    - microesferas
+    - midazolam
+    - midazolam base
+    - minerales
+    - minerales totales
+    - moxidectin
+    - moxidectina
+    - n acetil cisteina
+    - n acetilcisteina
+    - n butil bromuro de hioscina
+    - n omega
+    - naftalofos
+    - neomicina
+    - neomicina base
+    - neurotrofico fisiologico
+    - nicotinamida
+    - nistatina
+    - oclacitinib
+    - ofloxacina
+    - omega
+    - omeprazol
+    - oxbendazol
+    - oxfendazol
+    - oxido de cobre
+    - oxido de manganeso
+    - oxido de zn
+    - oxido ferrico
+    - oxitetraciclina
+    - oxitetraciclina base anfoterica
+    - oxitetraciclina clorhidrato
+    - palmitato de cloranfenicol
+    - pamoato de oxantel
+    - pamoato de pirantel
+    - pantotenato
+    - pantotenato de calcio
+    - papaina
+    - parainfluenza
+    - parainfluenza y leptospira caninos
+    - parainfluenza y parvo caninos
+    - pared celular de levadura
+    - parvo
+    - parvo y corona caninos
+    - parvo y leptospira caninos
+    - parvovirosis y tos de las perreras fraccion liofilizada
+    - pasta cuprosodica de clorofila
+    - penicilina
+    - penicilina benzatinica
+    - penicilina procainica
+    - pentobarbital sodico
+    - pentosan polisulfato sodico
+    - permetrina
+    - peroxido de benzoilo
+    - pimobendan
+    - piperonil butoxido
+    - pirantel
+    - pirantel base
+    - pirantel pamoato
+    - pirazolona
+    - piretrinas naturales
+    - piridoxina clorhidrato
+    - piriproxifen
+    - piriproxifeno
+    - pirrolidon carboxilato de magnesio monohidrato
+    - polimixina b
+    - ppm relacion omega
+    - praziquantel
+    - prednisolona
+    - prednisolona base
+    - prednisolona saborizada
+    - pregabalina comprimidos
+    - propano
+    - propelente
+    - propelentes
+    - propionato de clobetasol
+    - propoxur
+    - prot bruta
+    - proteina bruta
+    - pyrantel
+    - pyrantel embonato
+    - pyrantel pamoato
+    - ranitidina
+    - relaci
+    - relacion omega
+    - rinotraqueitis
+    - saborizante
+    - sal de aluminio de alantoina
+    - sal sodica
+    - same
+    - sarolaner
+    - sarolaner moxidectina pirantel
+    - selamectina
+    - selenito de sodio
+    - sforo
+    - silibina
+    - silicato de aluminio y magnesio
+    - silimarina
+    - silybum marianum extracto seco
+    - sodio
+    - sorbitol
+    - spinosad
+    - stanozolol
+    - sulfadiazina argentica
+    - sulfadiazina de plata
+    - sulfadimetoxina
+    - sulfametazina sodica
+    - sulfato
+    - sulfato de
+    - sulfato de cobre
+    - sulfato de dihidroestreptomicina
+    - sulfato de magnesio
+    - sulfato de manganeso
+    - sulfato de zinc
+    - sulfato ferroso
+    - sulfato sodico
+    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
+    - suspension inactivada de virus rabico desarrollado en celulas bhk
+    - taurina
+    - teanina
+    - tetraciclina clorhidrato
+    - tiabendazol
+    - tiamina clorhidrato
+    - tobramicina
+    - toltrazuril
+    - torasemida
+    - tramadol
+    - tramadol clorhidrato
+    - triamcinolona
+    - triamcinolona acetonida
+    - trimetoprim
+    - triptofano
+    - trisosfato de adenosina
+    - trofozoitos inactivados de giardia lamblia
+    - u i
+    - u i vitamina b
+    - u i vitamina d
+    - u i vitamina e
+    - u vitamina d
+    - urea
+    - vacuna contra el moquillo
+    - valerato
+    - vaselina
+    - veh
+    - veh o
+    - vehiculo
+    - virus atenuado
+    - virus de distemper
+    - virus de la panleucopenia atenuado
+    - virus de la rinotraqueitis cepa fvr f
+    - virus de moquillo
+    - virus de parvo canino
+    - virus de parvo y corona caninos
+    - virus moquillo atenuado
+    - virus rabico cepa paris
+    - virus vivos modificados de
+    - vit a
+    - vitamina a
+    - vitamina a palmitato
+    - vitamina b
+    - vitamina c recubierta
+    - vitamina d
+    - vitamina e
+    - vitamina e acetato
+    - vitamina k
+    - vitaminas
+    - vitaminas b
+    - vitaminas coenzima
+    - vitaminas y minerales
+    - vitaminico mineral aminoacidico
+    - xido de piperonilo
+    - xilacina
+    - xilazina
+    - xilitol
+    - xylitol
+    - y clorsulon al
+    - y griseofulvina
+    - y praziquantel
+    - zinc gluconato
+    - zinc sulfato
+
+- lookup: compuesto
+  examples: |
+    - a palmitato
+    - ac folico
+    - aceite con alto de acidos grasos
+    - aceite de higado de bacalao
+    - aceite mineral denso
+    - acepromacina maleato
+    - acepromazina maleato
+    - acetato de hidrocortisona
+    - acetato de medroxiprogesterona
+    - acetato de megestrol
+    - acetil metionina
+    - acetonida de triamcinolona
+    - acido
+    - acido acetico glacial
+    - acido alfalipoico
+    - acido ascorbico
+    - acido benzoico
+    - acido borico
+    - acido canforico
+    - acido clavulanico
+    - acido edetico
+    - acido estearico
+    - acido folico
+    - acido hialuronico
+    - acido lactico
+    - acido salicilico
+    - acido tioctico
+    - acido ursodesoxicolico
+    - active ingredient
+    - adenosin trifosfato
+    - adenovirus
+    - ajo
+    - albendazol
+    - alcanfor
+    - alcohol isopropilico
+    - alumbre
+    - aluminio
+    - aluminio micronizado
+    - aminoacidos y minerales
+    - amitraz
+    - amoxicilina
+    - analgesico monoclonal
+    - analogo semioquimico de la feromona de apaciguamiento canino
+    - analogo semioquimico de la fraccion f
+    - antigeno de bordetella bronchiseptica
+    - arandano
+    - atenuada
+    - atenuado
+    - atropina sulfato
+    - azitromicina
+    - azitromicina base
+    - azufre
+    - bacitracina
+    - base
+    - bedinvetmab antiinflamatorio
+    - benazepril
+    - benazepril clorhidrato
+    - benazepryl
+    - bencidamina clorhidrato
+    - bencilpenicilanato de benzatina
+    - bencilpenicilanato de procaina
+    - bencilpenicilina benzatinica
+    - bencilpenicilina proc
+    - benzoato de sodio
+    - benzoca
+    - benzocaina
+    - betaina
+    - betaina clorhidrato
+    - betaina cocoamida
+    - betaina hcl
+    - betametasona
+    - biclorhidrato de piperazina
+    - biotina
+    - bitartrato de colina
+    - borax
+    - bromelina
+    - bromhexina
+    - buspirona
+    - but
+    - butanos
+    - butorfanol
+    - butoxido de piperonil
+    - butoxido de piperonilo
+    - c y e
+    - cabergolina
+    - cafeina
+    - calcio
+    - calcivirosis felinos
+    - calicivirus cepa f
+    - canina
+    - carbaryl
+    - carbinoxamina maleato
+    - carbon activado
+    - carbon de cafe
+    - carbonato de ca
+    - carbonato de calcio
+    - carnitina
+    - carprofeno
+    - caseina hidrolizada
+    - ccyfluthrin
+    - cefalexina
+    - cefalexina monohidrato
+    - cefovecin
+    - ceftiofur clorhidrato
+    - ciaanocolabamina
+    - cianocobalamina
+    - ciclosporina a
+    - cifenotrina
+    - cipermetrina
+    - ciprofloxacina
+    - ciprofloxacina base
+    - ciproheptadina clorhidrato
+    - cl de benzalconio
+    - cloprostenol sodico
+    - cloranfenicol
+    - clorfeniramina maleato
+    - clorhexidina acetato
+    - clorhexidina diacetato
+    - clorhexidina digluconato
+    - clorhidrato
+    - clorhidrato de bencetimida
+    - clorhidrato de glucosamina
+    - clorhidrato de nafazolina
+    - clormadinona acetato
+    - clorobutanol
+    - clorocresol metabisulfito sodico
+    - clorpirifos
+    - cloruro de benzalconio
+    - cloruro de calcio
+    - cloruro de magnesio
+    - cloruro de magnesio hexahidrato
+    - cloruro de sodio
+    - clotrimazol
+    - coaltar
+    - cobre como etilenodinitrilo de calcio y cobre
+    - colina
+    - colina bitartrato
+    - como fuente de energia complejo vitamina b
+    - comprimidos
+    - con hidroxipropilmetilcelulosa
+    - condroitin
+    - condroitin de bajo peso molecular
+    - condroitin sulfato
+    - condroitin sulfato a al
+    - condroitin sulfato sodico
+    - condroitina
+    - corona y leptospira caninos
+    - cultivados en celulas de rinon de hamster lactante
+    - curcuma
+    - curcuma longa l extracto seco
+    - cynara scolymus l extracto seco
+    - d glucosamina
+    - d l calcio
+    - d l metionina
+    - d pantotenato de ca
+    - ddvp
+    - de feromona facial felina
+    - de solucion oral
+    - dehidrocolato de sodio
+    - deltametrina
+    - desoxicolato de sodio
+    - dexametasona
+    - dexametasona fosfato
+    - dexametasona fosfato sodico
+    - dexametasona sodio fosfato
+    - dextrosa
+    - dextrosa al
+    - diazepam
+    - diazepan
+    - diazinon
+    - diclorvos
+    - dicp
+    - dietanolamina
+    - difenhidramina clorhidrato
+    - difenilhidantoina
+    - difenilhidantoina sod
+    - difenilhidantoinato sodico
+    - dihidroestreptomicina
+    - dihidroestreptomicina sulf
+    - dimetil
+    - dimetilciclopropanocarboxilico
+    - dimetilpolisiloxano activado
+    - dimetilsulfoxido
+    - dimetridazol
+    - dl carnitina clorhidrato
+    - dl metionina
+    - doramectina
+    - doxapram clorhidrato
+    - doxiciclina
+    - doxiciclina hiclato
+    - e m
+    - emboato
+    - en comprimidos
+    - enapril
+    - enrofloxacina
+    - espironolactona
+    - espirulina
+    - estradiol
+    - estreptomicina
+    - etc
+    - etion
+    - etodolac
+    - etofenprox
+    - excip
+    - extracto de cynara scolymus
+    - extracto de malta
+    - extracto de peumus boldus
+    - extracto de raiz de valeriana
+    - extracto de rhamnus prushiana
+    - extracto de valeriana
+    - extracto diluido de alcachofa
+    - extracto en polvo de cardo mariano
+    - extracto etereo
+    - extracto tumerico
+    - febantel
+    - febendazol
+    - fenazona
+    - fenbend
+    - fenbendazol
+    - fenil
+    - fenitrotion
+    - fenobarbital
+    - fenoxicarb
+    - fenoxycarb
+    - feromona
+    - feromona m
+    - feromonas
+    - fibra cruda
+    - fibras
+    - fipronil
+    - firocoxib
+    - florfenicol
+    - fluazuron
+    - flumetrina
+    - flunixin base
+    - flunixin meglumine
+    - fluocinolona acetonida
+    - fluoruro de sodio
+    - fluralaner
+    - flurbiprofeno sodico
+    - fosfato
+    - fosfato diacido de potasio
+    - fosforo
+    - fosofro
+    - frasco fraccion liofilizada
+    - ftalilsulfatiazol
+    - furosemida
+    - g alquitran
+    - g butoxido de piper
+    - g butoxido de piperonilo
+    - g microesferas
+    - g n octyl bicicloheptene dicarboximida
+    - g permetrina
+    - gentamicina
+    - gingko biloba
+    - ginkgo biloba
+    - ginseng
+    - glicerina
+    - glicerol
+    - glicinato de cobre
+    - gluconato
+    - gluconato de calcio
+    - gluconato de mag
+    - gluconato de magnesio
+    - gluconato de manganeso
+    - gluconato de zinc
+    - glucosa anhidra
+    - glucosamina
+    - glucosamina clorhidrato
+    - glucosamina sulfato
+    - gr de concentrado
+    - gr de prenisolona
+    - gr y closantel
+    - gramicidina
+    - gramos
+    - grasas
+    - griseofulvina micronizada
+    - grs
+    - grupo b
+    - hepatitis
+    - heptahidrato
+    - hexahidrato
+    - hexametilentetramina
+    - hialuronato de sodio
+    - hidrocortisona
+    - hidrocortisona aceponato
+    - hioscina butilbromuro
+    - hipoalergenicos de origen natural
+    - histidina
+    - hum
+    - humedad
+    - icteryl o acido genabilico
+    - idem
+    - idoxuridina
+    - imidacloprid
+    - imidocarb dipropionato
+    - inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
+    - iodato de calcio
+    - ioduro de sodio al
+    - itraconazol
+    - ivemectina
+    - ivermectina
+    - ivermectina al
+    - ivermectina merial
+    - kcal
+    - ketamina
+    - ketamina base
+    - ketoconazol
+    - ketoprofeno
+    - kg tal cual se sirve
+    - kg y lufenuron
+    - l arginina
+    - l arginina clorhidrato
+    - l carnitina
+    - l cisteina
+    - l cistina
+    - l colina bitartrato
+    - l glutamina
+    - l lisina
+    - l lisina al
+    - l lisina monoclorhidrato
+    - l metionina
+    - l prolina
+    - lauril etoxisulfato de sodio
+    - lauril sulfato de sodio
+    - lauril sulfato de trietanolamina
+    - laurilsulfato de sodio
+    - lecitina de soja
+    - leishmaniasis
+    - levoflaxacina base
+    - levofloxacina
+    - lidocaina
+    - lidocaina clorhidrato
+    - lincomicina
+    - lotilaner
+    - lufenuron
+    - magnesio cloruro
+    - maltodextrina
+    - manganesio
+    - manganeso
+    - manganeso gluconato
+    - manganeso sulfato
+    - maropitant citrato monohidrato
+    - mat mineral
+    - materia mineral
+    - mavacoxib
+    - mebendazol
+    - medroxiprogesterona acetato
+    - mejora y mantiene la salud gastrointestina
+    - meloxicam
+    - membutona
+    - menbutona
+    - mercaptobenzotiazol
+    - metil bromuro de homatropina
+    - metilaminomet
+    - metilbromuro de homatropina
+    - metilprednisolona acetato
+    - metilsulfonilmetano
+    - metionina
+    - metionina dl
+    - metoprene
+    - metopreno
+    - metroclopramida clorhidrato
+    - metronidazol
+    - mg taurina
+    - mg vitamina b
+    - mgr
+    - mgr nipagin sodico
+    - microcapsulas
+    - microesferas
+    - midazolam
+    - midazolam base
+    - minerales
+    - minerales totales
+    - moxidectin
+    - moxidectina
+    - n acetil cisteina
+    - n acetilcisteina
+    - n butil bromuro de hioscina
+    - n omega
+    - naftalofos
+    - neomicina
+    - neomicina base
+    - neurotrofico fisiologico
+    - nicotinamida
+    - nistatina
+    - oclacitinib
+    - ofloxacina
+    - omega
+    - omeprazol
+    - oxbendazol
+    - oxfendazol
+    - oxido de cobre
+    - oxido de manganeso
+    - oxido de zn
+    - oxido ferrico
+    - oxitetraciclina
+    - oxitetraciclina base anfoterica
+    - oxitetraciclina clorhidrato
+    - palmitato de cloranfenicol
+    - pamoato de oxantel
+    - pamoato de pirantel
+    - pantotenato
+    - pantotenato de calcio
+    - papaina
+    - parainfluenza
+    - parainfluenza y leptospira caninos
+    - parainfluenza y parvo caninos
+    - pared celular de levadura
+    - parvo
+    - parvo y corona caninos
+    - parvo y leptospira caninos
+    - parvovirosis y tos de las perreras fraccion liofilizada
+    - pasta cuprosodica de clorofila
+    - penicilina
+    - penicilina benzatinica
+    - penicilina procainica
+    - pentobarbital sodico
+    - pentosan polisulfato sodico
+    - permetrina
+    - peroxido de benzoilo
+    - pimobendan
+    - piperonil butoxido
+    - pirantel
+    - pirantel base
+    - pirantel pamoato
+    - pirazolona
+    - piretrinas naturales
+    - piridoxina clorhidrato
+    - piriproxifen
+    - piriproxifeno
+    - pirrolidon carboxilato de magnesio monohidrato
+    - polimixina b
+    - ppm relacion omega
+    - praziquantel
+    - prednisolona
+    - prednisolona base
+    - prednisolona saborizada
+    - pregabalina comprimidos
+    - propano
+    - propelente
+    - propelentes
+    - propionato de clobetasol
+    - propoxur
+    - prot bruta
+    - proteina bruta
+    - pyrantel
+    - pyrantel embonato
+    - pyrantel pamoato
+    - ranitidina
+    - relaci
+    - relacion omega
+    - rinotraqueitis
+    - saborizante
+    - sal de aluminio de alantoina
+    - sal sodica
+    - same
+    - sarolaner
+    - sarolaner moxidectina pirantel
+    - selamectina
+    - selenito de sodio
+    - sforo
+    - silibina
+    - silicato de aluminio y magnesio
+    - silimarina
+    - silybum marianum extracto seco
+    - sodio
+    - sorbitol
+    - spinosad
+    - stanozolol
+    - sulfadiazina argentica
+    - sulfadiazina de plata
+    - sulfadimetoxina
+    - sulfametazina sodica
+    - sulfato
+    - sulfato de
+    - sulfato de cobre
+    - sulfato de dihidroestreptomicina
+    - sulfato de magnesio
+    - sulfato de manganeso
+    - sulfato de zinc
+    - sulfato ferroso
+    - sulfato sodico
+    - suplemento vitaminico mineral biodisponible de uso diario para perros y gatos
+    - suspension inactivada de virus rabico desarrollado en celulas bhk
+    - taurina
+    - teanina
+    - tetraciclina clorhidrato
+    - tiabendazol
+    - tiamina clorhidrato
+    - tobramicina
+    - toltrazuril
+    - torasemida
+    - tramadol
+    - tramadol clorhidrato
+    - triamcinolona
+    - triamcinolona acetonida
+    - trimetoprim
+    - triptofano
+    - trisosfato de adenosina
+    - trofozoitos inactivados de giardia lamblia
+    - u i
+    - u i vitamina b
+    - u i vitamina d
+    - u i vitamina e
+    - u vitamina d
+    - urea
+    - vacuna contra el moquillo
+    - valerato
+    - vaselina
+    - veh
+    - veh o
+    - vehiculo
+    - virus atenuado
+    - virus de distemper
+    - virus de la panleucopenia atenuado
+    - virus de la rinotraqueitis cepa fvr f
+    - virus de moquillo
+    - virus de parvo canino
+    - virus de parvo y corona caninos
+    - virus moquillo atenuado
+    - virus rabico cepa paris
+    - virus vivos modificados de
+    - vit a
+    - vitamina a
+    - vitamina a palmitato
+    - vitamina b
+    - vitamina c recubierta
+    - vitamina d
+    - vitamina e
+    - vitamina e acetato
+    - vitamina k
+    - vitaminas
+    - vitaminas b
+    - vitaminas coenzima
+    - vitaminas y minerales
+    - vitaminico mineral aminoacidico
+    - xido de piperonilo
+    - xilacina
+    - xilazina
+    - xilitol
+    - xylitol
+    - y clorsulon al
+    - y griseofulvina
+    - y praziquantel
+    - zinc gluconato
+    - zinc sulfato
+
+# ============================================================================
+# 🔹 PATTERN ENTITIES como LOOKUP TABLES
+# ============================================================================
+
+- lookup: indicador_temporal
+  examples: |
+    - nuevo
+    - nuevos
+    - nueva
+    - nuevas
+    - reciente
+    - recientes
+    - hace poco
+    - esta semana
+    - este mes
+    - últimamente
+    - ahora
+    - hoy
+    - ayer
+    - la semana pasada
+    - hace unos días
+    - recientemente
+    - que llegó hace poco
+    - que entró esta semana
+    - lo último
+    - lo más nuevo
+    - últimos que llegaron
+    - recién llegado
+    - recién llegados
+
+- lookup: estado
+  examples: |
+    - nuevo
+    - nuevos
+    - nueva
+    - nuevas
+    - en oferta
+    - con descuento
+    - con bonificación
+    - con poco stock
+    - disponible
+    - disponibles
+    - agotado
+    - agotados
+    - en promoción
+    - oferta especial
+    - liquidación
+    - rebajado
+    - rebajados
+    - que está en promo
+    - que tiene descuento
+    - en stock
+    - sin stock
+    - promocional
+    - promocionales
+
+- lookup: dosis
+  examples: |
+    - 500mg
+    - 250mg
+    - 100mg
+    - 50mg
+    - 25mg
+    - 1g
+    - 2g
+    - 5ml
+    - 10ml
+    - 50ml
+    - 100ml
+    - 200ml
+    - 1 comprimido
+    - 2 comprimidos
+    - 3 comprimidos
+    - 1 cápsula
+    - 2 cápsulas
+    - una pastilla
+    - dos pastillas
+    - tres pastillas
+    - una tableta
+    - dos tabletas
+    - miligramos
+    - mililitros
+    - gramos
+    - comprimidos
+    - cápsulas
+    - pastillas
+    - tabletas
+
+- lookup: cantidad
+  examples: |
+    - 1 caja
+    - 2 cajas
+    - 3 cajas
+    - 1 blister
+    - 2 blisters
+    - 1 ampolla
+    - 2 ampollas
+    - 1 frasco
+    - 2 frascos
+    - 3 frascos
+    - 1 envase
+    - 2 envases
+    - 1 tubo
+    - 2 tubos
+    - un paquete
+    - dos paquetes
+    - tres paquetes
+    - caja
+    - cajas
+    - blister
+    - blisters
+    - ampolla
+    - ampollas
+    - frasco
+    - frascos
+    - envase
+    - envases
+    - tubo
+    - tubos
+    - paquete
+    - paquetes
+    - unidades
+    - unidad
+
+- lookup: animal
+  examples: |
+    - perro
+    - perros
+    - gato
+    - gatos
+    - caballo
+    - caballos
+    - yegua
+    - yeguas
+    - vaca
+    - vacas
+    - toro
+    - toros
+    - cerdo
+    - cerdos
+    - oveja
+    - ovejas
+    - pollo
+    - pollos
+    - gallina
+    - gallinas
+    - pez
+    - peces
+    - pájaro
+    - pájaros
+    - ave
+    - aves
+    - conejo
+    - conejos
+    - hamster
+    - hamsters
+    - loro
+    - loros
+    - canario
+    - canarios
+    - mascota
+    - mascotas
+    - cachorro
+    - cachorros
+    - gatito
+    - gatitos
+    - perrito
+    - perritos
+    - ternero
+    - terneros
+    - potro
+    - potros
+    - cordero
+    - corderos
+
+- lookup: sentimiento_positivo
+  examples: |
+    - genial
+    - perfecto
+    - excelente
+    - buenísimo
+    - me gusta
+    - está bien
+    - fantástico
+    - bárbaro
+    - fenomenal
+    - espectacular
+    - joya
+    - re bien
+    - 10 puntos
+    - muy bueno
+    - bueno
+    - bien
+    - ok
+    - dale
+    - sí
+    - si
+    - claro
+    - correcto
+    - de acuerdo
+    - exacto
+    - ideal
+    - increíble
+    - maravilloso
+
+- lookup: sentimiento_negativo
+  examples: |
+    - malo
+    - terrible
+    - pésimo
+    - inútil
+    - no sirve
+    - frustrado
+    - molesto
+    - enojado
+    - horrible
+    - desastroso
+    - una porquería
+    - no me gusta
+    - mal
+    - feo
+    - incorrecto
+    - error
+    - problema
+    - desastre
+    - espantoso
+    - fatal
+
+- lookup: rechazo_total
+  examples: |
+    - nada
+    - no quiero nada
+    - déjame
+    - basta
+    - ya no
+    - stop
+    - cancelar
+    - no me interesa
+    - olvídalo
+    - mejor no
+    - dejá
+    - no quiero más
+    - False
+    - nunca
+    - jamás
+    - para nada
+    - ni loco
+    - ni en pedo
+    - de ninguna manera
+
+- lookup: intencion_buscar
+  examples: |
+    - buscar
+    - encontrar
+    - necesito
+    - quiero
+    - me hace falta
+    - tengo que conseguir
+    - ando buscando
+    - preciso
+    - requiero
+    - me interesa
+    - estoy buscando
+    - buscando
+    - a ver si tienen
+    - tienen
+    - hay
+    - existe
+    - se consigue
+    - conseguir
+    - hallar
+    - ubicar
+    - dar con
+
+- lookup: solicitud_ayuda
+  examples: |
+    - ayuda
+    - help
+    - no entiendo
+    - cómo
+    - explícame
+    - ayúdame
+    - dame una mano
+    - me orientás
+    - me guiás
+    - necesito ayuda
+    - me podés ayudar
+    - me das una mano
+    - no sé
+    - me perdí
+    - estoy confundido
+    - me confundí
+    - orientame
+    - guiame
+    - asistencia
+    - apoyo
+    - socorro
+
+- lookup: dia
+  examples: |
+    - lunes
+    - martes
+    - miércoles
+    - jueves
+    - viernes
+    - sábado
+    - domingo
+    - hoy
+    - ayer
+    - mañana
+    - el lunes
+    - el martes
+    - el miércoles
+    - el jueves
+    - el viernes
+    - el sábado
+    - el domingo
+    - esta semana
+    - la semana pasada
+    - la próxima semana
+    - fin de semana
+    - entre semana
+
+- lookup: fecha
+  examples: |
+    - esta semana
+    - la semana pasada
+    - el mes que viene
+    - este mes
+    - el mes pasado
+    - el próximo mes
+    - este año
+    - el año pasado
+    - el próximo año
+    - pronto
+    - dentro de poco
+    - en unos días
+    - la próxima semana
+    - el mes próximo
+
+# ============================================================================
+# 🔹 REGEX PATTERNS para ENTIDADES DINÁMICAS
+# ============================================================================
+
+- regex: cantidad_descuento
+  examples: |
+    - \d{1,2}%\s?(de\s?descuento|off|desc)?
+    - \d+x\d+
+    - (\d{1,2})?\s?%\s?(descuento|off)?
+    - mitad\s?de\s?precio
+    - precio\s?(promocional|especial|rebajado)
+    - (descuento|oferta)\s?especial
+
+- regex: cantidad_bonificacion
+  examples: |
+    - \d{1,2}%\s?(de\s?bonificación|bonus)
+    - \d+x\d+\s?bonificación
+    - lleva\s?\d+\s?paga\s?\d+
+    - (bonus|regalo|gratis)
+    - bonificación\s?especial
+    - con\s?(regalo|bonus)
+
+- regex: cantidad_stock
+  examples: |
+    - \d+\s?unidades?
+    - stock\s?(limitado|agotado|disponible|amplio)
+    - (pocas?|muchas?|últimas?)\s?unidades?
+    - disponibilidad\s?(limitada|amplia)
+    - (sin|con|mucho|poco)\s?stock
+    - (agotado|disponible)
+
+# ============================================================================
+# 🔹 EJEMPLOS de ENTIDADES DINÁMICAS (para mejor training)
+# ============================================================================
+
+- lookup: cantidad_descuento_ejemplos
+  examples: |
+    - 10%
+    - 15%
+    - 20%
+    - 25%
+    - 30%
+    - 35%
+    - 40%
+    - 45%
+    - 50%
+    - 55%
+    - 60%
+    - 65%
+    - 70%
+    - 75%
+    - 80%
+    - 2x1
+    - 3x2
+    - 4x3
+    - mitad de precio
+    - precio promocional
+
+- lookup: cantidad_bonificacion_ejemplos
+  examples: |
+    - 10%
+    - 15%
+    - 20%
+    - 25%
+    - 30%
+    - 35%
+    - 40%
+    - 45%
+    - 50%
+    - 2x1
+    - 3x2
+    - lleva 2 paga 1
+    - bonus
+    - regalo
+    - gratis
+
+- lookup: cantidad_stock_ejemplos
+  examples: |
+    - 1 unidades
+    - 5 unidades
+    - 10 unidades
+    - 20 unidades
+    - 50 unidades
+    - 100 unidades
+    - pocas unidades
+    - stock limitado
+    - sin stock
+    - mucho stock
+    - agotado
+    - disponible
 

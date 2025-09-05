@@ -1,0 +1,444 @@
+# entities.yml - CONFIGURACIÓN UNIFICADA DE ENTIDADES
+# ============================================================================
+# 🔹 TODAS las entidades del sistema: patterns + CSV + regex references
+# ============================================================================
+
+# CONFIGURACIÓN DE FUENTES DE DATOS
+data_sources:
+  csv_files:
+    productos: "data/product.csv"
+    categorias: "data/category.csv" 
+    proveedores: "data/enterprise.csv"
+  regex_file: "entities_regex.yml"
+  
+# CONFIGURACIÓN DE PROCESAMIENTO CSV
+csv_processing:
+  productos:
+    file: "product.csv"
+    column: "title"
+    filters:
+      - extract_name_and_dose: true
+      - min_length: 2
+    type: "producto"
+  categorias:
+    file: "category.csv"
+    column: "title"
+    filters:
+      - clean_text: true
+      - min_length: 2
+    type: "categoria"
+  proveedores:
+    file: "enterprise.csv"
+    column: "title"
+    filters:
+      - enterprise_type_id: [1]  # Solo veterinarias
+      - format_name: true
+      - add_first_word: true  # Agrega primera palabra como variante
+    type: "proveedor"
+  ingredientes_activos:
+    file: "product.csv"
+    column: "active_ingredient"
+    filters:
+      - extract_compounds: true
+      - min_length: 3
+    type: "ingrediente_activo"
+
+# ============================================================================
+# 🔹 ENTIDADES CON LOOKUP TABLES (desde CSV)
+# ============================================================================
+lookup_entities:
+  # Core business entities - generadas desde CSV
+  producto:
+    source: "csv"
+    csv_config: "productos"
+    description: "Productos veterinarios extraídos de product.csv"
+    
+  proveedor:
+    source: "csv" 
+    csv_config: "proveedores"
+    description: "Proveedores/laboratorios extraídos de enterprise.csv"
+    
+  categoria:
+    source: "csv"
+    csv_config: "categorias"
+    description: "Categorías de productos extraídas de category.csv"
+    
+  ingrediente_activo:
+    source: "csv"
+    csv_config: "ingredientes_activos"
+    description: "Ingredientes activos extraídos de product.csv"
+    
+  compuesto:
+    source: "alias"
+    alias_of: "ingrediente_activo"
+    description: "Alias de ingrediente_activo para compatibilidad"
+
+# ============================================================================
+# 🔹 ENTIDADES CON PATTERNS ESTÁTICOS
+# ============================================================================
+pattern_entities:
+  # Entidades temporales y de estado
+  indicador_temporal:
+    patterns:
+      - nuevo
+      - nuevos
+      - nueva
+      - nuevas
+      - reciente
+      - recientes
+      - hace poco
+      - esta semana
+      - este mes
+      - últimamente
+      - ahora
+      - hoy
+      - ayer
+      - la semana pasada
+      - hace unos días
+      - recientemente
+      - que llegó hace poco
+      - que entró esta semana
+      - lo último
+      - lo más nuevo
+      - últimos que llegaron
+      - recién llegado
+      - recién llegados
+  
+  estado:
+    patterns:
+      - nuevo
+      - nuevos
+      - nueva
+      - nuevas
+      - en oferta
+      - con descuento
+      - con bonificación
+      - con poco stock
+      - disponible
+      - disponibles
+      - agotado
+      - agotados
+      - en promoción
+      - oferta especial
+      - liquidación
+      - rebajado
+      - rebajados
+      - que está en promo
+      - que tiene descuento
+      - en stock
+      - sin stock
+      - promocional
+      - promocionales
+
+  # Entidades físicas y medidas
+  dosis:
+    patterns:
+      - 500mg
+      - 250mg
+      - 100mg
+      - 50mg
+      - 25mg
+      - 1g
+      - 2g
+      - 5ml
+      - 10ml
+      - 50ml
+      - 100ml
+      - 200ml
+      - 1 comprimido
+      - 2 comprimidos
+      - 3 comprimidos
+      - 1 cápsula
+      - 2 cápsulas
+      - una pastilla
+      - dos pastillas
+      - tres pastillas
+      - una tableta
+      - dos tabletas
+      - miligramos
+      - mililitros
+      - gramos
+      - comprimidos
+      - cápsulas
+      - pastillas
+      - tabletas
+  
+  cantidad:
+    patterns:
+      - 1 caja
+      - 2 cajas
+      - 3 cajas
+      - 1 blister
+      - 2 blisters
+      - 1 ampolla
+      - 2 ampollas
+      - 1 frasco
+      - 2 frascos
+      - 3 frascos
+      - 1 envase
+      - 2 envases
+      - 1 tubo
+      - 2 tubos
+      - un paquete
+      - dos paquetes
+      - tres paquetes
+      - caja
+      - cajas
+      - blister
+      - blisters
+      - ampolla
+      - ampollas
+      - frasco
+      - frascos
+      - envase
+      - envases
+      - tubo
+      - tubos
+      - paquete
+      - paquetes
+      - unidades
+      - unidad
+
+  # Entidades biológicas
+  animal:
+    patterns:
+      - perro
+      - perros
+      - gato
+      - gatos
+      - caballo
+      - caballos
+      - yegua
+      - yeguas
+      - vaca
+      - vacas
+      - toro
+      - toros
+      - cerdo
+      - cerdos
+      - oveja
+      - ovejas
+      - pollo
+      - pollos
+      - gallina
+      - gallinas
+      - pez
+      - peces
+      - pájaro
+      - pájaros
+      - ave
+      - aves
+      - conejo
+      - conejos
+      - hamster
+      - hamsters
+      - loro
+      - loros
+      - canario
+      - canarios
+      - mascota
+      - mascotas
+      - cachorro
+      - cachorros
+      - gatito
+      - gatitos
+      - perrito
+      - perritos
+      - ternero
+      - terneros
+      - potro
+      - potros
+      - cordero
+      - corderos
+
+  # Entidades emocionales y comunicativas
+  sentimiento_positivo:
+    patterns:
+      - genial
+      - perfecto
+      - excelente
+      - buenísimo
+      - me gusta
+      - está bien
+      - fantástico
+      - bárbaro
+      - fenomenal
+      - espectacular
+      - joya
+      - re bien
+      - 10 puntos
+      - muy bueno
+      - bueno
+      - bien
+      - ok
+      - dale
+      - sí
+      - si
+      - claro
+      - correcto
+      - de acuerdo
+      - exacto
+      - ideal
+      - increíble
+      - maravilloso
+  
+  sentimiento_negativo:
+    patterns:
+      - malo
+      - terrible
+      - pésimo
+      - inútil
+      - no sirve
+      - frustrado
+      - molesto
+      - enojado
+      - horrible
+      - desastroso
+      - una porquería
+      - no me gusta
+      - mal
+      - feo
+      - incorrecto
+      - error
+      - problema
+      - desastre
+      - espantoso
+      - fatal
+  
+  rechazo_total:
+    patterns:
+      - nada
+      - no quiero nada
+      - déjame
+      - basta
+      - ya no
+      - stop
+      - cancelar
+      - no me interesa
+      - olvídalo
+      - mejor no
+      - dejá
+      - no quiero más
+      - no
+      - nunca
+      - jamás
+      - para nada
+      - ni loco
+      - ni en pedo
+      - de ninguna manera
+  
+  intencion_buscar:
+    patterns:
+      - buscar
+      - encontrar
+      - necesito
+      - quiero
+      - me hace falta
+      - tengo que conseguir
+      - ando buscando
+      - preciso
+      - requiero
+      - me interesa
+      - estoy buscando
+      - buscando
+      - a ver si tienen
+      - tienen
+      - hay
+      - existe
+      - se consigue
+      - conseguir
+      - hallar
+      - ubicar
+      - dar con
+  
+  solicitud_ayuda:
+    patterns:
+      - ayuda
+      - help
+      - no entiendo
+      - cómo
+      - explícame
+      - ayúdame
+      - dame una mano
+      - me orientás
+      - me guiás
+      - necesito ayuda
+      - me podés ayudar
+      - me das una mano
+      - no sé
+      - me perdí
+      - estoy confundido
+      - me confundí
+      - orientame
+      - guiame
+      - asistencia
+      - apoyo
+      - socorro
+
+  # Entidades temporales
+  dia:
+    patterns:
+      - lunes
+      - martes
+      - miércoles
+      - jueves
+      - viernes
+      - sábado
+      - domingo
+      - hoy
+      - ayer
+      - mañana
+      - el lunes
+      - el martes
+      - el miércoles
+      - el jueves
+      - el viernes
+      - el sábado
+      - el domingo
+      - esta semana
+      - la semana pasada
+      - la próxima semana
+      - fin de semana
+      - entre semana
+  
+  fecha:
+    patterns:
+      - esta semana
+      - la semana pasada
+      - el mes que viene
+      - este mes
+      - el mes pasado
+      - el próximo mes
+      - este año
+      - el año pasado
+      - el próximo año
+      - pronto
+      - dentro de poco
+      - en unos días
+      - la próxima semana
+      - el mes próximo
+
+# ============================================================================
+# 🔹 ENTIDADES DINÁMICAS (referencias a regex)
+# ============================================================================
+dynamic_entities:
+  cantidad_descuento:
+    source: "regex"
+    regex_name: "cantidad_descuento"
+    regex_file: "entities_regex.yml"
+    examples_lookup: "cantidad_descuento_ejemplos"
+    description: "Porcentajes y ofertas de descuento"
+    
+  cantidad_bonificacion:
+    source: "regex"
+    regex_name: "cantidad_bonificacion" 
+    regex_file: "entities_regex.yml"
+    examples_lookup: "cantidad_bonificacion_ejemplos"
+    description: "Bonificaciones y regalos"
+    
+  cantidad_stock:
+    source: "regex"
+    regex_name: "cantidad_stock"
+    regex_file: "entities_regex.yml" 
+    examples_lookup: "cantidad_stock_ejemplos"
+    description: "Estados y cantidades de stock"

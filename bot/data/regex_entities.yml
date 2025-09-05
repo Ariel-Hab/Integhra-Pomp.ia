@@ -1,8 +1,30 @@
-regex:
-- name: cantidad_descuento
-  pattern: \d{1,3}\s?%
-- name: cantidad_descuento
-  pattern: \d{1,5}\s?\$
-- name: cantidad_descuento
-  pattern: \d{1,3}\s?(por\s*ciento)
-version: '3.1'
+version: "3.1"
+
+nlu:
+- regex: cantidad_descuento
+  examples: |
+    - \d{1,2}%\s?(de\s?descuento|off|desc)?
+    - \d+x\d+
+    - (\d{1,2})?\s?%\s?(descuento|off)?
+    - mitad\s?de\s?precio
+    - precio\s?(promocional|especial|rebajado)
+    - (descuento|oferta)\s?especial
+
+- regex: cantidad_bonificacion
+  examples: |
+    - \d{1,2}%\s?(de\s?bonificación|bonus)
+    - \d+x\d+\s?bonificación
+    - lleva\s?\d+\s?paga\s?\d+
+    - (bonus|regalo|gratis)
+    - bonificación\s?especial
+    - con\s?(regalo|bonus)
+
+- regex: cantidad_stock
+  examples: |
+    - \d+\s?unidades?
+    - stock\s?(limitado|agotado|disponible|amplio)
+    - (pocas?|muchas?|últimas?)\s?unidades?
+    - disponibilidad\s?(limitada|amplia)
+    - (sin|con|mucho|poco)\s?stock
+    - (agotado|disponible)
+
