@@ -1,4 +1,4 @@
-# context_config
+# context_config.yml - Versión Sincronizada con el Código
 version: "1.3"
 
 # 🔹 Definición de entidades globales
@@ -189,7 +189,9 @@ dynamic_entities_config:
 
 # 🔹 Definición de slots globales
 slots:
-  # Slots para entidades detectadas
+  # ============================================================================
+  # 🔹 SLOTS PARA ENTIDADES DETECTADAS
+  # ============================================================================
   producto:
     type: text
     influence_conversation: false
@@ -285,7 +287,9 @@ slots:
       - type: from_entity
         entity: cantidad_stock
   
-  # Slots de control de conversación
+  # ============================================================================
+  # 🔹 SLOTS DE CONTROL DE CONVERSACIÓN BÁSICOS
+  # ============================================================================
   user_sentiment:
     type: categorical
     values: ["positive", "negative", "neutral", "rejection"]
@@ -293,24 +297,94 @@ slots:
     influence_conversation: false
     mappings:
       - type: custom
+      
   last_intent_flow:
     type: text
     influence_conversation: false
     mappings:
       - type: custom
+      
+  user_engagement_level:
+    type: categorical
+    values: ["neutral", "engaged", "needs_help", "confused", "friendly", 
+             "collaborative", "reset", "disengaged", "interested", "needs_guidance", "satisfied",
+             "awaiting_confirmation", "awaiting_parameters"]
+    initial_value: "neutral"
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  # ============================================================================
+  # 🔹 SISTEMA UNIFICADO DE SUGERENCIAS (NUEVO)
+  # ============================================================================
+  pending_suggestion:
+    type: any
+    initial_value: null
+    influence_conversation: false
+    mappings:
+      - type: custom
+    description: "Almacena sugerencias pendientes (entity_correction, type_correction, missing_parameters)"
+    
+  suggestion_context:
+    type: any
+    initial_value: null
+    influence_conversation: false
+    mappings:
+      - type: custom
+    description: "Contexto adicional para el sistema de sugerencias"
+    
+  # ============================================================================
+  # 🔹 HISTORIAL Y CONTEXTO DE BÚSQUEDA
+  # ============================================================================
+  search_history:
+    type: any
+    initial_value: []
+    influence_conversation: false
+    mappings:
+      - type: custom
+    description: "Historial de búsquedas realizadas en la sesión"
+    
+  context_decision_pending:
+    type: bool
+    initial_value: false
+    influence_conversation: false
+    mappings:
+      - type: custom
+    description: "Indica si hay una decisión de contexto pendiente"
+    
+  # ============================================================================
+  # 🔹 SLOTS TEMPORALES PARA PROCESAMIENTO
+  # ============================================================================
+  current_search_params:
+    type: any
+    initial_value: null
+    influence_conversation: false
+    mappings:
+      - type: custom
+    description: "Parámetros de búsqueda actuales siendo procesados"
+    
+  validation_errors:
+    type: any
+    initial_value: []
+    influence_conversation: false
+    mappings:
+      - type: custom
+    description: "Errores de validación temporales"
+
+  # ============================================================================
+  # 🔹 SLOTS OBSOLETOS - MARCADOS PARA MIGRACIÓN
+  # ============================================================================
+  # NOTA: Estos slots están marcados como obsoletos y serán removidos
+  # en futuras versiones una vez que la migración esté completa
+  
   pedido_incompleto:
     type: bool
     initial_value: false
     influence_conversation: false
     mappings:
       - type: custom
-  user_engagement_level:
-    type: categorical
-    values: ["neutral", "engaged", "needs_help", "confused", "friendly", 
-             "collaborative", "reset", "disengaged", "interested", "needs_guidance", "satisfied"]
-    influence_conversation: false
-    mappings:
-      - type: custom
+    deprecated: true
+    description: "OBSOLETO: Reemplazado por sistema unificado de sugerencias"
 
 # 🔹 Definición de intents
 intents:
