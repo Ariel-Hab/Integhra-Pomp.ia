@@ -35,6 +35,31 @@ nlu:
     - "joya"
     - "tranquilo"
     - "10 puntos"
+    - "bien, [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "todo [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), gracias?"
+    - "aca andamos, [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), pero bueno"
+    - "medio [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "bien, [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "todo [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), gracias"
+    - "aca andamos, [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), pero bueno"
+    - "medio [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "bien, [ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "todo [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), gracias?"
+    - "aca andamos, [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), pero bueno"
+    - "medio [ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "bien, [ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "todo [ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), gracias?"
+    - "acá andamos, [ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), pero bueno."
+    - "medio [ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "bien, [ejemplo_sentimiento_positivo](sentimiento_positivo)"
 
 - intent: responder_estoy_bien
   examples: |
@@ -74,12 +99,227 @@ nlu:
     - "me reí"
     - "😂"
     - "sos re gracioso"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno?"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno?"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo), muy bueno?"
+    - "jajaja [ejemplo_sentimiento_positivo](sentimiento_positivo)"
 
 - intent: buscar_producto
   examples: |
     - "que productos tenes?"
     - "mostrame los productos"
     - "informacion de productos"
+    - "quiero [14](cantidad) de [grupo](producto) de [brouwer](proveedor)?"
+    - "hay [floxaday](producto) con [cafeina](ingrediente_activo) en [1 pastillas](dosis)?."
+    - "buscá [Comfortis](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Rochy](producto) de [biologico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [3 comprimidos](dosis)."
+    - "buscá [Ursoliv](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)."
+    - "necesito [Episol](producto) [10ml](dosis) [2](cantidad) [disponible](estado) [79](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[tobramax](producto) de [clinico](categoria) con [vehiculo](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Prednisolona](producto) de [Integhra-proveedor](proveedor) en [[1](cantidad) comprimidos](dosis) con [10](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Itraconazol](producto) con [dietanolamina](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [Doxivit](producto) [135mg](dosis), [4](cantidad) unidades, [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "busca [Atriben](producto) de [Integhra-proveedor](proveedor) con [nistatina](ingrediente_activo), [7ml](dosis), [disponible](estado), [78](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [7](cantidad) de [epitelizante](producto) de [john](proveedor)"
+    - "hay [atb](producto) con [metroclopramida clorhidrato](ingrediente_activo) en [3 comprimidos](dosis)?"
+    - "buscá [rochy](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Kensol](producto) de [clinico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [10ml](dosis)"
+    - "buscá [Otiflex](producto) [ejemplo_indicador_temporal](indicador_temporal) con [por llegar](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)."
+    - "necesito [Cefalong](producto) [1 pastillas](dosis) [4](cantidad) [disponible](estado) [60](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[driptol](producto) de [antiparasitario interno](categoria) con [febantel](ingrediente_activo), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [Enrofloxacina](producto) de [Integhra-proveedor](proveedor) en [2ml](dosis) con [61](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [dermomax](producto) con [butanos](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [bucal](producto) [2 comprimidos](dosis), [3](cantidad) unidades, [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Hepatoprotector](producto) de [Boehringer ingelheim](proveedor) con [ciclosporina a](ingrediente_activo), [1 comprimidos](dosis), [agotado](estado), [22](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [3](cantidad) de [Rimadyl](producto) de [Boehringer](proveedor)"
+    - "hay [mv](producto) con [stanozolol](ingrediente_activo) en [1 comprimidos](dosis)?."
+    - "busca [Carprodol](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Eutanasico](producto) de [antiparasitario interno](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [1 comprimidos](dosis)."
+    - "buscá [Barbitol](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [ecthonil](producto) [1 comprimidos](dosis) [13](cantidad) [por llegar](estado) [35](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[cefalong](producto) de [farmacos](categoria) con [lidocaina](ingrediente_activo), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Virbac](producto) de [labyes](proveedor) en [2 pastillas](dosis) con [5](cantidad)1 y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [Endospot](producto) con [nistatina](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [acederm](producto) [54mg](dosis), [6](cantidad) unidades, [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [totalvet](producto) de [brouwer](proveedor) con [ciprofloxacina base](ingrediente_activo), [6ml](dosis), [disponible](estado), [88](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [20](cantidad) de [cardial](producto) de [Boehringer](proveedor)"
+    - "hay [Tea](producto) con [espirulina](ingrediente_activo) en [286mg](dosis)?"
+    - "busca [ecthonil](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Bactrovet](producto) de [cardiologico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [7ml](dosis)"
+    - "buscá [vilisinh](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "necesito [Pragma](producto) [272mg](dosis) [13](cantidad) [por llegar](estado) [78](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Legend](producto) de [clinico](categoria) con [meloxicam](ingrediente_activo), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [Meltra](producto) de [Biogenesis](proveedor) en [7ml](dosis) con [67](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [mv](producto) con [carbon de cafe](ingrediente_activo), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [Fip](producto) [2ml](dosis), [20](cantidad) unidades, [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [tea](producto) de [Zoetis](proveedor) con [iodato de calcio](ingrediente_activo), [6ml](dosis), [agotado](estado), [14](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [7](cantidad) de [kuramicina](producto) de [Suizo](proveedor)"
+    - "hay [Flurbiprofeno](producto) con [cloruro de magnesio](ingrediente_activo) en [1 pastillas](dosis)?."
+    - "buscá [ocubiotic](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [grupo](producto) de [higiene y belleza](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [1 pastillas](dosis)"
+    - "buscá [totalvet](producto) [ejemplo_indicador_temporal](indicador_temporal) con [agotado](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "necesito [curavet](producto) [1 comprimidos](dosis) [10](cantidad) [disponible](estado) [77](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Voren](producto) de [antiparasitario interno](categoria) con [oxitetraciclina clorhidrato](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Protech](producto) de [Biogenesis bago](proveedor) en [2 pastillas](dosis) con [51](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [Sh](producto) con [u i vitamina b](ingrediente_activo), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [canis](producto) [5ml](dosis), [1](cantidad) unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [tonico](producto) de [holliday](proveedor) con [humedad](ingrediente_activo), [9ml](dosis), [agotado](estado), 3[8](cantidad) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [6](cantidad) de [enroplus](producto) de [Suizo argentina](proveedor)?"
+    - "hay [pentabiotico](producto) con [acido hialuronico](ingrediente_activo) en [1 pastillas](dosis)?"
+    - "buscá [Voren](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Sincelar](producto) de [antiparasitario interno](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [2 pastillas](dosis)"
+    - "buscá [albex](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [Methiovertan](producto) [1 pastillas](dosis) [6](cantidad) [disponible](estado) [79](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[crema](producto) de [accesorio](categoria) con [fluralaner](ingrediente_activo), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [Anti](producto) de [holliday scott s.a.](proveedor) en [5ml](dosis) con [1](cantidad)3 y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [puppyline](producto) con [lincomicina](ingrediente_activo), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [ol](producto) [2 comprimidos](dosis), [12](cantidad) unidades, [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [fauna](producto) de [konig](proveedor) con [pamoato de oxantel](ingrediente_activo), [8ml](dosis), [agotado](estado), [72](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [17](cantidad) de [pip](producto) de [john martin](proveedor)"
+    - "hay [Advantage](producto) con [dihidroestreptomicina sulf](ingrediente_activo) en [[1](cantidad) comprimidos](dosis)?"
+    - "buscá [Virbac](producto) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [calcificante](producto) de [antiartrosico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [3 pastillas](dosis)?"
+    - "buscá [Amoxivet](producto) [ejemplo_indicador_temporal](indicador_temporal) con [agotado](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "necesito [librela](producto) [1 comprimidos](dosis) [3](cantidad) [agotado](estado) [38](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[revol](producto) de [sin categoria](categoria) con [acido borico](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [adaptil](producto) de [holliday](proveedor) en [3 pastillas](dosis) con [44](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Crema](producto) con [ceftiofur clorhidrato](ingrediente_activo), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [power](producto) [[18](cantidad)9mg](dosis), 18 unidades, [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Pileran](producto) de [Biogenesis bago](proveedor) con [pirantel pamoato](ingrediente_activo), [64mg](dosis), [agotado](estado), [13](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [10](cantidad) de [azitromicina](producto) de [brouwer](proveedor)."
+    - "hay [pip](producto) con [mercaptobenzotiazol](ingrediente_activo) en [102mg](dosis)?"
+    - "busca [Protech](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [proteliv](producto) de [antiartrosico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [8[6](cantidad)mg](dosis)."
+    - "buscá [artrovet](producto) [ejemplo_indicador_temporal](indicador_temporal) con [por llegar](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "necesito [baycox](producto) [2 pastillas](dosis) [18](cantidad) [disponible](estado) [36](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[spinomax](producto) de [farmacos](categoria) con [piperonil butoxido](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [tonico](producto) de [Ceva](proveedor) en [91mg](dosis) con [37](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [Ivomec](producto) con [xilacina](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [Eqvalan](producto) [403mg](dosis), [1](cantidad) unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [feliway](producto) de [Biogenesis](proveedor) con analogo semioquimico de la feromona de apaciguamiento canino, [2 pastillas](dosis), [por llegar](estado), [77](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [20](cantidad) de [Fider](producto) de [john](proveedor)"
+    - "hay [sulfavet](producto) con [lotilaner](ingrediente_activo) en [3ml](dosis)?"
+    - "buscá [Toracard](producto) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [genabil](producto) de [biologico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [1 comprimidos](dosis)"
+    - "buscá [Episol](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)."
+    - "necesito [poten](producto) [2 comprimidos](dosis) [11](cantidad) [agotado](estado) [28](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Power](producto) de [accesorio](categoria) con [doramectina](ingrediente_activo), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [canis](producto) de [john](proveedor) en [51mg](dosis) con [75](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Sincelar](producto) con [carnitina](ingrediente_activo), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [Entero](producto) [3ml](dosis), [9](cantidad) unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Bagomectina](producto) de [Suizo argentina](proveedor) con [clotrimazol](ingrediente_activo), [[1](cantidad) comprimidos](dosis), [agotado](estado), [39](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [14](cantidad) de [super](producto) de [Suizo argentina](proveedor)."
+    - "hay [dexaflox](producto) con [sorbitol](ingrediente_activo) en [2 pastillas](dosis)"
+    - "busca [Carprodol](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [tonico](producto) de [clinico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [3 pastillas](dosis)"
+    - "buscá [cefalong](producto) [ejemplo_indicador_temporal](indicador_temporal) con [por llegar](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "necesito [Cumepina](producto) [1 comprimidos](dosis) [10](cantidad) [agotado](estado) [77](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[enroplus](producto) de [sin categoria](categoria) con [sulfato](ingrediente_activo), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Cerenia](producto) de [Boehringer ingelheim](proveedor) en [43[5](cantidad_stock)mg](dosis) con 5 y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [dominal](producto) con [condroitina](ingrediente_activo), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [doloalivio](producto) [265mg](dosis), [9](cantidad) unidades, [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Giacoccide](producto) de [labyes](proveedor) con [gluconato de calcio](ingrediente_activo), [189mg](dosis), [agotado](estado), [86](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [15](cantidad) de [cefalong](producto) de [brouwer](proveedor)."
+    - "hay [calcificante](producto) con [extracto de raiz de valeriana](ingrediente_activo) en [3 pastillas](dosis)??"
+    - "busca [Ketafine](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [acedan](producto) de [sin categoria](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [399mg](dosis)"
+    - "buscá [Pip](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [vaquero](producto) [25mg](dosis) [7](cantidad) [disponible](estado) [97](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[seresto](producto) de [farmacos](categoria) con [urea](ingrediente_activo), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [Vita](producto) de [labyes](proveedor) en [433mg](dosis) con [66](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [credelio](producto) con [pamoato de oxantel](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "necesito [puppyline](producto) [[10](cantidad)ml](dosis), 10 unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "busca [Fip](producto) de [holliday](proveedor) con [coaltar](ingrediente_activo), [1 comprimidos](dosis), [disponible](estado), [82](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [11](cantidad) de [Isiquick](producto) de [holliday](proveedor)"
+    - "hay [enroxina](producto) con [grupo b](ingrediente_activo) en [371mg](dosis)?."
+    - "busca [Ecthol](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [tau](producto) de [clinico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [189mg](dosis)"
+    - "buscá [bromhexina](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [azitromicina](producto) [[1](cantidad)ml](dosis) 1 [por llegar](estado) [66](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Cerenia](producto) de [higiene y belleza](categoria) con [teanina](ingrediente_activo), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [bagogard](producto) de [Biogenesis](proveedor) en [192mg](dosis) con [85](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Artroglycan](producto) con [extracto en polvo de cardo mariano](ingrediente_activo), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [enroplus](producto) [1[4](cantidad)3mg](dosis), 4 unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [Pi[gato](animal)perro](producto) de [Ceva](proveedor) con [lotilaner](ingrediente_activo), [[2](cantidad) comprimidos](dosis), [disponible](estado), [48](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [14](cantidad) de [Anti](producto) de [Ceva](proveedor)"
+    - "hay [artrovet](producto) con [hialuronato de sodio](ingrediente_activo) en [213mg](dosis)?"
+    - "buscá [moxidex](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [poten](producto) de [cardiologico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [1 pastillas](dosis)"
+    - "buscá [Prius](producto) [ejemplo_indicador_temporal](indicador_temporal) con [por llegar](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [protech](producto) [2 comprimidos](dosis) [20](cantidad) [disponible](estado) [91](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[Atriben](producto) de [clinico](categoria) con [taurina](ingrediente_activo), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [labyderm](producto) de [Biogenesis](proveedor) en [3 pastillas](dosis) con [1](cantidad)5 y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Clavamox](producto) con [spinosad](ingrediente_activo), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [Pigatoperro](producto) [5ml](dosis), [8](cantidad) unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Dermodene](producto) de [Suizo](proveedor) con [excip](ingrediente_activo), [1 comprimidos](dosis), [por llegar](estado), [54](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [14](cantidad) de [fipro](producto) de [konig s.a.](proveedor)"
+    - "hay [Trivermex](producto) con [acido folico](ingrediente_activo) en [8ml](dosis)"
+    - "buscá [Protech](producto) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [Serenex](producto) de [farmacos](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [2 pastillas](dosis)"
+    - "busca [fip](producto) [ejemplo_indicador_temporal](indicador_temporal) con [por llegar](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [Flurbiprofeno](producto) [8ml](dosis) [12](cantidad) [agotado](estado) [46](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[fip](producto) de [biologico](categoria) con [colina bitartrato](ingrediente_activo), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [dominal](producto) de [Suizo](proveedor) en [3ml](dosis) con [81](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [pragma](producto) con [extracto de cynara scolymus](ingrediente_activo), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "necesito [artrosan](producto) [1 comprimidos](dosis), [13](cantidad) unidades, [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [sedomin](producto) de [labyes](proveedor) con [bacitracina](ingrediente_activo), [35mg](dosis), [agotado](estado), [67](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [11](cantidad) de [Medroxiprogesterona](producto) de [Boehringer ingelheim](proveedor)"
+    - "hay [Cae](producto) con [l lisina al](ingrediente_activo) en [4ml](dosis)??"
+    - "buscá [semintra](producto) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [enzimax](producto) de [farmacos](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [2 pastillas](dosis)"
+    - "buscá [Artrosan](producto) [ejemplo_indicador_temporal](indicador_temporal) con [por llegar](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [vilisinh](producto) [1 comprimidos](dosis) [17](cantidad) [por llegar](estado) [79](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Cae](producto) de [clinico](categoria) con [humedad](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Pf](producto) de [brouwer](proveedor) en [2 comprimidos](dosis) con [27](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "busca [rimadyl](producto) con [n omega](ingrediente_activo), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [endospot](producto) [88mg](dosis), [12](cantidad) unidades, [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá [Cae](producto) de [Suizo](proveedor) con [enapril](ingrediente_activo), [204mg](dosis), [por llegar](estado), [8](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [3](cantidad) de [Cidar](producto) de [john](proveedor)"
+    - "hay [Diazepam](producto) con [analogo semioquimico de la fraccion f](ingrediente_activo) en [2 pastillas](dosis)"
+    - "buscá [nogastrol](producto) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [cidar](producto) de [clinico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [47mg](dosis)"
+    - "busca [Multivit](producto) [ejemplo_indicador_temporal](indicador_temporal) con [agotado](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [Solubron](producto) [2 comprimidos](dosis) [3](cantidad) [disponible](estado) [62](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Pro](producto) de [antiparasitario interno](categoria) con [extracto de peumus boldus](ingrediente_activo), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [enroplus](producto) de [brouwer](proveedor) en [3ml](dosis) con [93](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Cidar](producto) con [d l calcio](ingrediente_activo), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [dermomax](producto) [3 pastillas](dosis), [16](cantidad) unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "busca [Energia](producto) de [john martin](proveedor) con [metilaminomet](ingrediente_activo), [2 pastillas](dosis), [agotado](estado), [81](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [15](cantidad) de [prednovet](producto) de [konig s.a.](proveedor)"
+    - "hay [Ketafine](producto) con [itraconazol](ingrediente_activo) en [1 pastillas](dosis)?"
+    - "buscá [Diazepet](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Ciproplus](producto) de [accesorio](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [2 comprimidos](dosis)"
+    - "buscá [ivomec](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "necesito [Proderma](producto) [402mg](dosis) [12](cantidad) [agotado](estado) [5](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Endospot](producto) de [biologico](categoria) con [gluconato de calcio](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [complejo](producto) de [labyes](proveedor) en [5ml](dosis) con [90](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "busca [Eutanasico](producto) con [gramicidina](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [trivermex](producto) [4ml](dosis), [10](cantidad) unidades, [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá [Injection](producto) de [holliday](proveedor) con [idoxuridina](ingrediente_activo), [1 pastillas](dosis), [disponible](estado), [19](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [2](cantidad) de [tramadol](producto) de [Suizo argentina](proveedor)?"
+    - "hay [Feline](producto) con [pirazolona](ingrediente_activo) en [1 pastillas](dosis)?"
+    - "buscá [pf](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [lectora](producto) de [biologico](categoria) [ejemplo_indicador_temporal](indicador_temporal) en [3 pastillas](dosis)"
+    - "buscá [Energia](producto) [ejemplo_indicador_temporal](indicador_temporal) con [disponible](estado) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "necesito [itraconazol](producto) [5ml](dosis) [12](cantidad) [por llegar](estado) [88](cantidad_stock) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[Amoxivet](producto) de [accesorio](categoria) con [bromelina](ingrediente_activo), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [super](producto) de [Suizo](proveedor) en [1 pastillas](dosis) con [83](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Prius](producto) con [condroitin de bajo peso molecular](ingrediente_activo), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "necesito [vita](producto) [174mg](dosis), [13](cantidad) unidades, [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá [Acedan](producto) de [john](proveedor) con [ac folico](ingrediente_activo), [411mg](dosis), [por llegar](estado), [61](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [1](cantidad) de [Ciclosporina](producto) de [Boehringer ingelheim](proveedor)?"
+    - "hay [bio](producto) con [lidocaina clorhidrato](ingrediente_activo) en [3 pastillas](dosis)?."
 
 - intent: buscar_oferta
   examples: |
@@ -88,10 +328,566 @@ nlu:
     - "mostrame las ofertas"
     - "descuentos disponibles"
     - "promociones vigentes"
+    - "que promos tienen en [antiparasitario externo](categoria)?"
+    - "hay descuentos del laboratorio [brouwer](proveedor)?"
+    - "[Cefalong](producto) con [pirantel](ingrediente_activo) está en promo??"
+    - "buscá ofertas de [Totalvet](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [higiene y belleza odontologico](categoria) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "hay descuentos de [Boehringer ingelheim](proveedor) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[artrovet](producto) en [243mg](dosis) con [44](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "ofertas de [fauna](producto) con [15](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [clinico](categoria) con [por llegar](estado), [6](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[konig](proveedor) ofrece [Neovita](producto) con [27](cantidad_descuento), [disponible](estado), [16](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay promos de [pragma](producto) de [antiparasitario interno](categoria) con [flurbiprofeno sodico](ingrediente_activo), [28](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [display](producto) con [73](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá ofertas de [john](proveedor) con [disponible](estado), [10](cantidad_stock), [7](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Rimadyl](producto) de [higiene y belleza](categoria) en promoción con [43](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "muéstrame ofertas con [2ml](dosis), [50](cantidad_stock), ejemplo_c[anti](producto)dad_bonificacion y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "que promos tienen en [biologico](categoria)?"
+    - "hay descuentos del laboratorio [Suizo argentina](proveedor)?"
+    - "[Giacoccide](producto) con [azufre](ingrediente_activo) está en promo??"
+    - "buscá ofertas de [sulfavet](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [clinico](categoria) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "hay descuentos de [Boehringer ingelheim](proveedor) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[drontal](producto) en [7ml](dosis) con [50](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "ofertas de [tipertox](producto) con [38](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [alimento](categoria) con [agotado](estado), [4](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Boehringer ingelheim](proveedor) ofrece [atb](producto) con [16](cantidad_descuento), [agotado](estado), [29](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "hay promos de [Otiflex](producto) de [farmacos](categoria) con [acetato de megestrol](ingrediente_activo), [22](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "necesito [doxin](producto) con [42](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "busca ofertas de [john](proveedor) con [disponible](estado), [38](cantidad_stock), [23](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [ecthol](producto) de [antiparasitario interno](categoria) en promoción con [13](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "muéstrame ofertas con [3 pastillas](dosis), [9](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué promos tienen en [higiene y belleza](categoria)??"
+    - "hay descuentos del laboratorio [Zoetis](proveedor)"
+    - "[sedomin](producto) con [extracto de peumus boldus](ingrediente_activo) está en promo?"
+    - "buscá ofertas de [Ecp](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiparasitario externo](categoria) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "hay descuentos de [labyes](proveedor) [ejemplo_indicador_temporal](indicador_temporal)??"
+    - "[Enroxina](producto) en [341mg](dosis) con [23](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "ofertas de [Biox](producto) con [43](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [clinico](categoria) con [por llegar](estado), [53](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Suizo argentina](proveedor) ofrece [Nutrical](producto) con [19](cantidad_descuento), [agotado](estado), [49](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay promos de [vermiplex](producto) de [higiene y belleza](categoria) con [u i vitamina d](ingrediente_activo), [1](cantidad_stock)0, [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [trivermex](producto) con [44](cantidad_stock), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá ofertas de [holliday](proveedor) con [agotado](estado), [65](cantidad_stock), [30](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Coagulante](producto) de [cardiologico](categoria) en promoción con [18](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "muéstrame ofertas con [264mg](dosis), [21](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué promos tienen en [cardiologico](categoria)"
+    - "hay descuentos del laboratorio [Integhra-proveedor](proveedor)?"
+    - "[Pruricilona](producto) con [borax](ingrediente_activo) está en promo"
+    - "buscá ofertas de [ivomec](producto) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [alimento](categoria) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay descuentos de [labyes](proveedor) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[dermoxil](producto) en [2 comprimidos](dosis) con [12](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "ofertas de [Mayor](producto) con [45](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [cardiologico](categoria) con [por llegar](estado), [4](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[holliday scott s.a.](proveedor) ofrece [Toltrazol](producto) con [24](cantidad_descuento), [disponible](estado), [30](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay promos de [Griseofulvina](producto) de [accesorio](categoria) con [minerales totales](ingrediente_activo), [3](cantidad_stock)6, [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "necesito [lectora](producto) con [29](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá ofertas de [Biogenesis bago](proveedor) con [agotado](estado), [90](cantidad_stock), [37](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [Mayor](producto) de [higiene y belleza odontologico](categoria) en promoción con [11](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "muéstrame ofertas con [2 comprimidos](dosis), [23](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué promos tienen en [clinico](categoria)"
+    - "hay descuentos del laboratorio [konig](proveedor)"
+    - "[Multivit](producto) con [azitromicina](ingrediente_activo) está en promo??"
+    - "buscá ofertas de [sh](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [biologico](categoria) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay descuentos de [john](proveedor) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[dectomax](producto) en [2 pastillas](dosis) con [14](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "ofertas de [sosten](producto) con [22](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [cardiologico](categoria) con [agotado](estado), [90](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Boehringer](proveedor) ofrece [Oxitetraciclina](producto) con [9](cantidad_stock), [disponible](estado), 9 y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "hay promos de [Dexa](producto) de [accesorio](categoria) con [difenilhidantoina sod](ingrediente_activo), [19](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [neuroalivio](producto) con [81](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "buscá ofertas de [brouwer](proveedor) con [por llegar](estado), [40](cantidad_stock), [16](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [vaquero](producto) de [higiene y belleza](categoria) en promoción con [47](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "muéstrame ofertas con [373mg](dosis), [15](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué promos tienen en [higiene y belleza](categoria)?"
+    - "hay descuentos del laboratorio [john martin](proveedor)?"
+    - "[simparica](producto) con [metroclopramida clorhidrato](ingrediente_activo) está en promo?."
+    - "buscá ofertas de [proteliv](producto) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [farmacos](categoria) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay descuentos de [holliday scott s.a.](proveedor) [ejemplo_indicador_temporal](indicador_temporal)?."
+    - "[Episol](producto) en [216mg](dosis) con [29](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "ofertas de [Doxivit](producto) con [9](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiparasitario externo](categoria) con [agotado](estado), [57](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Suizo](proveedor) ofrece [Doxivit](producto) con [28](cantidad_descuento), [disponible](estado), [6](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay promos de [endospot](producto) de [antiparasitario interno](categoria) con [diazepan](ingrediente_activo), [29](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [Prednisolona](producto) con [74](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá ofertas de [Ceva](proveedor) con [por llegar](estado), [82](cantidad_stock), [39](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [feline](producto) de [higiene y belleza](categoria) en promoción con [17](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "muestrame ofertas con [1 pastillas](dosis), [99](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué promos tienen en [alimento](categoria)?"
+    - "hay descuentos del laboratorio [Boehringer](proveedor)"
+    - "[Otiflex](producto) con [gluconato de magnesio](ingrediente_activo) está en promo"
+    - "busca ofertas de [Nomat](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [alimento](categoria) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "hay descuentos de [Suizo argentina](proveedor) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[Seniorline](producto) en [8ml](dosis) con [43](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "ofertas de [Ecthonil](producto) con [27](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [farmacos](categoria) con [disponible](estado), [45](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[konig](proveedor) ofrece [Tea](producto) con [37](cantidad_descuento), [por llegar](estado), [78](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay promos de [Dectomax](producto) de [antiparasitario externo](categoria) con [analgesico monoclonal](ingrediente_activo), [7](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [Ciproplus](producto) con [32](cantidad_stock), [agotado](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá ofertas de [Boehringer ingelheim](proveedor) con [por llegar](estado), [92](cantidad_stock), [47](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [comfortis](producto) de [higiene y belleza odontologico](categoria) en promoción con [17](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "muéstrame ofertas con [2 pastillas](dosis), [13](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que promos tienen en [sin categoria](categoria)?"
+    - "hay descuentos del laboratorio [Biogenesis bago](proveedor)"
+    - "[Rimadyl](producto) con [membutona](ingrediente_activo) está en promo??"
+    - "busca ofertas de [Floxaday](producto) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [biologico](categoria) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay descuentos de [john](proveedor) [ejemplo_indicador_temporal](indicador_temporal)?."
+    - "[Tea](producto) en [3ml](dosis) con [46](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "ofertas de [aurix](producto) con [27](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [alimento](categoria) con [por llegar](estado), [89](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[konig](proveedor) ofrece [tobramax](producto) con [37](cantidad_descuento), [agotado](estado), [47](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "hay promos de [Oxitetraciclina](producto) de [biologico](categoria) con [microcapsulas](ingrediente_activo), [11](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [artrovet](producto) con [75](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá ofertas de [konig s.a.](proveedor) con [disponible](estado), [73](cantidad_stock), [26](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "quiero [Ketamid](producto) de [alimento](categoria) en promoción con [44](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "muestrame ofertas con [1 comprimidos](dosis), [47](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué promos tienen en [accesorio](categoria)?"
+    - "hay descuentos del laboratorio [konig](proveedor)??"
+    - "[ascaricida](producto) con [xilacina](ingrediente_activo) esta en promo?"
+    - "buscá ofertas de [Diurene](producto) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [clinico](categoria) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay descuentos de [Suizo argentina](proveedor) [ejemplo_indicador_temporal](indicador_temporal)??"
+    - "[super](producto) en [2 comprimidos](dosis) con [33](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "ofertas de [Pets](producto) con [44](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [biologico](categoria) con [por llegar](estado), [27](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Integhra-proveedor](proveedor) ofrece [Cefalong](producto) con [22](cantidad_descuento), [agotado](estado), [70](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "hay promos de [Furocal](producto) de [alimento](categoria) con [carbaryl](ingrediente_activo), [10](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "necesito [Legend](producto) con [1](cantidad_stock), [disponible](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "buscá ofertas de [john martin](proveedor) con [disponible](estado), [45](cantidad_stock), [35](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "quiero [puppyline](producto) de [alimento](categoria) en promocion con [37](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "muestrame ofertas con [2 comprimidos](dosis), [48](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que promos tienen en [antiparasitario interno](categoria)?"
+    - "hay descuentos del laboratorio [Boehringer](proveedor)"
+    - "[display](producto) con [vitamina d](ingrediente_activo) está en promo?"
+    - "buscá ofertas de [Ranitidina](producto) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [higiene y belleza odontologico](categoria) [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "hay descuentos de [Integhra-proveedor](proveedor) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[display](producto) en [3 pastillas](dosis) con [25](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "ofertas de [epitelizante](producto) con [34](cantidad_descuento) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion) [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiparasitario interno](categoria) con [disponible](estado), [39](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[konig](proveedor) ofrece [Kensol](producto) con [27](cantidad_descuento), [disponible](estado), [39](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "hay promos de [Medroxiprogesterona](producto) de [sin categoria](categoria) con [l glutamina](ingrediente_activo), [26](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "necesito [galmetrin](producto) con [70](cantidad_stock), [por llegar](estado), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "buscá ofertas de [konig](proveedor) con [agotado](estado), [71](cantidad_stock), [12](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "quiero [ofloxacina](producto) de [alimento](categoria) en promoción con [15](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "muéstrame ofertas con [1 pastillas](dosis), [65](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+
+- intent: completar_pedido
+  examples: |
+    - "[Fortepen](producto)?"
+    - "el producto sería [Voren](producto)"
+    - "lo que necesito es [Floxaday](producto)."
+    - "sumá [Furocal](producto) al pedido"
+    - "de [Ceva](proveedor)?"
+    - "laboratorio [labyes](proveedor)?"
+    - "marca [Biogenesis bago](proveedor)?"
+    - "bi[ol](producto)ogico."
+    - "es de la categoría [accesorio](categoria)?"
+    - "va en [higiene y belleza](categoria)."
+    - "que tenga [nicotinamida](ingrediente_activo)"
+    - "con principio activo [piriproxifeno](ingrediente_activo)"
+    - "que contenga [d pantotenato de ca](ingrediente_activo)?"
+    - "con [neomicina](ingrediente_activo)"
+    - "que traiga [acido estearico](ingrediente_activo)?"
+    - "de [3ml](dosis)"
+    - "en presentación [7ml](dosis)?"
+    - "formato [149mg](dosis)"
+    - "necesito [15](cantidad) unidades."
+    - "por [11](cantidad)"
+    - "sumá [18](cantidad)?"
+    - "[agotado](estado)"
+    - "que esté [disponible](estado)"
+    - "preferiblemente [por llegar](estado)."
+    - "[47](cantidad_stock)?"
+    - "que tenga [8](cantidad)3"
+    - "[22](cantidad_descuento)"
+    - "con [12](cantidad_descuento)"
+    - "[ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "que traiga [ejemplo_cantidad_bonificacion](cantidad_bonificacion)?"
+    - "[ejemplo_indicador_temporal](indicador_temporal)"
+    - "que sea [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[advantix](producto) de [Boehringer](proveedor)"
+    - "[Rimadyl](producto) con [g alquitran](ingrediente_activo)"
+    - "[ohm](producto) en [2 pastillas](dosis)"
+    - "[Carprodol](producto) [por llegar](estado)"
+    - "[15](cantidad) de [pentabiotico](producto)."
+    - "[Ol](producto) de [konig s.a.](proveedor) con [agotado](estado), [4](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[barbitol](producto) con [manganeso gluconato](ingrediente_activo) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[opter](producto) en [156mg](dosis) con [11](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[2](cantidad) de [credelio](producto) de [clinico](categoria) con [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[prednisol](producto) de [holliday scott s.a.](proveedor) en [7ml](dosis) con 2[1](cantidad) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[14](cantidad) unidades con [ketoprofeno](ingrediente_activo) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[espuma](producto)."
+    - "el producto sería [Biochip](producto)?"
+    - "lo que necesito es [Ecthol](producto)."
+    - "sumá [tau](producto) al pedido?"
+    - "de [john martin](proveedor)?"
+    - "laboratorio [Boehringer ingelheim](proveedor)"
+    - "marca [Biogenesis bago](proveedor)"
+    - "[antiartrosico](categoria)"
+    - "es de la categoria [higiene y belleza odontologico](categoria)"
+    - "va en [accesorio](categoria)."
+    - "que tenga [furosemida](ingrediente_activo)"
+    - "con principio activo [idoxuridina](ingrediente_activo)"
+    - "que contenga [dimetilsulfoxido](ingrediente_activo)"
+    - "con [benzoca](ingrediente_activo)"
+    - "que traiga [fenbendazol](ingrediente_activo)"
+    - "de [2ml](dosis)"
+    - "en presentación [484mg](dosis)?"
+    - "formato [11[4](cantidad)mg](dosis)"
+    - "necesito [12](cantidad) unidades"
+    - "por [6](cantidad)"
+    - "sumá [17](cantidad)"
+    - "[agotado](estado)"
+    - "que este [disponible](estado)"
+    - "preferiblemente [disponible](estado)"
+    - "[43](cantidad_stock)."
+    - "que tenga [11](cantidad_stock)"
+    - "[36](cantidad_descuento)"
+    - "con [4](cantidad)5"
+    - "[ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "que traiga [ejemplo_cantidad_bonificacion](cantidad_bonificacion)"
+    - "[ejemplo_indicador_temporal](indicador_temporal)?"
+    - "que sea [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Coagulante](producto) de [Zoetis](proveedor)."
+    - "[ofloxacina](producto) con [n acetilcisteina](ingrediente_activo)."
+    - "[albex](producto) en [1 pastillas](dosis)?"
+    - "[Tratam](producto) [agotado](estado)"
+    - "[19](cantidad) de [dozilam](producto)."
+    - "[convenia](producto) de [Biogenesis bago](proveedor) con [por llegar](estado), [55](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[enroxina](producto) con [cifenotrina](ingrediente_activo) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[driptol](producto) en [3ml](dosis) con [27](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[5](cantidad) de [Fip](producto) de [higiene y belleza](categoria) con [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[vita](producto) de [Integhra-proveedor](proveedor) en [4ml](dosis) con [17](cantidad) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[14](cantidad) unidades con [mg taurina](ingrediente_activo) y [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Algicam](producto)."
+    - "el producto sería [bio](producto)"
+    - "lo que necesito es [ecthonil](producto)?"
+    - "sumá [artroglycan](producto) al pedido."
+    - "de [Ceva](proveedor)"
+    - "laboratorio [Biogenesis](proveedor)"
+    - "marca [konig s.a.](proveedor)."
+    - "[higiene y belleza](categoria)"
+    - "es de la categoría [clinico](categoria)."
+    - "va en [higiene y belleza odontologico](categoria)?"
+    - "que tenga [vitamina e](ingrediente_activo)"
+    - "con principio activo [minerales](ingrediente_activo)"
+    - "que contenga [silimarina](ingrediente_activo)"
+    - "con [toltrazuril](ingrediente_activo)"
 
 - intent: consultar_novedades_producto
   examples: |
     - "qué productos nuevos llegaron?"
+    - "entro algo nuevo de [Biogenesis bago](proveedor)?"
+    - "hay algo nuevo con [gluconato de mag](ingrediente_activo)?"
+    - "[gato](animal) necesita [terpan](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [konig s.a.](proveedor)?."
+    - "hay algo nuevo con [virus de moquillo](ingrediente_activo)"
+    - "[bovino](animal) necesita [Methiovertan](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [konig](proveedor)??"
+    - "hay algo nuevo con [adenovirus](ingrediente_activo)?"
+    - "[gato](animal) necesita [revol](producto) nuevo"
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Integhra-proveedor](proveedor)?"
+    - "hay algo nuevo con [feromona m](ingrediente_activo)?"
+    - "[perro](animal) necesita [Baytril](producto) nuevo"
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [john martin](proveedor)?."
+    - "hay algo nuevo con [acido edetico](ingrediente_activo)??"
+    - "[bovino](animal) necesita [pimobendan](producto) nuevo?"
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entro algo nuevo de [Biogenesis](proveedor)?"
+    - "hay algo nuevo con [trofozoitos inactivados de giardia lamblia](ingrediente_activo)?"
+    - "[equino](animal) necesita [prednovet](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entró algo nuevo de [Ceva](proveedor)?."
+    - "hay algo nuevo con [aluminio micronizado](ingrediente_activo)"
+    - "[gato](animal) necesita [artrin](producto) nuevo?"
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Zoetis](proveedor)"
+    - "hay algo nuevo con [tiabendazol](ingrediente_activo)?."
+    - "[gato](animal) necesita [espuma](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [labyes](proveedor)?."
+    - "hay algo nuevo con [arandano](ingrediente_activo)"
+    - "[bovino](animal) necesita [Revol](producto) nuevo?"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [labyes](proveedor)?."
+    - "hay algo nuevo con [doxapram clorhidrato](ingrediente_activo)?"
+    - "[equino](animal) necesita [Ursomarina](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entró algo nuevo de [holliday](proveedor)?"
+    - "hay algo nuevo con [piridoxina clorhidrato](ingrediente_activo)?"
+    - "[equino](animal) necesita [bactroprofen](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Boehringer ingelheim](proveedor)??"
+    - "hay algo nuevo con [fenbendazol](ingrediente_activo)"
+    - "[equino](animal) necesita [Feliway](producto) nuevo"
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [john](proveedor)??"
+    - "hay algo nuevo con [clorhidrato de glucosamina](ingrediente_activo)"
+    - "[bovino](animal) necesita [atb](producto) nuevo."
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [konig s.a.](proveedor)?."
+    - "hay algo nuevo con [proteina bruta](ingrediente_activo)?"
+    - "[bovino](animal) necesita [bactrovet](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Integhra-proveedor](proveedor)??"
+    - "hay algo nuevo con [l lisina al](ingrediente_activo)"
+    - "[bovino](animal) necesita [Btk](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Suizo argentina](proveedor)?"
+    - "hay algo nuevo con [enapril](ingrediente_activo)?"
+    - "[perro](animal) necesita [Euthanyle](producto) nuevo?"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [konig s.a.](proveedor)??"
+    - "hay algo nuevo con [calcio](ingrediente_activo)??"
+    - "[gato](animal) necesita [Pf](producto) nuevo?"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entró algo nuevo de [Integhra-proveedor](proveedor)"
+    - "hay algo nuevo con [extracto de malta](ingrediente_activo)?."
+    - "[perro](animal) necesita [vilisinh](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [john martin](proveedor)?."
+    - "hay algo nuevo con [condroitin de bajo peso molecular](ingrediente_activo)?"
+    - "[equino](animal) necesita [idocarb12](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entró algo nuevo de [konig](proveedor)??"
+    - "hay algo nuevo con [bedinvetmab antiinflamatorio](ingrediente_activo)?"
+    - "[gato](animal) necesita [Condroitin](producto) nuevo?"
+    - "novedades de productos dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [konig](proveedor)?."
+    - "hay algo nuevo con [ketamina base](ingrediente_activo)?"
+    - "[equino](animal) necesita [tobramax](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Biogenesis](proveedor)?."
+    - "hay algo nuevo con [ketamina base](ingrediente_activo)?"
+    - "[gato](animal) necesita [genabil](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Boehringer ingelheim](proveedor)?."
+    - "hay algo nuevo con [etofenprox](ingrediente_activo)"
+    - "[gato](animal) necesita [uv](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entro algo nuevo de [brouwer](proveedor)?"
+    - "hay algo nuevo con [materia mineral](ingrediente_activo)??"
+    - "[equino](animal) necesita [dozilam](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entró algo nuevo de [konig](proveedor)?."
+    - "hay algo nuevo con [triamcinolona](ingrediente_activo)?."
+    - "[equino](animal) necesita [Toracard](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [konig s.a.](proveedor)?."
+    - "hay algo nuevo con [cultivados en celulas de rinon de hamster lactante](ingrediente_activo)?"
+    - "[perro](animal) necesita [Carprodol](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entró algo nuevo de [Biogenesis](proveedor)??"
+    - "hay algo nuevo con [tramadol](ingrediente_activo)??"
+    - "[perro](animal) necesita [ciclar](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entro algo nuevo de [Integhra-proveedor](proveedor)?"
+    - "hay algo nuevo con [fenbend](ingrediente_activo)?."
+    - "[bovino](animal) necesita [cortidural](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entro algo nuevo de [holliday](proveedor)?"
+    - "hay algo nuevo con [vaselina](ingrediente_activo)?."
+    - "[equino](animal) necesita [Pragma](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entró algo nuevo de [john martin](proveedor)?."
+    - "hay algo nuevo con [mg taurina](ingrediente_activo)?."
+    - "[gato](animal) necesita [Tripackprotech](producto) nuevo?"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entró algo nuevo de [Suizo argentina](proveedor)"
+    - "hay algo nuevo con [virus de la panleucopenia atenuado](ingrediente_activo)"
+    - "[bovino](animal) necesita [Pip](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Suizo](proveedor)"
+    - "hay algo nuevo con [azitromicina](ingrediente_activo)"
+    - "[perro](animal) necesita [diazepam](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "entro algo nuevo de [Zoetis](proveedor)?"
+    - "hay algo nuevo con [acido folico](ingrediente_activo)?."
+    - "[gato](animal) necesita [linco](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entró algo nuevo de [Zoetis](proveedor)??"
+    - "hay algo nuevo con [ketamina](ingrediente_activo)"
+    - "[gato](animal) necesita [grupo](producto) nuevo."
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Biogenesis](proveedor)??"
+    - "hay algo nuevo con [corona y leptospira caninos](ingrediente_activo)"
+    - "[bovino](animal) necesita [algidol](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [john martin](proveedor)??"
+    - "hay algo nuevo con [acido tioctico](ingrediente_activo)?"
+    - "[bovino](animal) necesita [serenex](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "entró algo nuevo de [john martin](proveedor)?."
+    - "hay algo nuevo con [clorhidrato de glucosamina](ingrediente_activo)?"
+    - "[bovino](animal) necesita [cardial](producto) nuevo"
+    - "novedades de productos difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "entró algo nuevo de [Biogenesis bago](proveedor)"
+    - "hay algo nuevo con [u i](ingrediente_activo)?."
+
+- intent: consultar_novedades_oferta
+  examples: |
+    - "descuentos nuevos del laboratorio [john](proveedor)?."
+    - "qué promos nuevas hay de [Enroplus](producto) en [282mg](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Biogenesis bago](proveedor)?"
+    - "qué promos nuevas hay de [Prius](producto) en [9ml](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Ceva](proveedor)??"
+    - "que promos nuevas hay de [Pf](producto) en [3 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Zoetis](proveedor)??"
+    - "qué promos nuevas hay de [ivermex](producto) en [6ml](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [Biogenesis](proveedor)??"
+    - "que promos nuevas hay de [Artrosan](producto) en [3 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [john martin](proveedor)?"
+    - "qué promos nuevas hay de [Cumepina](producto) en [1 comprimidos](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [konig](proveedor)?."
+    - "que promos nuevas hay de [Diurene](producto) en [5ml](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Biogenesis bago](proveedor)?"
+    - "qué promos nuevas hay de [calcificante](producto) en [1 pastillas](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [holliday](proveedor)?."
+    - "que promos nuevas hay de [convenia](producto) en [1 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Suizo](proveedor)??"
+    - "qué promos nuevas hay de [Meltra](producto) en [3 comprimidos](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [Boehringer](proveedor)?."
+    - "qué promos nuevas hay de [Vetscan](producto) en [1 pastillas](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [Boehringer ingelheim](proveedor)?."
+    - "que promos nuevas hay de [full](producto) en [3 pastillas](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [brouwer](proveedor)"
+    - "qué promos nuevas hay de [Cumepina](producto) en [6ml](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [Suizo](proveedor)"
+    - "qué promos nuevas hay de [Dectomax](producto) en [478mg](dosis)??"
+    - "novedades de ofertas dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Suizo argentina](proveedor)??"
+    - "qué promos nuevas hay de [clamoxyl](producto) en [6ml](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Boehringer](proveedor)?."
+    - "qué promos nuevas hay de [Drontal](producto) en [1 pastillas](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [brouwer](proveedor)??"
+    - "qué promos nuevas hay de [tea](producto) en [2 pastillas](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Zoetis](proveedor)??"
+    - "qué promos nuevas hay de [prius](producto) en [192mg](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [labyes](proveedor)??"
+    - "qué promos nuevas hay de [Cumepina](producto) en [4ml](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Ceva](proveedor)?"
+    - "que promos nuevas hay de [Osurnia](producto) en [2 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [Boehringer ingelheim](proveedor)?"
+    - "qué promos nuevas hay de [mv](producto) en [8ml](dosis)?"
+    - "novedades de ofertas dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [john](proveedor)"
+    - "qué promos nuevas hay de [tipertox](producto) en [9ml](dosis)?."
+    - "novedades de ofertas dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [john martin](proveedor)?"
+    - "qué promos nuevas hay de [Artrosan](producto) en [7ml](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [labyes](proveedor)"
+    - "qué promos nuevas hay de [proteliv](producto) en [2 pastillas](dosis)"
+    - "novedades de ofertas dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Suizo argentina](proveedor)?."
+    - "que promos nuevas hay de [Cloralen](producto) en [3ml](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Suizo argentina](proveedor)"
+    - "qué promos nuevas hay de [apoquel](producto) en [96mg](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Biogenesis](proveedor)?"
+    - "qué promos nuevas hay de [cidar](producto) en [1ml](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [holliday](proveedor)?."
+    - "qué promos nuevas hay de [Eutanasico](producto) en [8ml](dosis)?."
+    - "novedades de ofertas dificiles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [brouwer](proveedor)"
+    - "qué promos nuevas hay de [Kil](producto) en [2 comprimidos](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Suizo argentina](proveedor)??"
+    - "qué promos nuevas hay de [Pets](producto) en [3 pastillas](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Zoetis](proveedor)??"
+    - "qué promos nuevas hay de [Triavet](producto) en [1 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [brouwer](proveedor)?."
+    - "qué promos nuevas hay de [Fipro](producto) en [3 comprimidos](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [holliday](proveedor)"
+    - "qué promos nuevas hay de [linco](producto) en [2 pastillas](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Boehringer](proveedor)?"
+    - "que promos nuevas hay de [bagogard](producto) en [1 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [john martin](proveedor)"
+    - "que promos nuevas hay de [clamoxyl](producto) en [237mg](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [Ceva](proveedor)?."
+    - "qué promos nuevas hay de [Clorhexidina](producto) en [7ml](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [john martin](proveedor)?."
+    - "qué promos nuevas hay de [Flurbiprofeno](producto) en [1 comprimidos](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [brouwer](proveedor)?."
+    - "qué promos nuevas hay de [enteroplus](producto) en [289mg](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [Integhra-proveedor](proveedor)"
+    - "qué promos nuevas hay de [Biochip](producto) en [7ml](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [holliday scott s.a.](proveedor)?"
+    - "qué promos nuevas hay de [kothrina](producto) en [4ml](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [Biogenesis](proveedor)?"
+    - "qué promos nuevas hay de [Pigatoperro](producto) en [2 pastillas](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [holliday scott s.a.](proveedor)?"
+    - "qué promos nuevas hay de [crema](producto) en [2 comprimidos](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [john martin](proveedor)"
+    - "qué promos nuevas hay de [Cytopoint](producto) en [3 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [john martin](proveedor)"
+    - "qué promos nuevas hay de [Totalvet](producto) en [1 pastillas](dosis)??"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [Ceva](proveedor)?"
+    - "qué promos nuevas hay de [Euthanyle](producto) en [3 pastillas](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [labyes](proveedor)?"
+    - "qué promos nuevas hay de [Cestodan](producto) en [303mg](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [konig s.a.](proveedor)??"
+    - "que promos nuevas hay de [Dermomax](producto) en [1 comprimidos](dosis)?"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)"
+    - "descuentos nuevos del laboratorio [john martin](proveedor)??"
+    - "qué promos nuevas hay de [Enrofloxacina](producto) en [3 pastillas](dosis)"
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "descuentos nuevos del laboratorio [brouwer](proveedor)?"
+    - "qué promos nuevas hay de [vermiplex](producto) en [250mg](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
+    - "descuentos nuevos del laboratorio [Biogenesis bago](proveedor)?."
+    - "qué promos nuevas hay de [Doxilina](producto) en [2 comprimidos](dosis)?."
+    - "novedades de ofertas difíciles de ubicar [ejemplo_indicador_temporal](indicador_temporal)."
 
 - intent: consultar_novedades_generales
   examples: |
@@ -101,6 +897,465 @@ nlu:
     - "qué novedades hay en general?"
     - "lo último que llegó, mostrame"
     - "hay algo reciente que valga la pena?"
+
+- intent: consultar_recomendaciones_producto
+  examples: |
+    - "qué me recomendás de [Fider](producto)??"
+    - "cuál [bactroprofen](producto) es mejor?."
+    - "que conviene para mi [equino](animal)?"
+    - "me sugerís algo de [higiene y belleza](categoria)??"
+    - "recomiéndame [prius](producto) con [por llegar](estado), [16](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[gato](animal) necesita algo nuevo de [antiartrosico](categoria) con [disponible](estado), [54](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que me recomendas de [full](producto)?"
+    - "cuál [Dexa](producto) es mejor?"
+    - "que conviene para mi [perro](animal)?"
+    - "me sugeris algo de [sin categoria](categoria)?"
+    - "recomiéndame [Meloxivet](producto) con [agotado](estado), [54](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[perro](animal) necesita algo nuevo de [antiparasitario externo](categoria) con [por llegar](estado), [1](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "qué me recomendás de [Meloxivet](producto)?"
+    - "cuál [Episol](producto) es mejor??"
+    - "qué conviene para mi [equino](animal)"
+    - "me sugerís algo de [sin categoria](categoria)??"
+    - "recomiéndame [Pimobendan](producto) con [agotado](estado), [50](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[equino](animal) necesita algo nuevo de [antiartrosico](categoria) con [agotado](estado), [16](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [sh](producto)"
+    - "cuál [Gerioox](producto) es mejor"
+    - "qué conviene para mi [gato](animal)?."
+    - "me sugerís algo de [antiparasitario externo](categoria)??"
+    - "recomiéndame [ol](producto) con [por llegar](estado), [38](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[equino](animal) necesita algo nuevo de [antiartrosico](categoria) con [disponible](estado), [30](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [Rochy](producto)?"
+    - "cuál [pimocard](producto) es mejor?."
+    - "qué conviene para mi [perro](animal)?"
+    - "me sugerís algo de [cardiologico](categoria)"
+    - "recomiéndame [Ecthol](producto) con [por llegar](estado), [36](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[equino](animal) necesita algo nuevo de [sin categoria](categoria) con [disponible](estado), [79](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [tripackprotech](producto)?"
+    - "cuál [convenia](producto) es mejor?"
+    - "qué conviene para mi [perro](animal)"
+    - "me sugerís algo de [accesorio](categoria)??"
+    - "recomiéndame [Pro](producto) con [agotado](estado), [80](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[equino](animal) necesita algo nuevo de [cardiologico](categoria) con [por llegar](estado), [73](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué me recomendás de [credelio](producto)??"
+    - "cuál [Multivit](producto) es mejor?."
+    - "qué conviene para mi [perro](animal)"
+    - "me sugerís algo de [cardiologico](categoria)?"
+    - "recomiendame [dermoxil](producto) con [por llegar](estado), [30](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[equino](animal) necesita algo nuevo de [biologico](categoria) con [por llegar](estado), [48](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que me recomendas de [Pimocard](producto)?"
+    - "cuál [Tea](producto) es mejor?."
+    - "qué conviene para mi [gato](animal)?"
+    - "me sugerís algo de [higiene y belleza odontologico](categoria)?."
+    - "recomiéndame [Block](producto) con [por llegar](estado), [31](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[equino](animal) necesita algo nuevo de [alimento](categoria) con [disponible](estado), [84](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [cardial](producto)??"
+    - "cual [Cloralen](producto) es mejor?"
+    - "qué conviene para mi [gato](animal)?."
+    - "me sugerís algo de [biologico](categoria)?"
+    - "recomiéndame [Librela](producto) con [disponible](estado), [89](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[perro](animal) necesita algo nuevo de [accesorio](categoria) con [por llegar](estado), [55](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [sulfavet](producto)"
+    - "cuál [Ranitidina](producto) es mejor?."
+    - "qué conviene para mi [gato](animal)?."
+    - "me sugerís algo de [accesorio](categoria)"
+    - "recomiéndame [fipro](producto) con [por llegar](estado), [58](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[perro](animal) necesita algo nuevo de [antiparasitario externo](categoria) con [por llegar](estado), [31](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [Oxisol](producto)?."
+    - "cuál [tobramax](producto) es mejor?."
+    - "que conviene para mi [perro](animal)?"
+    - "me sugerís algo de [cardiologico](categoria)?"
+    - "recomiéndame [Block](producto) con [agotado](estado), [74](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[equino](animal) necesita algo nuevo de [clinico](categoria) con [por llegar](estado), [15](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "qué me recomendás de [bagogard](producto)?."
+    - "cual [Anti](producto) es mejor?"
+    - "qué conviene para mi [equino](animal)?"
+    - "me sugerís algo de [accesorio](categoria)?"
+    - "recomiéndame [antiverrugas](producto) con [agotado](estado), [59](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[bovino](animal) necesita algo nuevo de [accesorio](categoria) con [por llegar](estado), [9](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "que me recomendas de [tonico](producto)?"
+    - "cuál [Dermomax](producto) es mejor"
+    - "qué conviene para mi [equino](animal)"
+    - "me sugeris algo de [farmacos](categoria)?"
+    - "recomiéndame [vcc](producto) con [agotado](estado), [14](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[perro](animal) necesita algo nuevo de [alimento](categoria) con [por llegar](estado), [25](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué me recomendás de [pregabaliv](producto)??"
+    - "cuál [full](producto) es mejor"
+    - "que conviene para mi [equino](animal)?"
+    - "me sugeris algo de [farmacos](categoria)?"
+    - "recomiendame [singestar](producto) con [agotado](estado), [46](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[equino](animal) necesita algo nuevo de [alimento](categoria) con [agotado](estado), [42](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué me recomendás de [genabil](producto)"
+    - "cuál [Hepatoprotector](producto) es mejor?"
+    - "qué conviene para mi [bovino](animal)??"
+    - "me sugerís algo de [antiparasitario externo](categoria)??"
+    - "recomiéndame [Clavamox](producto) con [por llegar](estado), [29](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[gato](animal) necesita algo nuevo de [farmacos](categoria) con [agotado](estado), [36](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [Dectomax](producto)"
+    - "cuál [bromhexina](producto) es mejor??"
+    - "que conviene para mi [bovino](animal)?"
+    - "me sugerís algo de [biologico](categoria)?."
+    - "recomiéndame [albex](producto) con [por llegar](estado), [22](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[gato](animal) necesita algo nuevo de [cardiologico](categoria) con [disponible](estado), [39](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [Pruricilona](producto)"
+    - "cuál [Endospot](producto) es mejor?"
+    - "qué conviene para mi [bovino](animal)?."
+    - "me sugerís algo de [antiparasitario interno](categoria)?"
+    - "recomiéndame [Vitamina](producto) con [agotado](estado), [99](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[gato](animal) necesita algo nuevo de [antiparasitario interno](categoria) con [disponible](estado), [39](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué me recomendás de [Bactrovet](producto)?"
+    - "cual [Atropina](producto) es mejor?"
+    - "qué conviene para mi [equino](animal)?."
+    - "me sugeris algo de [higiene y belleza odontologico](categoria)?"
+    - "recomiéndame [uv](producto) con [por llegar](estado), [30](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[equino](animal) necesita algo nuevo de [higiene y belleza odontologico](categoria) con [por llegar](estado), [61](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [Ocubiotic](producto)?"
+    - "cual [advantage](producto) es mejor?"
+    - "qué conviene para mi [gato](animal)"
+    - "me sugerís algo de [accesorio](categoria)??"
+    - "recomiéndame [Estreptocarbocaftiazol](producto) con [disponible](estado), [21](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[equino](animal) necesita algo nuevo de [higiene y belleza](categoria) con [agotado](estado), [20](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que me recomendas de [spinomax](producto)?"
+    - "cuál [Giacoccide](producto) es mejor?."
+    - "qué conviene para mi [equino](animal)?"
+    - "me sugerís algo de [antiparasitario interno](categoria)?."
+    - "recomiendame [Vitamina](producto) con [por llegar](estado), [27](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[gato](animal) necesita algo nuevo de [higiene y belleza odontologico](categoria) con [disponible](estado), [50](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [cefalong](producto)?."
+    - "cuál [bucal](producto) es mejor?."
+    - "qué conviene para mi [equino](animal)"
+    - "me sugerís algo de [higiene y belleza odontologico](categoria)?"
+    - "recomiendame [Vaquero](producto) con [agotado](estado), [11](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[bovino](animal) necesita algo nuevo de [farmacos](categoria) con [por llegar](estado), [34](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que me recomendas de [Algicam](producto)?"
+    - "cuál [Estreptocarbocaftiazol](producto) es mejor?"
+    - "que conviene para mi [equino](animal)?"
+    - "me sugerís algo de [clinico](categoria)??"
+    - "recomiéndame [genabil](producto) con [disponible](estado), [50](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[gato](animal) necesita algo nuevo de [antiparasitario interno](categoria) con [disponible](estado), [76](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [Isiquick](producto)?."
+    - "cuál [prednisolona](producto) es mejor?"
+    - "qué conviene para mi [gato](animal)?."
+    - "me sugerís algo de [farmacos](categoria)??"
+    - "recomiéndame [Prednisolona](producto) con [disponible](estado), [50](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[bovino](animal) necesita algo nuevo de [clinico](categoria) con [por llegar](estado), [84](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "que me recomendas de [endospot](producto)?"
+    - "cuál [toltrazol](producto) es mejor"
+    - "que conviene para mi [equino](animal)?"
+    - "me sugerís algo de [farmacos](categoria)??"
+    - "recomiéndame [Diazepet](producto) con [por llegar](estado), [20](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[gato](animal) necesita algo nuevo de [antiparasitario externo](categoria) con [disponible](estado), [6](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué me recomendás de [labyderm](producto)"
+    - "cuál [Tripackprotech](producto) es mejor?"
+    - "que conviene para mi [perro](animal)?"
+    - "me sugerís algo de [sin categoria](categoria)?"
+    - "recomiéndame [Ketafine](producto) con [por llegar](estado), [32](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[bovino](animal) necesita algo nuevo de [antiparasitario interno](categoria) con [por llegar](estado), [46](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+
+- intent: consultar_recomendaciones_oferta
+  examples: |
+    - "qué oferta me recomendás de [ciclar](producto)?."
+    - "cuál promo de [integhra](producto) es mejor??"
+    - "qué oferta conviene para un [equino](animal)?"
+    - "promos recomendadas en [cardiologico](categoria)?."
+    - "me sugerís descuentos de [holliday scott s.a.](proveedor)?."
+    - "oferta de [grupo](producto) con [42](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiparasitario externo](categoria) con [agotado](estado), [71](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Boehringer](proveedor) recomienda [tratam](producto) con [disponible](estado), [97](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [super](producto)??"
+    - "cuál promo de [feliway](producto) es mejor"
+    - "qué oferta conviene para un [equino](animal)"
+    - "promos recomendadas en [alimento](categoria)?"
+    - "me sugerís descuentos de [john martin](proveedor)??"
+    - "oferta de [Butormin](producto) con [41](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [clinico](categoria) con [agotado](estado), [25](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[holliday scott s.a.](proveedor) recomienda [display](producto) con [por llegar](estado), [1](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "qué oferta me recomendás de [algicam](producto)??"
+    - "cual promo de [ciclosporina](producto) es mejor?"
+    - "qué oferta conviene para un [equino](animal)?."
+    - "promos recomendadas en [accesorio](categoria)?."
+    - "me sugerís descuentos de [Zoetis](proveedor)?."
+    - "oferta de [opter](producto) con [28](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [farmacos](categoria) con [agotado](estado), [58](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[holliday](proveedor) recomienda [enroplus](producto) con [agotado](estado), [78](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Meltra](producto)?"
+    - "cuál [pro](producto)mo de Pro es mejor?"
+    - "qué oferta conviene para un [equino](animal)"
+    - "promos recomendadas en [accesorio](categoria)??"
+    - "me sugerís descuentos de [john](proveedor)??"
+    - "oferta de [Cardial](producto) con [7](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [biologico](categoria) con [por llegar](estado), [90](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Integhra-proveedor](proveedor) recomienda [Barbitol](producto) con [disponible](estado), [67](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Ketamina](producto)??"
+    - "cuál promo de [Injection](producto) es mejor"
+    - "qué oferta conviene para un [gato](animal)?."
+    - "promos recomendadas en [higiene y belleza](categoria)"
+    - "me sugerís descuentos de [konig](proveedor)??"
+    - "oferta de [convenia](producto) con [18](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [alimento](categoria) con [por llegar](estado), [93](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[Boehringer ingelheim](proveedor) recomienda [floxaday](producto) con [disponible](estado), [42](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué oferta me recomendás de [Seraquin](producto)??"
+    - "cuál promo de [Relay](producto) es mejor"
+    - "qué oferta conviene para un [perro](animal)"
+    - "promos recomendadas en [biologico](categoria)?."
+    - "me sugerís descuentos de [holliday](proveedor)?."
+    - "oferta de [Nutrical](producto) con [37](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [higiene y belleza](categoria) con [por llegar](estado), [52](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[konig s.a.](proveedor) recomienda [pets](producto) con [disponible](estado), [45](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué oferta me recomendás de [Cefalong](producto)"
+    - "cual [pro](producto)mo de Pro es mejor?"
+    - "qué oferta conviene para un [gato](animal)?"
+    - "promos recomendadas en [antiartrosico](categoria)?"
+    - "me sugeris descuentos de [Suizo argentina](proveedor)?"
+    - "oferta de [pileran](producto) con [20](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [cardiologico](categoria) con [agotado](estado), [2](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[john](proveedor) recomienda [Toracard](producto) con [por llegar](estado), [68](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Artroglycan](producto)?."
+    - "cuál promo de [Singestar](producto) es mejor"
+    - "qué oferta conviene para un [equino](animal)??"
+    - "promos recomendadas en [accesorio](categoria)?."
+    - "me sugerís descuentos de [john](proveedor)??"
+    - "oferta de [ocubiotic](producto) con [45](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [accesorio](categoria) con [por llegar](estado), [81](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[Suizo argentina](proveedor) recomienda [Serenex](producto) con [agotado](estado), [57](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [colotrin](producto)"
+    - "cuál promo de [Rochy](producto) es mejor??"
+    - "qué oferta conviene para un [bovino](animal)"
+    - "promos recomendadas en [antiparasitario interno](categoria)"
+    - "me sugerís descuentos de [Biogenesis bago](proveedor)?"
+    - "oferta de [ocubiotic](producto) con [31](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [accesorio](categoria) con [agotado](estado), [100](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[Boehringer](proveedor) recomienda [Ketafine](producto) con [disponible](estado), [76](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Pragma](producto)??"
+    - "cual promo de [Injection](producto) es mejor?"
+    - "qué oferta conviene para un [perro](animal)?"
+    - "promos recomendadas en [farmacos](categoria)?"
+    - "me sugerís descuentos de [konig](proveedor)?."
+    - "oferta de [Fipro](producto) con [10](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [antiparasitario externo](categoria) con [disponible](estado), [16](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[Integhra-proveedor](proveedor) recomienda [Doxivit](producto) con [por llegar](estado), [48](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "que oferta me recomendas de [kothrina](producto)?"
+    - "cuál promo de [aplonal](producto) es mejor?."
+    - "que oferta conviene para un [equino](animal)?"
+    - "promos recomendadas en [cardiologico](categoria)"
+    - "me sugerís descuentos de [Biogenesis bago](proveedor)"
+    - "oferta de [sincelar](producto) con [48](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [antiparasitario externo](categoria) con [agotado](estado), [49](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[john](proveedor) recomienda [atb](producto) con [disponible](estado), [74](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Promafine](producto)"
+    - "cuál promo de [Pruricilona](producto) es mejor?"
+    - "qué oferta conviene para un [perro](animal)?"
+    - "promos recomendadas en [higiene y belleza odontologico](categoria)?"
+    - "me sugerís descuentos de [Boehringer ingelheim](proveedor)??"
+    - "oferta de [ocuflox](producto) con [37](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiparasitario interno](categoria) con [disponible](estado), [57](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[konig](proveedor) recomienda [grupo](producto) con [agotado](estado), [9](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Nogastrol](producto)?."
+    - "cual promo de [puppyline](producto) es mejor?"
+    - "qué oferta conviene para un [bovino](animal)?"
+    - "promos recomendadas en [clinico](categoria)?"
+    - "me sugerís descuentos de [Suizo](proveedor)"
+    - "oferta de [Baytril](producto) con [31](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiartrosico](categoria) con [agotado](estado), [71](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[john](proveedor) recomienda [integhra](producto) con [disponible](estado), [44](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [Bagomectina](producto)"
+    - "cuál promo de [bucal](producto) es mejor?"
+    - "que oferta conviene para un [gato](animal)?"
+    - "promos recomendadas en [antiparasitario externo](categoria)??"
+    - "me sugerís descuentos de [konig s.a.](proveedor)?"
+    - "oferta de [tonico](producto) con [35](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "promos de [antiparasitario interno](categoria) con [disponible](estado), [32](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[konig s.a.](proveedor) recomienda [Promafine](producto) con [por llegar](estado), [93](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué oferta me recomendás de [Ciclosporina](producto)?"
+    - "cuál promo de [bactroprofen](producto) es mejor?"
+    - "qué oferta conviene para un [perro](animal)??"
+    - "promos recomendadas en [alimento](categoria)??"
+    - "me sugeris descuentos de [Ceva](proveedor)?"
+    - "oferta de [Diurene](producto) con [11](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [antiartrosico](categoria) con [agotado](estado), [90](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[john](proveedor) recomienda [Bagogard](producto) con [disponible](estado), [7](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "qué oferta me recomendás de [simparica](producto)??"
+    - "cuál promo de [Ketamina](producto) es mejor??"
+    - "qué oferta conviene para un [bovino](animal)?"
+    - "promos recomendadas en [sin categoria](categoria)?."
+    - "me sugerís descuentos de [Biogenesis bago](proveedor)??"
+    - "oferta de [Coagulante](producto) con [27](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "promos de [antiartrosico](categoria) con [disponible](estado), [98](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[Integhra-proveedor](proveedor) recomienda [totalvet](producto) con [agotado](estado), [11](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "qué oferta me recomendás de [eqvalan](producto)?."
+    - "cuál promo de [tau](producto) es mejor?"
+    - "qué oferta conviene para un [equino](animal)?"
+    - "promos recomendadas en [accesorio](categoria)?"
+    - "me sugerís descuentos de [konig](proveedor)?."
+    - "oferta de [Seresto](producto) con [25](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [disponible](estado) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "[pro](producto)mos de [alimento](categoria) con [agotado](estado), [27](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "[john](proveedor) recomienda [Bactroprofen](producto) con [disponible](estado), [40](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "qué oferta me recomendás de [Serenex](producto)?"
+    - "cual promo de [Eutanasico](producto) es mejor?"
+    - "que oferta conviene para un [gato](animal)?"
+    - "promos recomendadas en [higiene y belleza odontologico](categoria)?"
+    - "me sugeris descuentos de [Biogenesis bago](proveedor)?"
+    - "oferta de [feline](producto) con [15](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [por llegar](estado) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "promos de [cardiologico](categoria) con [por llegar](estado), [24](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "[brouwer](proveedor) recomienda [Furocal](producto) con [por llegar](estado), [83](cantidad_stock) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "qué oferta me recomendás de [espuma](producto)?"
+    - "cuál promo de [Coagulante](producto) es mejor??"
+    - "que oferta conviene para un [equino](animal)?"
+    - "promos recomendadas en [accesorio](categoria)?."
+    - "me sugeris descuentos de [holliday](proveedor)?"
+    - "oferta de [Enroplus](producto) con [39](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion), [agotado](estado) y [ejemplo_indicador_temporal](indicador_temporal)"
+
+- intent: modificar_busqueda
+  examples: |
+    - "mejor mostrame [Hepatoprotector](producto)?"
+    - "en realidad quiero [Ioduro](producto) de [Biogenesis](proveedor)"
+    - "prefiero [Energia](producto) en [9ml](dosis)"
+    - "cambiá a [3](cantidad) de [Baytril](producto)?"
+    - "mostrame [Ocladerm](producto) con [sulfato de magnesio](ingrediente_activo)"
+    - "cambiemos a [trivermex](producto) con [agotado](estado) y [6](cantidad_stock)"
+    - "prefiero ofertas con [48](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [ocuflox](producto)"
+    - "en realidad quiero [Artrosan](producto) de [holliday scott s.a.](proveedor)?"
+    - "prefiero [Tea](producto) en [1 pastillas](dosis)?"
+    - "cambiá a [11](cantidad) de [Episol](producto)."
+    - "mostrame [Aminolite](producto) con [oxido ferrico](ingrediente_activo)"
+    - "cambiemos a [Pip](producto) con [disponible](estado) y [25](cantidad_stock)."
+    - "prefiero ofertas con [29](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [aurix](producto)?"
+    - "en realidad quiero [Pruricilona](producto) de [Zoetis](proveedor)"
+    - "prefiero [prednovet](producto) en [2[1](cantidad)6mg](dosis)"
+    - "cambiá a [6](cantidad) de [Bagovac](producto)"
+    - "mostrame [Mv](producto) con [pirantel](ingrediente_activo)"
+    - "cambiemos a [seresto](producto) con [por llegar](estado) y [57](cantidad_stock)"
+    - "prefiero ofertas con [50](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [vetscan](producto)?"
+    - "en realidad quiero [adaptil](producto) de [holliday scott s.a.](proveedor)."
+    - "prefiero [trocoxil](producto) en [10ml](dosis)"
+    - "cambiá a [3](cantidad) de [sh](producto)?"
+    - "mostrame [Prius](producto) con [saborizante](ingrediente_activo)"
+    - "cambiemos a [Vetscan](producto) con [agotado](estado) y [65](cantidad_stock)."
+    - "prefiero ofertas con [10](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [shampoo](producto)?"
+    - "en realidad quiero [singestar](producto) de [holliday scott s.a.](proveedor)."
+    - "prefiero [Mayor](producto) en [3 pastillas](dosis)."
+    - "cambiá a [8](cantidad) de [Injection](producto)."
+    - "mostrame [albex](producto) con [vaselina](ingrediente_activo)."
+    - "cambiemos a [Simparica](producto) con [agotado](estado) y 8[3](cantidad)"
+    - "prefiero ofertas con [11](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [semintra](producto)"
+    - "en realidad quiero [Advocate](producto) de [holliday](proveedor)."
+    - "prefiero [Seresto](producto) en [3 pastillas](dosis)?"
+    - "cambiá a [11](cantidad) de [Cestodan](producto)."
+    - "mostrame [Dexa](producto) con [atenuada](ingrediente_activo)"
+    - "cambiemos a [bactroprofen](producto) con [disponible](estado) y [20](cantidad_stock)."
+    - "prefiero ofertas con [25](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)?"
+    - "mejor mostrame [pimocard](producto)"
+    - "en realidad quiero [proteliv](producto) de [john](proveedor)."
+    - "prefiero [ectocan](producto) en [1 pastillas](dosis)?"
+    - "cambiá a [6](cantidad) de [cefalong](producto)."
+    - "mostrame [Bactrovet](producto) con [clotrimazol](ingrediente_activo)"
+    - "cambiemos a [Tea](producto) con [disponible](estado) y [35](cantidad_stock)"
+    - "prefiero ofertas con [39](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [prednovet](producto)"
+    - "en realidad quiero [dominal](producto) de [konig s.a.](proveedor)"
+    - "prefiero [grupo](producto) en [1 comprimidos](dosis)."
+    - "cambiá a [16](cantidad) de [Doxivit](producto)."
+    - "mostrame [Trivermex](producto) con [pentosan polisulfato sodico](ingrediente_activo)"
+    - "cambiemos a [rochy](producto) con [por llegar](estado) y [48](cantidad_stock)?"
+    - "prefiero ofertas con [38](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)."
+    - "mejor mostrame [Pragma](producto)"
+    - "en realidad quiero [Ursoliv](producto) de [Suizo argentina](proveedor)"
+    - "prefiero [Comfortis](producto) en [2 comprimidos](dosis)."
+    - "cambiá a [8](cantidad) de [pf](producto)?"
+    - "mostrame [Fortepen](producto) con [benazepryl](ingrediente_activo)."
+    - "cambiemos a [Repexxin](producto) con [agotado](estado) y [24](cantidad_stock)"
+    - "prefiero ofertas con [20](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [galmetrin](producto)?"
+    - "en realidad quiero [spinomax](producto) de [Integhra-proveedor](proveedor)"
+    - "prefiero [Injection](producto) en [3 comprimidos](dosis)"
+    - "cambiá a [14](cantidad) de [Floxaday](producto)."
+    - "mostrame [Laxavet](producto) con [pirazolona](ingrediente_activo)?"
+    - "cambiemos a [comfortis](producto) con [por llegar](estado) y [42](cantidad_stock)"
+    - "prefiero ofertas con [16](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Kobra](producto)?"
+    - "en realidad quiero [artrin](producto) de [holliday scott s.a.](proveedor)"
+    - "prefiero [diurene](producto) en [263mg](dosis)"
+    - "cambiá a [5](cantidad) de [Solubron](producto)."
+    - "mostrame [dynamide](producto) con parvovirosis y tos de las perreras fraccion liofilizada"
+    - "cambiemos a [colotrin](producto) con [disponible](estado) y [21](cantidad_stock)"
+    - "prefiero ofertas con [6](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [crema](producto)"
+    - "en realidad quiero [Enroplus](producto) de [brouwer](proveedor)?"
+    - "prefiero [crema](producto) en [10ml](dosis)"
+    - "cambiá a [15](cantidad) de [Cloralen](producto)?"
+    - "mostrame [Nogastrol](producto) con [laurilsulfato de sodio](ingrediente_activo)?"
+    - "cambiemos a [Kuraderm](producto) con [por llegar](estado) y [38](cantidad_stock)"
+    - "prefiero ofertas con [48](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [canis](producto)"
+    - "en realidad quiero [Ivomec](producto) de [Boehringer](proveedor)"
+    - "prefiero [Bucal](producto) en [3 comprimidos](dosis)"
+    - "cambiá a [10](cantidad) de [Cerenia](producto)?"
+    - "mostrame [Seniorline](producto) con [diclorvos](ingrediente_activo)"
+    - "cambiemos a [prednisol](producto) con [por llegar](estado) y [27](cantidad_stock)"
+    - "prefiero ofertas con [36](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Neovita](producto)."
+    - "en realidad quiero [Kothrina](producto) de [Ceva](proveedor)"
+    - "prefiero [Pets](producto) en [3 comprimidos](dosis)?"
+    - "cambiá a [20](cantidad) de [pantoliv](producto)?"
+    - "mostrame [Terpan](producto) con [metoprene](ingrediente_activo)."
+    - "cambiemos a [vcc](producto) con [por llegar](estado) y [66](cantidad_stock)."
+    - "prefiero ofertas con [24](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Kobra](producto)?"
+    - "en realidad quiero [Shampoo](producto) de [Integhra-proveedor](proveedor)"
+    - "prefiero [advantage](producto) en [144mg](dosis)?"
+    - "cambiá a [20](cantidad) de [tobramax](producto)"
+    - "mostrame [Pimocard](producto) con [vitamina e acetato](ingrediente_activo)"
+    - "cambiemos a [Bagovac](producto) con [agotado](estado) y [35](cantidad_stock)"
+    - "prefiero ofertas con [21](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Gerioox](producto)"
+    - "en realidad quiero [drontal](producto) de [Integhra-proveedor](proveedor)?"
+    - "prefiero [Pimocard](producto) en [1 comprimidos](dosis)"
+    - "cambia a [18](cantidad) de [Legend](producto)"
+    - "mostrame [Plano](producto) con [moxidectin](ingrediente_activo)"
+    - "cambiemos a [Hepatoprotector](producto) con [agotado](estado) y [100](cantidad_stock)"
+    - "prefiero ofertas con 2[6](cantidad_stock), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Ursoliv](producto)?"
+    - "en realidad quiero [clamoxyl](producto) de [Zoetis](proveedor)"
+    - "prefiero [Flexapet](producto) en [397mg](dosis)."
+    - "cambia a [20](cantidad) de [sedomin](producto)"
+    - "mostrame [feliway](producto) con [extracto de rhamnus prushiana](ingrediente_activo)"
+    - "cambiemos a [complejo](producto) con [por llegar](estado) y [98](cantidad_stock)"
+    - "prefiero ofertas con [6](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Terpan](producto)"
+    - "en realidad quiero [Nogastrol](producto) de [Integhra-proveedor](proveedor)"
+    - "prefiero [Floxaday](producto) en [457mg](dosis)."
+    - "cambia a [10](cantidad) de [Endospot](producto)"
+    - "mostrame [prius](producto) con [butanos](ingrediente_activo)"
+    - "cambiemos a [pileran](producto) con [disponible](estado) y [71](cantidad_stock)"
+    - "prefiero ofertas con [47](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Otiflex](producto)"
+    - "en realidad quiero [Plano](producto) de [john](proveedor)"
+    - "prefiero [Apetil](producto) en [2 comprimidos](dosis)"
+    - "cambiá a [13](cantidad) de [ivomec](producto)"
+    - "mostrame [Fider](producto) con [biotina](ingrediente_activo)"
+    - "cambiemos a [cortidural](producto) con [agotado](estado) y [41](cantidad_stock)?"
+    - "prefiero ofertas con [28](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Tratam](producto)"
+    - "en realidad quiero [espuma](producto) de [Suizo argentina](proveedor)"
+    - "prefiero [Ketamina](producto) en [90mg](dosis)"
+    - "cambiá a [18](cantidad) de [Tramadol](producto)"
+    - "mostrame [Artroglycan](producto) con [benzocaina](ingrediente_activo)"
+    - "cambiemos a [algicam](producto) con [agotado](estado) y [27](cantidad_stock)"
+    - "prefiero ofertas con [29](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [colotrin](producto)"
+    - "en realidad quiero [tonico](producto) de [brouwer](proveedor)."
+    - "prefiero [neo](producto) en [73mg](dosis)."
+    - "cambiá a [6](cantidad) de [Atriben](producto)"
+    - "mostrame [Librela](producto) con [nicotinamida](ingrediente_activo)."
+    - "cambiemos a [Butormin](producto) con [disponible](estado) y [71](cantidad_stock)"
+    - "prefiero ofertas con [10](cantidad_descuento), [ejemplo_cantidad_bonificacion](cantidad_bonificacion) y [ejemplo_indicador_temporal](indicador_temporal)"
+    - "mejor mostrame [Ioduro](producto)?"
+    - "en realidad quiero [felilax](producto) de [Biogenesis](proveedor)"
+    - "prefiero [trihepat](producto) en [1 comprimidos](dosis)"
 
 - intent: afirmar
   examples: |
@@ -114,6 +1369,36 @@ nlu:
     - "perfecto"
     - "de acuerdo"
     - "siii"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)?"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)."
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
+    - "[ejemplo_sentimiento_positivo](sentimiento_positivo)"
 
 - intent: denegar
   examples: |
@@ -121,6 +1406,56 @@ nlu:
     - "no, gracias"
     - "incorrecto"
     - "no es así"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "[ejemplo_rechazo_total](rechazo_total)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)."
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)?"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)."
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)."
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), [ejemplo_rechazo_total](rechazo_total)"
+    - "no, [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "[ejemplo_rechazo_total](rechazo_total)."
 
 - intent: agradecimiento
   examples: |
@@ -136,6 +1471,26 @@ nlu:
     - "qué hora es"
     - "cómo está el tráfico"
     - "contame un cuento"
+    - "qué hora es?."
+    - "cómo está el clima?"
+    - "[ejemplo_solicitud_ayuda](solicitud_ayuda), no entiendo nada?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), esto no funciona"
+    - "[ejemplo_rechazo_total](rechazo_total), [ejemplo_sentimiento_negativo](sentimiento_negativo)."
+    - "qué hora es"
+    - "cómo está el clima"
+    - "[ejemplo_solicitud_ayuda](solicitud_ayuda), no entiendo nada"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), esto no funciona"
+    - "[ejemplo_rechazo_total](rechazo_total), [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "qué hora es?."
+    - "cómo está el clima?"
+    - "[ejemplo_solicitud_ayuda](solicitud_ayuda), no entiendo nada"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), esto no funciona"
+    - "[ejemplo_rechazo_total](rechazo_total), [ejemplo_sentimiento_negativo](sentimiento_negativo)"
+    - "que hora es?"
+    - "cómo está el clima?"
+    - "[ejemplo_solicitud_ayuda](solicitud_ayuda), no entiendo nada?"
+    - "[ejemplo_sentimiento_negativo](sentimiento_negativo), esto no funciona"
+    - "[ejemplo_rechazo_total](rechazo_total), [ejemplo_sentimiento_negativo](sentimiento_negativo)"
 
 - intent: out_of_scope
   examples: |
@@ -209,95 +1564,91 @@ nlu:
 
 - lookup: producto
   examples: |
-    - Acederm
-    - Adaptil
+    - Acedan
+    - Advantage
     - Advantix
     - Advocate
-    - Albex
     - Algicam
-    - Algidol
+    - Aminolite
     - Amoxivet
     - Anfotropina
     - Anti
     - Apetil
     - Aplonal
-    - Apoquel
-    - Artrin
     - Artroglycan
     - Artrosan
-    - Atb
+    - Atriben
     - Atropina
     - Aurix
     - Azitromicina
-    - Bactroflay
     - Bactroprofen
     - Bactrovet
     - Bagogard
+    - Bagomectina
+    - Bagovac
     - Barbitol
     - Basken
-    - Baycox
     - Baytril
-    - Bio
     - Biochip
     - Biox
     - Block
     - Btk
+    - Bucal
     - Butormin
     - Cae
-    - Calcificante
     - Calcio
     - Canis
     - Cardial
     - Carprodol
     - Cefalexina
     - Cefalong
-    - Ciclar
+    - Cerenia
+    - Cestodan
+    - Cetfur
+    - Ciclosporina
     - Cidar
     - Ciproplus
-    - Clamoxyl
-    - Clorhex
+    - Clavamox
+    - Cloralen
+    - Clorhexidina
     - Coagulante
     - Colirama
     - Colotrin
     - Comfortis
-    - Complejo
-    - Convenia
-    - Cortidural
+    - Condroitin
     - Credelio
-    - Curavet
+    - Crema
+    - Cumepina
     - Cytopoint
+    - Dectomax
     - Dermodene
     - Dermomax
-    - Dermoxil
     - Dexa
-    - Dexaflox
-    - Dexametasona
+    - Dexashock
+    - Diafin
     - Diazepam
     - Diazepet
+    - Dipirona
     - Diurene
     - Dominal
     - Doxilina
-    - Doxin
     - Doxivit
-    - Dozilam
     - Driptol
     - Drontal
     - Duosecretina
-    - Dynamide
     - Ecp
     - Ecthol
     - Ecthonil
     - Endectocida
     - Endospot
     - Energia
-    - Energomag
     - Enrofloxacina
     - Enroplus
     - Enroxina
+    - Entero
     - Enteroplus
-    - Epitelizante
+    - Episol
     - Eqvalan
-    - Espuma
     - Estreptocarbocaftiazol
     - Eutanasico
     - Euthanyle
@@ -305,74 +1656,89 @@ nlu:
     - Feliway
     - Fenobarbital
     - Fider
+    - Fip
     - Fipro
     - Fleegard
     - Flexapet
     - Floxaday
-    - Full
+    - Fluido
+    - Flurbiprofeno
+    - Fortepen
     - Furocal
-    - Galmetrin
+    - Gerioox
     - Giacoccide
-    - Glypondin
-    - Grupo
+    - Griseofulvina
     - Hepatoprotector
-    - Idocarb12
     - Injection
-    - Integhra
     - Ioduro
+    - Isiquick
     - Itraconazol
     - Ivermectina
-    - Ivermex
+    - Ivomec
+    - Kensol
+    - Ketafine
+    - Ketamid
+    - Ketamina
     - Kil
     - Kobra
-    - Kuramicina
+    - Kothrina
+    - Kuraderm
     - Labyderm
-    - Lectora
+    - Laxavet
     - Legend
     - Librela
     - Mayor
+    - Medroxiprogesterona
     - Meloxivet
     - Meltra
+    - Methiovertan
     - Moxidex
+    - Multivit
     - Mv
-    - Neo
-    - Neuroalivio
+    - Neovita
     - Nogastrol
+    - Nomat
     - Novotioc
+    - Nutrical
     - Ocladerm
     - Ocubiotic
     - Ohm
     - Ol
-    - Opter
+    - Osurnia
+    - Otiflex
     - Oxisol
     - Oxitetraciclina
-    - Pentabiotico
     - Pets
     - Pf
+    - Pigatoperro
     - Pileran
     - Pimobendan
     - Pimocard
     - Pip
-    - Poten
+    - Plano
     - Power
-    - Prednisol
+    - Pragma
     - Prednisolona
+    - Pregabaliv
+    - Previcox
     - Prius
     - Pro
+    - Proderma
     - Promafine
     - Protech
-    - Proteliv
     - Pruricilona
-    - Puppyline
     - Ranitidina
+    - Relay
     - Repexxin
     - Revol
+    - Rimadyl
     - Rochy
     - Rolenal
     - Seniorline
     - Seraquin
     - Serenex
     - Seresto
+    - Sh
     - Shampoo
     - Simparica
     - Sincelar
@@ -380,12 +1746,9 @@ nlu:
     - Solubron
     - Sosten
     - Spinomax
-    - Tau
     - Tea
     - Terpan
     - Terramicina
-    - Tipertox
-    - Tiu
     - Toltrazol
     - Tonico
     - Toracard
@@ -394,27 +1757,29 @@ nlu:
     - Tramadol
     - Tratam
     - Triavet
-    - Trihepat
     - Tripackprotech
     - Trivermex
+    - Trocoxil
+    - Ursoliv
     - Ursomarina
-    - Vcc
-    - Vermiplex
-    - Vermkon
+    - Vaquero
+    - Vetanarcol
     - Vetscan
-    - Vilisinh
     - Virbac
     - Vita
     - Vitamina
+    - Vitaminico
+    - Viviramv
+    - Voren
+    - Ziflor
     - acedan
+    - acederm
     - adaptil
     - advantage
     - advantix
-    - advocate
     - albex
     - algicam
     - algidol
-    - aminolite
     - antiverrugas
     - aplonal
     - apoquel
@@ -423,116 +1788,108 @@ nlu:
     - artrosan
     - artrovet
     - ascaricida
-    - atriben
+    - atb
+    - aurix
+    - azitromicina
     - bactroflay
     - bactroprofen
     - bactrovet
     - bagogard
-    - bagomectina
-    - bagovac
     - barbitol
     - basken
-    - baytril
+    - baycox
+    - bio
     - block
     - bromhexina
     - bucal
+    - calcificante
     - canis
     - cardial
-    - carprodol
     - cefalexina
     - cefalong
     - cephilexine
-    - cerenia
-    - cestodan
-    - cetfur
+    - ciclar
     - ciclosporina
     - cidar
-    - clavamox
-    - cloralen
+    - clamoxyl
     - clorhex
-    - clorhexidina
-    - coagulante
     - colotrin
     - comfortis
-    - condroitin
+    - complejo
+    - convenia
+    - cortidural
     - credelio
     - crema
-    - cumepina
+    - curavet
     - dectomax
     - dermodene
+    - dermomax
+    - dermoxil
     - dexa
+    - dexaflox
     - dexametasona
-    - dexashock
-    - diafin
     - diazepam
-    - dipirona
     - display
+    - diurene
     - doloalivio
     - dominal
     - doxilina
-    - doxivit
+    - doxin
+    - dozilam
+    - driptol
     - drontal
     - duosecretina
+    - dynamide
     - ecthol
     - ecthonil
     - ectocan
-    - endectocida
     - endospot
+    - energomag
     - enroplus
     - enroxina
-    - entero
     - enteroplus
     - enzimax
-    - episol
+    - epitelizante
+    - eqvalan
+    - espuma
     - eutanasico
     - fauna
     - felilax
     - feline
     - feliway
     - fenobarbital
-    - fider
     - fip
+    - fipro
     - floxaday
-    - fluido
-    - flurbiprofeno
     - fortekor
-    - fortepen
-    - furocal
+    - full
+    - galmetrin
     - genabil
-    - gerioox
     - giacoccide
+    - glypondin
     - griseofulvina
+    - grupo
     - hialurina
     - idocarb12
     - integhra
-    - isiquick
     - itraconazol
     - ivermex
     - ivomec
-    - kensol
-    - ketafine
-    - ketamid
-    - ketamina
-    - kil
     - kothrina
     - kuraderm
     - kuramicina
     - labyderm
-    - laxavet
+    - lectora
     - librela
     - linco
-    - medroxiprogesterona
+    - mayor
     - meloxivet
     - meltra
-    - methiovertan
     - moxidex
-    - multivit
     - mv
-    - neovita
+    - neo
+    - neuroalivio
     - nogastrol
-    - nomat
-    - novotioc
-    - nutrical
     - nutripet
     - ocladerm
     - ocubiotic
@@ -540,11 +1897,11 @@ nlu:
     - ofloxacina
     - ohm
     - ol
+    - opter
     - osteo
-    - osurnia
-    - otiflex
     - oxisol
     - pantoliv
+    - pentabiotico
     - pets
     - pf
     - pigatoperro
@@ -552,9 +1909,10 @@ nlu:
     - pimobendan
     - pimocard
     - pip
-    - plano
+    - poten
     - power
     - pragma
+    - prednisol
     - prednisolona
     - prednovet
     - pregabaliv
@@ -564,22 +1922,23 @@ nlu:
     - proderma
     - protech
     - proteliv
-    - relay
-    - repexxin
+    - puppyline
     - revol
     - rimadyl
     - rochy
     - rolenal
     - sedomin
     - semintra
-    - seniorline
     - serenex
+    - seresto
     - sh
     - shampoo
     - silihepatic
     - simparica
     - sincelar
+    - singestar
     - sosten
+    - spinomax
     - sulfavet
     - super
     - tau
@@ -587,6 +1946,8 @@ nlu:
     - tears
     - terpan
     - terramicina
+    - tipertox
+    - tiu
     - tobramax
     - toltrazol
     - tolzuril
@@ -595,40 +1956,40 @@ nlu:
     - totalvet
     - tramadol
     - tratam
+    - trihepat
     - tripackprotech
     - trivermex
     - trocoxil
-    - ursoliv
     - ursomarina
     - uv
     - vaquero
-    - vetanarcol
+    - vcc
+    - vermiplex
+    - vermkon
     - vetscan
+    - vilisinh
     - virbac
-    - vitaminico
-    - viviramv
-    - voren
-    - ziflor
+    - vita
 
 - lookup: proveedor
   examples: |
+    - Biogenesis
+    - Biogenesis bago
+    - Boehringer
+    - Boehringer ingelheim
     - Ceva
-    - Holliday
-    - Holliday scott s.a.
     - Integhra-proveedor
-    - John
-    - John martin
-    - Labyes
+    - Suizo
+    - Suizo argentina
     - Zoetis
-    - biogenesis
-    - biogenesis bago
-    - boehringer
-    - boehringer ingelheim
     - brouwer
+    - holliday
+    - holliday scott s.a.
+    - john
+    - john martin
     - konig
     - konig s.a.
-    - suizo
-    - suizo argentina
+    - labyes
 
 - lookup: categoria
   examples: |
