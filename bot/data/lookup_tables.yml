@@ -3,95 +3,91 @@ version: "3.1"
 nlu:
 - lookup: producto
   examples: |
-    - Acederm
-    - Adaptil
+    - Acedan
+    - Advantage
     - Advantix
     - Advocate
-    - Albex
     - Algicam
-    - Algidol
+    - Aminolite
     - Amoxivet
     - Anfotropina
     - Anti
     - Apetil
     - Aplonal
-    - Apoquel
-    - Artrin
     - Artroglycan
     - Artrosan
-    - Atb
+    - Atriben
     - Atropina
     - Aurix
     - Azitromicina
-    - Bactroflay
     - Bactroprofen
     - Bactrovet
     - Bagogard
+    - Bagomectina
+    - Bagovac
     - Barbitol
     - Basken
-    - Baycox
     - Baytril
-    - Bio
     - Biochip
     - Biox
     - Block
     - Btk
+    - Bucal
     - Butormin
     - Cae
-    - Calcificante
     - Calcio
     - Canis
     - Cardial
     - Carprodol
     - Cefalexina
     - Cefalong
-    - Ciclar
+    - Cerenia
+    - Cestodan
+    - Cetfur
+    - Ciclosporina
     - Cidar
     - Ciproplus
-    - Clamoxyl
-    - Clorhex
+    - Clavamox
+    - Cloralen
+    - Clorhexidina
     - Coagulante
     - Colirama
     - Colotrin
     - Comfortis
-    - Complejo
-    - Convenia
-    - Cortidural
+    - Condroitin
     - Credelio
-    - Curavet
+    - Crema
+    - Cumepina
     - Cytopoint
+    - Dectomax
     - Dermodene
     - Dermomax
-    - Dermoxil
     - Dexa
-    - Dexaflox
-    - Dexametasona
+    - Dexashock
+    - Diafin
     - Diazepam
     - Diazepet
+    - Dipirona
     - Diurene
     - Dominal
     - Doxilina
-    - Doxin
     - Doxivit
-    - Dozilam
     - Driptol
     - Drontal
     - Duosecretina
-    - Dynamide
     - Ecp
     - Ecthol
     - Ecthonil
     - Endectocida
     - Endospot
     - Energia
-    - Energomag
     - Enrofloxacina
     - Enroplus
     - Enroxina
+    - Entero
     - Enteroplus
-    - Epitelizante
+    - Episol
     - Eqvalan
-    - Espuma
     - Estreptocarbocaftiazol
     - Eutanasico
     - Euthanyle
@@ -99,74 +95,89 @@ nlu:
     - Feliway
     - Fenobarbital
     - Fider
+    - Fip
     - Fipro
     - Fleegard
     - Flexapet
     - Floxaday
-    - Full
+    - Fluido
+    - Flurbiprofeno
+    - Fortepen
     - Furocal
-    - Galmetrin
+    - Gerioox
     - Giacoccide
-    - Glypondin
-    - Grupo
+    - Griseofulvina
     - Hepatoprotector
-    - Idocarb12
     - Injection
-    - Integhra
     - Ioduro
+    - Isiquick
     - Itraconazol
     - Ivermectina
-    - Ivermex
+    - Ivomec
+    - Kensol
+    - Ketafine
+    - Ketamid
+    - Ketamina
     - Kil
     - Kobra
-    - Kuramicina
+    - Kothrina
+    - Kuraderm
     - Labyderm
-    - Lectora
+    - Laxavet
     - Legend
     - Librela
     - Mayor
+    - Medroxiprogesterona
     - Meloxivet
     - Meltra
+    - Methiovertan
     - Moxidex
+    - Multivit
     - Mv
-    - Neo
-    - Neuroalivio
+    - Neovita
     - Nogastrol
+    - Nomat
     - Novotioc
+    - Nutrical
     - Ocladerm
     - Ocubiotic
     - Ohm
     - Ol
-    - Opter
+    - Osurnia
+    - Otiflex
     - Oxisol
     - Oxitetraciclina
-    - Pentabiotico
     - Pets
     - Pf
+    - Pigatoperro
     - Pileran
     - Pimobendan
     - Pimocard
     - Pip
-    - Poten
+    - Plano
     - Power
-    - Prednisol
+    - Pragma
     - Prednisolona
+    - Pregabaliv
+    - Previcox
     - Prius
     - Pro
+    - Proderma
     - Promafine
     - Protech
-    - Proteliv
     - Pruricilona
-    - Puppyline
     - Ranitidina
+    - Relay
     - Repexxin
     - Revol
+    - Rimadyl
     - Rochy
     - Rolenal
     - Seniorline
     - Seraquin
     - Serenex
     - Seresto
+    - Sh
     - Shampoo
     - Simparica
     - Sincelar
@@ -174,12 +185,9 @@ nlu:
     - Solubron
     - Sosten
     - Spinomax
-    - Tau
     - Tea
     - Terpan
     - Terramicina
-    - Tipertox
-    - Tiu
     - Toltrazol
     - Tonico
     - Toracard
@@ -188,27 +196,29 @@ nlu:
     - Tramadol
     - Tratam
     - Triavet
-    - Trihepat
     - Tripackprotech
     - Trivermex
+    - Trocoxil
+    - Ursoliv
     - Ursomarina
-    - Vcc
-    - Vermiplex
-    - Vermkon
+    - Vaquero
+    - Vetanarcol
     - Vetscan
-    - Vilisinh
     - Virbac
     - Vita
     - Vitamina
+    - Vitaminico
+    - Viviramv
+    - Voren
+    - Ziflor
     - acedan
+    - acederm
     - adaptil
     - advantage
     - advantix
-    - advocate
     - albex
     - algicam
     - algidol
-    - aminolite
     - antiverrugas
     - aplonal
     - apoquel
@@ -217,116 +227,108 @@ nlu:
     - artrosan
     - artrovet
     - ascaricida
-    - atriben
+    - atb
+    - aurix
+    - azitromicina
     - bactroflay
     - bactroprofen
     - bactrovet
     - bagogard
-    - bagomectina
-    - bagovac
     - barbitol
     - basken
-    - baytril
+    - baycox
+    - bio
     - block
     - bromhexina
     - bucal
+    - calcificante
     - canis
     - cardial
-    - carprodol
     - cefalexina
     - cefalong
     - cephilexine
-    - cerenia
-    - cestodan
-    - cetfur
+    - ciclar
     - ciclosporina
     - cidar
-    - clavamox
-    - cloralen
+    - clamoxyl
     - clorhex
-    - clorhexidina
-    - coagulante
     - colotrin
     - comfortis
-    - condroitin
+    - complejo
+    - convenia
+    - cortidural
     - credelio
     - crema
-    - cumepina
+    - curavet
     - dectomax
     - dermodene
+    - dermomax
+    - dermoxil
     - dexa
+    - dexaflox
     - dexametasona
-    - dexashock
-    - diafin
     - diazepam
-    - dipirona
     - display
+    - diurene
     - doloalivio
     - dominal
     - doxilina
-    - doxivit
+    - doxin
+    - dozilam
+    - driptol
     - drontal
     - duosecretina
+    - dynamide
     - ecthol
     - ecthonil
     - ectocan
-    - endectocida
     - endospot
+    - energomag
     - enroplus
     - enroxina
-    - entero
     - enteroplus
     - enzimax
-    - episol
+    - epitelizante
+    - eqvalan
+    - espuma
     - eutanasico
     - fauna
     - felilax
     - feline
     - feliway
     - fenobarbital
-    - fider
     - fip
+    - fipro
     - floxaday
-    - fluido
-    - flurbiprofeno
     - fortekor
-    - fortepen
-    - furocal
+    - full
+    - galmetrin
     - genabil
-    - gerioox
     - giacoccide
+    - glypondin
     - griseofulvina
+    - grupo
     - hialurina
     - idocarb12
     - integhra
-    - isiquick
     - itraconazol
     - ivermex
     - ivomec
-    - kensol
-    - ketafine
-    - ketamid
-    - ketamina
-    - kil
     - kothrina
     - kuraderm
     - kuramicina
     - labyderm
-    - laxavet
+    - lectora
     - librela
     - linco
-    - medroxiprogesterona
+    - mayor
     - meloxivet
     - meltra
-    - methiovertan
     - moxidex
-    - multivit
     - mv
-    - neovita
+    - neo
+    - neuroalivio
     - nogastrol
-    - nomat
-    - novotioc
-    - nutrical
     - nutripet
     - ocladerm
     - ocubiotic
@@ -334,11 +336,11 @@ nlu:
     - ofloxacina
     - ohm
     - ol
+    - opter
     - osteo
-    - osurnia
-    - otiflex
     - oxisol
     - pantoliv
+    - pentabiotico
     - pets
     - pf
     - pigatoperro
@@ -346,9 +348,10 @@ nlu:
     - pimobendan
     - pimocard
     - pip
-    - plano
+    - poten
     - power
     - pragma
+    - prednisol
     - prednisolona
     - prednovet
     - pregabaliv
@@ -358,22 +361,23 @@ nlu:
     - proderma
     - protech
     - proteliv
-    - relay
-    - repexxin
+    - puppyline
     - revol
     - rimadyl
     - rochy
     - rolenal
     - sedomin
     - semintra
-    - seniorline
     - serenex
+    - seresto
     - sh
     - shampoo
     - silihepatic
     - simparica
     - sincelar
+    - singestar
     - sosten
+    - spinomax
     - sulfavet
     - super
     - tau
@@ -381,6 +385,8 @@ nlu:
     - tears
     - terpan
     - terramicina
+    - tipertox
+    - tiu
     - tobramax
     - toltrazol
     - tolzuril
@@ -389,40 +395,40 @@ nlu:
     - totalvet
     - tramadol
     - tratam
+    - trihepat
     - tripackprotech
     - trivermex
     - trocoxil
-    - ursoliv
     - ursomarina
     - uv
     - vaquero
-    - vetanarcol
+    - vcc
+    - vermiplex
+    - vermkon
     - vetscan
+    - vilisinh
     - virbac
-    - vitaminico
-    - viviramv
-    - voren
-    - ziflor
+    - vita
 
 - lookup: proveedor
   examples: |
+    - Biogenesis
+    - Biogenesis bago
+    - Boehringer
+    - Boehringer ingelheim
     - Ceva
-    - Holliday
-    - Holliday scott s.a.
     - Integhra-proveedor
-    - John
-    - John martin
-    - Labyes
+    - Suizo
+    - Suizo argentina
     - Zoetis
-    - biogenesis
-    - biogenesis bago
-    - boehringer
-    - boehringer ingelheim
     - brouwer
+    - holliday
+    - holliday scott s.a.
+    - john
+    - john martin
     - konig
     - konig s.a.
-    - suizo
-    - suizo argentina
+    - labyes
 
 - lookup: categoria
   examples: |
