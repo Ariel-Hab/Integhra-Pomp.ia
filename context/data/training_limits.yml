@@ -16,11 +16,11 @@ intent_limits:
   agradecimiento: 30       # Pocos - común pero simple
   
   # === SMALL TALK (MÍNIMOS) ===
-  saludo: 0                # Solo ejemplos fijos
-  preguntar_como_estas: 0  # Solo ejemplos fijos
-  responder_estoy_bien: 0  # Solo ejemplos fijos
-  despedida: 0             # Solo ejemplos fijos
-  pedir_chiste: 0          # Solo ejemplos fijos
+  saludo: 10                # Solo ejemplos fijos
+  preguntar_como_estas: 10  # Solo ejemplos fijos
+  responder_estoy_bien: 10  # Solo ejemplos fijos
+  despedida: 10             # Solo ejemplos fijos
+  pedir_chiste: 10          # Solo ejemplos fijos
   responder_como_estoy: 25 # Pocos templates emocionales
   reirse_chiste: 15        # Muy pocos
   
@@ -71,5 +71,5 @@ profiles:
       buscar_producto: 300
       buscar_oferta: 250  
       completar_pedido: 150
-      saludo: 0
-      despedida: 0
+      saludo: 10
+      despedida: 10

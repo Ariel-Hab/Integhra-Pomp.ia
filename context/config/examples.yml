@@ -1,0 +1,123 @@
+# examples.yml - Ejemplos mejorados con roles y grupos de Rasa
+version: "3.1"
+
+# ======================================================================
+# 🔹 EJEMPLOS PARA GRUPO SMALL_TALK
+# ======================================================================
+
+saludo:
+  - "hola"
+  - "buenas"
+  - "qué tal"
+  - "buen día"
+  - "buenas tardes"
+  - "che, cómo andás"
+  - "hola, qué tal todo"
+  - "buenas, cómo va la cosa"
+  - "qué hacés"
+  - "cómo te va"
+
+preguntar_como_estas:
+  - "cómo estás {sentimiento:sentiment_analysis:core}?"
+  - "cómo andás {sentimiento:sentiment_analysis:core}?"
+  - "qué tal todo {sentimiento:sentiment_analysis:core}?"
+  - "cómo va {sentimiento:sentiment_analysis:core}?"
+  - "todo bien {sentimiento:sentiment_analysis:core}?"
+  - "cómo la estás pasando {sentimiento:sentiment_analysis:core}?"
+
+despedida:
+  - "chau {sentimiento:sentiment_analysis:core}"
+  - "hasta luego {sentimiento:sentiment_analysis:core}"
+  - "nos vemos {sentimiento:sentiment_analysis:core}"
+  - "que tengas buen día {sentimiento:sentiment_analysis:core}"
+  - "gracias por todo, nos vemos {sentimiento:sentiment_analysis:core}"
+  - "perfecto, hasta la próxima {sentimiento:sentiment_analysis:core}"
+  - "dale, cualquier cosa me escribís {sentimiento:sentiment_analysis:core}"
+  - "un abrazo {sentimiento:sentiment_analysis:core}"
+  - "nos estamos viendo {sentimiento:sentiment_analysis:core}"
+
+# ======================================================================
+# 🔹 EJEMPLOS PARA GRUPO BUSQUEDA CON ENTIDADES, ROLES Y GRUPOS
+# ======================================================================
+
+buscar_producto:
+  - "necesito [ivermectina]{producto:search_primary:search} que sea [mejor que]{comparador:comparison_filters:search}"
+  - "buscando [vacuna]{producto:search_primary:search} [más barata que]{comparador:comparison_filters:search} la de [zoetis]{proveedor:search_secondary:search}"
+  - "quiero [antiparasitario]{producto:search_primary:search} [igual de bueno que]{comparador:comparison_filters:search} el de [biogenesis]{proveedor:search_secondary:search}"
+  - "necesito [antibiótico]{producto:search_primary:search} [similar a]{comparador:comparison_filters:search} lo que uso habitualmente"
+  - "buscando algo [más efectivo que]{comparador:comparison_filters:search} la [penicilina]{producto:search_primary:search}"
+  - "necesito [vacuna]{producto:search_primary:search} para [esta semana]{tiempo:filtro_tiempo:search}"
+  - "buscando [antiparasitario]{producto:search_primary:search} que llegó [ayer]{tiempo:filtro_tiempo:search}"
+  - "quiero [vitaminas]{producto:search_primary:search} [recientes]{tiempo:filtro_tiempo:search}"
+  - "necesito [antibiótico]{producto:search_primary:search} para [el lunes]{tiempo:filtro_tiempo:search}"
+  - "productos que llegaron [el miércoles]{tiempo:filtro_tiempo:search}"
+  - "medicamentos de [este mes]{tiempo:filtro_tiempo:search}"
+  - "necesito [ivermectina]{producto:search_primary:search} de [zoetis]{proveedor:search_secondary:search} para [bovino]{animal:filtro_animal:search} [mejor que]{comparador:comparison_filters:search}"
+
+buscar_oferta:
+  - "hay [ivermectina]{producto:search_primary:search} con [20%]{cantidad:filters_numeric:search} de descuento"
+  - "ofertas de [zoetis]{proveedor:search_secondary:search} con [15%]{cantidad:filters_numeric:search} off"
+  - "promociones en [vacunas]{categoria:search_primary:search} [mejores que]{comparador:comparison_filters:search} la semana pasada"
+  - "descuentos del [25%]{cantidad:filters_numeric:search} en [antibióticos]{producto:search_primary:search} para [bovino]{animal:filtro_animal:search}"
+  - "ofertas [más grandes que]{comparador:comparison_filters:search} el [10%]{cantidad:filters_numeric:search} habitual"
+  - "bonificaciones [2x1]{cantidad_bonificacion:filters_numeric:search} en [antiparasitarios]{categoria:search_primary:search}"
+  - "promociones [3x2]{cantidad_bonificacion:filters_numeric:search} [mejores que]{comparador:comparison_filters:search} las anteriores"
+
+modificar_busqueda:
+  - "mejor que busque algo [más barato que]{comparador:comparison_filters:search} eso"
+  - "cambio por algo [similar a]{comparador:comparison_filters:search} lo que pedí"
+  - "prefiero algo [con menos de]{comparador:comparison_filters:search} [15%]{cantidad:filters_numeric:search} de descuento"
+  - "mejor algo para [el miércoles]{tiempo:filtro_tiempo:search} en lugar de [hoy]{tiempo:filtro_tiempo:search}"
+  - "cambio la fecha para [la semana que viene]{tiempo:filtro_tiempo:search}"
+  - "necesito algo [más efectivo que]{comparador:comparison_filters:search} lo que me mostraste"
+  - "cambio por [ivermectina]{producto:search_primary:search} en lugar de [vacuna]{producto:search_primary:search}"
+
+afirmar:
+  - "sí"
+  - "dale"
+  - "perfecto"
+  - "está bien"
+  - "sí, me sirve"
+  - "dale, lo necesito para [mañana]{tiempo:filtro_tiempo:search}"
+  - "perfecto, [mejor que]{comparador:comparison_filters:search} el anterior"
+
+denegar:
+  - "no"
+  - "no me sirve"
+  - "no es lo que busco"
+  - "no, prefiero algo [mejor que]{comparador:comparison_filters:search}"
+  - "no, necesito algo para [otra fecha]{tiempo:filtro_tiempo:search}"
+  - "no me convence, [muy caro]{estado:filters_categorical:search}"
+
+completar_pedido:
+  - "confirmo el pedido de [ivermectina]{producto:search_primary:search}"
+  - "perfecto, lo necesito para [el lunes]{tiempo:filtro_tiempo:search}"
+  - "dale, con el [20%]{cantidad:filters_numeric:search} de descuento"
+  - "confirmo, [mejor que]{comparador:comparison_filters:search} el precio anterior"
+
+agradecimiento:
+  - "gracias"
+  - "perfecto, gracias"
+  - "genial, muchas gracias"
+  - "excelente, gracias por la ayuda"
+  - "buenísimo, [mejor que]{comparador:comparison_filters:search} la última vez"
+
+# ======================================================================
+# 🔹 EJEMPLOS PARA FALLO / CONTEXTO
+# ======================================================================
+
+off_topic:
+  - "cómo está el clima"
+  - "qué tal el fútbol"
+  - "me podés ayudar con otra cosa"
+  - "cambio de tema"
+
+out_of_scope:
+  - "vendés autos"
+  - "tenés información de medicina humana"
+  - "podés ayudarme con computadoras"
+
+ambiguity_fallback:
+  - "eso"
+  - "lo que me dijiste"
+  - "como siempre"

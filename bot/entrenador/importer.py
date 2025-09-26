@@ -1,6 +1,5 @@
 import os
 import re
-import csv
 import yaml
 import random
 import unicodedata
@@ -44,10 +43,10 @@ class SimpleImportLogger:
         
         if failed:
             print(f"❌ Fallos ({len(failed)}):")
-            for entity, error in failed[:5]:  # Solo mostrar primeros 5
+            for entity, error in failed[:3]:  # Solo mostrar primeros 3
                 print(f"   • {entity}: {error}")
-            if len(failed) > 5:
-                print(f"   ... y {len(failed) - 5} errores más")
+            if len(failed) > 3:
+                print(f"   ... y {len(failed) - 3} errores más")
         
         print("=" * 60)
 
@@ -77,6 +76,7 @@ class UnifiedEntityManager:
                     entities_file = Path(entities_path)
                 
                 if not entities_file.exists():
+                    print(f"❌ Archivo entities.yml no encontrado en: {entities_file}")
                     return {}
                 
                 with open(entities_file, 'r', encoding='utf-8') as f:
@@ -84,7 +84,8 @@ class UnifiedEntityManager:
                 
                 _UNIFIED_CONFIG_CACHE = config
                 
-            except Exception:
+            except Exception as e:
+                print(f"❌ Error cargando entities.yml: {e}")
                 _UNIFIED_CONFIG_CACHE = {}
                 
         return _UNIFIED_CONFIG_CACHE
@@ -102,6 +103,9 @@ class UnifiedEntityManager:
         Returns: (lookup_tables, failed_entities)
         """
         config = UnifiedEntityManager.cargar_entities_config()
+        if not config:
+            return {}, [("config", "No se pudo cargar entities.yml")]
+            
         csv_processing = config.get("csv_processing", {})
         lookup_entities = config.get("lookup_entities", {})
         
@@ -121,104 +125,90 @@ class UnifiedEntityManager:
         
         SimpleImportLogger.log_start(total_entities, csv_files)
 
-        # Funciones de procesamiento reutilizables
-        def quitar_acentos(texto):
-            return ''.join(c for c in unicodedata.normalize('NFD', texto)
-                           if unicodedata.category(c) != 'Mn')
-
-        def limpiar_y_extraer_compuestos(texto_compuesto):
-            """Extrae compuestos químicos de texto"""
-            PALABRAS_IRRELEVANTES = [
-                'excipientes', 'csp', 'agua destilada', 'contenido de', 'cada',
-                'ml', 'g', 'mg', 'unidad', 'unidades', 'equivalente a', 'por',
-                'comp', 'tableta', 'comprimido', 'mgml'
-            ]
-            
-            texto = texto_compuesto.lower()
-            texto = quitar_acentos(texto)
-            texto = re.sub(r'\([^)]*\)', ' ', texto)
-            texto = re.sub(r'[:;+/]', ',', texto)
-            texto = re.sub(r'\b(c\.?s\.?p\.?|principios? activos?:?|contenido:?|cont(?:iene|:)?|formula:?|componentes?:?)\b', '', texto)
-            texto = re.sub(r'\b(mg|g|ml|ui|mcg|mcg/ml|%)\b', ' ', texto)
-            texto = re.sub(r'[^\w\s,]', ' ', texto)
-            texto = re.sub(r'\s+', ' ', texto).strip()
-            
-            for palabra in PALABRAS_IRRELEVANTES:
-                palabra_esc = re.escape(palabra)
-                texto = re.sub(r'\b' + palabra_esc + r'\b', ' ', texto, flags=re.IGNORECASE)
-            texto = re.sub(r'\s+', ' ', texto).strip()
-
-            patron = re.compile(r'([a-záéíóúñü\-]+(?: [a-záéíóúñü\-]+)*)', re.IGNORECASE)
-            candidatos = patron.findall(texto)
-            compuestos = [c.strip() for c in candidatos if len(c.strip()) >= 3 and not re.fullmatch(r'[\d\s,.]+', c)]
-            return sorted(set(compuestos))
-
         def procesar_csv(csv_config_name: str, csv_config: Dict[str, Any]) -> List[str]:
-            """Procesa un CSV según la configuración con ruta dinámica"""
-            csv_filename = csv_config["file"]
-            possible_paths = [
-                data_dir_path / csv_filename,
-                project_root / "bot" / "data" / csv_filename
-            ]
-            
-            file_path = None
-            for path in possible_paths:
-                if path.exists():
-                    file_path = path
-                    break
-            
-            if file_path is None:
-                raise FileNotFoundError(f"CSV no encontrado: {csv_filename}")
+            """Procesa un CSV según la configuración con manejo de errores mejorado"""
+            try:
+                csv_filename = csv_config["file"]
+                possible_paths = [
+                    data_dir_path / csv_filename,
+                    project_root / "bot" / "data" / csv_filename
+                ]
+                
+                file_path = None
+                for path in possible_paths:
+                    if path.exists():
+                        file_path = path
+                        break
+                
+                if file_path is None:
+                    raise FileNotFoundError(f"CSV no encontrado: {csv_filename}")
 
-            df = pd.read_csv(file_path, on_bad_lines='skip')
-            
-            # Aplicar filtros específicos
-            filters = csv_config.get("filters", [])
-            for filter_config in filters:
-                if isinstance(filter_config, dict):
-                    for filter_name, filter_value in filter_config.items():
-                        if filter_name == "enterprise_type_id" and "enterprise_type_id" in df.columns:
-                            df = df[df["enterprise_type_id"].isin(filter_value)]
+                df = pd.read_csv(file_path, on_bad_lines='skip')
+                if df.empty:
+                    raise ValueError("CSV está vacío")
+                
+                # Aplicar filtros específicos
+                filters = csv_config.get("filters", [])
+                for filter_config in filters:
+                    if isinstance(filter_config, dict):
+                        for filter_name, filter_value in filter_config.items():
+                            if filter_name == "enterprise_type_id" and "enterprise_type_id" in df.columns:
+                                df = df[df["enterprise_type_id"].isin(filter_value)]
 
-            resultados = []
-            column = csv_config["column"]
-            tipo = csv_config["type"]
-            
-            for row in df.itertuples(index=False):
-                valor_raw = getattr(row, column, "")
-                if pd.isna(valor_raw):
-                    continue
-                valor_raw = str(valor_raw).strip()
-                if not valor_raw or valor_raw == "." or len(valor_raw) == 1:
-                    continue
+                resultados = []
+                column = csv_config["column"]
+                tipo = csv_config["type"]
+                
+                if column not in df.columns:
+                    raise ValueError(f"Columna '{column}' no encontrada en CSV")
+                
+                for row in df.itertuples(index=False):
+                    try:
+                        valor_raw = getattr(row, column, "")
+                        if pd.isna(valor_raw):
+                            continue
+                        valor_raw = str(valor_raw).strip()
+                        if not valor_raw or valor_raw == "." or len(valor_raw) == 1:
+                            continue
 
-                # Procesamiento específico por tipo
-                if tipo == "producto":
-                    nombre_raw, _ = extraer_nombre_y_dosis(valor_raw)
-                    nombre = formatear_nombre(nombre_raw)
-                    if nombre and len(nombre) > 1:
-                        resultados.append(nombre)
-                elif tipo == "ingrediente_activo":
-                    resultados.extend(limpiar_y_extraer_compuestos(valor_raw))
-                elif tipo == "categoria":
-                    categoria = limpiar_texto(valor_raw)
-                    if categoria and len(categoria) > 1:
-                        resultados.append(categoria)
-                elif tipo == "proveedor":
-                    proveedor_full = formatear_nombre(valor_raw)
-                    if proveedor_full and len(proveedor_full) > 1:
-                        resultados.append(proveedor_full)
-                        # Agregar primera palabra como variante si está configurado
-                        if any(f.get("add_first_word") for f in filters if isinstance(f, dict)):
-                            palabras = proveedor_full.split()
-                            if len(palabras) > 1:
-                                resultados.append(palabras[0])
-                else:
-                    limpio = limpiar_texto(valor_raw)
-                    if limpio and len(limpio) > 1:
-                        resultados.append(limpio)
+                        # Procesamiento específico por tipo
+                        if tipo == "producto":
+                            nombre_raw, _ = extraer_nombre_y_dosis(valor_raw)
+                            nombre = formatear_nombre(nombre_raw)
+                            if nombre and len(nombre) > 1:
+                                resultados.append(nombre)
+                                
+                        elif tipo == "ingrediente_activo":
+                            compuestos = limpiar_y_extraer_compuestos(valor_raw)
+                            resultados.extend(compuestos)
+                            
+                        elif tipo == "categoria":
+                            categoria = limpiar_texto(valor_raw)
+                            if categoria and len(categoria) > 1:
+                                resultados.append(categoria)
+                                
+                        elif tipo == "proveedor":
+                            proveedor_full = formatear_nombre(valor_raw)
+                            if proveedor_full and len(proveedor_full) > 1:
+                                resultados.append(proveedor_full)
+                                # Agregar primera palabra como variante si está configurado
+                                if any(f.get("add_first_word") for f in filters if isinstance(f, dict)):
+                                    palabras = proveedor_full.split()
+                                    if len(palabras) > 1:
+                                        resultados.append(palabras[0])
+                        else:
+                            limpio = limpiar_texto(valor_raw)
+                            if limpio and len(limpio) > 1:
+                                resultados.append(limpio)
+                                
+                    except Exception as e:
+                        # Error procesando fila individual - continuar
+                        continue
                         
-            return sorted(set(resultados))
+                return sorted(set(resultados))
+                
+            except Exception as e:
+                raise Exception(f"Error procesando CSV {csv_config_name}: {e}")
 
         # Procesar todas las entidades con lookup tables
         successful = {}
@@ -230,10 +220,15 @@ class UnifiedEntityManager:
                     if csv_config_name in csv_processing:
                         csv_config = csv_processing[csv_config_name]
                         resultados = procesar_csv(csv_config_name, csv_config)
-                        lookup_tables[entity_name] = resultados
-                        successful[entity_name] = len(resultados)
+                        
+                        if resultados:
+                            lookup_tables[entity_name] = resultados
+                            successful[entity_name] = len(resultados)
+                        else:
+                            failed_entities.append((entity_name, "No se generaron resultados válidos"))
                     else:
                         failed_entities.append((entity_name, f"Configuración CSV no encontrada: {csv_config_name}"))
+                        
                 elif entity_config.get("source") == "alias":
                     # Manejar alias (ej: compuesto -> ingrediente_activo)
                     alias_of = entity_config["alias_of"]
@@ -256,7 +251,10 @@ class UnifiedEntityManager:
         
         patterns_dict = {}
         for entity_name, entity_data in pattern_entities.items():
-            patterns_dict[entity_name] = entity_data.get("patterns", [])
+            if isinstance(entity_data, dict):
+                patterns_dict[entity_name] = entity_data.get("patterns", [])
+            elif isinstance(entity_data, list):
+                patterns_dict[entity_name] = entity_data
             
         return patterns_dict
 
@@ -275,15 +273,15 @@ class UnifiedEntityManager:
         base_examples = {
             "cantidad_descuento": [
                 f"{i}%" for i in range(10, 81, 5)  # 10%, 15%, ..., 80%
-            ] + ["2x1", "3x2", "4x3", "mitad de precio", "precio promocional"],
+            ] + ["2x1", "3x2", "4x3", "mitad de precio"],
             
             "cantidad_bonificacion": [
                 f"{i}%" for i in range(10, 51, 5)  # 10%, 15%, ..., 50%
-            ] + ["2x1", "3x2", "lleva 2 paga 1", "bonus", "regalo", "gratis"],
+            ] + ["2x1", "3x2", "lleva 2 paga 1", "bonus", "regalo"],
             
             "cantidad_stock": [
                 f"{i} unidades" for i in [1, 5, 10, 20, 50, 100]
-            ] + ["pocas unidades", "stock limitado", "sin stock", "mucho stock", "agotado", "disponible"]
+            ] + ["pocas unidades", "stock limitado", "disponible", "agotado"]
         }
         
         # Filtrar solo las entidades dinámicas configuradas
@@ -294,6 +292,61 @@ class UnifiedEntityManager:
                 
         return result
 
+    @staticmethod
+    def obtener_entidades_disponibles() -> Dict[str, Any]:
+        """Devuelve información completa sobre todas las entidades disponibles"""
+        config = UnifiedEntityManager.cargar_entities_config()
+        
+        lookup_entities = list(config.get("lookup_entities", {}).keys())
+        pattern_entities = list(config.get("pattern_entities", {}).keys())
+        dynamic_entities = list(config.get("dynamic_entities", {}).keys())
+        
+        return {
+            "lookup_entities": lookup_entities,
+            "pattern_entities": pattern_entities,
+            "dynamic_entities": dynamic_entities,
+            "total_entities": len(lookup_entities) + len(pattern_entities) + len(dynamic_entities),
+            "entities_config": config
+        }
+
+
+def limpiar_y_extraer_compuestos(texto_compuesto: str) -> List[str]:
+    """Extrae compuestos químicos de texto mejorado"""
+    if not texto_compuesto or pd.isna(texto_compuesto):
+        return []
+        
+    PALABRAS_IRRELEVANTES = [
+        'excipientes', 'csp', 'agua destilada', 'contenido de', 'cada',
+        'ml', 'g', 'mg', 'unidad', 'unidades', 'equivalente a', 'por',
+        'comp', 'tableta', 'comprimido', 'mgml'
+    ]
+    
+    def quitar_acentos(texto):
+        return ''.join(c for c in unicodedata.normalize('NFD', texto)
+                       if unicodedata.category(c) != 'Mn')
+    
+    try:
+        texto = str(texto_compuesto).lower()
+        texto = quitar_acentos(texto)
+        texto = re.sub(r'\([^)]*\)', ' ', texto)
+        texto = re.sub(r'[:;+/]', ',', texto)
+        texto = re.sub(r'\b(c\.?s\.?p\.?|principios? activos?:?|contenido:?|cont(?:iene|:)?|formula:?|componentes?:?)\b', '', texto)
+        texto = re.sub(r'\b(mg|g|ml|ui|mcg|mcg/ml|%)\b', ' ', texto)
+        texto = re.sub(r'[^\w\s,]', ' ', texto)
+        texto = re.sub(r'\s+', ' ', texto).strip()
+        
+        for palabra in PALABRAS_IRRELEVANTES:
+            palabra_esc = re.escape(palabra)
+            texto = re.sub(r'\b' + palabra_esc + r'\b', ' ', texto, flags=re.IGNORECASE)
+        texto = re.sub(r'\s+', ' ', texto).strip()
+
+        patron = re.compile(r'([a-záéíóúñü\-]+(?: [a-záéíóúñü\-]+)*)', re.IGNORECASE)
+        candidatos = patron.findall(texto)
+        compuestos = [c.strip() for c in candidatos if len(c.strip()) >= 3 and not re.fullmatch(r'[\d\s,.]+', c)]
+        return sorted(set(compuestos))
+        
+    except Exception:
+        return []
 
 
 def generar_imports_unificado(data_dir: str = "data") -> Tuple[Dict[str, List[str]], Dict[str, List[str]], Dict[str, Dict[str, Any]]]:
@@ -320,9 +373,9 @@ def generar_imports_unificado(data_dir: str = "data") -> Tuple[Dict[str, List[st
     
     # 3. Obtener información de dynamic entities
     dynamic_entities_info = UnifiedEntityManager.obtener_dynamic_entities_info()
-    dynamic_examples = UnifiedEntityManager.generar_dynamic_entities_examples()
     
     return lookup_tables, pattern_entities, dynamic_entities_info
+
 
 def exportar_lookup_tables_csv(lookup_tables: Dict[str, List[str]], output_dir: str = "data"):
     """Exporta lookup tables a archivos CSV individuales (compatibilidad)"""
@@ -338,9 +391,14 @@ def exportar_lookup_tables_csv(lookup_tables: Dict[str, List[str]], output_dir: 
     for entity_name, values in lookup_tables.items():
         if values:  # Solo exportar si hay valores
             csv_path = output_path / f"{entity_name}_lookup.csv"
-            with open(csv_path, 'w', encoding='utf-8') as f:
-                for value in sorted(set(values)):
-                    f.write(f"{value}\n")
+            try:
+                with open(csv_path, 'w', encoding='utf-8', newline='') as f:
+                    for value in sorted(set(values)):
+                        if value and isinstance(value, str):
+                            f.write(f"{value}\n")
+            except Exception as e:
+                print(f"❌ Error exportando {entity_name}: {e}")
+
 
 # Funciones de compatibilidad con el sistema anterior
 def generar_imports(data_dir: str = "data") -> Tuple[Dict[str, List[str]], Dict[str, Any]]:
@@ -350,37 +408,27 @@ def generar_imports(data_dir: str = "data") -> Tuple[Dict[str, List[str]], Dict[
     # Exportar CSVs para compatibilidad
     exportar_lookup_tables_csv(lookup_tables, data_dir)
     
-    # Generar entidades por producto (compatibilidad)
+    # Generar entidades por producto (compatibilidad simplificada)
     entidades_por_producto = {}
     productos = lookup_tables.get("producto", [])
     if productos:
         # Simplificado para compatibilidad
-        for i, producto in enumerate(productos[:100]):  # Limitar para eficiencia
+        for i, producto in enumerate(productos[:50]):  # Limitar para eficiencia
             entidades_por_producto[producto] = {
                 "nombre": producto,
                 "producto": producto,
-                "proveedor": random.choice(lookup_tables.get("proveedor", ["Proveedor"])),
-                "categoria": random.choice(lookup_tables.get("categoria", ["Categoria"])),
+                "proveedor": random.choice(lookup_tables.get("proveedor", ["Proveedor Ejemplo"])),
+                "categoria": random.choice(lookup_tables.get("categoria", ["Categoria Ejemplo"])),
             }
     
     return lookup_tables, entidades_por_producto
 
+
 # Funciones de utilidad
 def obtener_entidades_disponibles() -> Dict[str, Any]:
     """Devuelve información completa sobre todas las entidades disponibles"""
-    config = UnifiedEntityManager.cargar_entities_config()
-    
-    lookup_entities = list(config.get("lookup_entities", {}).keys())
-    pattern_entities = list(config.get("pattern_entities", {}).keys())
-    dynamic_entities = list(config.get("dynamic_entities", {}).keys())
-    
-    return {
-        "lookup_entities": lookup_entities,
-        "pattern_entities": pattern_entities,
-        "dynamic_entities": dynamic_entities,
-        "total_entities": len(lookup_entities) + len(pattern_entities) + len(dynamic_entities),
-        "entities_config": config
-    }
+    return UnifiedEntityManager.obtener_entidades_disponibles()
+
 
 def validar_entidades_kwargs(**kwargs) -> Dict[str, str]:
     """Valida que las entidades pasadas existan en la configuración unificada"""
@@ -396,6 +444,7 @@ def validar_entidades_kwargs(**kwargs) -> Dict[str, str]:
     
     return issues
 
+
 # Testing y ejemplos
 if __name__ == "__main__":
     print("🚀 TESTING SISTEMA UNIFICADO DE ENTIDADES")
@@ -405,17 +454,12 @@ if __name__ == "__main__":
     info = obtener_entidades_disponibles()
     print(f"📊 Entidades disponibles:")
     print(f"   • Lookup: {info['lookup_entities']}")
-    print(f"   • Patterns: {info['pattern_entities']}")
+    print(f"   • Patterns: {info['pattern_entities']}")  
     print(f"   • Dynamic: {info['dynamic_entities']}")
     print(f"   • Total: {info['total_entities']}")
     
     # Generar imports usando sistema unificado
     print(f"\n🔧 Generando imports...")
     lookup, patterns, dynamic = generar_imports_unificado()
-    
-    # Ejemplo de anotación
-    texto_ejemplo = "necesito antibiótico de bayer para mi perro con 20% de descuento"
-    print(f"\n📝 Ejemplo de anotación:")
-    print(f"   Original: {texto_ejemplo}")
     
     print(f"\n✅ Sistema unificado funcionando correctamente")

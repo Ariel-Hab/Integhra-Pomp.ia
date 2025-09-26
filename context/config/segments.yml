@@ -3,40 +3,39 @@ version: "3.1"
 nlu:
 
 # ---------------------------
-# 🔹 SEGMENTOS DE CONVERSACIÓN - SINÓNIMOS
+# 🔹 SEGMENTOS DE CONVERSACIÓN
 # ---------------------------
-
 - synonym: inicio
   examples: |
     - hola
     - buenas
     - buen día
     - qué tal
-    - cómo va?
+    - cómo va
     - che
     - disculpá
     - perdón
     - buenos días
     - buenas tardes
     - buenas noches
-    - cómo estás?
-    - cómo andás?
 
-- synonym: cierre  
+- synonym: cierre_positivo
   examples: |
-    - gracias
-    - por favor
-    - si podés
-    - si no es molestia
-    - te agradezco
-    - genial
-    - dale
-    - joya
     - perfecto
+    - genial
+    - joya
     - bárbaro
     - excelente
+    - de diez
+    - impecable
+
+- synonym: agradecimiento
+  examples: |
+    - gracias
     - muchas gracias
     - mil gracias
+    - te agradezco
+    - un millón de gracias
 
 - synonym: solicitud_de_ayuda
   examples: |
@@ -110,3 +109,35 @@ nlu:
     - flaco
     - amigo
     - hermano
+
+- synonym: comparativo
+  examples: |
+    - más barato
+    - económico
+    - rendidor
+    - de mejor calidad
+    - superior
+
+- synonym: enfasis
+  examples: |
+    - por favor
+    - sí o sí
+    - urgente
+    - re importante
+    - necesito ya
+
+- synonym: opcionalidad
+  examples: |
+    - si se puede
+    - si tenés
+    - de ser posible
+    - cuando puedas
+    - si es posible
+
+- synonym: negacion
+  examples: |
+    - no quiero
+    - sin
+    - nada de
+    - evitá
+    - que no sea
