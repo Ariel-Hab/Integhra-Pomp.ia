@@ -28,3 +28,13 @@ nlu:
     - con\s*stock
     - agotado
     - disponible
+
+- regex: dosis_gramaje
+  examples: |
+    - \d+\s*mg
+    - \d+\s*g
+
+- regex: dosis_volumen
+  examples: |
+    - \d+\s*ml
+    - \d+\s*l
