@@ -1,0 +1,337 @@
+version: "2.2"
+metadata:
+  description: "Configuración optimizada del agente con actions personalizadas"
+  last_updated: "2025-09-18"
+
+# ===============================================================================  
+# 🔹 CONFIGURACIÓN DE ARCHIVOS (Referencias externas)  
+# ===============================================================================  
+files:
+  entities: "entities_config.yml"
+  slots: "slots_config.yml"
+  responses: "responses.yml"
+  examples: "examples.yml"
+  templates: "templates.yml"
+  segments: "segments.yml"
+
+# ===============================================================================  
+# 🔹 CONFIGURACIÓN DE ACTIONS PERSONALIZADAS  
+# ===============================================================================  
+custom_actions:
+  action_busqueda_situacion:
+    description: "Maneja búsquedas de productos, ofertas y consultas"
+    intents: [buscar_producto, buscar_oferta, consultar_novedades, modificar_busqueda]
+    
+  action_conf_neg_agradecer:
+    description: "Maneja confirmaciones, negaciones y agradecimientos"
+    intents: [afirmar, denegar, agradecimiento, completar_pedido]
+    
+  action_smalltalk_situacion:
+    description: "Maneja conversación general y saludos"
+    intents: [saludo, preguntar_como_estas, responder_como_estoy, pedir_chiste, reirse_chiste, responder_estoy_bien]
+    
+  action_despedida_limpia_contexto:
+    description: "Maneja despedidas y limpia contexto"
+    intents: [despedida]
+    
+  action_fallback:
+    description: "Maneja casos no reconocidos"
+    intents: [off_topic, out_of_scope, ambiguity_fallback]
+    
+  action_context_validator:
+    description: "Valida contexto de conversación"
+    intents: []  # Se ejecuta internamente, no por intents específicos
+
+# ===============================================================================  
+# 🔹 CONFIGURACIÓN DE GRUPOS E INTENTS  
+# ===============================================================================  
+flow_groups:
+  core:
+    intents: [saludo, despedida, agradecimiento]
+    starter_allowed: true
+    default_action: action_smalltalk_situacion
+    
+  search:
+    intents: [buscar_producto, buscar_oferta, consultar_novedades, modificar_busqueda]
+    starter_allowed: true
+    default_action: action_busqueda_situacion
+    
+  interaction:
+    intents: [afirmar, denegar, completar_pedido]
+    starter_allowed: false
+    default_action: action_conf_neg_agradecer
+    
+  smalltalk:
+    intents: [preguntar_como_estas, responder_como_estoy, pedir_chiste, reirse_chiste, responder_estoy_bien]
+    starter_allowed: true
+    default_action: action_smalltalk_situacion
+    
+  fallback:
+    intents: [off_topic, out_of_scope, ambiguity_fallback]
+    starter_allowed: false
+    default_action: action_fallback
+
+# ===============================================================================  
+# 🔹 PLANTILLAS DE INTENTS  
+# ===============================================================================  
+intent_templates:
+  basic_interaction:
+    action: action_smalltalk_situacion
+    context_switch: false
+    
+  search_template:
+    action: action_busqueda_situacion
+    context_switch: false
+    entities: &search_entities
+      - producto
+      - empresa   # 👈 reemplazo de proveedor
+      - categoria
+      - ingrediente_activo
+      - animal
+      - dosis
+      - cantidad
+      - cantidad_stock
+      - estado
+      - tiempo
+      - precio
+      - comparador
+      - indicador_temporal
+      - dia
+      - fecha
+      
+  confirmation_template:
+    action: action_conf_neg_agradecer
+    context_switch: false
+    entities: [sentimiento]
+    
+  fallback_template:
+    action: action_fallback
+    context_switch: true
+    entities: []
+
+  search_with_offers: &search_with_offers
+    - producto
+    - empresa   # 👈 reemplazo de proveedor
+    - categoria
+    - ingrediente_activo
+    - animal
+    - dosis
+    - cantidad
+    - cantidad_stock
+    - estado
+    - tiempo
+    - precio
+    - comparador
+    - indicador_temporal
+    - dia
+    - fecha
+    - cantidad_descuento
+    - cantidad_bonificacion
+    - precio_monto
+    - fecha_especifica
+
+# ===============================================================================  
+# 🔹 DEFINICIÓN DE INTENTS CON ACTIONS  
+# (SIN CAMBIOS, solo ajustado a la entidad empresa en plantillas)  
+# ===============================================================================  
+intents:
+  # === INTENTS CORE/SMALLTALK ===  
+  saludo:
+    template: basic_interaction
+    grupo: core
+    action: action_smalltalk_situacion
+    entities: [sentimiento]
+    next_intents: [preguntar_como_estas, buscar_producto, buscar_oferta]
+
+  despedida:
+    grupo: core
+    action: action_despedida_limpia_contexto
+    entities: [sentimiento]
+    next_intents: []
+
+  agradecimiento:
+    template: confirmation_template
+    grupo: interaction
+    action: action_conf_neg_agradecer
+    entities: [sentimiento]
+    next_intents: [buscar_producto, buscar_oferta]
+
+  preguntar_como_estas:
+    template: basic_interaction
+    grupo: smalltalk
+    action: action_smalltalk_situacion
+    entities: [sentimiento]
+    next_intents: [responder_estoy_bien, buscar_producto]
+
+  responder_como_estoy:
+    template: basic_interaction
+    grupo: smalltalk
+    action: action_smalltalk_situacion
+    entities: [sentimiento]
+    next_intents: [preguntar_como_estas, buscar_producto]
+
+  pedir_chiste:
+    template: basic_interaction
+    grupo: smalltalk
+    action: action_smalltalk_situacion
+    entities: [sentimiento]
+    next_intents: [reirse_chiste, agradecimiento]
+
+  reirse_chiste:
+    template: basic_interaction
+    grupo: smalltalk
+    action: action_smalltalk_situacion
+    entities: [sentimiento]
+    next_intents: [pedir_chiste, agradecimiento]
+
+  responder_estoy_bien:
+    template: basic_interaction
+    grupo: smalltalk
+    action: action_smalltalk_situacion
+    entities: [sentimiento]
+    next_intents: [buscar_producto, buscar_oferta]
+
+  # === INTENTS DE BÚSQUEDA ===  
+  buscar_producto:
+    template: search_template
+    grupo: search
+    action: action_busqueda_situacion
+    entities: *search_entities
+    next_intents: [completar_pedido, modificar_busqueda, consultar_novedades]
+
+  buscar_oferta:
+    template: search_template
+    grupo: search
+    action: action_busqueda_situacion
+    entities: *search_with_offers
+    next_intents: [completar_pedido, modificar_busqueda]
+
+  consultar_novedades:
+    template: search_template
+    grupo: search
+    action: action_busqueda_situacion
+    entities: *search_entities
+    next_intents: [buscar_producto, buscar_oferta]
+
+  modificar_busqueda:
+    template: search_template
+    grupo: search
+    action: action_busqueda_situacion
+    context_switch: true
+    entities: *search_entities
+    next_intents: [buscar_producto, buscar_oferta, completar_pedido]
+
+  # === INTENTS DE INTERACCIÓN ===  
+  afirmar:
+    template: confirmation_template
+    grupo: interaction
+    action: action_conf_neg_agradecer
+    entities: [sentimiento]
+    next_intents: [buscar_producto, buscar_oferta]
+
+  denegar:
+    template: confirmation_template
+    grupo: interaction
+    action: action_conf_neg_agradecer
+    entities: [sentimiento]
+    next_intents: [buscar_producto, buscar_oferta]
+
+  completar_pedido:
+    template: confirmation_template
+    grupo: interaction
+    action: action_conf_neg_agradecer
+    entities: *search_entities
+    next_intents: [agradecimiento]
+
+  # === INTENTS DE FALLBACK ===  
+  off_topic:
+    template: fallback_template
+    grupo: fallback
+    action: action_fallback
+    context_switch: true
+    entities: [sentimiento]
+    next_intents: [buscar_producto, buscar_oferta]
+
+  out_of_scope:
+    template: fallback_template
+    grupo: fallback
+    action: action_fallback
+    context_switch: true
+    entities: []
+    next_intents: [buscar_producto, buscar_oferta]
+
+  ambiguity_fallback:
+    template: fallback_template
+    grupo: fallback
+    action: action_fallback
+    context_switch: true
+    entities: [sentimiento]
+    next_intents: [buscar_producto, buscar_oferta]
+
+# ===============================================================================  
+# 🔹 CONFIGURACIÓN DE VALIDACIÓN  
+# ===============================================================================  
+validation:
+  context_validation: true
+  max_context_switches: 5
+  fallback_action: action_fallback
+  context_validator_action: action_context_validator
+
+# ===============================================================================  
+# 🔹 ENTIDADES NECESARIAS POR INTENT  
+# ===============================================================================  
+required_entities:
+
+  # === BÚSQUEDA DE PRODUCTOS ===
+  buscar_producto:
+    entities:
+      - producto
+      - categoria
+      - ingrediente_activo
+      - animal
+      - empresa
+      - dosis
+      - cantidad
+      - estado
+      - comparador
+      - precio
+    rules:
+      - description: "Se requiere al menos una entidad de core_entities"
+        type: at_least_one
+        entities: [producto, categoria, ingrediente_activo, animal,empresa]
+
+  # === BÚSQUEDA DE OFERTAS ===
+  buscar_oferta:
+    entities:
+      - producto
+      - categoria
+      - ingrediente_activo
+      - animal
+      - cantidad_descuento
+      - cantidad_bonificacion
+      - precio_monto
+      - comparador
+      - indicador_temporal
+      - fecha_especifica
+      - empresa
+      - dosis
+      - cantidad
+      - estado
+      - tiempo
+      - precio
+    rules:
+      - description: "Se requiere al menos una entidad de core_entities"
+        type: at_least_one
+        entities: [producto, categoria, ingrediente_activo, animal]
+
+      - description: "Además se requiere al menos una entidad de offer_criteria_entities"
+        type: at_least_one
+        entities: [cantidad_descuento, cantidad_bonificacion, precio_monto, comparador, indicador_temporal, fecha_especifica]
+
+# ===============================================================================  
+# 🔹 CONFIGURACIÓN DE SESIÓN  
+# ===============================================================================  
+session:
+  expiration_time: 300
+  carry_over_slots: true
+  session_start_action:

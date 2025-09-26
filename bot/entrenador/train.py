@@ -1,13 +1,20 @@
+#!/usr/bin/env python3
+"""
+train.py - Entrenador RASA Optimizado
+Orquesta la generación de datos, stories y dominio sin duplicar funcionalidades.
+"""
+
 import os
+import sys
 from pathlib import Path
+from typing import Dict
 from bot.entrenador.data_generator.domain_generator import DomainGenerator
 from bot.entrenador.data_generator.nlu_generator import NLUGenerator
 from bot.entrenador.data_generator.stories_generator import StoriesGenerator
 from scripts.config_loader import ConfigLoader
-from bot.entrenador.importer import generar_imports_unificado, UnifiedEntityManager
+from bot.entrenador.importer import generar_imports_unificado
 from bot.entrenador.exporter import UnifiedExporter, validar_yaml
 
-# Colores para terminal
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -18,283 +25,168 @@ class Colors:
     BOLD = '\033[1m'
     ENDC = '\033[0m'
 
-def get_project_root() -> Path:
-    """Obtiene la ruta raíz del proyecto dinámicamente"""
-    # Desde donde sea que esté train.py, ir a la raíz
+def get_project_paths() -> Dict[str, Path]:
+    """Detecta raíz del proyecto y rutas principales."""
     current_file = Path(__file__).parent.resolve()
-    # Si train.py está en la raíz, usar el directorio del archivo
-    # Si está en subdirectorio, ajustar según sea necesario
-    return current_file.parent
+    project_root = current_file
+    for parent in current_file.parents:
+        if (parent / "context").exists() and (parent / "bot").exists():
+            project_root = parent
+            break
+    return {
+        "project_root": project_root,
+        "context_config": project_root / "context" / "context_config.yml",
+        "bot_data": project_root / "bot" / "data",
+        "domain_file": project_root / "bot" / "domain.yml"
+    }
 
 def main():
-    print(f"{Colors.HEADER}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.HEADER}SISTEMA UNIFICADO DE ENTRENAMIENTO - VERSIÓN OPTIMIZADA{Colors.ENDC}")
-    print(f"{Colors.HEADER}{'='*80}{Colors.ENDC}")
-    
-    # Obtener rutas absolutas
-    project_root = get_project_root()
-    data_dir = project_root / "data"
-    
-    # Crear carpeta data
-    data_dir.mkdir(exist_ok=True)
-    print(f"{Colors.OKBLUE}Preparando directorio de datos en {data_dir}...{Colors.ENDC}")
+    print(f"{Colors.HEADER}🚀 ENTRENADOR RASA OPTIMIZADO{Colors.ENDC}")
+    print("="*60)
 
-    # 1. GENERAR ENTIDADES USANDO SISTEMA UNIFICADO
-    print(f"{Colors.OKCYAN}FASE 1: Generando entidades desde sistema unificado...{Colors.ENDC}")
-    
-    # Generar todas las entidades desde entities.yml centralizado
-    lookup_tables, pattern_entities, dynamic_entities_info = generar_imports_unificado(data_dir=str(data_dir))
-    
-    print(f"{Colors.OKGREEN}Entidades generadas:{Colors.ENDC}")
-    print(f"  • Lookup entities (CSV): {len(lookup_tables)}")
-    print(f"  • Pattern entities (estáticas): {len(pattern_entities)}")
-    print(f"  • Dynamic entities (regex): {len(dynamic_entities_info)}")
+    try:
+        # Paths
+        paths = get_project_paths()
+        paths["bot_data"].mkdir(parents=True, exist_ok=True)
 
-    # 2. CARGAR CONFIGURACIÓN DE INTENTS
-    print(f"{Colors.OKCYAN}FASE 2: Cargando configuración de intents...{Colors.ENDC}")
-    config_data = ConfigLoader.cargar_config()
-    intents = config_data["intents"]
-    
-    print(f"{Colors.OKGREEN}Configuración cargada: {len(intents)} intents{Colors.ENDC}")
+        print(f"{Colors.OKBLUE}📁 Rutas del proyecto:{Colors.ENDC}")
+        print(f"   • Raíz: {paths['project_root']}")
+        print(f"   • Config: {paths['context_config']}")
+        print(f"   • Data: {paths['bot_data']}")
 
-    # 3. GENERAR EJEMPLOS NLU (opcional)
-    ejemplos = []
-    if input(f"{Colors.HEADER}¿Generar nuevos ejemplos NLU? (s/N): {Colors.ENDC}").lower() in ["s", "si", "sí", "y", "yes"]:
-        print(f"{Colors.OKCYAN}FASE 3: Generando ejemplos NLU...{Colors.ENDC}")
-        
-        # Combinar todas las entidades para el generador
-        all_lookup_entities = {**lookup_tables, **pattern_entities}
-        
-        ejemplos = NLUGenerator.generar_ejemplos(
-            config=config_data, 
-            lookup=all_lookup_entities,  # Ahora incluye tanto CSV como patterns
-            synonyms=config_data.get("segments", {}),
-            n_por_intent=500,
-            use_limits_file=True
+        # FASE 1: Cargar configuración
+        print(f"\n{Colors.OKCYAN}FASE 1: Cargando configuración{Colors.ENDC}")
+        config_data = ConfigLoader.cargar_config(str(paths["context_config"]))
+
+        # FASE 2: Generar entidades
+        print(f"\n{Colors.OKCYAN}FASE 2: Generando entidades{Colors.ENDC}")
+        lookup_tables, pattern_entities, dynamic_entities_info = generar_imports_unificado(
+            data_dir=str(paths["bot_data"])
         )
-        print(f"{Colors.OKGREEN}Ejemplos generados: {len(ejemplos)}{Colors.ENDC}")
-    else:
-        print(f"{Colors.WARNING}Manteniendo ejemplos NLU existentes{Colors.ENDC}")
+        print(f"{Colors.OKGREEN}✅ Entidades generadas:{Colors.ENDC}")
+        print(f"   • Lookup: {len(lookup_tables)}")
+        print(f"   • Patterns: {len(pattern_entities)}")
+        print(f"   • Dynamic: {len(dynamic_entities_info)}")
 
-    # 4. EXPORTAR NLU COMPLETO (TODO EN UNO)
-    print(f"{Colors.OKCYAN}FASE 4: Exportando NLU completo (ejemplos + lookups + regex)...{Colors.ENDC}")
-    
-    # Usar rutas absolutas para exportación
-    nlu_path = data_dir / "nlu.yml"
-    
-    # Exportar TODO en un solo archivo para que Rasa tenga acceso completo
-    nlu_success = UnifiedExporter.exportar_nlu_completo(
-        ejemplos=ejemplos,
-        lookup_tables=lookup_tables,
-        pattern_entities=pattern_entities,
-        dynamic_entities_info=dynamic_entities_info,
-        output_path=str(nlu_path)
-    )
-    
-    if nlu_success:
-        validar_yaml(str(nlu_path))
-        print(f"{Colors.OKGREEN}NLU completo exportado y validado{Colors.ENDC}")
-    else:
-        print(f"{Colors.FAIL}Error exportando NLU completo{Colors.ENDC}")
-        return
+        # FASE 3: Generar ejemplos NLU (opcional)
+        ejemplos = []
+        if input(f"\n{Colors.HEADER}¿Generar ejemplos NLU? (s/N): {Colors.ENDC}").lower() in ["s", "si", "sí", "y", "yes"]:
+            print(f"{Colors.OKCYAN}FASE 3: Generando ejemplos NLU{Colors.ENDC}")
+            all_entities = {**lookup_tables, **pattern_entities}
+            ejemplos = NLUGenerator.generar_ejemplos(
+                config=config_data,
+                lookup=all_entities,
+                synonyms=config_data.get("segments", {}),
+                dynamic_entities=dynamic_entities_info,
+                n_por_intent=500,
+                use_limits_file=True
+            )
+            print(f"{Colors.OKGREEN}✅ Ejemplos generados: {len(ejemplos)}{Colors.ENDC}")
 
-    # 5. GENERAR SINÓNIMOS AUTOMÁTICOS
-    print(f"{Colors.OKCYAN}FASE 5: Generando sinónimos automáticos...{Colors.ENDC}")
-    synonyms_path = data_dir / "synonyms.yml"
-    
-    UnifiedExporter.exportar_synonyms_desde_lookup(
-        lookup_tables=lookup_tables,
-        output_path=str(synonyms_path)
-    )
-    validar_yaml(str(synonyms_path))
-
-    # 6. EXPORTAR ARCHIVOS SEPARADOS (opcional, para debugging)
-    if input(f"{Colors.HEADER}¿Exportar archivos separados para debugging? (s/N): {Colors.ENDC}").lower() in ["s", "si", "sí", "y", "yes"]:
-        print(f"{Colors.OKCYAN}FASE 6: Exportando archivos separados...{Colors.ENDC}")
-        
-        separate_results = UnifiedExporter.exportar_archivos_separados(
+        # FASE 4: Exportar NLU completo
+        print(f"\n{Colors.OKCYAN}FASE 4: Exportando NLU completo{Colors.ENDC}")
+        nlu_path = paths["bot_data"] / "nlu.yml"
+        if not UnifiedExporter.exportar_nlu_completo(
+            ejemplos=ejemplos,
             lookup_tables=lookup_tables,
             pattern_entities=pattern_entities,
             dynamic_entities_info=dynamic_entities_info,
-            output_dir=str(data_dir)
+            output_path=str(nlu_path)
+        ):
+            print(f"{Colors.FAIL}❌ Error exportando NLU{Colors.ENDC}")
+            return False
+        validar_yaml(str(nlu_path))
+        print(f"{Colors.OKGREEN}✅ NLU exportado: {nlu_path}{Colors.ENDC}")
+
+        # FASE 5: Generar sinónimos automáticos
+        print(f"\n{Colors.OKCYAN}FASE 5: Generando sinónimos{Colors.ENDC}")
+        synonyms_path = paths["bot_data"] / "synonyms.yml"
+        UnifiedExporter.exportar_synonyms_desde_lookup(
+            lookup_tables=lookup_tables,
+            output_path=str(synonyms_path)
         )
-        
-        for file_type, success in separate_results.items():
-            status = "✅" if success else "❌"
-            print(f"  {status} {file_type}")
+        validar_yaml(str(synonyms_path))
+        print(f"{Colors.OKGREEN}✅ Sinónimos: {synonyms_path}{Colors.ENDC}")
 
-    # 7. GENERAR STORIES Y RULES
-    print(f"{Colors.OKCYAN}FASE 7: Generando stories y rules...{Colors.ENDC}")
-    stories_path = data_dir / "stories.yml"
-    rules_path = data_dir / "rules.yml"
-    
-    StoriesGenerator.generar_stories_rules(
-        config_data,
-        output_path_stories=str(stories_path),
-        output_path_rules=str(rules_path)
-    )
-    validar_yaml(str(stories_path))
-    validar_yaml(str(rules_path))
-    print(f"{Colors.OKGREEN}Stories y rules generados{Colors.ENDC}")
+        # FASE 6: Generar Stories y Rules
+        print(f"\n{Colors.OKCYAN}FASE 6: Generando Stories y Rules{Colors.ENDC}")
+        stories_path = paths["bot_data"] / "stories.yml"
+        rules_path = paths["bot_data"] / "rules.yml"
 
-    # 8. GENERAR DOMAIN.YML
-    print(f"{Colors.OKCYAN}FASE 8: Generando domain.yml...{Colors.ENDC}")
-    domain_path = project_root / "domain.yml"
-    
-    DomainGenerator.generar_domain(config=config_data, output_path=str(domain_path))
-    validar_yaml(str(domain_path))
-    print(f"{Colors.OKGREEN}Domain generado{Colors.ENDC}")
-
-    # 9. RESUMEN PRE-ENTRENAMIENTO
-    print(f"\n{Colors.HEADER}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.HEADER}RESUMEN DE ARCHIVOS GENERADOS{Colors.ENDC}")
-    print(f"{Colors.HEADER}{'='*80}{Colors.ENDC}")
-    
-    # Usar rutas absolutas para verificación
-    archivos_verificar = [
-        data_dir / "nlu.yml",
-        data_dir / "synonyms.yml", 
-        data_dir / "stories.yml",
-        data_dir / "rules.yml",
-        project_root / "domain.yml"
-    ]
-    
-    for archivo in archivos_verificar:
-        if archivo.exists():
-            # Mostrar ruta relativa para mejor legibilidad
-            try:
-                ruta_relativa = archivo.relative_to(project_root)
-                print(f"{Colors.OKGREEN}✅ {ruta_relativa}{Colors.ENDC}")
-            except ValueError:
-                print(f"{Colors.OKGREEN}✅ {archivo}{Colors.ENDC}")
+        if 'flow_groups' not in config_data:
+            from bot.entrenador.data_generator.stories_generator import StoriesGeneratorMinimal
+            StoriesGeneratorMinimal.generar_stories_rules_minimal(
+                config=config_data,
+                output_path_stories=str(stories_path),
+                output_path_rules=str(rules_path)
+            )
         else:
-            try:
-                ruta_relativa = archivo.relative_to(project_root)
-                print(f"{Colors.FAIL}❌ {ruta_relativa} - FALTANTE{Colors.ENDC}")
-            except ValueError:
-                print(f"{Colors.FAIL}❌ {archivo} - FALTANTE{Colors.ENDC}")
-    
-    # Mostrar estadísticas del sistema unificado
-    print(f"\n{Colors.HEADER}ESTADÍSTICAS DEL SISTEMA UNIFICADO:{Colors.ENDC}")
-    print(f"  • Lookup entities: {len(lookup_tables)} (desde CSV)")
-    print(f"  • Pattern entities: {len(pattern_entities)} (estáticas)")
-    print(f"  • Dynamic entities: {len(dynamic_entities_info)} (regex)")
-    print(f"  • Total intents: {len(intents)}")
-    if ejemplos:
-        print(f"  • Training examples: {len(ejemplos)}")
+            StoriesGenerator.generar_stories_rules(
+                config=config_data,
+                output_path_stories=str(stories_path),
+                output_path_rules=str(rules_path)
+            )
+        validar_yaml(str(stories_path))
+        validar_yaml(str(rules_path))
+        print(f"{Colors.OKGREEN}✅ Stories: {stories_path}{Colors.ENDC}")
+        print(f"{Colors.OKGREEN}✅ Rules: {rules_path}{Colors.ENDC}")
 
-    # 10. ENTRENAR MODELO
-    if input(f"\n{Colors.HEADER}¿Entrenar modelo con Rasa? (s/N): {Colors.ENDC}").lower() in ["s", "si", "sí", "y", "yes"]:
-        print(f"{Colors.OKCYAN}FASE 10: Entrenando modelo...{Colors.ENDC}")
-        
-        # Verificar que Rasa esté disponible
-        try:
-            result = os.system("rasa --version > nul 2>&1" if os.name == 'nt' else "rasa --version > /dev/null 2>&1")
-            if result != 0:
-                print(f"{Colors.FAIL}❌ Rasa no está instalado o no está en PATH{Colors.ENDC}")
-                return
-        except:
-            print(f"{Colors.FAIL}❌ Error verificando instalación de Rasa{Colors.ENDC}")
-            return
-        
-        # Cambiar al directorio del proyecto para entrenar
-        original_dir = Path.cwd()
-        try:
-            os.chdir(project_root)
-            print(f"{Colors.OKCYAN}Iniciando entrenamiento con Rasa desde {project_root}...{Colors.ENDC}")
-            result = os.system("rasa train")
-            
-            if result == 0:
-                print(f"{Colors.OKGREEN}✅ Entrenamiento completado exitosamente{Colors.ENDC}")
-                
-                # Verificar modelo generado
-                models_dir = project_root / "models"
-                if models_dir.exists():
-                    model_files = list(models_dir.glob("*.tar.gz"))
-                    if model_files:
-                        latest_model = max(model_files, key=lambda x: x.stat().st_mtime)
-                        print(f"{Colors.OKGREEN}Modelo generado: {latest_model.name}{Colors.ENDC}")
-                    else:
-                        print(f"{Colors.WARNING}⚠️ No se encontraron archivos de modelo{Colors.ENDC}")
-            else:
-                print(f"{Colors.FAIL}❌ Error durante el entrenamiento{Colors.ENDC}")
-        finally:
-            # Volver al directorio original
-            os.chdir(original_dir)
-    else:
-        print(f"{Colors.WARNING}Entrenamiento omitido{Colors.ENDC}")
+        # FASE 7: Generar Domain
+        print(f"\n{Colors.OKCYAN}FASE 7: Generando Domain{Colors.ENDC}")
+        DomainGenerator.generar_domain(
+            config=config_data,
+            output_path=str(paths["domain_file"])
+        )
+        validar_yaml(str(paths["domain_file"]))
+        print(f"{Colors.OKGREEN}✅ Domain: {paths['domain_file']}{Colors.ENDC}")
 
-    # 11. FINALIZACIÓN
-    print(f"\n{Colors.HEADER}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.HEADER}PROCESO COMPLETADO{Colors.ENDC}")
-    print(f"{Colors.HEADER}{'='*80}{Colors.ENDC}")
-    
-    print(f"{Colors.OKGREEN}Sistema unificado funcionando correctamente.{Colors.ENDC}")
-    print(f"{Colors.OKBLUE}El agente tiene acceso a:{Colors.ENDC}")
-    print(f"  • Todas las lookup tables (CSV + patterns)")
-    print(f"  • Todos los regex patterns para entidades dinámicas") 
-    print(f"  • Sinónimos automáticos generados")
-    print(f"  • Ejemplos de entrenamiento completos")
-    
-    if input(f"\n{Colors.HEADER}¿Mostrar información detallada del sistema? (s/N): {Colors.ENDC}").lower() in ["s", "si", "sí", "y", "yes"]:
-        mostrar_info_detallada(project_root)
+        # FASE 8: Entrenar modelo (opcional)
+        if input(f"\n{Colors.HEADER}¿Entrenar modelo con Rasa? (s/N): {Colors.ENDC}").lower() in ["s", "si", "sí", "y", "yes"]:
+            print(f"{Colors.OKCYAN}FASE 8: Entrenando modelo{Colors.ENDC}")
+            if os.system("rasa --version > /dev/null 2>&1") != 0:
+                print(f"{Colors.FAIL}❌ Rasa no está instalado{Colors.ENDC}")
+                return False
 
-def mostrar_info_detallada(project_root: Path):
-    """Muestra información detallada del sistema unificado"""
-    print(f"\n{Colors.HEADER}INFORMACIÓN DETALLADA DEL SISTEMA{Colors.ENDC}")
-    print(f"{Colors.HEADER}{'='*50}{Colors.ENDC}")
-    
-    # Información de entidades disponibles
-    info = UnifiedEntityManager.obtener_entidades_disponibles()
-    
-    print(f"{Colors.OKCYAN}ENTIDADES LOOKUP (desde CSV):{Colors.ENDC}")
-    for entity in info.get("lookup_entities", []):
-        print(f"  • {entity}")
-    
-    print(f"\n{Colors.OKCYAN}ENTIDADES PATTERN (estáticas):{Colors.ENDC}")
-    for entity in info.get("pattern_entities", []):
-        print(f"  • {entity}")
-    
-    print(f"\n{Colors.OKCYAN}ENTIDADES DYNAMIC (regex):{Colors.ENDC}")
-    for entity in info.get("dynamic_entities", []):
-        print(f"  • {entity}")
-    
-    print(f"\n{Colors.OKGREEN}Total de entidades: {info.get('total_entities', 0)}{Colors.ENDC}")
-    
-    # Verificar archivos clave del sistema con rutas absolutas
-    print(f"\n{Colors.OKCYAN}ARCHIVOS DEL SISTEMA:{Colors.ENDC}")
-    archivos_sistema = [
-        project_root / "bot" / "data" / "entities.yml",
-        project_root / "bot" / "data" / "entities_regex.yml", 
-        project_root / "context" / "context_config.yml"
-    ]
-    
-    for archivo in archivos_sistema:
-        if archivo.exists():
+            original_dir = Path.cwd()
             try:
-                ruta_relativa = archivo.relative_to(project_root)
-                print(f"  ✅ {ruta_relativa}")
-            except ValueError:
-                print(f"  ✅ {archivo}")
-        else:
-            try:
-                ruta_relativa = archivo.relative_to(project_root)
-                print(f"  ❌ {ruta_relativa} - FALTANTE")
-            except ValueError:
-                print(f"  ❌ {archivo} - FALTANTE")
-                
-    # Mostrar directorio de trabajo actual
-    print(f"\n{Colors.OKCYAN}INFORMACIÓN DE RUTAS:{Colors.ENDC}")
-    print(f"  • Directorio del proyecto: {project_root}")
-    print(f"  • Directorio actual: {Path.cwd()}")
-    print(f"  • Directorio de datos: {project_root / 'data'}")
+                os.chdir(paths["project_root"])
+                print(f"📍 Entrenando desde: {paths['project_root']}")
+                if os.system("rasa train") == 0:
+                    print(f"{Colors.OKGREEN}✅ Entrenamiento completado{Colors.ENDC}")
+                    models_dir = paths["project_root"] / "models"
+                    if models_dir.exists():
+                        model_files = list(models_dir.glob("*.tar.gz"))
+                        if model_files:
+                            latest_model = max(model_files, key=lambda x: x.stat().st_mtime)
+                            model_size = latest_model.stat().st_size / (1024 * 1024)
+                            print(f"📦 Modelo: {latest_model.name} ({model_size:.1f} MB)")
+                else:
+                    print(f"{Colors.FAIL}❌ Error durante entrenamiento{Colors.ENDC}")
+                    return False
+            finally:
+                os.chdir(original_dir)
+
+        print(f"\n{Colors.HEADER}🎉 ENTRENAMIENTO COMPLETADO{Colors.ENDC}")
+        print("="*60)
+        print("✅ Archivos generados en bot/data/:")
+        print("   • nlu.yml")
+        print("   • synonyms.yml")
+        print("   • stories.yml")
+        print("   • rules.yml")
+        print("   • domain.yml")
+        print("="*60)
+
+        return True
+
+    except KeyboardInterrupt:
+        print(f"\n{Colors.WARNING}⚠️ Entrenamiento cancelado{Colors.ENDC}")
+        return False
+    except Exception as e:
+        import traceback
+        print(f"{Colors.FAIL}❌ Error crítico: {e}{Colors.ENDC}")
+        traceback.print_exc()
+        return False
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print(f"\n{Colors.WARNING}Proceso interrumpido por el usuario{Colors.ENDC}")
-    except Exception as e:
-        print(f"\n{Colors.FAIL}❌ Error inesperado: {e}{Colors.ENDC}")
-        import traceback
-        traceback.print_exc()
+    success = main()
+    sys.exit(0 if success else 1)

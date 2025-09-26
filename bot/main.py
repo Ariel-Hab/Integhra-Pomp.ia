@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from rasa.core.agent import Agent
 from rasa.core.utils import EndpointConfig
 from rasa.core.channels.channel import CollectingOutputChannel, UserMessage
+from rasa.shared.core.events import SessionStarted, SlotSet
 import glob
 
 # ---------- Configuración ----------
@@ -158,7 +159,34 @@ async def health_check():
         "action_server": ACTION_SERVER_URL,
         "model_folder": MODEL_FOLDER
     }
+@app.post("/reset_context")
+async def reset_context(user_id: str):
+    """
+    Reinicia el contexto y los slots de un usuario específico.
+    """
+    if agent is None:
+        raise HTTPException(status_code=503, detail="Rasa agent not loaded")
 
+    try:
+        # Reinicia la sesión (contexto de conversación)
+        await agent.handle_message(UserMessage(
+            text=None,
+            output_channel=LoggingOutputChannel(),
+            sender_id=user_id,
+            input_channel=None,
+        ))
+
+        # Reinicia todos los slots a None
+        tracker = await agent.tracker_store.get_or_create_tracker(user_id)
+        events = [SlotSet(slot, None) for slot in tracker.slots.keys()]
+        for e in events:
+            tracker.update(e)
+        await agent.tracker_store.save(tracker)
+
+        return {"status": "success", "message": f"Contexto y slots reiniciados para user_id: {user_id}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 @app.get("/models")
 async def list_models():
     """List available models in the models directory"""
@@ -240,6 +268,15 @@ def consola_listener():
             if user_text.lower() in ["exit", "quit", "salir"]:
                 break
             if not user_text:
+                continue
+            if user_text.lower() == "reset":
+                user_id_reset = "console_user"
+                tracker = loop.run_until_complete(agent.tracker_store.get_or_create_tracker(user_id_reset))
+                for slot in tracker.slots.keys():
+                    tracker.update(SlotSet(slot, None))
+                tracker.update(SessionStarted())
+                loop.run_until_complete(agent.tracker_store.save(tracker))
+                print(f"✅ Contexto y slots reiniciados para la consola (user_id: {user_id_reset})")
                 continue
 
             output_channel = LoggingOutputChannel()

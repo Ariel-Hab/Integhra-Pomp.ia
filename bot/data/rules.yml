@@ -1,98 +1,59 @@
-version: '3.1'
+version: "3.1"
+
 rules:
-- rule: rule_saludo
-  steps:
-  - intent: saludo
-  - action: action_smalltalk_situacion
-- rule: rule_preguntar_como_estas
-  steps:
-  - intent: preguntar_como_estas
-  - action: action_smalltalk_situacion
-- rule: rule_responder_como_estoy
-  steps:
-  - intent: responder_como_estoy
-  - action: action_smalltalk_situacion
-- rule: rule_responder_estoy_bien
-  steps:
-  - intent: responder_estoy_bien
-  - action: action_smalltalk_situacion
-- rule: rule_despedida
-  steps:
-  - intent: despedida
-  - action: action_smalltalk_situacion
-- rule: rule_pedir_chiste
-  steps:
-  - intent: pedir_chiste
-  - action: action_smalltalk_situacion
-- rule: rule_reirse_chiste
-  steps:
-  - intent: reirse_chiste
-  - action: action_smalltalk_situacion
-- rule: rule_buscar_producto
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-- rule: rule_buscar_oferta
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-- rule: rule_completar_pedido
-  steps:
-  - intent: completar_pedido
-  - action: action_busqueda_situacion
-- rule: rule_consultar_novedades_producto
-  steps:
-  - intent: consultar_novedades_producto
-  - action: action_generica
-- rule: rule_consultar_novedades_oferta
-  steps:
-  - intent: consultar_novedades_oferta
-  - action: action_generica
-- rule: rule_consultar_novedades_generales
-  steps:
-  - intent: consultar_novedades_generales
-  - action: action_generica
-- rule: rule_consultar_recomendaciones_producto
-  steps:
-  - intent: consultar_recomendaciones_producto
-  - action: action_generica
-- rule: rule_consultar_recomendaciones_oferta
-  steps:
-  - intent: consultar_recomendaciones_oferta
-  - action: action_generica
-- rule: rule_modificar_busqueda
-  steps:
-  - intent: modificar_busqueda
-  - action: action_generic_intent_reporter
-- rule: rule_afirmar
-  steps:
-  - intent: afirmar
-  - action: action_conf_neg_agradecer
-- rule: rule_denegar
-  steps:
-  - intent: denegar
-  - action: action_conf_neg_agradecer
-- rule: rule_agradecimiento
-  steps:
-  - intent: agradecimiento
-  - action: action_conf_neg_agradecer
-- rule: rule_off_topic
-  steps:
-  - intent: off_topic
-  - action: action_fallback
-- rule: rule_out_of_scope
-  steps:
-  - intent: out_of_scope
-  - action: action_out_of_scope
-- rule: rule_ambiguity_fallback
-  steps:
-  - intent: ambiguity_fallback
-  - action: action_clarify_ambiguous
-- rule: rule_low_confidence_fallback
-  steps:
-  - intent: low_confidence_fallback
-  - action: action_low_confidence
-- rule: rule_default_fallback
-  steps:
-  - intent: nlu_fallback
-  - action: action_default_fallback
+# # -------------------------
+# # BÚSQUEDAS BÁSICAS
+# # -------------------------
+# - rule: buscar producto directa
+#   steps:
+#   - intent: buscar_producto
+#   - action: action_busqueda_situacion
+
+# - rule: buscar oferta directa
+#   steps:
+#   - intent: buscar_oferta
+#   - action: action_busqueda_situacion
+
+# # -------------------------
+# # RECOMENDACIONES
+# # -------------------------  
+# - rule: consultar recomendaciones
+#   steps:
+#   - intent: consultar_recomendaciones
+#   - action: action_recomendaciones
+
+# -------------------------
+# RESPUESTAS BÁSICAS
+# -------------------------
+# - rule: saludar
+#   steps:
+#   - intent: saludo
+#   - action: utter_saludo
+
+# # - rule: despedirse
+# #   steps:
+# #   - intent: despedida
+# #   - action: utter_despedida
+
+# # - rule: agradecer
+# #   steps:
+# #   - intent: agradecimiento
+# #   - action: utter_agradecimiento
+
+# # - rule: contar chiste
+# #   steps:
+# #   - intent: pedir_chiste
+# #   - action: utter_pedir_chiste
+
+# # -------------------------
+# # CONFIRMACIONES
+# # -------------------------
+# - rule: confirmar
+#   steps:
+#   - intent: afirmar
+#   - action: utter_afirmar
+
+# - rule: denegar
+#   steps:
+#   - intent: denegar
+#   - action: utter_denegar

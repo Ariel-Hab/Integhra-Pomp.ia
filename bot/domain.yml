@@ -1,312 +1,272 @@
 version: '3.1'
+config:
+  store_entities_as_slots: true
+  fallback_action: action_fallback
+
 intents:
-- saludo:
-    is_starter: true
-    use_entities: true
-- preguntar_como_estas:
-    is_starter: true
-    use_entities: true
-- responder_como_estoy:
-    follow_up_only: true
-    use_entities: true
-- responder_estoy_bien:
-    follow_up_only: true
-    use_entities: true
-- despedida:
-    is_starter: true
-    use_entities: true
-- pedir_chiste:
-    is_starter: true
-    use_entities: true
-- reirse_chiste:
-    follow_up_only: true
-    use_entities: true
-- buscar_producto:
-    is_starter: true
-    use_entities: true
-- buscar_oferta:
-    is_starter: true
-    use_entities: true
-- completar_pedido:
-    follow_up_only: true
-    use_entities: true
-- consultar_novedades_producto:
-    is_starter: true
-    use_entities: true
-- consultar_novedades_oferta:
-    is_starter: true
-    use_entities: true
-- consultar_novedades_generales:
-    is_starter: true
-    use_entities: true
-- consultar_recomendaciones_producto:
-    is_starter: true
-    use_entities: true
-- consultar_recomendaciones_oferta:
-    is_starter: true
-    use_entities: true
-- modificar_busqueda:
-    is_starter: true
-    use_entities: true
-- afirmar:
-    follow_up_only: true
-    use_entities: true
-- denegar:
-    follow_up_only: true
-    use_entities: true
-- agradecimiento:
-    follow_up_only: true
-    use_entities: true
-- off_topic:
-    follow_up_only: true
-    use_entities: true
-- out_of_scope:
-    follow_up_only: true
-    use_entities: true
-- ambiguity_fallback:
-    follow_up_only: true
-    use_entities: true
-- low_confidence_fallback:
-    follow_up_only: true
-    use_entities: true
+  - saludo
+  - despedida
+  - agradecimiento
+  - preguntar_como_estas
+  - responder_como_estoy
+  - pedir_chiste
+  - reirse_chiste
+  - responder_estoy_bien
+  - buscar_producto
+  - buscar_oferta
+  - consultar_recomendaciones
+  - modificar_busqueda
+  - afirmar
+  - denegar
+  - completar_pedido
+  - off_topic
+  - out_of_scope
+  - ambiguity_fallback
+
 entities:
-- producto
-- proveedor
-- categoria
-- ingrediente_activo
-- compuesto
-- animal
-- dosis
-- cantidad
-- dia
-- fecha
-- estado
-- indicador_temporal
-- sentimiento_positivo
-- sentimiento_negativo
-- rechazo_total
-- intencion_buscar
-- solicitud_ayuda
-- cantidad_descuento
-- cantidad_bonificacion
-- cantidad_stock
+  # ✅ Entidades principales simplificadas
+  - producto
+  - empresa                    # ✅ Unificado (antes proveedor)
+  - categoria
+  - animal
+  - sintoma
+  - dosis
+  - estado
+  
+  # ✅ Entidades numéricas/comparativas que faltaban
+  - cantidad
+  - precio
+  - descuento                  # ✅ Simplificado (antes cantidad_descuento)
+  - bonificacion              # ✅ Simplificado (antes cantidad_bonificacion)  
+  - stock                     # ✅ Simplificado (antes cantidad_stock)
+  - comparador
+  
+  # ✅ Entidades temporales
+  - tiempo
+  - fecha
+  - dia
+  
+  # ✅ Entidades de contexto
+  - sentimiento
+
 slots:
+  # --- Slots principales ---
   producto:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: producto
-  proveedor:
+      - type: from_entity
+        entity: producto
+
+  empresa:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: proveedor
+      - type: from_entity
+        entity: empresa
+
   categoria:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: categoria
-  ingrediente_activo:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: ingrediente_activo
-    - type: from_entity
-      entity: compuesto
-  compuesto:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: compuesto
-    - type: from_entity
-      entity: ingrediente_activo
+      - type: from_entity
+        entity: categoria
+
   animal:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: animal
+      - type: from_entity
+        entity: animal
+
+  sintoma:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: sintoma
+
   dosis:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: dosis
-  cantidad:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: cantidad
-  dia:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: dia
-  fecha:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: fecha
+      - type: from_entity
+        entity: dosis
+
   estado:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: estado
-  indicador_temporal:
+      - type: from_entity
+        entity: estado
+
+  # --- Slots numéricos/comparativos ---
+  cantidad:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: indicador_temporal
-  sentimiento_positivo:
+      - type: from_entity
+        entity: cantidad
+
+  precio:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: sentimiento_positivo
-  sentimiento_negativo:
+      - type: from_entity
+        entity: precio
+
+  descuento:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: sentimiento_negativo
-  rechazo_total:
+      - type: from_entity
+        entity: descuento
+
+  bonificacion:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: rechazo_total
-  intencion_buscar:
+      - type: from_entity
+        entity: bonificacion
+
+  stock:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: intencion_buscar
-  solicitud_ayuda:
+      - type: from_entity
+        entity: stock
+
+  comparador:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: solicitud_ayuda
-  cantidad_descuento:
+      - type: from_entity
+        entity: comparador
+
+  # --- Slots temporales ---
+  tiempo:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: cantidad_descuento
-  cantidad_bonificacion:
+      - type: from_entity
+        entity: tiempo
+
+  fecha:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: cantidad_bonificacion
-  cantidad_stock:
+      - type: from_entity
+        entity: fecha
+
+  dia:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: cantidad_stock
-  context_switch:
-    type: bool
-    initial_value: false
+      - type: from_entity
+        entity: dia
+
+  sentimiento:
+    type: text
     influence_conversation: false
     mappings:
-    - type: custom
-  user_sentiment:
-    type: categorical
-    values:
-    - positive
-    - negative
-    - neutral
-    - rejection
-    initial_value: neutral
-    influence_conversation: false
-    mappings:
-    - type: custom
+      - type: from_entity
+        entity: sentimiento
+
+  # --- Slots de control de conversación ---
   last_intent_flow:
     type: text
     influence_conversation: false
     mappings:
-    - type: custom
+      - type: from_text
+
   user_engagement_level:
     type: categorical
+    influence_conversation: false
     values:
-    - neutral
-    - engaged
-    - needs_help
-    - confused
-    - friendly
-    - collaborative
-    - reset
-    - disengaged
-    - interested
-    - needs_guidance
-    - satisfied
-    - awaiting_confirmation
-    - awaiting_parameters
+      - neutral
+      - engaged
+      - needs_help
+      - confused
+      - friendly
+      - collaborative
+      - reset
+      - disengaged
+      - interested
+      - needs_guidance
+      - satisfied
+      - awaiting_confirmation
+      - awaiting_parameters
     initial_value: neutral
-    influence_conversation: false
     mappings:
-    - type: custom
-  pending_suggestion:
-    type: any
-    initial_value: null
-    influence_conversation: false
-    mappings:
-    - type: custom
-    description: Almacena sugerencias pendientes (entity_correction, type_correction, missing_parameters)
-  suggestion_context:
-    type: any
-    initial_value: null
-    influence_conversation: false
-    mappings:
-    - type: custom
-    description: Contexto adicional para el sistema de sugerencias
-  search_history:
-    type: any
-    initial_value: []
-    influence_conversation: false
-    mappings:
-    - type: custom
-    description: Historial de búsquedas realizadas en la sesión
-  context_decision_pending:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-    - type: custom
-    description: Indica si hay una decisión de contexto pendiente
+      - type: from_entity
+        entity: user_engagement_level
+
   current_search_params:
     type: any
-    initial_value: null
     influence_conversation: false
+    initial_value: {}
+    mappings: []
+
+  search_active:
+    type: bool
+    influence_conversation: true
+    initial_value: false
     mappings:
-    - type: custom
-    description: Parámetros de búsqueda actuales siendo procesados
+      - type: from_intent
+        value: true
+        intent: buscar_producto
+      - type: from_intent
+        value: true
+        intent: buscar_oferta
+      - type: from_intent
+        value: false
+        intent: despedida
+
+  last_search_type:
+    type: text
+    influence_conversation: true
+    initial_value: null
+    mappings:
+      - type: from_text
+  
+    # --- Slots faltantes reportados por logs ---
+  user_sentiment:
+    type: text
+    influence_conversation: false
+    initial_value: null
+    mappings: []
+
+  pending_suggestion:
+    type: text
+    influence_conversation: false
+    initial_value: null
+    mappings: []
+
+  suggestion_context:
+    type: text
+    influence_conversation: false
+    initial_value: null
+    mappings: []
+
+  search_history:
+    type: any
+    influence_conversation: false
+    initial_value: []
+    mappings: []
+
+  context_decision_pending:
+    type: bool
+    influence_conversation: false
+    initial_value: false
+    mappings: []
+
   validation_errors:
     type: any
+    influence_conversation: false
     initial_value: []
-    influence_conversation: false
-    mappings:
-    - type: custom
-    description: Errores de validación temporales
-  pedido_incompleto:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings:
-    - type: custom
-    deprecated: true
-    description: 'OBSOLETO: Reemplazado por sistema unificado de sugerencias'
+    mappings: []
+
+
 responses:
   utter_saludo:
   - text: ¡Hola!🐶
@@ -327,26 +287,37 @@ responses:
   - text: Buenisimoo! Necesitas ayuda?
   - text: Genial! Estoy aquí por si necesitas algo
   utter_pedir_chiste:
-  - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué hizo? —Vendí la bicicleta.'
-  - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene miedo al *ratón*.'
-  - text: 'Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre da el primer *click* del día.'
+  - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué
+      hizo? —Vendí la bicicleta.'
+  - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene
+      miedo al *ratón*.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre
+      da el primer *click* del día.'
   - text: 'Aquí va uno: ¿Qué hace una vaca cuando escucha música? ¡Da leche condensada!'
-  - text: 'Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en *escuela*.'
+  - text: 'Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en
+      *escuela*.'
   - text: 'Aquí va uno: ¿Qué hace un perro con un taladro? ¡Hace agujeros a lo *guau*!'
-  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía está en blanco y negro.'
-  - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas emocionales*.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía
+      está en blanco y negro.'
+  - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas
+      emocionales*.'
   - text: 'Aquí va uno: ¿Qué hace un conejo cuando se aburre? ¡Ve *zanahorias* películas!'
-  - text: 'Aquí va uno: ¿Cómo se despiden dos pulgas? ‘Nos vemos en el perro’.'
-  - text: 'Aquí va uno: ¿Cuál es el animal más ordenado? El perro pastor, siempre pone todo en fila.'
+  - text: 'Aquí va uno: ¿Cómo se despiden dos pulgas? Nos vemos en el perro'
+  - text: 'Aquí va uno: ¿Cuál es el animal más ordenado? El perro pastor, siempre
+      pone todo en fila.'
   - text: 'Aquí va uno: ¿Por qué el loro nunca aprueba exámenes? Porque siempre repite.'
-  - text: 'Aquí va uno: ¿Qué le dijo el gato al veterinario? ‘¡Hoy vengo por curiosidad!’'
-  - text: 'Aquí va uno: ¿Cuál es el pez más gracioso? El *pez payaso*... pero siempre hace chistes *de mal gusto*.'
-  - text: 'Aquí va uno: ¿Qué hace un perro frente al aire acondicionado? ¡Esperar que le dé un poco de *fres-canis*!'
+  - text: 'Aquí va uno: ¿Qué le dijo el gato al veterinario? ¡Hoy vengo por curiosidad!'
+  - text: 'Aquí va uno: ¿Cuál es el pez más gracioso? El *pez payaso*... pero siempre
+      hace chistes *de mal gusto*.'
+  - text: 'Aquí va uno: ¿Qué hace un perro frente al aire acondicionado? ¡Esperar
+      que le dé un poco de *fres-canis*!'
   - text: 'Aquí va uno: ¿Cómo llaman a un perro que sabe cantar? ¡Un *can-tante* profesional!'
   - text: 'Aquí va uno: ¿Por qué los pollitos no usan Facebook? Porque ya tienen *pío-pío*.'
-  - text: 'Aquí va uno: ¿Qué le dice una oveja presumida a otra? ‘¡Soy la oveja más *cool-la* del rebaño!’'
+  - text: 'Aquí va uno: ¿Qué le dice una oveja presumida a otra? ¡Soy la oveja más
+      *cool-la* del rebaño!'
   - text: 'Aquí va uno: ¿Cómo se llama el gato que hace magia? ¡Miau-dini!'
-  - text: 'Aquí va uno: ¿Por qué la vaca fue astronauta? Porque quería ver la *Vía Láctea* desde arriba.'
+  - text: 'Aquí va uno: ¿Por qué la vaca fue astronauta? Porque quería ver la *Vía
+      Láctea* desde arriba.'
   utter_despedida:
   - text: ¡Adiós! Que tengas un gran día ✨
   - text: Hasta luego, nos vemos pronto 🐾
@@ -363,46 +334,48 @@ responses:
   - text: ¡Perfecto!
   - text: Genial, entendido 👍
   - text: Claro que sí
-  utter_buscar_producto:
-  - text: Buscando información sobre buscar producto...
-  utter_buscar_oferta:
-  - text: Buscando información sobre buscar oferta...
-  utter_completar_pedido:
-  - text: Buscando información sobre completar pedido...
-  utter_consultar_novedades_producto:
-  - text: Buscando información sobre consultar novedades producto...
-  utter_consultar_novedades_oferta:
-  - text: Buscando información sobre consultar novedades oferta...
-  utter_consultar_novedades_generales:
-  - text: Buscando información sobre consultar novedades generales...
-  utter_consultar_recomendaciones_producto:
-  - text: Buscando información sobre consultar recomendaciones producto...
-  utter_consultar_recomendaciones_oferta:
-  - text: Buscando información sobre consultar recomendaciones oferta...
-  utter_modificar_busqueda:
-  - text: Buscando información sobre modificar busqueda...
-  utter_off_topic:
-  - text: Respuesta para off topic
-  utter_out_of_scope:
-  - text: Respuesta para out of scope
-  utter_ambiguity_fallback:
-  - text: Respuesta para ambiguity fallback
-  utter_low_confidence_fallback:
-  - text: Respuesta para low confidence fallback
-  utter_fallback:
-  - text: Perdón, no entendí lo que quisiste decir.
+  utter_pedir_parametros_producto:
+  - text: |
+      Para buscar un producto necesito al menos un dato 🛒  
+      Ejemplo ➡️ nombre del producto, categoría, ingrediente activo o animal.  
+      ¿Cuál me pasás?
+
+  utter_pedir_parametros_oferta:
+    - text: |
+        Para mostrarte ofertas necesito saber algun dato **de qué producto o categoría** 👌  
+        ¿Cuál te interesa?
+
+  utter_pedir_criterio_oferta:
+    - text: |
+        ¿Qué tipo de oferta buscás? 🎯  
+        🔹 descuento  
+        🔹 bonificación  
+        🔹 o una fecha específica  
+        Así te muestro las más relevantes.
+
+  # 🆕 NUEVAS RESPUESTAS PARA RECOMENDACIONES UNIFICADAS
+  utter_recomendaciones_no_disponible:
+  - text: |
+      Entiendo que buscás recomendaciones 🎯 
+      Por el momento esta funcionalidad no está disponible, pero puedo ayudarte a buscar productos específicos o ver ofertas actuales.
+      ¿Te interesa que busquemos algo en particular?
+  - text: |
+      Perfecto, capturo que querés recomendaciones 💡 
+      Esa función está en desarrollo aún. Mientras tanto, puedo mostrarte productos por categoría o buscar ofertas.
+      ¿Qué prefieres?
+  - text: |
+      ¡Claro! Te entiendo, buscás que te recomiende algo 🤝 
+      Esa característica no está lista todavía, pero sí puedo ayudarte a encontrar productos si me decís qué necesitás.
+      ¿Para qué animal o qué tipo de producto buscás?
 actions:
-- action_busqueda_situacion
-- action_clarify_ambiguous
-- action_conf_neg_agradecer
-- action_context_validator
-- action_despedida_limpia_contexto
-- action_fallback
-- action_generic_intent_reporter
-- action_generica
-- action_low_confidence
-- action_out_of_scope
-- action_smalltalk_situacion
+  - action_busqueda_situacion
+  - action_conf_neg_agradecer
+  - action_context_validator
+  - action_despedida_limpia_contexto
+  - action_fallback
+  - action_smalltalk_situacion
+  - action_recomendaciones
+
 session_config:
   session_expiration_time: 300
   carry_over_slots_to_new_session: true

@@ -1,0 +1,429 @@
+- intent: saludo
+  examples:
+  - text: hola
+  - text: buenas
+  - text: qué tal
+  - text: buen día
+  - text: buenas tardes
+  - text: che, cómo andás
+  - text: hola, qué tal todo
+  - text: buenas, cómo va la cosa
+  - text: qué hacés
+  - text: cómo te va
+  - text: cómo va
+  - text: sabés, buenas
+- intent: preguntar_como_estas
+  examples:
+  - text: cómo estás {sentimiento:sentiment_analysis:core}?
+  - text: cómo andás {sentimiento:sentiment_analysis:core}?
+  - text: qué tal todo {sentimiento:sentiment_analysis:core}?
+  - text: cómo va {sentimiento:sentiment_analysis:core}?
+  - text: todo bien {sentimiento:sentiment_analysis:core}?
+  - text: cómo la estás pasando {sentimiento:sentiment_analysis:core}?
+- intent: despedida
+  examples:
+  - text: chau {sentimiento:sentiment_analysis:core}
+  - text: hasta luego {sentimiento:sentiment_analysis:core}
+  - text: nos vemos {sentimiento:sentiment_analysis:core}
+  - text: que tengas buen día {sentimiento:sentiment_analysis:core}
+  - text: gracias por todo, nos vemos {sentimiento:sentiment_analysis:core}
+  - text: perfecto, hasta la próxima {sentimiento:sentiment_analysis:core}
+  - text: dale, cualquier cosa me escribís {sentimiento:sentiment_analysis:core}
+  - text: un abrazo {sentimiento:sentiment_analysis:core}
+  - text: nos estamos viendo {sentimiento:sentiment_analysis:core}
+  - text: chau
+  - text: hola, chau
+  - text: hasta luego
+  - text: nos vemos
+  - text: que tengas buen día
+  - text: que ponele tengas buen día
+  - text: que tengas buen día, desde ya gracias
+- intent: buscar_producto
+  examples:
+  - text: necesito [ivermectina]{producto:search_primary:search} que sea [mejor que]{comparador:comparison_filters:search}
+  - text: buscando [vacuna]{producto:search_primary:search} [más barata que]{comparador:comparison_filters:search} la de [zoetis]{proveedor:search_secondary:search}
+  - text: quiero [antiparasitario]{producto:search_primary:search} [igual de bueno que]{comparador:comparison_filters:search} el de [biogenesis]{proveedor:search_secondary:search}
+  - text: necesito [antibiótico]{producto:search_primary:search} [similar a]{comparador:comparison_filters:search} lo que uso habitualmente
+  - text: buscando algo [más efectivo que]{comparador:comparison_filters:search} la [penicilina]{producto:search_primary:search}
+  - text: necesito [vacuna]{producto:search_primary:search} para [esta semana]{tiempo:filtro_tiempo:search}
+  - text: buscando [antiparasitario]{producto:search_primary:search} que llegó [ayer]{tiempo:filtro_tiempo:search}
+  - text: quiero [vitaminas]{producto:search_primary:search} [recientes]{tiempo:filtro_tiempo:search}
+  - text: necesito [antibiótico]{producto:search_primary:search} para [el lunes]{tiempo:filtro_tiempo:search}
+  - text: productos que llegaron [el miércoles]{tiempo:filtro_tiempo:search}
+  - text: tenés acedan para equino
+    entities:
+    - entity: producto
+      value: acedan
+      start: 6
+      end: 12
+    - entity: animal
+      value: equino
+      start: 14
+      end: 20
+  - text: tenés acedan para medio que caninos
+    entities:
+    - entity: producto
+      value: acedan
+      start: 6
+      end: 12
+    - entity: animal
+      value: caninos
+      start: 28
+      end: 35
+  - text: acedan hay disponible
+    entities:
+    - entity: producto
+      value: acedan
+      start: 0
+      end: 6
+  - text: busco advocate de medio que Zoetis
+    entities:
+    - entity: producto
+      value: advocate
+      start: 6
+      end: 14
+    - entity: proveedor
+      value: Zoetis
+      start: 28
+      end: 34
+  - text: algicam hay bueno disponible
+    entities:
+    - entity: producto
+      value: algicam
+      start: 0
+      end: 7
+  - text: necesito apetil
+    entities:
+    - entity: producto
+      value: apetil
+      start: 9
+      end: 15
+  - text: anti ulceras hay disponible
+    entities:
+    - entity: producto
+      value: anti ulceras
+      start: 0
+      end: 12
+  - text: quiero comprar antiverrugas
+    entities:
+    - entity: producto
+      value: antiverrugas
+      start: 15
+      end: 27
+  - text: necesito adaptil, te agradezco
+    entities:
+    - entity: producto
+      value: adaptil
+      start: 9
+      end: 16
+  - text: necesito albex
+    entities:
+    - entity: producto
+      value: albex
+      start: 9
+      end: 14
+  - text: conseguís amino lite para gato
+    entities:
+    - entity: producto
+      value: amino lite
+      start: 10
+      end: 20
+    - entity: animal
+      value: gato
+      start: 26
+      end: 30
+  - text: tenés acedan para caninos
+    entities:
+    - entity: producto
+      value: acedan
+      start: 6
+      end: 12
+    - entity: animal
+      value: caninos
+      start: 14
+      end: 21
+  - text: quiero medio que comprar anfotropina
+    entities:
+    - entity: producto
+      value: anfotropina
+      start: 25
+      end: 36
+  - text: me mostrás acederm en tableta
+    entities:
+    - entity: producto
+      value: acederm
+      start: 11
+      end: 18
+    - entity: dosis
+      value: tableta
+      start: 19
+      end: 26
+  - text: quiero comprar anfotropina
+    entities:
+    - entity: producto
+      value: anfotropina
+      start: 15
+      end: 26
+- intent: buscar_oferta
+  examples:
+  - text: hay [ivermectina]{producto:search_primary:search} con [20%]{cantidad:filters_numeric:search} de descuento
+  - text: ofertas de [zoetis]{proveedor:search_secondary:search} con [15%]{cantidad:filters_numeric:search} off
+  - text: promociones en [vacunas]{categoria:search_primary:search} [mejores que]{comparador:comparison_filters:search} la semana pasada
+  - text: descuentos del [25%]{cantidad:filters_numeric:search} en [antibióticos]{producto:search_primary:search} para [bovino]{animal:filtro_animal:search}
+  - text: ofertas [más grandes que]{comparador:comparison_filters:search} el [10%]{cantidad:filters_numeric:search} habitual
+  - text: bonificaciones [2x1]{cantidad_bonificacion:filters_numeric:search} en [antiparasitarios]{categoria:search_primary:search}
+  - text: promociones [3x2]{cantidad_bonificacion:filters_numeric:search} [mejores que]{comparador:comparison_filters:search} las anteriores
+  - text: ofertas en antiartrosico
+    entities:
+    - entity: categoria
+      value: antiartrosico
+      start: 11
+      end: 24
+  - text: anfotropina con descuento
+    entities:
+    - entity: producto
+      value: anfotropina
+      start: 0
+      end: 11
+  - text: qué ofertas hay
+  - text: promociones de Brouwer
+    entities:
+    - entity: proveedor
+      value: Brouwer
+      start: 15
+      end: 22
+  - text: ofertas en higiene y belleza odontologico
+    entities:
+    - entity: categoria
+      value: higiene y belleza odontologico
+      start: 11
+      end: 41
+  - text: promociones de holliday
+    entities:
+    - entity: proveedor
+      value: holliday
+      start: 15
+      end: 23
+  - text: promociones de konig s.a.
+    entities:
+    - entity: proveedor
+      value: konig s.a.
+      start: 15
+      end: 25
+  - text: promociones de ceva
+    entities:
+    - entity: proveedor
+      value: ceva
+      start: 15
+      end: 19
+  - text: algicam pets con descuento, por favor
+    entities:
+    - entity: producto
+      value: algicam pets
+      start: 0
+      end: 12
+  - text: ofertas en antiparasitario externo
+    entities:
+    - entity: categoria
+      value: antiparasitario externo
+      start: 11
+      end: 34
+  - text: hay descuentos en accesorio
+    entities:
+    - entity: categoria
+      value: accesorio
+      start: 18
+      end: 27
+  - text: artrin palatable con descuento
+    entities:
+    - entity: producto
+      value: artrin palatable
+      start: 0
+      end: 16
+  - text: ofertas en alimento
+    entities:
+    - entity: categoria
+      value: alimento
+      start: 11
+      end: 19
+  - text: hay descuentos en higiene y belleza
+    entities:
+    - entity: categoria
+      value: higiene y belleza
+      start: 18
+      end: 35
+  - text: hay descuentos en sin categoria
+    entities:
+    - entity: categoria
+      value: sin categoria
+      start: 18
+      end: 31
+  - text: artrovet o sea con descuento
+    entities:
+    - entity: producto
+      value: artrovet
+      start: 0
+      end: 8
+  - text: algicam pets con descuento
+    entities:
+    - entity: producto
+      value: algicam pets
+      start: 0
+      end: 12
+  - text: ofertas en ponele alimento
+    entities:
+    - entity: categoria
+      value: alimento
+      start: 18
+      end: 26
+- intent: modificar_busqueda
+  examples:
+  - text: mejor que busque algo [más barato que]{comparador:comparison_filters:search} eso
+  - text: cambio por algo [similar a]{comparador:comparison_filters:search} lo que pedí
+  - text: prefiero algo [con menos de]{comparador:comparison_filters:search} [15%]{cantidad:filters_numeric:search} de descuento
+  - text: mejor algo para [el miércoles]{tiempo:filtro_tiempo:search} en lugar de [hoy]{tiempo:filtro_tiempo:search}
+  - text: cambio la fecha para [la semana que viene]{tiempo:filtro_tiempo:search}
+  - text: necesito algo [más efectivo que]{comparador:comparison_filters:search} lo que me mostraste
+  - text: cambio por [ivermectina]{producto:search_primary:search} en lugar de [vacuna]{producto:search_primary:search}
+- intent: afirmar
+  examples:
+  - text: sí
+  - text: dale
+  - text: perfecto
+  - text: está bien
+  - text: sí, me sirve
+  - text: dale, lo necesito para [mañana]{tiempo:filtro_tiempo:search}
+  - text: perfecto, [mejor que]{comparador:comparison_filters:search} el anterior
+  - text: sí, está bien
+  - text: dale, está bien
+  - text: por casualidad, genial
+  - text: me sirve
+  - text: hola, me sirve
+- intent: denegar
+  examples:
+  - text: 'no'
+  - text: no me sirve
+  - text: no es lo que busco
+  - text: no, prefiero algo [mejor que]{comparador:comparison_filters:search}
+  - text: no, necesito algo para [otra fecha]{tiempo:filtro_tiempo:search}
+  - text: no me convence, [muy caro]{estado:filters_categorical:search}
+  - text: prefiero otra cosa
+  - text: no es lo tipo que busco
+  - text: no es bueno lo que busco
+- intent: completar_pedido
+  examples:
+  - text: confirmo el pedido de [ivermectina]{producto:search_primary:search}
+  - text: perfecto, lo necesito para [el lunes]{tiempo:filtro_tiempo:search}
+  - text: dale, con el [20%]{cantidad:filters_numeric:search} de descuento
+  - text: confirmo, [mejor que]{comparador:comparison_filters:search} el precio anterior
+  - text: confirmo el pedido
+  - text: está bien así
+  - text: sabés, está bien así
+  - text: dale, hacemos el pedido
+- intent: agradecimiento
+  examples:
+  - text: gracias
+  - text: perfecto, gracias
+  - text: genial, muchas gracias
+  - text: excelente, gracias por la ayuda
+  - text: buenísimo, [mejor que]{comparador:comparison_filters:search} la última vez
+  - text: te agradezco, gracias
+  - text: mil gracias
+  - text: muchas gracias
+  - text: muchas te digamos agradezco
+  - text: muchas te agradezco
+  - text: excelente atención
+  - text: genial atención, un millón de gracias
+  - text: genial atención
+  - text: excelente atención, te agradezco
+  - text: muy amable
+- intent: off_topic
+  examples:
+  - text: cómo está el clima
+  - text: qué tal el fútbol
+  - text: me podés ayudar con otra cosa
+  - text: cambio de tema
+- intent: out_of_scope
+  examples:
+  - text: vendés autos
+  - text: tenés información de medicina humana
+  - text: podés ayudarme con computadoras
+- intent: ambiguity_fallback
+  examples:
+  - text: eso
+  - text: lo que me dijiste
+  - text: como siempre
+- intent: consultar_novedades
+  examples:
+  - text: qué novedades hay
+  - text: disculpá, qué novedades hay
+  - text: qué novedades como que hay
+  - text: productos nuevos de Brouwer
+    entities:
+    - entity: proveedor
+      value: Brouwer
+      start: 20
+      end: 27
+  - text: tendrás, productos nuevos de Brouwer
+    entities:
+    - entity: proveedor
+      value: Brouwer
+      start: 29
+      end: 36
+  - text: productos nuevos de holliday scott s.a.
+    entities:
+    - entity: proveedor
+      value: holliday scott s.a.
+      start: 20
+      end: 39
+  - text: productos nuevos de Biogenesis
+    entities:
+    - entity: proveedor
+      value: Biogenesis
+      start: 20
+      end: 30
+  - text: productos nuevos de suizo argentina
+    entities:
+    - entity: proveedor
+      value: suizo argentina
+      start: 20
+      end: 35
+  - text: tendrás, productos nuevos de suizo argentina
+    entities:
+    - entity: proveedor
+      value: suizo argentina
+      start: 29
+      end: 44
+  - text: productos nuevos de integhra-proveedor
+    entities:
+    - entity: proveedor
+      value: integhra-proveedor
+      start: 20
+      end: 38
+  - text: productos nuevos de konig
+    entities:
+    - entity: proveedor
+      value: konig
+      start: 20
+      end: 25
+  - text: productos ponele nuevos de konig
+    entities:
+    - entity: proveedor
+      value: konig
+      start: 27
+      end: 32
+  - text: productos nuevos de Boehringer ingelheim
+    entities:
+    - entity: proveedor
+      value: Boehringer ingelheim
+      start: 20
+      end: 40
+  - text: productos nuevos tipo de Boehringer ingelheim
+    entities:
+    - entity: proveedor
+      value: Boehringer ingelheim
+      start: 25
+      end: 45
+  - text: qué llegó nuevo
+  - text: últimos productos
+  - text: por casualidad, últimos productos

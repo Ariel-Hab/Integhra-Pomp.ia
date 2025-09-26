@@ -1,5 +1,5 @@
 # actions/__init__.py
-from .actions_busqueda import ActionBusquedaSituacion
+from .actions_busqueda.actions_busqueda import ActionBusquedaSituacion
 from .actions_confneg import ActionConfNegAgradecer
 from .actions_smalltalk import ActionSmallTalkSituacion
 from .actions_context_validation import ActionContextValidator
