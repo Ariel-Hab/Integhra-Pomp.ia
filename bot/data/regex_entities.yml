@@ -3,28 +3,28 @@ version: "3.1"
 nlu:
 - regex: cantidad_descuento
   examples: |
-    - \d{1,2}%\s?(de\s?descuento|off|desc)?
-    - \d+x\d+
-    - (\d{1,2})?\s?%\s?(descuento|off)?
-    - mitad\s?de\s?precio
-    - precio\s?(promocional|especial|rebajado)
-    - (descuento|oferta)\s?especial
+    - \d+\s*%\s*de\s*descuento
+    - \d+\s*%\s*descuento
+    - \d+\s*%\s*dto
+    - \d+\s*%\s*off
 
-- regex: cantidad_bonificacion
+- regex: cantidad_bonificacion  
   examples: |
-    - \d{1,2}%\s?(de\s?bonificación|bonus)
-    - \d+x\d+\s?bonificación
-    - lleva\s?\d+\s?paga\s?\d+
-    - (bonus|regalo|gratis)
-    - bonificación\s?especial
-    - con\s?(regalo|bonus)
+    - \d+\s*%\s*de\s*bonificación
+    - \d+\s*%\s*bonificación
+    - \d+\s*%\s*bonus
 
 - regex: cantidad_stock
   examples: |
-    - \d+\s?unidades?
-    - stock\s?(limitado|agotado|disponible|amplio)
-    - (pocas?|muchas?|últimas?)\s?unidades?
-    - disponibilidad\s?(limitada|amplia)
-    - (sin|con|mucho|poco)\s?stock
-    - (agotado|disponible)
-
+    - \d+\s*unidades
+    - stock\s*limitado
+    - stock\s*agotado
+    - stock\s*disponible
+    - stock\s*amplio
+    - pocas\s*unidades
+    - muchas\s*unidades
+    - últimas\s*unidades
+    - sin\s*stock
+    - con\s*stock
+    - agotado
+    - disponible

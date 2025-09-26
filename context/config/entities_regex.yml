@@ -1,0 +1,17 @@
+# entities_regex.yml - Patterns regex para entidades dinámicas
+# ============================================================================
+
+# Porcentajes y tipos de descuento
+cantidad_descuento: "\\d{1,2}%\\s?(de\\s?descuento|off|desc|dto)?|\\d+x\\d+|(\\d{1,2})?\\s?%\\s?(descuento|off)?|mitad\\s?de\\s?precio|precio\\s?(promocional|especial|rebajado)|(descuento|oferta)\\s?especial"
+
+# Bonificaciones y promociones
+cantidad_bonificacion: "\\d{1,2}%\\s?(de\\s?bonificación|bonus|bm)|\\d+x\\d+\\s?bonificación|lleva\\s?\\d+\\s?paga\\s?\\d+|(bonus|regalo)|bonificación\\s?especial|con\\s?(regalo|bonus)"
+
+# Stock y disponibilidad
+cantidad_stock: "\\d+\\s?unidades?|stock\\s?(limitado|agotado|disponible|amplio)|(pocas?|muchas?|últimas?)\\s?unidades?|disponibilidad\\s?(limitada|amplia)|(sin|con|mucho|poco)\\s?stock|(agotado|disponible)"
+
+# Precios y montos
+precio: "\\$\\d{1,6}(?:[.,]\\d{1,2})?|\\d{1,6}\\s?pesos?|\\d{1,6}\\s?\\$|precio\\s?(bajo|alto|justo|accesible)|\\d+k?\\s?pesos?|(barato|caro|económico|costoso)"
+
+# Fechas y períodos
+fecha: "\\d{1,2}[/\\-]\\d{1,2}[/\\-]\\d{4}|\\d{1,2}\\s?de\\s?\\w+|esta\\s?semana|próxima\\s?semana|este\\s?mes|próximo\\s?mes"

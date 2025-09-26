@@ -1,0 +1,392 @@
+# nlu_config.yml - Configuración OPTIMIZADA PARA ALTO VOLUMEN
+# Versión: 2.0 - HIGH VOLUME GENERATION
+
+# ================================================================
+# 🎯 MAPEO DE GRUPOS DE ENTIDADES (sin cambios)
+# ================================================================
+entity_groups:
+  # Entidades principales de búsqueda
+  producto: search_primary
+  categoria: search_primary
+  
+  # Entidades secundarias de búsqueda  
+  proveedor: search_secondary
+  ingrediente_activo: search_secondary
+  
+  # Filtros temporales
+  fecha: temporal_filters
+  dia: temporal_filters
+  indicador_temporal: temporal_filters
+  
+  # Filtros numéricos y de cantidad
+  cantidad_descuento: numeric_filters
+  cantidad_bonificacion: numeric_filters
+  cantidad_stock: numeric_filters
+  dosis: numeric_filters
+  
+  # Filtros comparativos
+  comparador: comparative_filters
+  
+  # Filtros de contexto
+  animal: context_filters
+  estado: context_filters
+
+# ================================================================
+# ⚙️ CONFIGURACIÓN POR INTENT - OPTIMIZADA PARA ALTO VOLUMEN
+# ================================================================
+intent_settings:
+  
+  # === INTENTS DE BÚSQUEDA ===
+  buscar_producto:
+    max_examples_per_template: 12  # ⬆️ De 5 a 12
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities: 
+      - producto
+      - categoria
+    optional_entities:
+      - proveedor
+      - animal
+      - fecha
+      - comparador
+    required_entities: []
+    
+  buscar_oferta:
+    max_examples_per_template: 10  # ⬆️ De 4 a 10
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - cantidad_descuento
+      - cantidad_bonificacion
+      - categoria
+    optional_entities:
+      - producto
+      - proveedor
+      - fecha
+    required_entities:
+      - cantidad_descuento
+      - cantidad_bonificacion
+    
+  consultar_novedades:
+    max_examples_per_template: 8   # ⬆️ De 3 a 8
+    use_entity_combinations: true  # ⬆️ Activado para más variación
+    use_templates: true
+    priority_entities:
+      - indicador_temporal
+      - fecha
+    optional_entities:
+      - proveedor
+      - categoria
+    required_entities: []
+    
+  consultar_novedades_producto:
+    max_examples_per_template: 8   # ⬆️ De 3 a 8
+    use_entity_combinations: true  # ⬆️ Activado
+    use_templates: true
+    priority_entities:
+      - indicador_temporal
+      - producto
+    optional_entities:
+      - proveedor
+      - fecha
+    required_entities: []
+    
+  consultar_novedades_oferta:
+    max_examples_per_template: 8   # ⬆️ De 3 a 8
+    use_entity_combinations: true  # ⬆️ Activado
+    use_templates: true
+    priority_entities:
+      - indicador_temporal
+      - cantidad_descuento
+    optional_entities:
+      - categoria
+      - fecha
+    required_entities: []
+    
+  modificar_busqueda:
+    max_examples_per_template: 10  # ⬆️ De 4 a 10
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - comparador
+      - producto
+    optional_entities:
+      - fecha
+      - dia
+      - cantidad_descuento
+    required_entities:
+      - comparador
+      
+  # === INTENTS DE CONFIRMACIÓN ===
+  afirmar:
+    max_examples_per_template: 6   # ⬆️ De 2 a 6
+    use_entity_combinations: true  # ⬆️ Activado
+    use_templates: true
+    priority_entities:
+      - comparador
+    optional_entities:
+      - dia
+      - fecha
+      - estado
+    required_entities: []
+    
+  denegar:
+    max_examples_per_template: 6   # ⬆️ De 2 a 6
+    use_entity_combinations: true  # ⬆️ Activado
+    use_templates: true
+    priority_entities:
+      - comparador
+    optional_entities:
+      - fecha
+      - dia
+      - producto
+    required_entities: []
+    
+  completar_pedido:
+    max_examples_per_template: 8   # ⬆️ De 3 a 8
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - producto
+      - dia
+    optional_entities:
+      - cantidad_descuento
+      - comparador
+      - animal
+      - dosis
+    required_entities: []
+    
+  # === INTENTS DE CONVERSACIÓN ===
+  saludo:
+    max_examples_per_template: 0
+    use_templates: false
+    use_entity_combinations: false
+    priority_entities: []
+    optional_entities: []
+    required_entities: []
+    
+  despedida:
+    max_examples_per_template: 0
+    use_templates: false
+    use_entity_combinations: false
+    priority_entities: []
+    optional_entities: []
+    required_entities: []
+    
+  agradecimiento:
+    max_examples_per_template: 4   # ⬆️ De 1 a 4
+    use_templates: true
+    use_entity_combinations: true  # ⬆️ Activado
+    priority_entities:
+      - comparador
+    optional_entities:
+      - fecha
+    required_entities: []
+    
+  # === INTENTS AVANZADOS ===
+  price_filtering:
+    max_examples_per_template: 10  # ⬆️ De 4 a 10
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - comparador
+      - cantidad_stock
+    optional_entities:
+      - producto
+      - categoria
+    required_entities:
+      - comparador
+      
+  time_filtering:
+    max_examples_per_template: 8   # ⬆️ De 3 a 8
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - fecha
+      - comparador
+    optional_entities:
+      - producto
+      - indicador_temporal
+    required_entities:
+      - fecha
+      
+  animal_filtering:
+    max_examples_per_template: 8   # ⬆️ De 3 a 8
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - animal
+      - producto
+    optional_entities:
+      - categoria
+    required_entities:
+      - animal
+
+  # === INTENTS CON ROLES (nuevos) ===
+  discount_roles:
+    max_examples_per_template: 12
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - cantidad_descuento
+      - producto
+    optional_entities:
+      - dia
+      - categoria
+    required_entities: []
+
+  bonification_roles:
+    max_examples_per_template: 10
+    use_entity_combinations: true
+    use_templates: true
+    priority_entities:
+      - cantidad_bonificacion
+      - categoria
+    optional_entities:
+      - comparador
+    required_entities: []
+
+# ================================================================
+# 🔧 CONFIGURACIÓN DE GENERACIÓN - OPTIMIZADA PARA ALTO VOLUMEN
+# ================================================================
+generation_settings:
+  # Control de duplicados - Más permisivo para generar más ejemplos
+  avoid_duplicates: true
+  max_duplicate_similarity: 0.75  # ⬇️ De 0.85 a 0.75 (más permisivo)
+  
+  # Balance de uso de entidades - Más reutilización permitida
+  balance_entity_usage: true
+  max_entity_reuse: 8             # ⬆️ De 3 a 8
+  
+  # Límites generales - SIGNIFICATIVAMENTE AUMENTADOS
+  max_total_examples_per_intent: 120  # ⬆️ De 25 a 120
+  min_examples_per_intent: 5          # ⬆️ De 1 a 5
+  
+  # Variantes de ejemplos - Más variaciones
+  include_empty_entity_variants: true
+  empty_variant_probability: 0.25     # ⬆️ De 0.15 a 0.25
+  
+  # Selección inteligente de combinaciones
+  smart_combination_selection: true
+  max_entities_per_example: 5         # ⬆️ De 4 a 5
+  
+  # Control de calidad - Más permisivo
+  min_text_length: 8                  # ⬇️ De 10 a 8
+  max_text_length: 250                # ⬆️ De 200 a 250
+  
+  # Configuración de contexto
+  enable_contextual_selection: true
+  context_validation: false           # ⬇️ Desactivado para más ejemplos
+  
+  # Logging y debug
+  debug_mode: false
+  log_generation_stats: true
+  save_generation_report: true
+
+# ================================================================
+# 📋 REGLAS DE CONTEXTO Y VALIDACIÓN - RELAJADAS
+# ================================================================
+context_rules:
+  
+  temporal_consistency:
+    description: "Evita conflictos temporales entre entidades"
+    entities:
+      - fecha
+      - dia  
+      - indicador_temporal
+    validation_type: "temporal_conflict_check"
+    enabled: false  # ⬇️ Desactivado para más ejemplos
+    
+  product_category_match:
+    description: "Asegura consistencia entre producto y categoría"
+    entities:
+      - producto
+      - categoria
+    validation_type: "semantic_consistency"
+    enabled: false  # ⬇️ Desactivado
+    
+  discount_exclusivity:
+    description: "Prefiere un tipo de descuento por ejemplo"
+    entities:
+      - cantidad_descuento
+      - cantidad_bonificacion
+    validation_type: "mutual_exclusion"
+    probability_both: 0.3  # ⬆️ De 0.1 a 0.3 (más combinaciones)
+    
+  animal_product_relevance:
+    description: "Valida relevancia entre animal y producto"
+    entities:
+      - animal
+      - producto
+      - categoria
+    validation_type: "domain_relevance"
+    enabled: false  # ⬇️ Desactivado
+
+# ================================================================
+# 🎨 CONFIGURACIÓN DE FORMATO DE SALIDA (sin cambios)
+# ================================================================
+output_format:
+  version: "3.1"
+  
+  # Formato de ejemplos simples
+  simple_examples:
+    prefix: "- "
+    multiline: true
+    
+  # Formato de ejemplos con entidades
+  entity_examples:
+    include_confidence: false
+    sort_entities_by_position: true
+    
+  # Configuración de sinónimos
+  synonyms:
+    include_in_output: true
+    format: "multiline"
+    prefix: "    - "
+    
+  # Orden de elementos en el archivo
+  nlu_element_order:
+    - synonyms
+    - intents
+    
+  # Configuración de intents
+  intent_order: "alphabetical"  # "alphabetical", "by_priority", "custom"
+  
+# ================================================================
+# 📊 CONFIGURACIÓN DE ESTADÍSTICAS Y REPORTING (sin cambios)
+# ================================================================
+reporting:
+  generate_stats: true
+  stats_file: "nlu_generation_stats.json"
+  
+  include_metrics:
+    - total_examples_generated
+    - examples_per_intent
+    - entity_usage_distribution
+    - template_coverage
+    - generation_time
+    - validation_results
+    
+  export_formats:
+    - json
+    - yaml
+    - csv
+
+# ================================================================
+# 🔍 CONFIGURACIÓN DE DEBUGGING (sin cambios)
+# ================================================================
+debug:
+  enabled: false
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  
+  debug_sections:
+    entity_loading: false
+    template_processing: false
+    example_generation: true
+    context_validation: false
+    output_formatting: false
+    
+  output_debug_files:
+    entity_debug: "debug_entities.json"
+    template_debug: "debug_templates.json"
+    generation_debug: "debug_generation.json"

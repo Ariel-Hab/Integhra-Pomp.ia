@@ -1,1720 +1,1624 @@
-version: '3.1'
-nlu:
-- synonym: Acedan
-  examples: '    - acedan'
-- synonym: Advantage
-  examples: '    - advantage'
-- synonym: Advantix
-  examples: '    - advantix'
-- synonym: Advocate
-  examples: '    - advocate'
-- synonym: Algicam
-  examples: '    - algicam'
-- synonym: Aminolite
-  examples: '    - aminolite'
-- synonym: Amoxivet
-  examples: '    - amoxivet'
-- synonym: Anfotropina
-  examples: '    - anfotropina'
-- synonym: Anti
-  examples: '    - anti'
-- synonym: Apetil
-  examples: '    - apetil'
-- synonym: Aplonal
-  examples: '    - aplonal'
-- synonym: Artroglycan
-  examples: '    - artroglycan'
-- synonym: Artrosan
-  examples: '    - artrosan'
-- synonym: Atriben
-  examples: '    - atriben'
-- synonym: Atropina
-  examples: '    - atropina'
-- synonym: Aurix
-  examples: '    - aurix'
-- synonym: Azitromicina
-  examples: '    - azitromicina'
-- synonym: Bactroprofen
-  examples: '    - bactroprofen'
-- synonym: Bactrovet
-  examples: '    - bactrovet'
-- synonym: Bagogard
-  examples: '    - bagogard'
-- synonym: Bagomectina
-  examples: '    - bagomectina'
-- synonym: Bagovac
-  examples: '    - bagovac'
-- synonym: Barbitol
-  examples: '    - barbitol'
-- synonym: Basken
-  examples: '    - basken'
-- synonym: Baytril
-  examples: '    - baytril'
-- synonym: Biochip
-  examples: '    - biochip'
-- synonym: Biox
-  examples: '    - biox'
-- synonym: Block
-  examples: '    - block'
-- synonym: Btk
-  examples: '    - btk'
-- synonym: Bucal
-  examples: '    - bucal'
-- synonym: Butormin
-  examples: '    - butormin'
-- synonym: Cae
-  examples: '    - cae'
-- synonym: Calcio
-  examples: '    - calcio'
-- synonym: Canis
-  examples: '    - canis'
-- synonym: Cardial
-  examples: '    - cardial'
-- synonym: Carprodol
-  examples: '    - carprodol'
-- synonym: Cefalexina
-  examples: '    - cefalexina'
-- synonym: Cefalong
-  examples: '    - cefalong'
-- synonym: Cerenia
-  examples: '    - cerenia'
-- synonym: Cestodan
-  examples: '    - cestodan'
-- synonym: Cetfur
-  examples: '    - cetfur'
-- synonym: Ciclosporina
-  examples: '    - ciclosporina'
-- synonym: Cidar
-  examples: '    - cidar'
-- synonym: Ciproplus
-  examples: '    - ciproplus'
-- synonym: Clavamox
-  examples: '    - clavamox'
-- synonym: Cloralen
-  examples: '    - cloralen'
-- synonym: Clorhexidina
-  examples: '    - clorhexidina'
-- synonym: Coagulante
-  examples: '    - coagulante'
-- synonym: Colirama
-  examples: '    - colirama'
-- synonym: Colotrin
-  examples: '    - colotrin'
-- synonym: Comfortis
-  examples: '    - comfortis'
-- synonym: Condroitin
-  examples: '    - condroitin'
-- synonym: Credelio
-  examples: '    - credelio'
-- synonym: Crema
-  examples: '    - crema'
-- synonym: Cumepina
-  examples: '    - cumepina'
-- synonym: Cytopoint
-  examples: '    - cytopoint'
-- synonym: Dectomax
-  examples: '    - dectomax'
-- synonym: Dermodene
-  examples: '    - dermodene'
-- synonym: Dermomax
-  examples: '    - dermomax'
-- synonym: Dexa
-  examples: '    - dexa'
-- synonym: Dexashock
-  examples: '    - dexashock'
-- synonym: Diafin
-  examples: '    - diafin'
-- synonym: Diazepam
-  examples: '    - diazepam'
-- synonym: Diazepet
-  examples: '    - diazepet'
-- synonym: Dipirona
-  examples: '    - dipirona'
-- synonym: Diurene
-  examples: '    - diurene'
-- synonym: Dominal
-  examples: '    - dominal'
-- synonym: Doxilina
-  examples: '    - doxilina'
-- synonym: Doxivit
-  examples: '    - doxivit'
-- synonym: Driptol
-  examples: '    - driptol'
-- synonym: Drontal
-  examples: '    - drontal'
-- synonym: Duosecretina
-  examples: '    - duosecretina'
-- synonym: Ecp
-  examples: '    - ecp'
-- synonym: Ecthol
-  examples: '    - ecthol'
-- synonym: Ecthonil
-  examples: '    - ecthonil'
-- synonym: Endectocida
-  examples: '    - endectocida'
-- synonym: Endospot
-  examples: '    - endospot'
-- synonym: Energia
-  examples: '    - energia'
-- synonym: Enrofloxacina
-  examples: '    - enrofloxacina'
-- synonym: Enroplus
-  examples: '    - enroplus'
-- synonym: Enroxina
-  examples: '    - enroxina'
-- synonym: Entero
-  examples: '    - entero'
-- synonym: Enteroplus
-  examples: '    - enteroplus'
-- synonym: Episol
-  examples: '    - episol'
-- synonym: Eqvalan
-  examples: '    - eqvalan'
-- synonym: Estreptocarbocaftiazol
-  examples: '    - estreptocarbocaftiazol'
-- synonym: Eutanasico
-  examples: '    - eutanasico'
-- synonym: Euthanyle
-  examples: '    - euthanyle'
-- synonym: Feline
-  examples: '    - feline'
-- synonym: Feliway
-  examples: '    - feliway'
-- synonym: Fenobarbital
-  examples: '    - fenobarbital'
-- synonym: Fider
-  examples: '    - fider'
-- synonym: Fip
-  examples: '    - fip'
-- synonym: Fipro
-  examples: '    - fipro'
-- synonym: Fleegard
-  examples: '    - fleegard'
-- synonym: Flexapet
-  examples: '    - flexapet'
-- synonym: Floxaday
-  examples: '    - floxaday'
-- synonym: Fluido
-  examples: '    - fluido'
-- synonym: Flurbiprofeno
-  examples: '    - flurbiprofeno'
-- synonym: Fortepen
-  examples: '    - fortepen'
-- synonym: Furocal
-  examples: '    - furocal'
-- synonym: Gerioox
-  examples: '    - gerioox'
-- synonym: Giacoccide
-  examples: '    - giacoccide'
-- synonym: Griseofulvina
-  examples: '    - griseofulvina'
-- synonym: Hepatoprotector
-  examples: '    - hepatoprotector'
-- synonym: Injection
-  examples: '    - injection'
-- synonym: Ioduro
-  examples: '    - ioduro'
-- synonym: Isiquick
-  examples: '    - isiquick'
-- synonym: Itraconazol
-  examples: '    - itraconazol'
-- synonym: Ivermectina
-  examples: '    - ivermectina'
-- synonym: Ivomec
-  examples: '    - ivomec'
-- synonym: Kensol
-  examples: '    - kensol'
-- synonym: Ketafine
-  examples: '    - ketafine'
-- synonym: Ketamid
-  examples: '    - ketamid'
-- synonym: Ketamina
-  examples: '    - ketamina'
-- synonym: Kil
-  examples: '    - kil'
-- synonym: Kobra
-  examples: '    - kobra'
-- synonym: Kothrina
-  examples: '    - kothrina'
-- synonym: Kuraderm
-  examples: '    - kuraderm'
-- synonym: Labyderm
-  examples: '    - labyderm'
-- synonym: Laxavet
-  examples: '    - laxavet'
-- synonym: Legend
-  examples: '    - legend'
-- synonym: Librela
-  examples: '    - librela'
-- synonym: Mayor
-  examples: '    - mayor'
-- synonym: Medroxiprogesterona
-  examples: '    - medroxiprogesterona'
-- synonym: Meloxivet
-  examples: '    - meloxivet'
-- synonym: Meltra
-  examples: '    - meltra'
-- synonym: Methiovertan
-  examples: '    - methiovertan'
-- synonym: Moxidex
-  examples: '    - moxidex'
-- synonym: Multivit
-  examples: '    - multivit'
-- synonym: Mv
-  examples: '    - mv'
-- synonym: Neovita
-  examples: '    - neovita'
-- synonym: Nogastrol
-  examples: '    - nogastrol'
-- synonym: Nomat
-  examples: '    - nomat'
-- synonym: Novotioc
-  examples: '    - novotioc'
-- synonym: Nutrical
-  examples: '    - nutrical'
-- synonym: Ocladerm
-  examples: '    - ocladerm'
-- synonym: Ocubiotic
-  examples: '    - ocubiotic'
-- synonym: Ohm
-  examples: '    - ohm'
-- synonym: Ol
-  examples: '    - ol'
-- synonym: Osurnia
-  examples: '    - osurnia'
-- synonym: Otiflex
-  examples: '    - otiflex'
-- synonym: Oxisol
-  examples: '    - oxisol'
-- synonym: Oxitetraciclina
-  examples: '    - oxitetraciclina'
-- synonym: Pets
-  examples: '    - pets'
-- synonym: Pf
-  examples: '    - pf'
-- synonym: Pigatoperro
-  examples: '    - pigatoperro'
-- synonym: Pileran
-  examples: '    - pileran'
-- synonym: Pimobendan
-  examples: '    - pimobendan'
-- synonym: Pimocard
-  examples: '    - pimocard'
-- synonym: Pip
-  examples: '    - pip'
-- synonym: Plano
-  examples: '    - plano'
-- synonym: Power
-  examples: '    - power'
-- synonym: Pragma
-  examples: '    - pragma'
-- synonym: Prednisolona
-  examples: '    - prednisolona'
-- synonym: Pregabaliv
-  examples: '    - pregabaliv'
-- synonym: Previcox
-  examples: '    - previcox'
-- synonym: Prius
-  examples: '    - prius'
-- synonym: Pro
-  examples: '    - pro'
-- synonym: Proderma
-  examples: '    - proderma'
-- synonym: Promafine
-  examples: '    - promafine'
-- synonym: Protech
-  examples: '    - protech'
-- synonym: Pruricilona
-  examples: '    - pruricilona'
-- synonym: Ranitidina
-  examples: '    - ranitidina'
-- synonym: Relay
-  examples: '    - relay'
-- synonym: Repexxin
-  examples: '    - repexxin'
-- synonym: Revol
-  examples: '    - revol'
-- synonym: Rimadyl
-  examples: '    - rimadyl'
-- synonym: Rochy
-  examples: '    - rochy'
-- synonym: Rolenal
-  examples: '    - rolenal'
-- synonym: Seniorline
-  examples: '    - seniorline'
-- synonym: Seraquin
-  examples: '    - seraquin'
-- synonym: Serenex
-  examples: '    - serenex'
-- synonym: Seresto
-  examples: '    - seresto'
-- synonym: Sh
-  examples: '    - sh'
-- synonym: Shampoo
-  examples: '    - shampoo'
-- synonym: Simparica
-  examples: '    - simparica'
-- synonym: Sincelar
-  examples: '    - sincelar'
-- synonym: Singestar
-  examples: '    - singestar'
-- synonym: Solubron
-  examples: '    - solubron'
-- synonym: Sosten
-  examples: '    - sosten'
-- synonym: Spinomax
-  examples: '    - spinomax'
-- synonym: Tea
-  examples: '    - tea'
-- synonym: Terpan
-  examples: '    - terpan'
-- synonym: Terramicina
-  examples: '    - terramicina'
-- synonym: Toltrazol
-  examples: '    - toltrazol'
-- synonym: Tonico
-  examples: '    - tonico'
-- synonym: Toracard
-  examples: '    - toracard'
-- synonym: Total
-  examples: '    - total'
-- synonym: Totalvet
-  examples: '    - totalvet'
-- synonym: Tramadol
-  examples: '    - tramadol'
-- synonym: Tratam
-  examples: '    - tratam'
-- synonym: Triavet
-  examples: '    - triavet'
-- synonym: Tripackprotech
-  examples: '    - tripackprotech'
-- synonym: Trivermex
-  examples: '    - trivermex'
-- synonym: Trocoxil
-  examples: '    - trocoxil'
-- synonym: Ursoliv
-  examples: '    - ursoliv'
-- synonym: Ursomarina
-  examples: '    - ursomarina'
-- synonym: Vaquero
-  examples: '    - vaquero'
-- synonym: Vetanarcol
-  examples: '    - vetanarcol'
-- synonym: Vetscan
-  examples: '    - vetscan'
-- synonym: Virbac
-  examples: '    - virbac'
-- synonym: Vita
-  examples: '    - vita'
-- synonym: Vitamina
-  examples: '    - vitamina'
-- synonym: Vitaminico
-  examples: '    - vitaminico'
-- synonym: Viviramv
-  examples: '    - viviramv'
-- synonym: Voren
-  examples: '    - voren'
-- synonym: Ziflor
-  examples: '    - ziflor'
-- synonym: Biogenesis
-  examples: '    - biogenesis'
-- synonym: Biogenesis bago
-  examples: "    - Biogenesis\n    - biogenesis bago\n    - Biogenesisbago"
-- synonym: Boehringer
-  examples: '    - boehringer'
-- synonym: Boehringer ingelheim
-  examples: "    - Boehringer\n    - Boehringeringelheim\n    - boehringer ingelheim"
-- synonym: Ceva
-  examples: '    - ceva'
-- synonym: Integhra-proveedor
-  examples: '    - integhra-proveedor'
-- synonym: Suizo
-  examples: '    - suizo'
-- synonym: Suizo argentina
-  examples: "    - Suizo\n    - Suizoargentina\n    - suizo argentina"
-- synonym: Zoetis
-  examples: '    - zoetis'
-- synonym: holliday scott s.a.
-  examples: "    - hollidayscotts.a.\n    - holliday"
-- synonym: john martin
-  examples: "    - john\n    - johnmartin"
-- synonym: konig s.a.
-  examples: "    - konig\n    - konigs.a."
-- synonym: antiparasitario externo
-  examples: "    - antiparasitario\n    - antiparasitarioexterno"
-- synonym: antiparasitario interno
-  examples: "    - antiparasitario\n    - antiparasitariointerno"
-- synonym: higiene y belleza
-  examples: "    - higieneybelleza\n    - higiene"
-- synonym: higiene y belleza odontologico
-  examples: "    - higieneybellezaodontologico\n    - higiene"
-- synonym: sin categoria
-  examples: "    - sincategoria\n    - sin"
-- synonym: a palmitato
-  examples: '    - apalmitato'
-- synonym: ac folico
-  examples: '    - acfolico'
-- synonym: aceite con alto de acidos grasos
-  examples: "    - aceite\n    - aceiteconaltodeacidosgrasos"
-- synonym: aceite de higado de bacalao
-  examples: "    - aceitedehigadodebacalao\n    - aceite"
-- synonym: aceite mineral denso
-  examples: "    - aceite\n    - aceitemineraldenso"
-- synonym: acepromacina maleato
-  examples: "    - acepromacinamaleato\n    - acepromacina"
-- synonym: acepromazina maleato
-  examples: "    - acepromazinamaleato\n    - acepromazina"
-- synonym: acetato de hidrocortisona
-  examples: "    - acetatodehidrocortisona\n    - acetato"
-- synonym: acetato de medroxiprogesterona
-  examples: "    - acetatodemedroxiprogesterona\n    - acetato"
-- synonym: acetato de megestrol
-  examples: "    - acetatodemegestrol\n    - acetato"
-- synonym: acetil metionina
-  examples: "    - acetil\n    - acetilmetionina"
-- synonym: acetonida de triamcinolona
-  examples: "    - acetonida\n    - acetonidadetriamcinolona"
-- synonym: acido acetico glacial
-  examples: "    - acidoaceticoglacial\n    - acido"
-- synonym: acido alfalipoico
-  examples: "    - acidoalfalipoico\n    - acido"
-- synonym: acido ascorbico
-  examples: "    - acidoascorbico\n    - acido"
-- synonym: acido benzoico
-  examples: "    - acidobenzoico\n    - acido"
-- synonym: acido borico
-  examples: "    - acidoborico\n    - acido"
-- synonym: acido canforico
-  examples: "    - acidocanforico\n    - acido"
-- synonym: acido clavulanico
-  examples: "    - acidoclavulanico\n    - acido"
-- synonym: acido edetico
-  examples: "    - acido\n    - acidoedetico"
-- synonym: acido estearico
-  examples: "    - acidoestearico\n    - acido"
-- synonym: acido folico
-  examples: "    - acidofolico\n    - acido"
-- synonym: acido hialuronico
-  examples: "    - acidohialuronico\n    - acido"
-- synonym: acido lactico
-  examples: "    - acido\n    - acidolactico"
-- synonym: acido salicilico
-  examples: "    - acido\n    - acidosalicilico"
-- synonym: acido tioctico
-  examples: "    - acidotioctico\n    - acido"
-- synonym: acido ursodesoxicolico
-  examples: "    - acidoursodesoxicolico\n    - acido"
-- synonym: active ingredient
-  examples: "    - activeingredient\n    - active"
-- synonym: adenosin trifosfato
-  examples: "    - adenosin\n    - adenosintrifosfato"
-- synonym: alcohol isopropilico
-  examples: "    - alcoholisopropilico\n    - alcohol"
-- synonym: aluminio micronizado
-  examples: "    - aluminio\n    - aluminiomicronizado"
-- synonym: aminoacidos y minerales
-  examples: "    - aminoacidos\n    - aminoacidosyminerales"
-- synonym: analgesico monoclonal
-  examples: "    - analgesico\n    - analgesicomonoclonal"
-- synonym: analogo semioquimico de la feromona de apaciguamiento canino
-  examples: "    - analogo\n    - analogosemioquimicodelaferomonadeapaciguamientocanino"
-- synonym: analogo semioquimico de la fraccion f
-  examples: "    - analogo\n    - analogosemioquimicodelafraccionf"
-- synonym: antigeno de bordetella bronchiseptica
-  examples: "    - antigeno\n    - antigenodebordetellabronchiseptica"
-- synonym: atropina sulfato
-  examples: "    - atropinasulfato\n    - atropina"
-- synonym: azitromicina base
-  examples: "    - azitromicina\n    - azitromicinabase"
-- synonym: bedinvetmab antiinflamatorio
-  examples: "    - bedinvetmab\n    - bedinvetmabantiinflamatorio"
-- synonym: benazepril clorhidrato
-  examples: "    - benazepril\n    - benazeprilclorhidrato"
-- synonym: bencidamina clorhidrato
-  examples: "    - bencidamina\n    - bencidaminaclorhidrato"
-- synonym: bencilpenicilanato de benzatina
-  examples: "    - bencilpenicilanato\n    - bencilpenicilanatodebenzatina"
-- synonym: bencilpenicilanato de procaina
-  examples: "    - bencilpenicilanato\n    - bencilpenicilanatodeprocaina"
-- synonym: bencilpenicilina benzatinica
-  examples: "    - bencilpenicilina\n    - bencilpenicilinabenzatinica"
-- synonym: bencilpenicilina proc
-  examples: "    - bencilpenicilina\n    - bencilpenicilinaproc"
-- synonym: benzoato de sodio
-  examples: "    - benzoato\n    - benzoatodesodio"
-- synonym: betaina clorhidrato
-  examples: "    - betaina\n    - betainaclorhidrato"
-- synonym: betaina cocoamida
-  examples: "    - betaina\n    - betainacocoamida"
-- synonym: betaina hcl
-  examples: "    - betaina\n    - betainahcl"
-- synonym: biclorhidrato de piperazina
-  examples: "    - biclorhidrato\n    - biclorhidratodepiperazina"
-- synonym: bitartrato de colina
-  examples: "    - bitartratodecolina\n    - bitartrato"
-- synonym: butoxido de piperonil
-  examples: "    - butoxidodepiperonil\n    - butoxido"
-- synonym: butoxido de piperonilo
-  examples: "    - butoxidodepiperonilo\n    - butoxido"
-- synonym: c y e
-  examples: '    - cye'
-- synonym: calcivirosis felinos
-  examples: "    - calcivirosisfelinos\n    - calcivirosis"
-- synonym: calicivirus cepa f
-  examples: "    - calicivirus\n    - caliciviruscepaf"
-- synonym: carbinoxamina maleato
-  examples: "    - carbinoxamina\n    - carbinoxaminamaleato"
-- synonym: carbon activado
-  examples: "    - carbon\n    - carbonactivado"
-- synonym: carbon de cafe
-  examples: "    - carbon\n    - carbondecafe"
-- synonym: carbonato de ca
-  examples: "    - carbonatodeca\n    - carbonato"
-- synonym: carbonato de calcio
-  examples: "    - carbonatodecalcio\n    - carbonato"
-- synonym: caseina hidrolizada
-  examples: "    - caseina\n    - caseinahidrolizada"
-- synonym: cefalexina monohidrato
-  examples: "    - cefalexinamonohidrato\n    - cefalexina"
-- synonym: ceftiofur clorhidrato
-  examples: "    - ceftiofurclorhidrato\n    - ceftiofur"
-- synonym: ciclosporina a
-  examples: "    - ciclosporina\n    - ciclosporinaa"
-- synonym: ciprofloxacina base
-  examples: "    - ciprofloxacina\n    - ciprofloxacinabase"
-- synonym: ciproheptadina clorhidrato
-  examples: "    - ciproheptadinaclorhidrato\n    - ciproheptadina"
-- synonym: cl de benzalconio
-  examples: '    - cldebenzalconio'
-- synonym: cloprostenol sodico
-  examples: "    - cloprostenol\n    - cloprostenolsodico"
-- synonym: clorfeniramina maleato
-  examples: "    - clorfeniramina\n    - clorfeniraminamaleato"
-- synonym: clorhexidina acetato
-  examples: "    - clorhexidinaacetato\n    - clorhexidina"
-- synonym: clorhexidina diacetato
-  examples: "    - clorhexidina\n    - clorhexidinadiacetato"
-- synonym: clorhexidina digluconato
-  examples: "    - clorhexidinadigluconato\n    - clorhexidina"
-- synonym: clorhidrato de bencetimida
-  examples: "    - clorhidrato\n    - clorhidratodebencetimida"
-- synonym: clorhidrato de glucosamina
-  examples: "    - clorhidrato\n    - clorhidratodeglucosamina"
-- synonym: clorhidrato de nafazolina
-  examples: "    - clorhidratodenafazolina\n    - clorhidrato"
-- synonym: clormadinona acetato
-  examples: "    - clormadinona\n    - clormadinonaacetato"
-- synonym: clorocresol metabisulfito sodico
-  examples: "    - clorocresolmetabisulfitosodico\n    - clorocresol"
-- synonym: cloruro de benzalconio
-  examples: "    - clorurodebenzalconio\n    - cloruro"
-- synonym: cloruro de calcio
-  examples: "    - cloruro\n    - clorurodecalcio"
-- synonym: cloruro de magnesio
-  examples: "    - cloruro\n    - clorurodemagnesio"
-- synonym: cloruro de magnesio hexahidrato
-  examples: "    - cloruro\n    - clorurodemagnesiohexahidrato"
-- synonym: cloruro de sodio
-  examples: "    - cloruro\n    - clorurodesodio"
-- synonym: cobre como etilenodinitrilo de calcio y cobre
-  examples: "    - cobre\n    - cobrecomoetilenodinitrilodecalcioycobre"
-- synonym: colina bitartrato
-  examples: "    - colinabitartrato\n    - colina"
-- synonym: como fuente de energia complejo vitamina b
-  examples: "    - como\n    - comofuentedeenergiacomplejovitaminab"
-- synonym: con hidroxipropilmetilcelulosa
-  examples: "    - conhidroxipropilmetilcelulosa\n    - con"
-- synonym: condroitin de bajo peso molecular
-  examples: "    - condroitin\n    - condroitindebajopesomolecular"
-- synonym: condroitin sulfato
-  examples: "    - condroitinsulfato\n    - condroitin"
-- synonym: condroitin sulfato a al
-  examples: "    - condroitinsulfatoaal\n    - condroitin"
-- synonym: condroitin sulfato sodico
-  examples: "    - condroitinsulfatosodico\n    - condroitin"
-- synonym: corona y leptospira caninos
-  examples: "    - corona\n    - coronayleptospiracaninos"
-- synonym: cultivados en celulas de rinon de hamster lactante
-  examples: "    - cultivadosencelulasderinondehamsterlactante\n    - cultivados"
-- synonym: curcuma longa l extracto seco
-  examples: "    - curcuma\n    - curcumalongalextractoseco"
-- synonym: cynara scolymus l extracto seco
-  examples: "    - cynara\n    - cynarascolymuslextractoseco"
-- synonym: d glucosamina
-  examples: '    - dglucosamina'
-- synonym: d l calcio
-  examples: '    - dlcalcio'
-- synonym: d l metionina
-  examples: '    - dlmetionina'
-- synonym: d pantotenato de ca
-  examples: '    - dpantotenatodeca'
-- synonym: de feromona facial felina
-  examples: '    - deferomonafacialfelina'
-- synonym: de solucion oral
-  examples: '    - desolucionoral'
-- synonym: dehidrocolato de sodio
-  examples: "    - dehidrocolatodesodio\n    - dehidrocolato"
-- synonym: desoxicolato de sodio
-  examples: "    - desoxicolatodesodio\n    - desoxicolato"
-- synonym: dexametasona fosfato
-  examples: "    - dexametasona\n    - dexametasonafosfato"
-- synonym: dexametasona fosfato sodico
-  examples: "    - dexametasona\n    - dexametasonafosfatosodico"
-- synonym: dexametasona sodio fosfato
-  examples: "    - dexametasona\n    - dexametasonasodiofosfato"
-- synonym: dextrosa al
-  examples: "    - dextrosa\n    - dextrosaal"
-- synonym: difenhidramina clorhidrato
-  examples: "    - difenhidraminaclorhidrato\n    - difenhidramina"
-- synonym: difenilhidantoina sod
-  examples: "    - difenilhidantoina\n    - difenilhidantoinasod"
-- synonym: difenilhidantoinato sodico
-  examples: "    - difenilhidantoinato\n    - difenilhidantoinatosodico"
-- synonym: dihidroestreptomicina sulf
-  examples: "    - dihidroestreptomicinasulf\n    - dihidroestreptomicina"
-- synonym: dimetilpolisiloxano activado
-  examples: "    - dimetilpolisiloxano\n    - dimetilpolisiloxanoactivado"
-- synonym: dl carnitina clorhidrato
-  examples: '    - dlcarnitinaclorhidrato'
-- synonym: dl metionina
-  examples: '    - dlmetionina'
-- synonym: doxapram clorhidrato
-  examples: "    - doxapram\n    - doxapramclorhidrato"
-- synonym: doxiciclina hiclato
-  examples: "    - doxiciclinahiclato\n    - doxiciclina"
-- synonym: e m
-  examples: '    - em'
-- synonym: en comprimidos
-  examples: '    - encomprimidos'
-- synonym: extracto de cynara scolymus
-  examples: "    - extractodecynarascolymus\n    - extracto"
-- synonym: extracto de malta
-  examples: "    - extractodemalta\n    - extracto"
-- synonym: extracto de peumus boldus
-  examples: "    - extracto\n    - extractodepeumusboldus"
-- synonym: extracto de raiz de valeriana
-  examples: "    - extractoderaizdevaleriana\n    - extracto"
-- synonym: extracto de rhamnus prushiana
-  examples: "    - extracto\n    - extractoderhamnusprushiana"
-- synonym: extracto de valeriana
-  examples: "    - extracto\n    - extractodevaleriana"
-- synonym: extracto diluido de alcachofa
-  examples: "    - extracto\n    - extractodiluidodealcachofa"
-- synonym: extracto en polvo de cardo mariano
-  examples: "    - extractoenpolvodecardomariano\n    - extracto"
-- synonym: extracto etereo
-  examples: "    - extractoetereo\n    - extracto"
-- synonym: extracto tumerico
-  examples: "    - extracto\n    - extractotumerico"
-- synonym: feromona m
-  examples: "    - feromonam\n    - feromona"
-- synonym: fibra cruda
-  examples: "    - fibracruda\n    - fibra"
-- synonym: flunixin base
-  examples: "    - flunixinbase\n    - flunixin"
-- synonym: flunixin meglumine
-  examples: "    - flunixin\n    - flunixinmeglumine"
-- synonym: fluocinolona acetonida
-  examples: "    - fluocinolonaacetonida\n    - fluocinolona"
-- synonym: fluoruro de sodio
-  examples: "    - fluoruro\n    - fluorurodesodio"
-- synonym: flurbiprofeno sodico
-  examples: "    - flurbiprofenosodico\n    - flurbiprofeno"
-- synonym: fosfato diacido de potasio
-  examples: "    - fosfatodiacidodepotasio\n    - fosfato"
-- synonym: frasco fraccion liofilizada
-  examples: "    - frascofraccionliofilizada\n    - frasco"
-- synonym: g alquitran
-  examples: '    - galquitran'
-- synonym: g butoxido de piper
-  examples: '    - gbutoxidodepiper'
-- synonym: g butoxido de piperonilo
-  examples: '    - gbutoxidodepiperonilo'
-- synonym: g microesferas
-  examples: '    - gmicroesferas'
-- synonym: g n octyl bicicloheptene dicarboximida
-  examples: '    - gnoctylbicicloheptenedicarboximida'
-- synonym: g permetrina
-  examples: '    - gpermetrina'
-- synonym: gingko biloba
-  examples: "    - gingko\n    - gingkobiloba"
-- synonym: ginkgo biloba
-  examples: "    - ginkgobiloba\n    - ginkgo"
-- synonym: glicinato de cobre
-  examples: "    - glicinatodecobre\n    - glicinato"
-- synonym: gluconato de calcio
-  examples: "    - gluconatodecalcio\n    - gluconato"
-- synonym: gluconato de mag
-  examples: "    - gluconato\n    - gluconatodemag"
-- synonym: gluconato de magnesio
-  examples: "    - gluconato\n    - gluconatodemagnesio"
-- synonym: gluconato de manganeso
-  examples: "    - gluconato\n    - gluconatodemanganeso"
-- synonym: gluconato de zinc
-  examples: "    - gluconato\n    - gluconatodezinc"
-- synonym: glucosa anhidra
-  examples: "    - glucosaanhidra\n    - glucosa"
-- synonym: glucosamina clorhidrato
-  examples: "    - glucosaminaclorhidrato\n    - glucosamina"
-- synonym: glucosamina sulfato
-  examples: "    - glucosaminasulfato\n    - glucosamina"
-- synonym: gr de concentrado
-  examples: '    - grdeconcentrado'
-- synonym: gr de prenisolona
-  examples: '    - grdeprenisolona'
-- synonym: gr y closantel
-  examples: '    - gryclosantel'
-- synonym: griseofulvina micronizada
-  examples: "    - griseofulvina\n    - griseofulvinamicronizada"
-- synonym: grupo b
-  examples: "    - grupo\n    - grupob"
-- synonym: hialuronato de sodio
-  examples: "    - hialuronato\n    - hialuronatodesodio"
-- synonym: hidrocortisona aceponato
-  examples: "    - hidrocortisonaaceponato\n    - hidrocortisona"
-- synonym: hioscina butilbromuro
-  examples: "    - hioscina\n    - hioscinabutilbromuro"
-- synonym: hipoalergenicos de origen natural
-  examples: "    - hipoalergenicos\n    - hipoalergenicosdeorigennatural"
-- synonym: icteryl o acido genabilico
-  examples: "    - icteryl\n    - icteryloacidogenabilico"
-- synonym: imidocarb dipropionato
-  examples: "    - imidocarb\n    - imidocarbdipropionato"
-- synonym: inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
-  examples: "    - inactivados\n    - inactivadosconbetapropiolactonayadyuvadaconhidroxidodealuminio"
-- synonym: iodato de calcio
-  examples: "    - iodato\n    - iodatodecalcio"
-- synonym: ioduro de sodio al
-  examples: "    - ioduro\n    - iodurodesodioal"
-- synonym: ivermectina al
-  examples: "    - ivermectina\n    - ivermectinaal"
-- synonym: ivermectina merial
-  examples: "    - ivermectinamerial\n    - ivermectina"
-- synonym: ketamina base
-  examples: "    - ketaminabase\n    - ketamina"
-- synonym: kg tal cual se sirve
-  examples: '    - kgtalcualsesirve'
-- synonym: kg y lufenuron
-  examples: '    - kgylufenuron'
-- synonym: l arginina
-  examples: '    - larginina'
-- synonym: l arginina clorhidrato
-  examples: '    - largininaclorhidrato'
-- synonym: l carnitina
-  examples: '    - lcarnitina'
-- synonym: l cisteina
-  examples: '    - lcisteina'
-- synonym: l cistina
-  examples: '    - lcistina'
-- synonym: l colina bitartrato
-  examples: '    - lcolinabitartrato'
-- synonym: l glutamina
-  examples: '    - lglutamina'
-- synonym: l lisina
-  examples: '    - llisina'
-- synonym: l lisina al
-  examples: '    - llisinaal'
-- synonym: l lisina monoclorhidrato
-  examples: '    - llisinamonoclorhidrato'
-- synonym: l metionina
-  examples: '    - lmetionina'
-- synonym: l prolina
-  examples: '    - lprolina'
-- synonym: lauril etoxisulfato de sodio
-  examples: "    - lauril\n    - lauriletoxisulfatodesodio"
-- synonym: lauril sulfato de sodio
-  examples: "    - lauril\n    - laurilsulfatodesodio"
-- synonym: lauril sulfato de trietanolamina
-  examples: "    - lauril\n    - laurilsulfatodetrietanolamina"
-- synonym: laurilsulfato de sodio
-  examples: "    - laurilsulfatodesodio\n    - laurilsulfato"
-- synonym: lecitina de soja
-  examples: "    - lecitina\n    - lecitinadesoja"
-- synonym: levoflaxacina base
-  examples: "    - levoflaxacinabase\n    - levoflaxacina"
-- synonym: lidocaina clorhidrato
-  examples: "    - lidocaina\n    - lidocainaclorhidrato"
-- synonym: magnesio cloruro
-  examples: "    - magnesio\n    - magnesiocloruro"
-- synonym: manganeso gluconato
-  examples: "    - manganesogluconato\n    - manganeso"
-- synonym: manganeso sulfato
-  examples: "    - manganesosulfato\n    - manganeso"
-- synonym: maropitant citrato monohidrato
-  examples: "    - maropitant\n    - maropitantcitratomonohidrato"
-- synonym: mat mineral
-  examples: "    - mat\n    - matmineral"
-- synonym: materia mineral
-  examples: "    - materiamineral\n    - materia"
-- synonym: medroxiprogesterona acetato
-  examples: "    - medroxiprogesteronaacetato\n    - medroxiprogesterona"
-- synonym: mejora y mantiene la salud gastrointestina
-  examples: "    - mejoraymantienelasaludgastrointestina\n    - mejora"
-- synonym: metil bromuro de homatropina
-  examples: "    - metilbromurodehomatropina\n    - metil"
-- synonym: metilbromuro de homatropina
-  examples: "    - metilbromurodehomatropina\n    - metilbromuro"
-- synonym: metilprednisolona acetato
-  examples: "    - metilprednisolona\n    - metilprednisolonaacetato"
-- synonym: metionina dl
-  examples: "    - metionina\n    - metioninadl"
-- synonym: metroclopramida clorhidrato
-  examples: "    - metroclopramida\n    - metroclopramidaclorhidrato"
-- synonym: mg taurina
-  examples: '    - mgtaurina'
-- synonym: mg vitamina b
-  examples: '    - mgvitaminab'
-- synonym: mgr nipagin sodico
-  examples: "    - mgr\n    - mgrnipaginsodico"
-- synonym: midazolam base
-  examples: "    - midazolam\n    - midazolambase"
-- synonym: minerales totales
-  examples: "    - minerales\n    - mineralestotales"
-- synonym: n acetil cisteina
-  examples: '    - nacetilcisteina'
-- synonym: n acetilcisteina
-  examples: '    - nacetilcisteina'
-- synonym: n butil bromuro de hioscina
-  examples: '    - nbutilbromurodehioscina'
-- synonym: n omega
-  examples: '    - nomega'
-- synonym: neomicina base
-  examples: "    - neomicina\n    - neomicinabase"
-- synonym: neurotrofico fisiologico
-  examples: "    - neurotrofico\n    - neurotroficofisiologico"
-- synonym: oxido de cobre
-  examples: "    - oxidodecobre\n    - oxido"
-- synonym: oxido de manganeso
-  examples: "    - oxido\n    - oxidodemanganeso"
-- synonym: oxido de zn
-  examples: "    - oxido\n    - oxidodezn"
-- synonym: oxido ferrico
-  examples: "    - oxidoferrico\n    - oxido"
-- synonym: oxitetraciclina base anfoterica
-  examples: "    - oxitetraciclina\n    - oxitetraciclinabaseanfoterica"
-- synonym: oxitetraciclina clorhidrato
-  examples: "    - oxitetraciclina\n    - oxitetraciclinaclorhidrato"
-- synonym: palmitato de cloranfenicol
-  examples: "    - palmitatodecloranfenicol\n    - palmitato"
-- synonym: pamoato de oxantel
-  examples: "    - pamoatodeoxantel\n    - pamoato"
-- synonym: pamoato de pirantel
-  examples: "    - pamoatodepirantel\n    - pamoato"
-- synonym: pantotenato de calcio
-  examples: "    - pantotenato\n    - pantotenatodecalcio"
-- synonym: parainfluenza y leptospira caninos
-  examples: "    - parainfluenzayleptospiracaninos\n    - parainfluenza"
-- synonym: parainfluenza y parvo caninos
-  examples: "    - parainfluenzayparvocaninos\n    - parainfluenza"
-- synonym: pared celular de levadura
-  examples: "    - paredcelulardelevadura\n    - pared"
-- synonym: parvo y corona caninos
-  examples: "    - parvo\n    - parvoycoronacaninos"
-- synonym: parvo y leptospira caninos
-  examples: "    - parvo\n    - parvoyleptospiracaninos"
-- synonym: parvovirosis y tos de las perreras fraccion liofilizada
-  examples: "    - parvovirosisytosdelasperrerasfraccionliofilizada\n    - parvovirosis"
-- synonym: pasta cuprosodica de clorofila
-  examples: "    - pasta\n    - pastacuprosodicadeclorofila"
-- synonym: penicilina benzatinica
-  examples: "    - penicilina\n    - penicilinabenzatinica"
-- synonym: penicilina procainica
-  examples: "    - penicilina\n    - penicilinaprocainica"
-- synonym: pentobarbital sodico
-  examples: "    - pentobarbital\n    - pentobarbitalsodico"
-- synonym: pentosan polisulfato sodico
-  examples: "    - pentosanpolisulfatosodico\n    - pentosan"
-- synonym: peroxido de benzoilo
-  examples: "    - peroxidodebenzoilo\n    - peroxido"
-- synonym: piperonil butoxido
-  examples: "    - piperonilbutoxido\n    - piperonil"
-- synonym: pirantel base
-  examples: "    - pirantelbase\n    - pirantel"
-- synonym: pirantel pamoato
-  examples: "    - pirantel\n    - pirantelpamoato"
-- synonym: piretrinas naturales
-  examples: "    - piretrinasnaturales\n    - piretrinas"
-- synonym: piridoxina clorhidrato
-  examples: "    - piridoxina\n    - piridoxinaclorhidrato"
-- synonym: pirrolidon carboxilato de magnesio monohidrato
-  examples: "    - pirrolidoncarboxilatodemagnesiomonohidrato\n    - pirrolidon"
-- synonym: polimixina b
-  examples: "    - polimixina\n    - polimixinab"
-- synonym: ppm relacion omega
-  examples: "    - ppm\n    - ppmrelacionomega"
-- synonym: prednisolona base
-  examples: "    - prednisolonabase\n    - prednisolona"
-- synonym: prednisolona saborizada
-  examples: "    - prednisolona\n    - prednisolonasaborizada"
-- synonym: pregabalina comprimidos
-  examples: "    - pregabalinacomprimidos\n    - pregabalina"
-- synonym: propionato de clobetasol
-  examples: "    - propionato\n    - propionatodeclobetasol"
-- synonym: prot bruta
-  examples: "    - prot\n    - protbruta"
-- synonym: proteina bruta
-  examples: "    - proteina\n    - proteinabruta"
-- synonym: pyrantel embonato
-  examples: "    - pyrantelembonato\n    - pyrantel"
-- synonym: pyrantel pamoato
-  examples: "    - pyrantelpamoato\n    - pyrantel"
-- synonym: relacion omega
-  examples: "    - relacionomega\n    - relacion"
-- synonym: sal de aluminio de alantoina
-  examples: "    - saldealuminiodealantoina\n    - sal"
-- synonym: sal sodica
-  examples: "    - sal\n    - salsodica"
-- synonym: sarolaner moxidectina pirantel
-  examples: "    - sarolanermoxidectinapirantel\n    - sarolaner"
-- synonym: selenito de sodio
-  examples: "    - selenito\n    - selenitodesodio"
-- synonym: silicato de aluminio y magnesio
-  examples: "    - silicato\n    - silicatodealuminioymagnesio"
-- synonym: silybum marianum extracto seco
-  examples: "    - silybum\n    - silybummarianumextractoseco"
-- synonym: sulfadiazina argentica
-  examples: "    - sulfadiazinaargentica\n    - sulfadiazina"
-- synonym: sulfadiazina de plata
-  examples: "    - sulfadiazinadeplata\n    - sulfadiazina"
-- synonym: sulfametazina sodica
-  examples: "    - sulfametazina\n    - sulfametazinasodica"
-- synonym: sulfato de
-  examples: "    - sulfato\n    - sulfatode"
-- synonym: sulfato de cobre
-  examples: "    - sulfato\n    - sulfatodecobre"
-- synonym: sulfato de dihidroestreptomicina
-  examples: "    - sulfato\n    - sulfatodedihidroestreptomicina"
-- synonym: sulfato de magnesio
-  examples: "    - sulfatodemagnesio\n    - sulfato"
-- synonym: sulfato de manganeso
-  examples: "    - sulfatodemanganeso\n    - sulfato"
-- synonym: sulfato de zinc
-  examples: "    - sulfato\n    - sulfatodezinc"
-- synonym: sulfato ferroso
-  examples: "    - sulfato\n    - sulfatoferroso"
-- synonym: sulfato sodico
-  examples: "    - sulfato\n    - sulfatosodico"
-- synonym: suplemento vitaminico mineral biodisponible de uso diario para perros y
-    gatos
-  examples: "    - suplemento\n    - suplementovitaminicomineralbiodisponibledeusodiarioparaperrosygatos"
-- synonym: suspension inactivada de virus rabico desarrollado en celulas bhk
-  examples: "    - suspensioninactivadadevirusrabicodesarrolladoencelulasbhk\n   \
-    \ - suspension"
-- synonym: tetraciclina clorhidrato
-  examples: "    - tetraciclinaclorhidrato\n    - tetraciclina"
-- synonym: tiamina clorhidrato
-  examples: "    - tiamina\n    - tiaminaclorhidrato"
-- synonym: tramadol clorhidrato
-  examples: "    - tramadolclorhidrato\n    - tramadol"
-- synonym: triamcinolona acetonida
-  examples: "    - triamcinolonaacetonida\n    - triamcinolona"
-- synonym: trisosfato de adenosina
-  examples: "    - trisosfato\n    - trisosfatodeadenosina"
-- synonym: trofozoitos inactivados de giardia lamblia
-  examples: "    - trofozoitosinactivadosdegiardialamblia\n    - trofozoitos"
-- synonym: u i
-  examples: '    - ui'
-- synonym: u i vitamina b
-  examples: '    - uivitaminab'
-- synonym: u i vitamina d
-  examples: '    - uivitaminad'
-- synonym: u i vitamina e
-  examples: '    - uivitaminae'
-- synonym: u vitamina d
-  examples: '    - uvitaminad'
-- synonym: vacuna contra el moquillo
-  examples: "    - vacuna\n    - vacunacontraelmoquillo"
-- synonym: veh o
-  examples: "    - veh\n    - veho"
-- synonym: virus atenuado
-  examples: "    - virus\n    - virusatenuado"
-- synonym: virus de distemper
-  examples: "    - virus\n    - virusdedistemper"
-- synonym: virus de la panleucopenia atenuado
-  examples: "    - virus\n    - virusdelapanleucopeniaatenuado"
-- synonym: virus de la rinotraqueitis cepa fvr f
-  examples: "    - virus\n    - virusdelarinotraqueitiscepafvrf"
-- synonym: virus de moquillo
-  examples: "    - virusdemoquillo\n    - virus"
-- synonym: virus de parvo canino
-  examples: "    - virus\n    - virusdeparvocanino"
-- synonym: virus de parvo y corona caninos
-  examples: "    - virusdeparvoycoronacaninos\n    - virus"
-- synonym: virus moquillo atenuado
-  examples: "    - virusmoquilloatenuado\n    - virus"
-- synonym: virus rabico cepa paris
-  examples: "    - virus\n    - virusrabicocepaparis"
-- synonym: virus vivos modificados de
-  examples: "    - virusvivosmodificadosde\n    - virus"
-- synonym: vit a
-  examples: "    - vit\n    - vita"
-- synonym: vitamina a
-  examples: "    - vitaminaa\n    - vitamina"
-- synonym: vitamina a palmitato
-  examples: "    - vitaminaapalmitato\n    - vitamina"
-- synonym: vitamina b
-  examples: "    - vitamina\n    - vitaminab"
-- synonym: vitamina c recubierta
-  examples: "    - vitaminacrecubierta\n    - vitamina"
-- synonym: vitamina d
-  examples: "    - vitaminad\n    - vitamina"
-- synonym: vitamina e
-  examples: "    - vitaminae\n    - vitamina"
-- synonym: vitamina e acetato
-  examples: "    - vitaminaeacetato\n    - vitamina"
-- synonym: vitamina k
-  examples: "    - vitaminak\n    - vitamina"
-- synonym: vitaminas b
-  examples: "    - vitaminasb\n    - vitaminas"
-- synonym: vitaminas coenzima
-  examples: "    - vitaminascoenzima\n    - vitaminas"
-- synonym: vitaminas y minerales
-  examples: "    - vitaminasyminerales\n    - vitaminas"
-- synonym: vitaminico mineral aminoacidico
-  examples: "    - vitaminicomineralaminoacidico\n    - vitaminico"
-- synonym: xido de piperonilo
-  examples: "    - xido\n    - xidodepiperonilo"
-- synonym: y clorsulon al
-  examples: '    - yclorsulonal'
-- synonym: y griseofulvina
-  examples: '    - ygriseofulvina'
-- synonym: y praziquantel
-  examples: '    - ypraziquantel'
-- synonym: zinc gluconato
-  examples: "    - zinc\n    - zincgluconato"
-- synonym: zinc sulfato
-  examples: "    - zincsulfato\n    - zinc"
-- synonym: a palmitato
-  examples: '    - apalmitato'
-- synonym: ac folico
-  examples: '    - acfolico'
-- synonym: aceite con alto de acidos grasos
-  examples: "    - aceite\n    - aceiteconaltodeacidosgrasos"
-- synonym: aceite de higado de bacalao
-  examples: "    - aceitedehigadodebacalao\n    - aceite"
-- synonym: aceite mineral denso
-  examples: "    - aceite\n    - aceitemineraldenso"
-- synonym: acepromacina maleato
-  examples: "    - acepromacinamaleato\n    - acepromacina"
-- synonym: acepromazina maleato
-  examples: "    - acepromazinamaleato\n    - acepromazina"
-- synonym: acetato de hidrocortisona
-  examples: "    - acetatodehidrocortisona\n    - acetato"
-- synonym: acetato de medroxiprogesterona
-  examples: "    - acetatodemedroxiprogesterona\n    - acetato"
-- synonym: acetato de megestrol
-  examples: "    - acetatodemegestrol\n    - acetato"
-- synonym: acetil metionina
-  examples: "    - acetil\n    - acetilmetionina"
-- synonym: acetonida de triamcinolona
-  examples: "    - acetonida\n    - acetonidadetriamcinolona"
-- synonym: acido acetico glacial
-  examples: "    - acidoaceticoglacial\n    - acido"
-- synonym: acido alfalipoico
-  examples: "    - acidoalfalipoico\n    - acido"
-- synonym: acido ascorbico
-  examples: "    - acidoascorbico\n    - acido"
-- synonym: acido benzoico
-  examples: "    - acidobenzoico\n    - acido"
-- synonym: acido borico
-  examples: "    - acidoborico\n    - acido"
-- synonym: acido canforico
-  examples: "    - acidocanforico\n    - acido"
-- synonym: acido clavulanico
-  examples: "    - acidoclavulanico\n    - acido"
-- synonym: acido edetico
-  examples: "    - acido\n    - acidoedetico"
-- synonym: acido estearico
-  examples: "    - acidoestearico\n    - acido"
-- synonym: acido folico
-  examples: "    - acidofolico\n    - acido"
-- synonym: acido hialuronico
-  examples: "    - acidohialuronico\n    - acido"
-- synonym: acido lactico
-  examples: "    - acido\n    - acidolactico"
-- synonym: acido salicilico
-  examples: "    - acido\n    - acidosalicilico"
-- synonym: acido tioctico
-  examples: "    - acidotioctico\n    - acido"
-- synonym: acido ursodesoxicolico
-  examples: "    - acidoursodesoxicolico\n    - acido"
-- synonym: active ingredient
-  examples: "    - activeingredient\n    - active"
-- synonym: adenosin trifosfato
-  examples: "    - adenosin\n    - adenosintrifosfato"
-- synonym: alcohol isopropilico
-  examples: "    - alcoholisopropilico\n    - alcohol"
-- synonym: aluminio micronizado
-  examples: "    - aluminio\n    - aluminiomicronizado"
-- synonym: aminoacidos y minerales
-  examples: "    - aminoacidos\n    - aminoacidosyminerales"
-- synonym: analgesico monoclonal
-  examples: "    - analgesico\n    - analgesicomonoclonal"
-- synonym: analogo semioquimico de la feromona de apaciguamiento canino
-  examples: "    - analogo\n    - analogosemioquimicodelaferomonadeapaciguamientocanino"
-- synonym: analogo semioquimico de la fraccion f
-  examples: "    - analogo\n    - analogosemioquimicodelafraccionf"
-- synonym: antigeno de bordetella bronchiseptica
-  examples: "    - antigeno\n    - antigenodebordetellabronchiseptica"
-- synonym: atropina sulfato
-  examples: "    - atropinasulfato\n    - atropina"
-- synonym: azitromicina base
-  examples: "    - azitromicina\n    - azitromicinabase"
-- synonym: bedinvetmab antiinflamatorio
-  examples: "    - bedinvetmab\n    - bedinvetmabantiinflamatorio"
-- synonym: benazepril clorhidrato
-  examples: "    - benazepril\n    - benazeprilclorhidrato"
-- synonym: bencidamina clorhidrato
-  examples: "    - bencidamina\n    - bencidaminaclorhidrato"
-- synonym: bencilpenicilanato de benzatina
-  examples: "    - bencilpenicilanato\n    - bencilpenicilanatodebenzatina"
-- synonym: bencilpenicilanato de procaina
-  examples: "    - bencilpenicilanato\n    - bencilpenicilanatodeprocaina"
-- synonym: bencilpenicilina benzatinica
-  examples: "    - bencilpenicilina\n    - bencilpenicilinabenzatinica"
-- synonym: bencilpenicilina proc
-  examples: "    - bencilpenicilina\n    - bencilpenicilinaproc"
-- synonym: benzoato de sodio
-  examples: "    - benzoato\n    - benzoatodesodio"
-- synonym: betaina clorhidrato
-  examples: "    - betaina\n    - betainaclorhidrato"
-- synonym: betaina cocoamida
-  examples: "    - betaina\n    - betainacocoamida"
-- synonym: betaina hcl
-  examples: "    - betaina\n    - betainahcl"
-- synonym: biclorhidrato de piperazina
-  examples: "    - biclorhidrato\n    - biclorhidratodepiperazina"
-- synonym: bitartrato de colina
-  examples: "    - bitartratodecolina\n    - bitartrato"
-- synonym: butoxido de piperonil
-  examples: "    - butoxidodepiperonil\n    - butoxido"
-- synonym: butoxido de piperonilo
-  examples: "    - butoxidodepiperonilo\n    - butoxido"
-- synonym: c y e
-  examples: '    - cye'
-- synonym: calcivirosis felinos
-  examples: "    - calcivirosisfelinos\n    - calcivirosis"
-- synonym: calicivirus cepa f
-  examples: "    - calicivirus\n    - caliciviruscepaf"
-- synonym: carbinoxamina maleato
-  examples: "    - carbinoxamina\n    - carbinoxaminamaleato"
-- synonym: carbon activado
-  examples: "    - carbon\n    - carbonactivado"
-- synonym: carbon de cafe
-  examples: "    - carbon\n    - carbondecafe"
-- synonym: carbonato de ca
-  examples: "    - carbonatodeca\n    - carbonato"
-- synonym: carbonato de calcio
-  examples: "    - carbonatodecalcio\n    - carbonato"
-- synonym: caseina hidrolizada
-  examples: "    - caseina\n    - caseinahidrolizada"
-- synonym: cefalexina monohidrato
-  examples: "    - cefalexinamonohidrato\n    - cefalexina"
-- synonym: ceftiofur clorhidrato
-  examples: "    - ceftiofurclorhidrato\n    - ceftiofur"
-- synonym: ciclosporina a
-  examples: "    - ciclosporina\n    - ciclosporinaa"
-- synonym: ciprofloxacina base
-  examples: "    - ciprofloxacina\n    - ciprofloxacinabase"
-- synonym: ciproheptadina clorhidrato
-  examples: "    - ciproheptadinaclorhidrato\n    - ciproheptadina"
-- synonym: cl de benzalconio
-  examples: '    - cldebenzalconio'
-- synonym: cloprostenol sodico
-  examples: "    - cloprostenol\n    - cloprostenolsodico"
-- synonym: clorfeniramina maleato
-  examples: "    - clorfeniramina\n    - clorfeniraminamaleato"
-- synonym: clorhexidina acetato
-  examples: "    - clorhexidinaacetato\n    - clorhexidina"
-- synonym: clorhexidina diacetato
-  examples: "    - clorhexidina\n    - clorhexidinadiacetato"
-- synonym: clorhexidina digluconato
-  examples: "    - clorhexidinadigluconato\n    - clorhexidina"
-- synonym: clorhidrato de bencetimida
-  examples: "    - clorhidrato\n    - clorhidratodebencetimida"
-- synonym: clorhidrato de glucosamina
-  examples: "    - clorhidrato\n    - clorhidratodeglucosamina"
-- synonym: clorhidrato de nafazolina
-  examples: "    - clorhidratodenafazolina\n    - clorhidrato"
-- synonym: clormadinona acetato
-  examples: "    - clormadinona\n    - clormadinonaacetato"
-- synonym: clorocresol metabisulfito sodico
-  examples: "    - clorocresolmetabisulfitosodico\n    - clorocresol"
-- synonym: cloruro de benzalconio
-  examples: "    - clorurodebenzalconio\n    - cloruro"
-- synonym: cloruro de calcio
-  examples: "    - cloruro\n    - clorurodecalcio"
-- synonym: cloruro de magnesio
-  examples: "    - cloruro\n    - clorurodemagnesio"
-- synonym: cloruro de magnesio hexahidrato
-  examples: "    - cloruro\n    - clorurodemagnesiohexahidrato"
-- synonym: cloruro de sodio
-  examples: "    - cloruro\n    - clorurodesodio"
-- synonym: cobre como etilenodinitrilo de calcio y cobre
-  examples: "    - cobre\n    - cobrecomoetilenodinitrilodecalcioycobre"
-- synonym: colina bitartrato
-  examples: "    - colinabitartrato\n    - colina"
-- synonym: como fuente de energia complejo vitamina b
-  examples: "    - como\n    - comofuentedeenergiacomplejovitaminab"
-- synonym: con hidroxipropilmetilcelulosa
-  examples: "    - conhidroxipropilmetilcelulosa\n    - con"
-- synonym: condroitin de bajo peso molecular
-  examples: "    - condroitin\n    - condroitindebajopesomolecular"
-- synonym: condroitin sulfato
-  examples: "    - condroitinsulfato\n    - condroitin"
-- synonym: condroitin sulfato a al
-  examples: "    - condroitinsulfatoaal\n    - condroitin"
-- synonym: condroitin sulfato sodico
-  examples: "    - condroitinsulfatosodico\n    - condroitin"
-- synonym: corona y leptospira caninos
-  examples: "    - corona\n    - coronayleptospiracaninos"
-- synonym: cultivados en celulas de rinon de hamster lactante
-  examples: "    - cultivadosencelulasderinondehamsterlactante\n    - cultivados"
-- synonym: curcuma longa l extracto seco
-  examples: "    - curcuma\n    - curcumalongalextractoseco"
-- synonym: cynara scolymus l extracto seco
-  examples: "    - cynara\n    - cynarascolymuslextractoseco"
-- synonym: d glucosamina
-  examples: '    - dglucosamina'
-- synonym: d l calcio
-  examples: '    - dlcalcio'
-- synonym: d l metionina
-  examples: '    - dlmetionina'
-- synonym: d pantotenato de ca
-  examples: '    - dpantotenatodeca'
-- synonym: de feromona facial felina
-  examples: '    - deferomonafacialfelina'
-- synonym: de solucion oral
-  examples: '    - desolucionoral'
-- synonym: dehidrocolato de sodio
-  examples: "    - dehidrocolatodesodio\n    - dehidrocolato"
-- synonym: desoxicolato de sodio
-  examples: "    - desoxicolatodesodio\n    - desoxicolato"
-- synonym: dexametasona fosfato
-  examples: "    - dexametasona\n    - dexametasonafosfato"
-- synonym: dexametasona fosfato sodico
-  examples: "    - dexametasona\n    - dexametasonafosfatosodico"
-- synonym: dexametasona sodio fosfato
-  examples: "    - dexametasona\n    - dexametasonasodiofosfato"
-- synonym: dextrosa al
-  examples: "    - dextrosa\n    - dextrosaal"
-- synonym: difenhidramina clorhidrato
-  examples: "    - difenhidraminaclorhidrato\n    - difenhidramina"
-- synonym: difenilhidantoina sod
-  examples: "    - difenilhidantoina\n    - difenilhidantoinasod"
-- synonym: difenilhidantoinato sodico
-  examples: "    - difenilhidantoinato\n    - difenilhidantoinatosodico"
-- synonym: dihidroestreptomicina sulf
-  examples: "    - dihidroestreptomicinasulf\n    - dihidroestreptomicina"
-- synonym: dimetilpolisiloxano activado
-  examples: "    - dimetilpolisiloxano\n    - dimetilpolisiloxanoactivado"
-- synonym: dl carnitina clorhidrato
-  examples: '    - dlcarnitinaclorhidrato'
-- synonym: dl metionina
-  examples: '    - dlmetionina'
-- synonym: doxapram clorhidrato
-  examples: "    - doxapram\n    - doxapramclorhidrato"
-- synonym: doxiciclina hiclato
-  examples: "    - doxiciclinahiclato\n    - doxiciclina"
-- synonym: e m
-  examples: '    - em'
-- synonym: en comprimidos
-  examples: '    - encomprimidos'
-- synonym: extracto de cynara scolymus
-  examples: "    - extractodecynarascolymus\n    - extracto"
-- synonym: extracto de malta
-  examples: "    - extractodemalta\n    - extracto"
-- synonym: extracto de peumus boldus
-  examples: "    - extracto\n    - extractodepeumusboldus"
-- synonym: extracto de raiz de valeriana
-  examples: "    - extractoderaizdevaleriana\n    - extracto"
-- synonym: extracto de rhamnus prushiana
-  examples: "    - extracto\n    - extractoderhamnusprushiana"
-- synonym: extracto de valeriana
-  examples: "    - extracto\n    - extractodevaleriana"
-- synonym: extracto diluido de alcachofa
-  examples: "    - extracto\n    - extractodiluidodealcachofa"
-- synonym: extracto en polvo de cardo mariano
-  examples: "    - extractoenpolvodecardomariano\n    - extracto"
-- synonym: extracto etereo
-  examples: "    - extractoetereo\n    - extracto"
-- synonym: extracto tumerico
-  examples: "    - extracto\n    - extractotumerico"
-- synonym: feromona m
-  examples: "    - feromonam\n    - feromona"
-- synonym: fibra cruda
-  examples: "    - fibracruda\n    - fibra"
-- synonym: flunixin base
-  examples: "    - flunixinbase\n    - flunixin"
-- synonym: flunixin meglumine
-  examples: "    - flunixin\n    - flunixinmeglumine"
-- synonym: fluocinolona acetonida
-  examples: "    - fluocinolonaacetonida\n    - fluocinolona"
-- synonym: fluoruro de sodio
-  examples: "    - fluoruro\n    - fluorurodesodio"
-- synonym: flurbiprofeno sodico
-  examples: "    - flurbiprofenosodico\n    - flurbiprofeno"
-- synonym: fosfato diacido de potasio
-  examples: "    - fosfatodiacidodepotasio\n    - fosfato"
-- synonym: frasco fraccion liofilizada
-  examples: "    - frascofraccionliofilizada\n    - frasco"
-- synonym: g alquitran
-  examples: '    - galquitran'
-- synonym: g butoxido de piper
-  examples: '    - gbutoxidodepiper'
-- synonym: g butoxido de piperonilo
-  examples: '    - gbutoxidodepiperonilo'
-- synonym: g microesferas
-  examples: '    - gmicroesferas'
-- synonym: g n octyl bicicloheptene dicarboximida
-  examples: '    - gnoctylbicicloheptenedicarboximida'
-- synonym: g permetrina
-  examples: '    - gpermetrina'
-- synonym: gingko biloba
-  examples: "    - gingko\n    - gingkobiloba"
-- synonym: ginkgo biloba
-  examples: "    - ginkgobiloba\n    - ginkgo"
-- synonym: glicinato de cobre
-  examples: "    - glicinatodecobre\n    - glicinato"
-- synonym: gluconato de calcio
-  examples: "    - gluconatodecalcio\n    - gluconato"
-- synonym: gluconato de mag
-  examples: "    - gluconato\n    - gluconatodemag"
-- synonym: gluconato de magnesio
-  examples: "    - gluconato\n    - gluconatodemagnesio"
-- synonym: gluconato de manganeso
-  examples: "    - gluconato\n    - gluconatodemanganeso"
-- synonym: gluconato de zinc
-  examples: "    - gluconato\n    - gluconatodezinc"
-- synonym: glucosa anhidra
-  examples: "    - glucosaanhidra\n    - glucosa"
-- synonym: glucosamina clorhidrato
-  examples: "    - glucosaminaclorhidrato\n    - glucosamina"
-- synonym: glucosamina sulfato
-  examples: "    - glucosaminasulfato\n    - glucosamina"
-- synonym: gr de concentrado
-  examples: '    - grdeconcentrado'
-- synonym: gr de prenisolona
-  examples: '    - grdeprenisolona'
-- synonym: gr y closantel
-  examples: '    - gryclosantel'
-- synonym: griseofulvina micronizada
-  examples: "    - griseofulvina\n    - griseofulvinamicronizada"
-- synonym: grupo b
-  examples: "    - grupo\n    - grupob"
-- synonym: hialuronato de sodio
-  examples: "    - hialuronato\n    - hialuronatodesodio"
-- synonym: hidrocortisona aceponato
-  examples: "    - hidrocortisonaaceponato\n    - hidrocortisona"
-- synonym: hioscina butilbromuro
-  examples: "    - hioscina\n    - hioscinabutilbromuro"
-- synonym: hipoalergenicos de origen natural
-  examples: "    - hipoalergenicos\n    - hipoalergenicosdeorigennatural"
-- synonym: icteryl o acido genabilico
-  examples: "    - icteryl\n    - icteryloacidogenabilico"
-- synonym: imidocarb dipropionato
-  examples: "    - imidocarb\n    - imidocarbdipropionato"
-- synonym: inactivados con beta propiolactona y adyuvada con hidroxido de aluminio
-  examples: "    - inactivados\n    - inactivadosconbetapropiolactonayadyuvadaconhidroxidodealuminio"
-- synonym: iodato de calcio
-  examples: "    - iodato\n    - iodatodecalcio"
-- synonym: ioduro de sodio al
-  examples: "    - ioduro\n    - iodurodesodioal"
-- synonym: ivermectina al
-  examples: "    - ivermectina\n    - ivermectinaal"
-- synonym: ivermectina merial
-  examples: "    - ivermectinamerial\n    - ivermectina"
-- synonym: ketamina base
-  examples: "    - ketaminabase\n    - ketamina"
-- synonym: kg tal cual se sirve
-  examples: '    - kgtalcualsesirve'
-- synonym: kg y lufenuron
-  examples: '    - kgylufenuron'
-- synonym: l arginina
-  examples: '    - larginina'
-- synonym: l arginina clorhidrato
-  examples: '    - largininaclorhidrato'
-- synonym: l carnitina
-  examples: '    - lcarnitina'
-- synonym: l cisteina
-  examples: '    - lcisteina'
-- synonym: l cistina
-  examples: '    - lcistina'
-- synonym: l colina bitartrato
-  examples: '    - lcolinabitartrato'
-- synonym: l glutamina
-  examples: '    - lglutamina'
-- synonym: l lisina
-  examples: '    - llisina'
-- synonym: l lisina al
-  examples: '    - llisinaal'
-- synonym: l lisina monoclorhidrato
-  examples: '    - llisinamonoclorhidrato'
-- synonym: l metionina
-  examples: '    - lmetionina'
-- synonym: l prolina
-  examples: '    - lprolina'
-- synonym: lauril etoxisulfato de sodio
-  examples: "    - lauril\n    - lauriletoxisulfatodesodio"
-- synonym: lauril sulfato de sodio
-  examples: "    - lauril\n    - laurilsulfatodesodio"
-- synonym: lauril sulfato de trietanolamina
-  examples: "    - lauril\n    - laurilsulfatodetrietanolamina"
-- synonym: laurilsulfato de sodio
-  examples: "    - laurilsulfatodesodio\n    - laurilsulfato"
-- synonym: lecitina de soja
-  examples: "    - lecitina\n    - lecitinadesoja"
-- synonym: levoflaxacina base
-  examples: "    - levoflaxacinabase\n    - levoflaxacina"
-- synonym: lidocaina clorhidrato
-  examples: "    - lidocaina\n    - lidocainaclorhidrato"
-- synonym: magnesio cloruro
-  examples: "    - magnesio\n    - magnesiocloruro"
-- synonym: manganeso gluconato
-  examples: "    - manganesogluconato\n    - manganeso"
-- synonym: manganeso sulfato
-  examples: "    - manganesosulfato\n    - manganeso"
-- synonym: maropitant citrato monohidrato
-  examples: "    - maropitant\n    - maropitantcitratomonohidrato"
-- synonym: mat mineral
-  examples: "    - mat\n    - matmineral"
-- synonym: materia mineral
-  examples: "    - materiamineral\n    - materia"
-- synonym: medroxiprogesterona acetato
-  examples: "    - medroxiprogesteronaacetato\n    - medroxiprogesterona"
-- synonym: mejora y mantiene la salud gastrointestina
-  examples: "    - mejoraymantienelasaludgastrointestina\n    - mejora"
-- synonym: metil bromuro de homatropina
-  examples: "    - metilbromurodehomatropina\n    - metil"
-- synonym: metilbromuro de homatropina
-  examples: "    - metilbromurodehomatropina\n    - metilbromuro"
-- synonym: metilprednisolona acetato
-  examples: "    - metilprednisolona\n    - metilprednisolonaacetato"
-- synonym: metionina dl
-  examples: "    - metionina\n    - metioninadl"
-- synonym: metroclopramida clorhidrato
-  examples: "    - metroclopramida\n    - metroclopramidaclorhidrato"
-- synonym: mg taurina
-  examples: '    - mgtaurina'
-- synonym: mg vitamina b
-  examples: '    - mgvitaminab'
-- synonym: mgr nipagin sodico
-  examples: "    - mgr\n    - mgrnipaginsodico"
-- synonym: midazolam base
-  examples: "    - midazolam\n    - midazolambase"
-- synonym: minerales totales
-  examples: "    - minerales\n    - mineralestotales"
-- synonym: n acetil cisteina
-  examples: '    - nacetilcisteina'
-- synonym: n acetilcisteina
-  examples: '    - nacetilcisteina'
-- synonym: n butil bromuro de hioscina
-  examples: '    - nbutilbromurodehioscina'
-- synonym: n omega
-  examples: '    - nomega'
-- synonym: neomicina base
-  examples: "    - neomicina\n    - neomicinabase"
-- synonym: neurotrofico fisiologico
-  examples: "    - neurotrofico\n    - neurotroficofisiologico"
-- synonym: oxido de cobre
-  examples: "    - oxidodecobre\n    - oxido"
-- synonym: oxido de manganeso
-  examples: "    - oxido\n    - oxidodemanganeso"
-- synonym: oxido de zn
-  examples: "    - oxido\n    - oxidodezn"
-- synonym: oxido ferrico
-  examples: "    - oxidoferrico\n    - oxido"
-- synonym: oxitetraciclina base anfoterica
-  examples: "    - oxitetraciclina\n    - oxitetraciclinabaseanfoterica"
-- synonym: oxitetraciclina clorhidrato
-  examples: "    - oxitetraciclina\n    - oxitetraciclinaclorhidrato"
-- synonym: palmitato de cloranfenicol
-  examples: "    - palmitatodecloranfenicol\n    - palmitato"
-- synonym: pamoato de oxantel
-  examples: "    - pamoatodeoxantel\n    - pamoato"
-- synonym: pamoato de pirantel
-  examples: "    - pamoatodepirantel\n    - pamoato"
-- synonym: pantotenato de calcio
-  examples: "    - pantotenato\n    - pantotenatodecalcio"
-- synonym: parainfluenza y leptospira caninos
-  examples: "    - parainfluenzayleptospiracaninos\n    - parainfluenza"
-- synonym: parainfluenza y parvo caninos
-  examples: "    - parainfluenzayparvocaninos\n    - parainfluenza"
-- synonym: pared celular de levadura
-  examples: "    - paredcelulardelevadura\n    - pared"
-- synonym: parvo y corona caninos
-  examples: "    - parvo\n    - parvoycoronacaninos"
-- synonym: parvo y leptospira caninos
-  examples: "    - parvo\n    - parvoyleptospiracaninos"
-- synonym: parvovirosis y tos de las perreras fraccion liofilizada
-  examples: "    - parvovirosisytosdelasperrerasfraccionliofilizada\n    - parvovirosis"
-- synonym: pasta cuprosodica de clorofila
-  examples: "    - pasta\n    - pastacuprosodicadeclorofila"
-- synonym: penicilina benzatinica
-  examples: "    - penicilina\n    - penicilinabenzatinica"
-- synonym: penicilina procainica
-  examples: "    - penicilina\n    - penicilinaprocainica"
-- synonym: pentobarbital sodico
-  examples: "    - pentobarbital\n    - pentobarbitalsodico"
-- synonym: pentosan polisulfato sodico
-  examples: "    - pentosanpolisulfatosodico\n    - pentosan"
-- synonym: peroxido de benzoilo
-  examples: "    - peroxidodebenzoilo\n    - peroxido"
-- synonym: piperonil butoxido
-  examples: "    - piperonilbutoxido\n    - piperonil"
-- synonym: pirantel base
-  examples: "    - pirantelbase\n    - pirantel"
-- synonym: pirantel pamoato
-  examples: "    - pirantel\n    - pirantelpamoato"
-- synonym: piretrinas naturales
-  examples: "    - piretrinasnaturales\n    - piretrinas"
-- synonym: piridoxina clorhidrato
-  examples: "    - piridoxina\n    - piridoxinaclorhidrato"
-- synonym: pirrolidon carboxilato de magnesio monohidrato
-  examples: "    - pirrolidoncarboxilatodemagnesiomonohidrato\n    - pirrolidon"
-- synonym: polimixina b
-  examples: "    - polimixina\n    - polimixinab"
-- synonym: ppm relacion omega
-  examples: "    - ppm\n    - ppmrelacionomega"
-- synonym: prednisolona base
-  examples: "    - prednisolonabase\n    - prednisolona"
-- synonym: prednisolona saborizada
-  examples: "    - prednisolona\n    - prednisolonasaborizada"
-- synonym: pregabalina comprimidos
-  examples: "    - pregabalinacomprimidos\n    - pregabalina"
-- synonym: propionato de clobetasol
-  examples: "    - propionato\n    - propionatodeclobetasol"
-- synonym: prot bruta
-  examples: "    - prot\n    - protbruta"
-- synonym: proteina bruta
-  examples: "    - proteina\n    - proteinabruta"
-- synonym: pyrantel embonato
-  examples: "    - pyrantelembonato\n    - pyrantel"
-- synonym: pyrantel pamoato
-  examples: "    - pyrantelpamoato\n    - pyrantel"
-- synonym: relacion omega
-  examples: "    - relacionomega\n    - relacion"
-- synonym: sal de aluminio de alantoina
-  examples: "    - saldealuminiodealantoina\n    - sal"
-- synonym: sal sodica
-  examples: "    - sal\n    - salsodica"
-- synonym: sarolaner moxidectina pirantel
-  examples: "    - sarolanermoxidectinapirantel\n    - sarolaner"
-- synonym: selenito de sodio
-  examples: "    - selenito\n    - selenitodesodio"
-- synonym: silicato de aluminio y magnesio
-  examples: "    - silicato\n    - silicatodealuminioymagnesio"
-- synonym: silybum marianum extracto seco
-  examples: "    - silybum\n    - silybummarianumextractoseco"
-- synonym: sulfadiazina argentica
-  examples: "    - sulfadiazinaargentica\n    - sulfadiazina"
-- synonym: sulfadiazina de plata
-  examples: "    - sulfadiazinadeplata\n    - sulfadiazina"
-- synonym: sulfametazina sodica
-  examples: "    - sulfametazina\n    - sulfametazinasodica"
-- synonym: sulfato de
-  examples: "    - sulfato\n    - sulfatode"
-- synonym: sulfato de cobre
-  examples: "    - sulfato\n    - sulfatodecobre"
-- synonym: sulfato de dihidroestreptomicina
-  examples: "    - sulfato\n    - sulfatodedihidroestreptomicina"
-- synonym: sulfato de magnesio
-  examples: "    - sulfatodemagnesio\n    - sulfato"
-- synonym: sulfato de manganeso
-  examples: "    - sulfatodemanganeso\n    - sulfato"
-- synonym: sulfato de zinc
-  examples: "    - sulfato\n    - sulfatodezinc"
-- synonym: sulfato ferroso
-  examples: "    - sulfato\n    - sulfatoferroso"
-- synonym: sulfato sodico
-  examples: "    - sulfato\n    - sulfatosodico"
-- synonym: suplemento vitaminico mineral biodisponible de uso diario para perros y
-    gatos
-  examples: "    - suplemento\n    - suplementovitaminicomineralbiodisponibledeusodiarioparaperrosygatos"
-- synonym: suspension inactivada de virus rabico desarrollado en celulas bhk
-  examples: "    - suspensioninactivadadevirusrabicodesarrolladoencelulasbhk\n   \
-    \ - suspension"
-- synonym: tetraciclina clorhidrato
-  examples: "    - tetraciclinaclorhidrato\n    - tetraciclina"
-- synonym: tiamina clorhidrato
-  examples: "    - tiamina\n    - tiaminaclorhidrato"
-- synonym: tramadol clorhidrato
-  examples: "    - tramadolclorhidrato\n    - tramadol"
-- synonym: triamcinolona acetonida
-  examples: "    - triamcinolonaacetonida\n    - triamcinolona"
-- synonym: trisosfato de adenosina
-  examples: "    - trisosfato\n    - trisosfatodeadenosina"
-- synonym: trofozoitos inactivados de giardia lamblia
-  examples: "    - trofozoitosinactivadosdegiardialamblia\n    - trofozoitos"
-- synonym: u i
-  examples: '    - ui'
-- synonym: u i vitamina b
-  examples: '    - uivitaminab'
-- synonym: u i vitamina d
-  examples: '    - uivitaminad'
-- synonym: u i vitamina e
-  examples: '    - uivitaminae'
-- synonym: u vitamina d
-  examples: '    - uvitaminad'
-- synonym: vacuna contra el moquillo
-  examples: "    - vacuna\n    - vacunacontraelmoquillo"
-- synonym: veh o
-  examples: "    - veh\n    - veho"
-- synonym: virus atenuado
-  examples: "    - virus\n    - virusatenuado"
-- synonym: virus de distemper
-  examples: "    - virus\n    - virusdedistemper"
-- synonym: virus de la panleucopenia atenuado
-  examples: "    - virus\n    - virusdelapanleucopeniaatenuado"
-- synonym: virus de la rinotraqueitis cepa fvr f
-  examples: "    - virus\n    - virusdelarinotraqueitiscepafvrf"
-- synonym: virus de moquillo
-  examples: "    - virusdemoquillo\n    - virus"
-- synonym: virus de parvo canino
-  examples: "    - virus\n    - virusdeparvocanino"
-- synonym: virus de parvo y corona caninos
-  examples: "    - virusdeparvoycoronacaninos\n    - virus"
-- synonym: virus moquillo atenuado
-  examples: "    - virusmoquilloatenuado\n    - virus"
-- synonym: virus rabico cepa paris
-  examples: "    - virus\n    - virusrabicocepaparis"
-- synonym: virus vivos modificados de
-  examples: "    - virusvivosmodificadosde\n    - virus"
-- synonym: vit a
-  examples: "    - vit\n    - vita"
-- synonym: vitamina a
-  examples: "    - vitaminaa\n    - vitamina"
-- synonym: vitamina a palmitato
-  examples: "    - vitaminaapalmitato\n    - vitamina"
-- synonym: vitamina b
-  examples: "    - vitamina\n    - vitaminab"
-- synonym: vitamina c recubierta
-  examples: "    - vitaminacrecubierta\n    - vitamina"
-- synonym: vitamina d
-  examples: "    - vitaminad\n    - vitamina"
-- synonym: vitamina e
-  examples: "    - vitaminae\n    - vitamina"
-- synonym: vitamina e acetato
-  examples: "    - vitaminaeacetato\n    - vitamina"
-- synonym: vitamina k
-  examples: "    - vitaminak\n    - vitamina"
-- synonym: vitaminas b
-  examples: "    - vitaminasb\n    - vitaminas"
-- synonym: vitaminas coenzima
-  examples: "    - vitaminascoenzima\n    - vitaminas"
-- synonym: vitaminas y minerales
-  examples: "    - vitaminasyminerales\n    - vitaminas"
-- synonym: vitaminico mineral aminoacidico
-  examples: "    - vitaminicomineralaminoacidico\n    - vitaminico"
-- synonym: xido de piperonilo
-  examples: "    - xido\n    - xidodepiperonilo"
-- synonym: y clorsulon al
-  examples: '    - yclorsulonal'
-- synonym: y griseofulvina
-  examples: '    - ygriseofulvina'
-- synonym: y praziquantel
-  examples: '    - ypraziquantel'
-- synonym: zinc gluconato
-  examples: "    - zinc\n    - zincgluconato"
-- synonym: zinc sulfato
-  examples: "    - zincsulfato\n    - zinc"
+# # Sinónimos automáticos - Generado desde lookup tables
+# # Fecha: 2025-09-09 14:44:06
+# version: "3.1"
+
+# nlu:
+
+# - synonym: adaptil
+#   examples: |
+#     - Adaptil
+#     - adaptil
+
+# - synonym: advocate
+#   examples: |
+#     - Advocate
+#     - advocate
+
+# - synonym: algicam
+#   examples: |
+#     - Algicam
+#     - algicam
+
+# - synonym: algidol
+#   examples: |
+#     - Algidol
+#     - algidol
+
+# - synonym: aplonal
+#   examples: |
+#     - Aplonal
+#     - aplonal
+
+# - synonym: apoquel
+#   examples: |
+#     - Apoquel
+#     - apoquel
+
+# - synonym: artroglycan
+#   examples: |
+#     - Artroglycan
+#     - artroglycan
+
+# - synonym: artrovet
+#   examples: |
+#     - Artrovet
+#     - artrovet
+
+# - synonym: aurix
+#   examples: |
+#     - Aurix
+#     - aurix
+
+# - synonym: bactroflay
+#   examples: |
+#     - Bactroflay
+#     - bactroflay
+
+# - synonym: bactrovet
+#   examples: |
+#     - Bactrovet
+#     - bactrovet
+
+# - synonym: bagogard
+#   examples: |
+#     - Bagogard
+#     - bagogard
+
+# - synonym: basken
+#   examples: |
+#     - Basken
+#     - basken
+
+# - synonym: baytril
+#   examples: |
+#     - Baytril
+#     - baytril
+
+# - synonym: block
+#   examples: |
+#     - Block
+#     - block
+
+# - synonym: bucal
+#   examples: |
+#     - Bucal
+#     - bucal
+
+# - synonym: cae
+#   examples: |
+#     - Cae
+#     - cae
+
+# - synonym: canis
+#   examples: |
+#     - Canis
+#     - canis
+
+# - synonym: cardial
+#   examples: |
+#     - Cardial
+#     - cardial
+
+# - synonym: carprodol
+#   examples: |
+#     - Carprodol
+#     - carprodol
+
+# - synonym: cefalexina
+#   examples: |
+#     - Cefalexina
+#     - cefalexina
+
+# - synonym: cefalong
+#   examples: |
+#     - Cefalong
+#     - cefalong
+
+# - synonym: cidar
+#   examples: |
+#     - Cidar
+#     - cidar
+
+# - synonym: coagulante
+#   examples: |
+#     - Coagulante
+#     - coagulante
+
+# - synonym: colotrin
+#   examples: |
+#     - Colotrin
+#     - colotrin
+
+# - synonym: comfortis
+#   examples: |
+#     - Comfortis
+#     - comfortis
+
+# - synonym: convenia
+#   examples: |
+#     - Convenia
+#     - convenia
+
+# - synonym: credelio
+#   examples: |
+#     - Credelio
+#     - credelio
+
+# - synonym: crema
+#   examples: |
+#     - Crema
+#     - crema
+
+# - synonym: cytopoint
+#   examples: |
+#     - Cytopoint
+#     - cytopoint
+
+# - synonym: dectomax
+#   examples: |
+#     - Dectomax
+#     - dectomax
+
+# - synonym: dermodene
+#   examples: |
+#     - Dermodene
+#     - dermodene
+
+# - synonym: dermomax
+#   examples: |
+#     - Dermomax
+#     - dermomax
+
+# - synonym: dexa
+#   examples: |
+#     - Dexa
+#     - dexa
+
+# - synonym: dexametasona
+#   examples: |
+#     - Dexametasona
+#     - dexametasona
+
+# - synonym: diafin
+#   examples: |
+#     - Diafin
+#     - diafin
+
+# - synonym: diurene
+#   examples: |
+#     - Diurene
+#     - diurene
+
+# - synonym: dominal
+#   examples: |
+#     - Dominal
+#     - dominal
+
+# - synonym: doxilina
+#   examples: |
+#     - Doxilina
+#     - doxilina
+
+# - synonym: drontal
+#   examples: |
+#     - Drontal
+#     - drontal
+
+# - synonym: duosecretina
+#   examples: |
+#     - Duosecretina
+#     - duosecretina
+
+# - synonym: ecthol
+#   examples: |
+#     - Ecthol
+#     - ecthol
+
+# - synonym: ecthonil
+#   examples: |
+#     - Ecthonil
+#     - ecthonil
+
+# - synonym: endectocida
+#   examples: |
+#     - Endectocida
+#     - endectocida
+
+# - synonym: enroplus
+#   examples: |
+#     - Enroplus
+#     - enroplus
+
+# - synonym: enteroplus
+#   examples: |
+#     - Enteroplus
+#     - enteroplus
+
+# - synonym: eutanasico
+#   examples: |
+#     - Eutanasico
+#     - eutanasico
+
+# - synonym: feline
+#   examples: |
+#     - Feline
+#     - feline
+
+# - synonym: feliway
+#   examples: |
+#     - Feliway
+#     - feliway
+
+# - synonym: fider
+#   examples: |
+#     - Fider
+#     - fider
+
+# - synonym: fip
+#   examples: |
+#     - Fip
+#     - fip
+
+# - synonym: fipro
+#   examples: |
+#     - Fipro
+#     - fipro
+
+# - synonym: floxaday
+#   examples: |
+#     - Floxaday
+#     - floxaday
+
+# - synonym: full
+#   examples: |
+#     - Full
+#     - full
+
+# - synonym: giacoccide
+#   examples: |
+#     - Giacoccide
+#     - giacoccide
+
+# - synonym: idocarb12
+#   examples: |
+#     - Idocarb12
+#     - idocarb12
+
+# - synonym: itraconazol
+#   examples: |
+#     - Itraconazol
+#     - itraconazol
+
+# - synonym: ivermex
+#   examples: |
+#     - Ivermex
+#     - ivermex
+
+# - synonym: ivomec
+#   examples: |
+#     - Ivomec
+#     - ivomec
+
+# - synonym: kil
+#   examples: |
+#     - Kil
+#     - kil
+
+# - synonym: kuraderm
+#   examples: |
+#     - Kuraderm
+#     - kuraderm
+
+# - synonym: kuramicina
+#   examples: |
+#     - Kuramicina
+#     - kuramicina
+
+# - synonym: labyderm
+#   examples: |
+#     - Labyderm
+#     - labyderm
+
+# - synonym: librela
+#   examples: |
+#     - Librela
+#     - librela
+
+# - synonym: meloxivet
+#   examples: |
+#     - Meloxivet
+#     - meloxivet
+
+# - synonym: meltra
+#   examples: |
+#     - Meltra
+#     - meltra
+
+# - synonym: moxidex
+#   examples: |
+#     - Moxidex
+#     - moxidex
+
+# - synonym: mv
+#   examples: |
+#     - Mv
+#     - mv
+
+# - synonym: novotioc
+#   examples: |
+#     - Novotioc
+#     - novotioc
+
+# - synonym: nutripet
+#   examples: |
+#     - Nutripet
+#     - nutripet
+
+# - synonym: ocubiotic
+#   examples: |
+#     - Ocubiotic
+#     - ocubiotic
+
+# - synonym: ohm
+#   examples: |
+#     - Ohm
+#     - ohm
+
+# - synonym: ol
+#   examples: |
+#     - Ol
+#     - ol
+
+# - synonym: otiflex
+#   examples: |
+#     - Otiflex
+#     - otiflex
+
+# - synonym: oxisol
+#   examples: |
+#     - Oxisol
+#     - oxisol
+
+# - synonym: pets
+#   examples: |
+#     - Pets
+#     - pets
+
+# - synonym: pf
+#   examples: |
+#     - Pf
+#     - pf
+
+# - synonym: pimocard
+#   examples: |
+#     - Pimocard
+#     - pimocard
+
+# - synonym: pip
+#   examples: |
+#     - Pip
+#     - pip
+
+# - synonym: power
+#   examples: |
+#     - Power
+#     - power
+
+# - synonym: pragma
+#   examples: |
+#     - Pragma
+#     - pragma
+
+# - synonym: prednisolona
+#   examples: |
+#     - Prednisolona
+#     - prednisolona
+
+# - synonym: pregabaliv
+#   examples: |
+#     - Pregabaliv
+#     - pregabaliv
+
+# - synonym: prius
+#   examples: |
+#     - Prius
+#     - prius
+
+# - synonym: pro
+#   examples: |
+#     - Pro
+#     - pro
+
+# - synonym: protech
+#   examples: |
+#     - Protech
+#     - protech
+
+# - synonym: proteliv
+#   examples: |
+#     - Proteliv
+#     - proteliv
+
+# - synonym: ranitidina
+#   examples: |
+#     - Ranitidina
+#     - ranitidina
+
+# - synonym: revol
+#   examples: |
+#     - Revol
+#     - revol
+
+# - synonym: rimadyl
+#   examples: |
+#     - Rimadyl
+#     - rimadyl
+
+# - synonym: rochy
+#   examples: |
+#     - Rochy
+#     - rochy
+
+# - synonym: serenex
+#   examples: |
+#     - Serenex
+#     - serenex
+
+# - synonym: sh
+#   examples: |
+#     - Sh
+#     - sh
+
+# - synonym: shampoo
+#   examples: |
+#     - Shampoo
+#     - shampoo
+
+# - synonym: simparica
+#   examples: |
+#     - Simparica
+#     - simparica
+
+# - synonym: sincelar
+#   examples: |
+#     - Sincelar
+#     - sincelar
+
+# - synonym: singestar
+#   examples: |
+#     - Singestar
+#     - singestar
+
+# - synonym: sosten
+#   examples: |
+#     - Sosten
+#     - sosten
+
+# - synonym: spinomax
+#   examples: |
+#     - Spinomax
+#     - spinomax
+
+# - synonym: tau
+#   examples: |
+#     - Tau
+#     - tau
+
+# - synonym: tea
+#   examples: |
+#     - Tea
+#     - tea
+
+# - synonym: terramicina
+#   examples: |
+#     - Terramicina
+#     - terramicina
+
+# - synonym: toltrazol
+#   examples: |
+#     - Toltrazol
+#     - toltrazol
+
+# - synonym: tonico
+#   examples: |
+#     - Tonico
+#     - tonico
+
+# - synonym: total
+#   examples: |
+#     - Total
+#     - total
+
+# - synonym: totalvet
+#   examples: |
+#     - Totalvet
+#     - totalvet
+
+# - synonym: tramadol
+#   examples: |
+#     - Tramadol
+#     - tramadol
+
+# - synonym: tratam
+#   examples: |
+#     - Tratam
+#     - tratam
+
+# - synonym: tripackprotech
+#   examples: |
+#     - Tripackprotech
+#     - tripackprotech
+
+# - synonym: trivermex
+#   examples: |
+#     - Trivermex
+#     - trivermex
+
+# - synonym: trocoxil
+#   examples: |
+#     - Trocoxil
+#     - trocoxil
+
+# - synonym: ursomarina
+#   examples: |
+#     - Ursomarina
+#     - ursomarina
+
+# - synonym: vetscan
+#   examples: |
+#     - Vetscan
+#     - vetscan
+
+# - synonym: virbac
+#   examples: |
+#     - Virbac
+#     - virbac
+
+# - synonym: vita
+#   examples: |
+#     - Vita
+#     - vita
+
+# - synonym: boehringer
+#   examples: |
+#     - Boehringer
+#     - Boehringer ingelheim
+
+# - synonym: holliday
+#   examples: |
+#     - Holliday
+#     - Holliday scott s.a.
+
+# - synonym: john
+#   examples: |
+#     - John
+#     - John martin
+
+# - synonym: biogenesis
+#   examples: |
+#     - biogenesis
+#     - biogenesis bago
+
+# - synonym: konig
+#   examples: |
+#     - konig
+#     - konig s.a.
+
+# - synonym: suizo
+#   examples: |
+#     - suizo
+#     - suizo argentina
+
+# - synonym: antiparasitario
+#   examples: |
+#     - antiparasitario externo
+#     - antiparasitario interno
+
+# - synonym: higiene
+#   examples: |
+#     - higiene y belleza
+#     - higiene y belleza odontologico
+
+# - synonym: aceite
+#   examples: |
+#     - aceite con alto de acidos grasos
+#     - aceite de higado de bacalao
+#     - aceite mineral denso
+
+# - synonym: acetato
+#   examples: |
+#     - acetato de hidrocortisona
+#     - acetato de medroxiprogesterona
+#     - acetato de megestrol
+
+# - synonym: acido
+#   examples: |
+#     - acido
+#     - acido acetico glacial
+#     - acido alfalipoico
+#     - acido ascorbico
+#     - acido benzoico
+#     - acido borico
+#     - acido canforico
+#     - acido clavulanico
+#     - acido edetico
+#     - acido estearico
+#     - acido folico
+#     - acido hialuronico
+#     - acido lactico
+#     - acido salicilico
+#     - acido tioctico
+#     - acido ursodesoxicolico
+
+# - synonym: aluminio
+#   examples: |
+#     - aluminio
+#     - aluminio micronizado
+
+# - synonym: analogo
+#   examples: |
+#     - analogo semioquimico de la feromona de apaciguamiento canino
+#     - analogo semioquimico de la fraccion f
+
+# - synonym: azitromicina
+#   examples: |
+#     - azitromicina
+#     - azitromicina base
+
+# - synonym: benazepril
+#   examples: |
+#     - benazepril
+#     - benazepril clorhidrato
+
+# - synonym: bencilpenicilanato
+#   examples: |
+#     - bencilpenicilanato de benzatina
+#     - bencilpenicilanato de procaina
+
+# - synonym: bencilpenicilina
+#   examples: |
+#     - bencilpenicilina benzatinica
+#     - bencilpenicilina proc
+
+# - synonym: betaina
+#   examples: |
+#     - betaina
+#     - betaina clorhidrato
+#     - betaina cocoamida
+#     - betaina hcl
+
+# - synonym: butoxido
+#   examples: |
+#     - butoxido de piperonil
+#     - butoxido de piperonilo
+
+# - synonym: carbon
+#   examples: |
+#     - carbon activado
+#     - carbon de cafe
+
+# - synonym: carbonato
+#   examples: |
+#     - carbonato de ca
+#     - carbonato de calcio
+
+# - synonym: cefalexina
+#   examples: |
+#     - cefalexina
+#     - cefalexina monohidrato
+
+# - synonym: ciprofloxacina
+#   examples: |
+#     - ciprofloxacina
+#     - ciprofloxacina base
+
+# - synonym: clorhexidina
+#   examples: |
+#     - clorhexidina acetato
+#     - clorhexidina diacetato
+#     - clorhexidina digluconato
+
+# - synonym: clorhidrato
+#   examples: |
+#     - clorhidrato
+#     - clorhidrato de bencetimida
+#     - clorhidrato de glucosamina
+#     - clorhidrato de nafazolina
+
+# - synonym: cloruro
+#   examples: |
+#     - cloruro de benzalconio
+#     - cloruro de calcio
+#     - cloruro de magnesio
+#     - cloruro de magnesio hexahidrato
+#     - cloruro de sodio
+
+# - synonym: colina
+#   examples: |
+#     - colina
+#     - colina bitartrato
+
+# - synonym: condroitin
+#   examples: |
+#     - condroitin
+#     - condroitin de bajo peso molecular
+#     - condroitin sulfato
+#     - condroitin sulfato a al
+#     - condroitin sulfato sodico
+
+# - synonym: curcuma
+#   examples: |
+#     - curcuma
+#     - curcuma longa l extracto seco
+
+# - synonym: d
+#   examples: |
+#     - d glucosamina
+#     - d l calcio
+#     - d l metionina
+#     - d pantotenato de ca
+
+# - synonym: de
+#   examples: |
+#     - de feromona facial felina
+#     - de solucion oral
+
+# - synonym: dexametasona
+#   examples: |
+#     - dexametasona
+#     - dexametasona fosfato
+#     - dexametasona fosfato sodico
+#     - dexametasona sodio fosfato
+
+# - synonym: dextrosa
+#   examples: |
+#     - dextrosa
+#     - dextrosa al
+
+# - synonym: difenilhidantoina
+#   examples: |
+#     - difenilhidantoina
+#     - difenilhidantoina sod
+
+# - synonym: dihidroestreptomicina
+#   examples: |
+#     - dihidroestreptomicina
+#     - dihidroestreptomicina sulf
+
+# - synonym: dl
+#   examples: |
+#     - dl carnitina clorhidrato
+#     - dl metionina
+
+# - synonym: doxiciclina
+#   examples: |
+#     - doxiciclina
+#     - doxiciclina hiclato
+
+# - synonym: extracto
+#   examples: |
+#     - extracto de cynara scolymus
+#     - extracto de malta
+#     - extracto de peumus boldus
+#     - extracto de raiz de valeriana
+#     - extracto de rhamnus prushiana
+#     - extracto de valeriana
+#     - extracto diluido de alcachofa
+#     - extracto en polvo de cardo mariano
+#     - extracto etereo
+#     - extracto tumerico
+
+# - synonym: feromona
+#   examples: |
+#     - feromona
+#     - feromona m
+
+# - synonym: flunixin
+#   examples: |
+#     - flunixin base
+#     - flunixin meglumine
+
+# - synonym: fosfato
+#   examples: |
+#     - fosfato
+#     - fosfato diacido de potasio
+
+# - synonym: g
+#   examples: |
+#     - g alquitran
+#     - g butoxido de piper
+#     - g butoxido de piperonilo
+#     - g microesferas
+#     - g n octyl bicicloheptene dicarboximida
+#     - g permetrina
+
+# - synonym: gluconato
+#   examples: |
+#     - gluconato
+#     - gluconato de calcio
+#     - gluconato de mag
+#     - gluconato de magnesio
+#     - gluconato de manganeso
+#     - gluconato de zinc
+
+# - synonym: glucosamina
+#   examples: |
+#     - glucosamina
+#     - glucosamina clorhidrato
+#     - glucosamina sulfato
+
+# - synonym: gr
+#   examples: |
+#     - gr de concentrado
+#     - gr de prenisolona
+#     - gr y closantel
+
+# - synonym: hidrocortisona
+#   examples: |
+#     - hidrocortisona
+#     - hidrocortisona aceponato
+
+# - synonym: ivermectina
+#   examples: |
+#     - ivermectina
+#     - ivermectina al
+#     - ivermectina merial
+
+# - synonym: ketamina
+#   examples: |
+#     - ketamina
+#     - ketamina base
+
+# - synonym: kg
+#   examples: |
+#     - kg tal cual se sirve
+#     - kg y lufenuron
+
+# - synonym: l
+#   examples: |
+#     - l arginina
+#     - l arginina clorhidrato
+#     - l carnitina
+#     - l cisteina
+#     - l cistina
+#     - l colina bitartrato
+#     - l glutamina
+#     - l lisina
+#     - l lisina al
+#     - l lisina monoclorhidrato
+#     - l metionina
+#     - l prolina
+
+# - synonym: lauril
+#   examples: |
+#     - lauril etoxisulfato de sodio
+#     - lauril sulfato de sodio
+#     - lauril sulfato de trietanolamina
+
+# - synonym: lidocaina
+#   examples: |
+#     - lidocaina
+#     - lidocaina clorhidrato
+
+# - synonym: manganeso
+#   examples: |
+#     - manganeso
+#     - manganeso gluconato
+#     - manganeso sulfato
+
+# - synonym: metionina
+#   examples: |
+#     - metionina
+#     - metionina dl
+
+# - synonym: mg
+#   examples: |
+#     - mg taurina
+#     - mg vitamina b
+
+# - synonym: mgr
+#   examples: |
+#     - mgr
+#     - mgr nipagin sodico
+
+# - synonym: midazolam
+#   examples: |
+#     - midazolam
+#     - midazolam base
+
+# - synonym: minerales
+#   examples: |
+#     - minerales
+#     - minerales totales
+
+# - synonym: n
+#   examples: |
+#     - n acetil cisteina
+#     - n acetilcisteina
+#     - n butil bromuro de hioscina
+#     - n omega
+
+# - synonym: neomicina
+#   examples: |
+#     - neomicina
+#     - neomicina base
+
+# - synonym: oxido
+#   examples: |
+#     - oxido de cobre
+#     - oxido de manganeso
+#     - oxido de zn
+#     - oxido ferrico
+
+# - synonym: oxitetraciclina
+#   examples: |
+#     - oxitetraciclina
+#     - oxitetraciclina base anfoterica
+#     - oxitetraciclina clorhidrato
+
+# - synonym: pamoato
+#   examples: |
+#     - pamoato de oxantel
+#     - pamoato de pirantel
+
+# - synonym: pantotenato
+#   examples: |
+#     - pantotenato
+#     - pantotenato de calcio
+
+# - synonym: parainfluenza
+#   examples: |
+#     - parainfluenza
+#     - parainfluenza y leptospira caninos
+#     - parainfluenza y parvo caninos
+
+# - synonym: parvo
+#   examples: |
+#     - parvo
+#     - parvo y corona caninos
+#     - parvo y leptospira caninos
+
+# - synonym: penicilina
+#   examples: |
+#     - penicilina
+#     - penicilina benzatinica
+#     - penicilina procainica
+
+# - synonym: pirantel
+#   examples: |
+#     - pirantel
+#     - pirantel base
+#     - pirantel pamoato
+
+# - synonym: prednisolona
+#   examples: |
+#     - prednisolona
+#     - prednisolona base
+#     - prednisolona saborizada
+
+# - synonym: pyrantel
+#   examples: |
+#     - pyrantel
+#     - pyrantel embonato
+#     - pyrantel pamoato
+
+# - synonym: sal
+#   examples: |
+#     - sal de aluminio de alantoina
+#     - sal sodica
+
+# - synonym: sarolaner
+#   examples: |
+#     - sarolaner
+#     - sarolaner moxidectina pirantel
+
+# - synonym: sulfadiazina
+#   examples: |
+#     - sulfadiazina argentica
+#     - sulfadiazina de plata
+
+# - synonym: sulfato
+#   examples: |
+#     - sulfato
+#     - sulfato de
+#     - sulfato de cobre
+#     - sulfato de dihidroestreptomicina
+#     - sulfato de magnesio
+#     - sulfato de manganeso
+#     - sulfato de zinc
+#     - sulfato ferroso
+#     - sulfato sodico
+
+# - synonym: tramadol
+#   examples: |
+#     - tramadol
+#     - tramadol clorhidrato
+
+# - synonym: triamcinolona
+#   examples: |
+#     - triamcinolona
+#     - triamcinolona acetonida
+
+# - synonym: u
+#   examples: |
+#     - u i
+#     - u i vitamina b
+#     - u i vitamina d
+#     - u i vitamina e
+#     - u vitamina d
+
+# - synonym: veh
+#   examples: |
+#     - veh
+#     - veh o
+
+# - synonym: virus
+#   examples: |
+#     - virus atenuado
+#     - virus de distemper
+#     - virus de la panleucopenia atenuado
+#     - virus de la rinotraqueitis cepa fvr f
+#     - virus de moquillo
+#     - virus de parvo canino
+#     - virus de parvo y corona caninos
+#     - virus moquillo atenuado
+#     - virus rabico cepa paris
+#     - virus vivos modificados de
+
+# - synonym: vitamina
+#   examples: |
+#     - vitamina a
+#     - vitamina a palmitato
+#     - vitamina b
+#     - vitamina c recubierta
+#     - vitamina d
+#     - vitamina e
+#     - vitamina e acetato
+#     - vitamina k
+
+# - synonym: vitaminas
+#   examples: |
+#     - vitaminas
+#     - vitaminas b
+#     - vitaminas coenzima
+#     - vitaminas y minerales
+
+# - synonym: y
+#   examples: |
+#     - y clorsulon al
+#     - y griseofulvina
+#     - y praziquantel
+
+# - synonym: zinc
+#   examples: |
+#     - zinc gluconato
+#     - zinc sulfato
+
+# - synonym: aceite
+#   examples: |
+#     - aceite con alto de acidos grasos
+#     - aceite de higado de bacalao
+#     - aceite mineral denso
+
+# - synonym: acetato
+#   examples: |
+#     - acetato de hidrocortisona
+#     - acetato de medroxiprogesterona
+#     - acetato de megestrol
+
+# - synonym: acido
+#   examples: |
+#     - acido
+#     - acido acetico glacial
+#     - acido alfalipoico
+#     - acido ascorbico
+#     - acido benzoico
+#     - acido borico
+#     - acido canforico
+#     - acido clavulanico
+#     - acido edetico
+#     - acido estearico
+#     - acido folico
+#     - acido hialuronico
+#     - acido lactico
+#     - acido salicilico
+#     - acido tioctico
+#     - acido ursodesoxicolico
+
+# - synonym: aluminio
+#   examples: |
+#     - aluminio
+#     - aluminio micronizado
+
+# - synonym: analogo
+#   examples: |
+#     - analogo semioquimico de la feromona de apaciguamiento canino
+#     - analogo semioquimico de la fraccion f
+
+# - synonym: azitromicina
+#   examples: |
+#     - azitromicina
+#     - azitromicina base
+
+# - synonym: benazepril
+#   examples: |
+#     - benazepril
+#     - benazepril clorhidrato
+
+# - synonym: bencilpenicilanato
+#   examples: |
+#     - bencilpenicilanato de benzatina
+#     - bencilpenicilanato de procaina
+
+# - synonym: bencilpenicilina
+#   examples: |
+#     - bencilpenicilina benzatinica
+#     - bencilpenicilina proc
+
+# - synonym: betaina
+#   examples: |
+#     - betaina
+#     - betaina clorhidrato
+#     - betaina cocoamida
+#     - betaina hcl
+
+# - synonym: butoxido
+#   examples: |
+#     - butoxido de piperonil
+#     - butoxido de piperonilo
+
+# - synonym: carbon
+#   examples: |
+#     - carbon activado
+#     - carbon de cafe
+
+# - synonym: carbonato
+#   examples: |
+#     - carbonato de ca
+#     - carbonato de calcio
+
+# - synonym: cefalexina
+#   examples: |
+#     - cefalexina
+#     - cefalexina monohidrato
+
+# - synonym: ciprofloxacina
+#   examples: |
+#     - ciprofloxacina
+#     - ciprofloxacina base
+
+# - synonym: clorhexidina
+#   examples: |
+#     - clorhexidina acetato
+#     - clorhexidina diacetato
+#     - clorhexidina digluconato
+
+# - synonym: clorhidrato
+#   examples: |
+#     - clorhidrato
+#     - clorhidrato de bencetimida
+#     - clorhidrato de glucosamina
+#     - clorhidrato de nafazolina
+
+# - synonym: cloruro
+#   examples: |
+#     - cloruro de benzalconio
+#     - cloruro de calcio
+#     - cloruro de magnesio
+#     - cloruro de magnesio hexahidrato
+#     - cloruro de sodio
+
+# - synonym: colina
+#   examples: |
+#     - colina
+#     - colina bitartrato
+
+# - synonym: condroitin
+#   examples: |
+#     - condroitin
+#     - condroitin de bajo peso molecular
+#     - condroitin sulfato
+#     - condroitin sulfato a al
+#     - condroitin sulfato sodico
+
+# - synonym: curcuma
+#   examples: |
+#     - curcuma
+#     - curcuma longa l extracto seco
+
+# - synonym: d
+#   examples: |
+#     - d glucosamina
+#     - d l calcio
+#     - d l metionina
+#     - d pantotenato de ca
+
+# - synonym: de
+#   examples: |
+#     - de feromona facial felina
+#     - de solucion oral
+
+# - synonym: dexametasona
+#   examples: |
+#     - dexametasona
+#     - dexametasona fosfato
+#     - dexametasona fosfato sodico
+#     - dexametasona sodio fosfato
+
+# - synonym: dextrosa
+#   examples: |
+#     - dextrosa
+#     - dextrosa al
+
+# - synonym: difenilhidantoina
+#   examples: |
+#     - difenilhidantoina
+#     - difenilhidantoina sod
+
+# - synonym: dihidroestreptomicina
+#   examples: |
+#     - dihidroestreptomicina
+#     - dihidroestreptomicina sulf
+
+# - synonym: dl
+#   examples: |
+#     - dl carnitina clorhidrato
+#     - dl metionina
+
+# - synonym: doxiciclina
+#   examples: |
+#     - doxiciclina
+#     - doxiciclina hiclato
+
+# - synonym: extracto
+#   examples: |
+#     - extracto de cynara scolymus
+#     - extracto de malta
+#     - extracto de peumus boldus
+#     - extracto de raiz de valeriana
+#     - extracto de rhamnus prushiana
+#     - extracto de valeriana
+#     - extracto diluido de alcachofa
+#     - extracto en polvo de cardo mariano
+#     - extracto etereo
+#     - extracto tumerico
+
+# - synonym: feromona
+#   examples: |
+#     - feromona
+#     - feromona m
+
+# - synonym: flunixin
+#   examples: |
+#     - flunixin base
+#     - flunixin meglumine
+
+# - synonym: fosfato
+#   examples: |
+#     - fosfato
+#     - fosfato diacido de potasio
+
+# - synonym: g
+#   examples: |
+#     - g alquitran
+#     - g butoxido de piper
+#     - g butoxido de piperonilo
+#     - g microesferas
+#     - g n octyl bicicloheptene dicarboximida
+#     - g permetrina
+
+# - synonym: gluconato
+#   examples: |
+#     - gluconato
+#     - gluconato de calcio
+#     - gluconato de mag
+#     - gluconato de magnesio
+#     - gluconato de manganeso
+#     - gluconato de zinc
+
+# - synonym: glucosamina
+#   examples: |
+#     - glucosamina
+#     - glucosamina clorhidrato
+#     - glucosamina sulfato
+
+# - synonym: gr
+#   examples: |
+#     - gr de concentrado
+#     - gr de prenisolona
+#     - gr y closantel
+
+# - synonym: hidrocortisona
+#   examples: |
+#     - hidrocortisona
+#     - hidrocortisona aceponato
+
+# - synonym: ivermectina
+#   examples: |
+#     - ivermectina
+#     - ivermectina al
+#     - ivermectina merial
+
+# - synonym: ketamina
+#   examples: |
+#     - ketamina
+#     - ketamina base
+
+# - synonym: kg
+#   examples: |
+#     - kg tal cual se sirve
+#     - kg y lufenuron
+
+# - synonym: l
+#   examples: |
+#     - l arginina
+#     - l arginina clorhidrato
+#     - l carnitina
+#     - l cisteina
+#     - l cistina
+#     - l colina bitartrato
+#     - l glutamina
+#     - l lisina
+#     - l lisina al
+#     - l lisina monoclorhidrato
+#     - l metionina
+#     - l prolina
+
+# - synonym: lauril
+#   examples: |
+#     - lauril etoxisulfato de sodio
+#     - lauril sulfato de sodio
+#     - lauril sulfato de trietanolamina
+
+# - synonym: lidocaina
+#   examples: |
+#     - lidocaina
+#     - lidocaina clorhidrato
+
+# - synonym: manganeso
+#   examples: |
+#     - manganeso
+#     - manganeso gluconato
+#     - manganeso sulfato
+
+# - synonym: metionina
+#   examples: |
+#     - metionina
+#     - metionina dl
+
+# - synonym: mg
+#   examples: |
+#     - mg taurina
+#     - mg vitamina b
+
+# - synonym: mgr
+#   examples: |
+#     - mgr
+#     - mgr nipagin sodico
+
+# - synonym: midazolam
+#   examples: |
+#     - midazolam
+#     - midazolam base
+
+# - synonym: minerales
+#   examples: |
+#     - minerales
+#     - minerales totales
+
+# - synonym: n
+#   examples: |
+#     - n acetil cisteina
+#     - n acetilcisteina
+#     - n butil bromuro de hioscina
+#     - n omega
+
+# - synonym: neomicina
+#   examples: |
+#     - neomicina
+#     - neomicina base
+
+# - synonym: oxido
+#   examples: |
+#     - oxido de cobre
+#     - oxido de manganeso
+#     - oxido de zn
+#     - oxido ferrico
+
+# - synonym: oxitetraciclina
+#   examples: |
+#     - oxitetraciclina
+#     - oxitetraciclina base anfoterica
+#     - oxitetraciclina clorhidrato
+
+# - synonym: pamoato
+#   examples: |
+#     - pamoato de oxantel
+#     - pamoato de pirantel
+
+# - synonym: pantotenato
+#   examples: |
+#     - pantotenato
+#     - pantotenato de calcio
+
+# - synonym: parainfluenza
+#   examples: |
+#     - parainfluenza
+#     - parainfluenza y leptospira caninos
+#     - parainfluenza y parvo caninos
+
+# - synonym: parvo
+#   examples: |
+#     - parvo
+#     - parvo y corona caninos
+#     - parvo y leptospira caninos
+
+# - synonym: penicilina
+#   examples: |
+#     - penicilina
+#     - penicilina benzatinica
+#     - penicilina procainica
+
+# - synonym: pirantel
+#   examples: |
+#     - pirantel
+#     - pirantel base
+#     - pirantel pamoato
+
+# - synonym: prednisolona
+#   examples: |
+#     - prednisolona
+#     - prednisolona base
+#     - prednisolona saborizada
+
+# - synonym: pyrantel
+#   examples: |
+#     - pyrantel
+#     - pyrantel embonato
+#     - pyrantel pamoato
+
+# - synonym: sal
+#   examples: |
+#     - sal de aluminio de alantoina
+#     - sal sodica
+
+# - synonym: sarolaner
+#   examples: |
+#     - sarolaner
+#     - sarolaner moxidectina pirantel
+
+# - synonym: sulfadiazina
+#   examples: |
+#     - sulfadiazina argentica
+#     - sulfadiazina de plata
+
+# - synonym: sulfato
+#   examples: |
+#     - sulfato
+#     - sulfato de
+#     - sulfato de cobre
+#     - sulfato de dihidroestreptomicina
+#     - sulfato de magnesio
+#     - sulfato de manganeso
+#     - sulfato de zinc
+#     - sulfato ferroso
+#     - sulfato sodico
+
+# - synonym: tramadol
+#   examples: |
+#     - tramadol
+#     - tramadol clorhidrato
+
+# - synonym: triamcinolona
+#   examples: |
+#     - triamcinolona
+#     - triamcinolona acetonida
+
+# - synonym: u
+#   examples: |
+#     - u i
+#     - u i vitamina b
+#     - u i vitamina d
+#     - u i vitamina e
+#     - u vitamina d
+
+# - synonym: veh
+#   examples: |
+#     - veh
+#     - veh o
+
+# - synonym: virus
+#   examples: |
+#     - virus atenuado
+#     - virus de distemper
+#     - virus de la panleucopenia atenuado
+#     - virus de la rinotraqueitis cepa fvr f
+#     - virus de moquillo
+#     - virus de parvo canino
+#     - virus de parvo y corona caninos
+#     - virus moquillo atenuado
+#     - virus rabico cepa paris
+#     - virus vivos modificados de
+
+# - synonym: vitamina
+#   examples: |
+#     - vitamina a
+#     - vitamina a palmitato
+#     - vitamina b
+#     - vitamina c recubierta
+#     - vitamina d
+#     - vitamina e
+#     - vitamina e acetato
+#     - vitamina k
+
+# - synonym: vitaminas
+#   examples: |
+#     - vitaminas
+#     - vitaminas b
+#     - vitaminas coenzima
+#     - vitaminas y minerales
+
+# - synonym: y
+#   examples: |
+#     - y clorsulon al
+#     - y griseofulvina
+#     - y praziquantel
+
+# - synonym: zinc
+#   examples: |
+#     - zinc gluconato
+#     - zinc sulfato
+
+# - synonym: "antibioticos"
+#   examples: |
+#     - antibióticos
+#     - antibiotico
+#     - antibiótico
+#     - atb
+
+# - synonym: "antiparasitarios"
+#   examples: |
+#     - desparasitantes
+#     - antiparasitario
+#     - desparasitante
+
+# - synonym: "perros"
+#   examples: |
+#     - perro
+#     - caninos
+#     - canino
+
+# - synonym: "gatos"  
+#   examples: |
+#     - gato
+#     - felinos
+#     - felino
+
+# - synonym: "ivermectina"
+#   examples: |
+#     - ivermex
+#     - ivomec
+
+# - synonym: "amoxicilina"
+#   examples: |
+#     - amoxivet
+#     - clamoxyl
+
+# - synonym: "fiebre"
+#   examples: |
+#     - calentura
+#     - temperatura alta
+#     - hipertermia
+
+# - synonym: "diarrea"
+#   examples: |
+#     - diarreas
+#     - deposiciones liquidas
+#     - deposiciones líquidas
+
+# - synonym: "disponible"
+#   examples: |
+#     - en stock
+#     - hay
+#     - tiene
+#     - existe

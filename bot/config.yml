@@ -10,6 +10,8 @@ pipeline:
   - name: RegexEntityExtractor
     use_lookup_tables: true
     use_regexes: true
+    case_sensitive: false
+    use_word_boundaries: false 
 
   # Features de lenguaje profundo
   - name: LanguageModelFeaturizer
@@ -33,11 +35,6 @@ pipeline:
     threshold: 0.6       # Activamos fallback si confidence < 0.6
     ambiguity_threshold: 0.15  # Activamos si top intents están muy parecidos
 
-  - name: DucklingEntityExtractor
-    dimensions: ["number", "amount-of-money", "time"]
-    locale: "es_ES"
-    timezone: "America/Argentina/Buenos_Aires"
-    anchor_date: "2023-01-01T12:00:00.000Z"
 
 # --- Dialogue Policies ---
 policies:
