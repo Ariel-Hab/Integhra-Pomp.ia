@@ -1,59 +1,85 @@
 version: "3.1"
 
 rules:
-# # -------------------------
-# # BÚSQUEDAS BÁSICAS
-# # -------------------------
-# - rule: buscar producto directa
-#   steps:
-#   - intent: buscar_producto
-#   - action: action_busqueda_situacion
+  # ========================================
+  # BÚSQUEDAS
+  # ========================================
+  
+  - rule: Cualquier intent de búsqueda
+    steps:
+    - or:
+      - intent: buscar_producto
+      - intent: buscar_oferta
+      - intent: modificar_busqueda
+      - intent: consultar_novedades_producto
+      - intent: consultar_novedades_oferta
+    - action: action_busqueda_situacion
 
-# - rule: buscar oferta directa
-#   steps:
-#   - intent: buscar_oferta
-#   - action: action_busqueda_situacion
+  # ========================================
+  # CON SUGERENCIA PENDIENTE
+  # ========================================
+  
+  - rule: Afirmación con sugerencia activa
+    condition:
+    - slot_was_set:
+      - pending_suggestion:
+          is_not: null
+    steps:
+    - intent: afirmar
+    - action: action_conf_neg_agradecer
 
-# # -------------------------
-# # RECOMENDACIONES
-# # -------------------------  
-# - rule: consultar recomendaciones
-#   steps:
-#   - intent: consultar_recomendaciones
-#   - action: action_recomendaciones
+  - rule: Negación con sugerencia activa
+    condition:
+    - slot_was_set:
+      - pending_suggestion:
+          is_not: null
+    steps:
+    - intent: denegar
+    - action: action_conf_neg_agradecer
 
-# -------------------------
-# RESPUESTAS BÁSICAS
-# -------------------------
-# - rule: saludar
-#   steps:
-#   - intent: saludo
-#   - action: utter_saludo
+  - rule: Agradecimiento con sugerencia activa
+    condition:
+    - slot_was_set:
+      - pending_suggestion:
+          is_not: null
+    steps:
+    - intent: agradecer  # ⚠️ CAMBIÓ: era "agradecimiento"
+    - action: action_conf_neg_agradecer
 
-# # - rule: despedirse
-# #   steps:
-# #   - intent: despedida
-# #   - action: utter_despedida
+  # ========================================
+  # SIN SUGERENCIA PENDIENTE
+  # ========================================
+  
+  - rule: Afirmación sin contexto especial
+    condition:
+    - slot_was_set:
+      - pending_suggestion: null
+    steps:
+    - intent: afirmar
+    - action: action_conf_neg_agradecer
 
-# # - rule: agradecer
-# #   steps:
-# #   - intent: agradecimiento
-# #   - action: utter_agradecimiento
+  - rule: Negación sin contexto especial
+    condition:
+    - slot_was_set:
+      - pending_suggestion: null
+    steps:
+    - intent: denegar
+    - action: action_conf_neg_agradecer
 
-# # - rule: contar chiste
-# #   steps:
-# #   - intent: pedir_chiste
-# #   - action: utter_pedir_chiste
+  - rule: Agradecimiento sin contexto especial
+    condition:
+    - slot_was_set:
+      - pending_suggestion: null
+    steps:
+    - intent: agradecer  # ⚠️ CAMBIÓ
+    - action: action_conf_neg_agradecer
 
-# # -------------------------
-# # CONFIRMACIONES
-# # -------------------------
-# - rule: confirmar
-#   steps:
-#   - intent: afirmar
-#   - action: utter_afirmar
-
-# - rule: denegar
-#   steps:
-#   - intent: denegar
-#   - action: utter_denegar
+  - rule: Saludo
+    steps:
+    - intent: saludar
+    - action: action_conf_neg_agradecer
+  
+  - rule: Despedida
+    steps:
+    - intent: despedida
+    - action: action_conf_neg_agradecer

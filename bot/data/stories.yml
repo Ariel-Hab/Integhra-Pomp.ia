@@ -1,350 +1,57 @@
-# =========================================================
-# 🔹 STORIES SIMPLIFICADAS - SIN COMPLETAR_PEDIDO
-# =========================================================
-# Eliminamos completar_pedido y fortalecemos modificar_busqueda
-
 version: "3.1"
 
 stories:
-
-# -------------------------
-# SMALLTALK BÁSICO
-# -------------------------
-- story: smalltalk_basico
-  steps:
-  - intent: saludo
-  - action: action_smalltalk_situacion
+  # Solo las que NECESITAS, eliminando intents sin NLU data
   
-- story: smalltalk_chiste
-  steps:
-  - intent: pedir_chiste
-  - action: action_smalltalk_situacion
+  - story: Búsqueda de producto simple
+    steps:
+    - intent: buscar_producto
+    - action: action_busqueda_situacion
 
-- story: smalltalk_durante_busqueda
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: pedir_chiste
-  - action: action_smalltalk_situacion
+  - story: Búsqueda de oferta simple
+    steps:
+    - intent: buscar_oferta
+    - action: action_busqueda_situacion
 
-# -------------------------
-# BÚSQUEDAS DIRECTAS
-# -------------------------
-- story: busqueda_producto_directa
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
+  - story: Modificar búsqueda previa
+    steps:
+    - intent: buscar_oferta
+    - action: action_busqueda_situacion
+    - intent: modificar_busqueda
+    - action: action_busqueda_situacion
 
-- story: busqueda_oferta_directa
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
+  - story: Búsqueda con sugerencia aceptada
+    steps:
+    - intent: buscar_producto
+    - action: action_busqueda_situacion
+    - intent: afirmar
+    - action: action_conf_neg_agradecer
+    - action: action_listen
 
-# -------------------------
-# MODIFICAR BÚSQUEDA (REEMPLAZA COMPLETAR_PEDIDO)
-# -------------------------
-- story: modificar_busqueda_simple
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
+  - story: Búsqueda con sugerencia rechazada
+    steps:
+    - intent: buscar_oferta
+    - action: action_busqueda_situacion
+    - intent: denegar
+    - action: action_conf_neg_agradecer
 
-- story: modificar_busqueda_oferta
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
+  - story: Usuario agradece después de búsqueda
+    steps:
+    - intent: buscar_oferta
+    - action: action_busqueda_situacion
+    - intent: agradecer  # ⚠️ CAMBIÓ
+    - action: action_conf_neg_agradecer
 
-- story: modificar_tras_sugerencia
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion  # Puede generar sugerencia
-  - intent: modificar_busqueda        # Usuario modifica en lugar de responder sugerencia
-  - action: action_busqueda_situacion
+  - story: Usuario saluda y busca
+    steps:
+    - intent: saludar
+    - action: action_conf_neg_agradecer
+    - intent: buscar_producto
+    - action: action_busqueda_situacion
 
-- story: modificar_multiple
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Múltiples modificaciones
-  - action: action_busqueda_situacion
-
-- story: modificar_cambio_tipo
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Puede cambiar criterios completamente
-  - action: action_busqueda_situacion
-
-# -------------------------
-# RECOMENDACIONES
-# -------------------------
-- story: recomendaciones_producto
-  steps:
-  - intent: consultar_recomendaciones_producto
-  - action: action_recomendaciones
-
-- story: recomendaciones_oferta
-  steps:
-  - intent: consultar_recomendaciones_oferta
-  - action: action_recomendaciones
-
-- story: recomendaciones_tras_busqueda
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: consultar_recomendaciones_producto
-  - action: action_recomendaciones
-
-- story: recomendaciones_tras_modificacion
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: consultar_recomendaciones_producto
-  - action: action_recomendaciones
-
-# -------------------------
-# TRANSICIONES ENTRE BÚSQUEDAS
-# -------------------------
-- story: cambio_producto_a_oferta
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-
-- story: cambio_oferta_a_producto
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-
-- story: busqueda_modificar_nueva_busqueda
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: buscar_oferta              # Nueva búsqueda después de modificar
-  - action: action_busqueda_situacion
-
-- story: modificar_a_recomendaciones
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: consultar_recomendaciones_producto
-  - action: action_recomendaciones
-
-# -------------------------
-# CONFIRMACIONES Y RESPUESTAS (SIN COMPLETAR_PEDIDO)
-# -------------------------
-- story: afirmacion_tras_busqueda
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: afirmar
-  - action: action_conf_neg_agradecer
-
-- story: negacion_tras_busqueda
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: denegar
-  - action: action_conf_neg_agradecer
-
-- story: afirmacion_luego_modificar
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: afirmar                   # Acepta sugerencia
-  - action: action_conf_neg_agradecer
-  - intent: modificar_busqueda        # Luego modifica búsqueda
-  - action: action_busqueda_situacion
-
-- story: negacion_luego_modificar
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: denegar                   # Rechaza sugerencia
-  - action: action_conf_neg_agradecer
-  - intent: modificar_busqueda        # Luego modifica búsqueda
-  - action: action_busqueda_situacion
-
-# -------------------------
-# MÚLTIPLES BÚSQUEDAS Y MODIFICACIONES
-# -------------------------
-- story: busqueda_multiple_con_modificaciones
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: buscar_producto           # Nueva búsqueda
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Modificar la nueva
-  - action: action_busqueda_situacion
-
-- story: ciclo_busqueda_modificacion
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Otra modificación
-  - action: action_busqueda_situacion
-  - intent: buscar_oferta             # Nueva búsqueda similar
-  - action: action_busqueda_situacion
-
-# -------------------------
-# PATRONES DE REFINAMIENTO
-# -------------------------
-- story: refinamiento_progresivo
-  steps:
-  - intent: buscar_producto           # Búsqueda inicial vaga
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Agregar más criterios
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Refinar aún más
-  - action: action_busqueda_situacion
-
-- story: refinamiento_oferta
-  steps:
-  - intent: buscar_oferta             # Búsqueda inicial de ofertas
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Especificar criterios
-  - action: action_busqueda_situacion
-
-- story: cambio_criterios_completo
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda        # Cambia completamente los criterios
-  - action: action_busqueda_situacion
-
-# -------------------------
-# DESPEDIDAS
-# -------------------------
-- story: despedida_simple
-  steps:
-  - intent: despedida
-  - action: action_context_validator
-  - action: action_despedida_limpia_contexto
-
-- story: despedida_durante_busqueda
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: despedida
-  - action: action_context_validator
-  - action: action_despedida_limpia_contexto
-
-- story: despedida_tras_modificacion
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: despedida
-  - action: action_context_validator
-  - action: action_despedida_limpia_contexto
-
-# -------------------------
-# MANEJO DE ENTIDADES INVÁLIDAS CON MODIFICAR
-# -------------------------
-- story: entidad_invalida_luego_modificar
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion  # Genera sugerencia por entidad inválida
-  - intent: modificar_busqueda        # Usuario modifica en lugar de responder sugerencia
-  - action: action_busqueda_situacion
-
-- story: sugerencia_rechazada_modificar
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion  # Genera sugerencia
-  - intent: denegar                   # Rechaza sugerencia
-  - action: action_conf_neg_agradecer
-  - intent: modificar_busqueda        # Modifica búsqueda
-  - action: action_busqueda_situacion
-
-- story: sugerencia_aceptada_luego_modificar
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion  # Genera sugerencia
-  - intent: afirmar                   # Acepta sugerencia
-  - action: action_conf_neg_agradecer
-  - intent: modificar_busqueda        # Luego modifica para agregar más criterios
-  - action: action_busqueda_situacion
-
-# -------------------------
-# RECOVERY PATTERNS SIMPLIFICADOS
-# -------------------------
-- story: recovery_desde_fallback_buscar
-  steps:
-  - action: action_fallback
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-
-- story: recovery_desde_fallback_modificar
-  steps:
-  - action: action_fallback
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-
-- story: recovery_smalltalk_modificar
-  steps:
-  - intent: pedir_chiste
-  - action: action_smalltalk_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-
-# -------------------------
-# PATRONES DE CONTINUIDAD SIN COMPLETAR
-# -------------------------
-- story: continuidad_busqueda_modificacion
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-
-- story: continuidad_mixta
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: modificar_busqueda
-  - action: action_busqueda_situacion
-
-# -------------------------
-# MODIFICAR DESPUÉS DE CONFIRMACIONES
-# -------------------------
-- story: confirmar_luego_modificar_mas
-  steps:
-  - intent: buscar_producto
-  - action: action_busqueda_situacion
-  - intent: afirmar                   # Confirma resultados
-  - action: action_conf_neg_agradecer
-  - intent: modificar_busqueda        # Pero quiere agregar más criterios
-  - action: action_busqueda_situacion
-
-- story: negar_y_modificar_completamente
-  steps:
-  - intent: buscar_oferta
-  - action: action_busqueda_situacion
-  - intent: denegar                   # No le gustan los resultados
-  - action: action_conf_neg_agradecer
-  - intent: modificar_busqueda        # Cambia completamente la búsqueda
-  - action: action_busqueda_situacion
+  - story: Cambio de contexto
+    steps:
+    - intent: buscar_producto
+    - action: action_busqueda_situacion
+    - intent: buscar_oferta
+    - action: action_busqueda_situacion
