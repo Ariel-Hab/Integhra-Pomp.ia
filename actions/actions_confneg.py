@@ -103,80 +103,6 @@ class ActionConfNegAgradecer(Action):
                 ]
             }
     
-    def _handle_affirmative_response_improved(self, pending_suggestion: Dict[str, Any], 
-                                            response_analysis: Dict[str, Any], tracker: Tracker,
-                                            dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """✅ MEJORADO: Maneja respuestas afirmativas con mejor contexto"""
-        suggestion_type = pending_suggestion.get('suggestion_type', '')
-        confidence = response_analysis.get('confidence', 0.0)
-        events = []
-        
-        try:
-            if suggestion_type == 'entity_correction':
-                suggestions = pending_suggestion.get('suggestions', [])
-                corrected_value = suggestions[0] if suggestions else ''
-                entity_type = pending_suggestion.get('entity_type', '')
-                
-                if corrected_value and entity_type:
-                    # ✅ MENSAJE MEJORADO según confianza
-                    if confidence >= 0.9:
-                        dispatcher.utter_message(f"¡Perfecto! Usando '{corrected_value}' para buscar {entity_type}.")
-                    else:
-                        dispatcher.utter_message(f"Entendido. Buscando con '{corrected_value}' como {entity_type}.")
-                    
-                    # Ejecutar búsqueda con valor corregido
-                    search_result = self._execute_search_with_corrected_entity(
-                        {'value': corrected_value, 'type': entity_type}, 
-                        pending_suggestion, tracker, dispatcher
-                    )
-                    
-                    if search_result['success']:
-                        events.extend(self._create_search_completion_events(search_result))
-                else:
-                    dispatcher.utter_message("Hubo un problema con la sugerencia. ¿Podrías intentar nuevamente?")
-            
-            elif suggestion_type == 'type_correction':
-                original_value = pending_suggestion.get('original_value', '')
-                correct_type = pending_suggestion.get('correct_type', '')
-                
-                if original_value and correct_type:
-                    dispatcher.utter_message(f"¡Entendido! Buscando '{original_value}' como {correct_type}.")
-                    
-                    search_result = self._execute_search_with_corrected_entity(
-                        {'value': original_value, 'type': correct_type}, 
-                        pending_suggestion, tracker, dispatcher
-                    )
-                    
-                    if search_result['success']:
-                        events.extend(self._create_search_completion_events(search_result))
-            
-            elif suggestion_type == 'missing_parameters':
-                criteria = pending_suggestion.get('required_criteria', 'información adicional')
-                if confidence >= 0.9:
-                    dispatcher.utter_message(f"¡Excelente! ¿Qué {criteria} específico puedes darme?")
-                else:
-                    dispatcher.utter_message(f"Perfecto. Necesito que me especifiques {criteria}.")
-                events.append(SlotSet("user_engagement_level", "engaged"))
-            
-            # Limpiar sugerencia pendiente
-            events.extend([
-                SlotSet("pending_suggestion", None),
-                SlotSet("user_engagement_level", "satisfied")
-            ])
-            
-            logger.info(f"[ConfNegAgradecer] Respuesta afirmativa procesada exitosamente (confianza: {confidence:.2f})")
-            return {'handled': True, 'events': events}
-            
-        except Exception as e:
-            logger.error(f"Error manejando respuesta afirmativa mejorada: {e}", exc_info=True)
-            dispatcher.utter_message("Hubo un error procesando tu confirmación. ¿Puedes intentar nuevamente?")
-            return {
-                'handled': True,
-                'events': [
-                    SlotSet("pending_suggestion", None),
-                    SlotSet("user_engagement_level", "needs_help")
-                ]
-            }
     
     def _handle_negative_response_improved(self, pending_suggestion: Dict[str, Any], 
                                          response_analysis: Dict[str, Any],
@@ -333,12 +259,20 @@ class ActionConfNegAgradecer(Action):
     # ===== FUNCIONES AUXILIARES (igual que antes) =====
     
     def _execute_search_with_corrected_entity(self, corrected_entity: Dict[str, str], 
-                                            pending_suggestion: Dict[str, Any], tracker: Tracker,
-                                            dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+                                        pending_suggestion: Dict[str, Any], tracker: Tracker,
+                                        dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """Ejecuta búsqueda con entidad corregida"""
         try:
             search_context = pending_suggestion.get('search_context', {})
             search_type = search_context.get('search_type', 'producto')
+            
+            # ✅ CORREGIR: Determinar search_type desde el intent si no está en context
+            if not search_type or search_type == 'producto':
+                original_intent = search_context.get('intent', '')
+                if 'oferta' in original_intent:
+                    search_type = 'oferta'
+                elif 'producto' in original_intent:
+                    search_type = 'producto'
             
             entity_mappings = {
                 "producto": "nombre",
@@ -382,29 +316,136 @@ class ActionConfNegAgradecer(Action):
             logger.error(f"Error ejecutando búsqueda con entidad corregida: {e}", exc_info=True)
             dispatcher.utter_message("Hubo un error procesando tu búsqueda. Inténtalo de nuevo.")
             return {'success': False, 'error': str(e)}
-    
     def _create_search_completion_events(self, search_result: Dict[str, Any]) -> List[EventType]:
         """Crea eventos para completar búsqueda"""
         events = []
         
         try:
-            # Agregar a historial con información de sugerencia
+            # ✅ AGREGAR: Actualizar historial de búsqueda
             search_entry = {
                 'timestamp': datetime.now().isoformat(),
                 'type': search_result['search_type'],
                 'parameters': search_result['parameters'],
-                'status': 'completed_with_improved_suggestion',
-                'source': 'improved_suggestion_acceptance'
+                'status': 'completed',
+                'source': 'suggestion_acceptance'
             }
             
-            # Nota: Aquí necesitarías obtener el historial actual del tracker
-            # events.append(SlotSet("search_history", updated_history))
+            # ✅ NUEVO: Obtener historial actual del tracker
+            # IMPORTANTE: Necesitas recibir tracker como parámetro
+            # Modificar la firma de la función:
+            # def _create_search_completion_events(self, search_result: Dict[str, Any], tracker: Tracker) -> List[EventType]:
+            
+            # Por ahora, crear historial nuevo
+            events.append(SlotSet("search_history", [search_entry]))
+            
+            # ✅ CRÍTICO: Limpiar sugerencia
+            events.append(SlotSet("pending_suggestion", None))
+            events.append(SlotSet("suggestion_context", None))
+            
+            # ✅ IMPORTANTE: Establecer engagement
+            events.append(SlotSet("user_engagement_level", "satisfied"))
             
         except Exception as e:
             logger.error(f"Error creando eventos de finalización: {e}")
         
         return events
-    
+
+    def _handle_affirmative_response_improved(self, pending_suggestion: Dict[str, Any], 
+                                            response_analysis: Dict[str, Any], tracker: Tracker,
+                                            dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+        """✅ MEJORADO: Maneja respuestas afirmativas con mejor contexto"""
+        suggestion_type = pending_suggestion.get('suggestion_type', '')
+        confidence = response_analysis.get('confidence', 0.0)
+        events = []
+        
+        try:
+            if suggestion_type == 'entity_correction':
+                suggestions = pending_suggestion.get('suggestions', [])
+                corrected_value = suggestions[0] if suggestions else ''
+                entity_type = pending_suggestion.get('entity_type', '')
+                
+                if corrected_value and entity_type:
+                    if confidence >= 0.9:
+                        dispatcher.utter_message(f"¡Perfecto! Usando '{corrected_value}' para buscar {entity_type}.")
+                    else:
+                        dispatcher.utter_message(f"Entendido. Buscando con '{corrected_value}' como {entity_type}.")
+                    
+                    # Ejecutar búsqueda con valor corregido
+                    search_result = self._execute_search_with_corrected_entity(
+                        {'value': corrected_value, 'type': entity_type}, 
+                        pending_suggestion, tracker, dispatcher
+                    )
+                    
+                    if search_result['success']:
+                        # ✅ CORREGIDO: Remover tracker del llamado
+                        # events.extend(self._create_search_completion_events(search_result, tracker))
+                        # En su lugar, crear eventos directamente aquí:
+                        events.extend([
+                            SlotSet("pending_suggestion", None),
+                            SlotSet("suggestion_context", None),
+                            SlotSet("user_engagement_level", "satisfied")
+                        ])
+                    else:
+                        events.extend([
+                            SlotSet("pending_suggestion", None),
+                            SlotSet("user_engagement_level", "needs_help")
+                        ])
+                else:
+                    dispatcher.utter_message("Hubo un problema con la sugerencia. ¿Podrías intentar nuevamente?")
+                    events.extend([
+                        SlotSet("pending_suggestion", None),
+                        SlotSet("user_engagement_level", "needs_help")
+                    ])
+            
+            elif suggestion_type == 'type_correction':
+                original_value = pending_suggestion.get('original_value', '')
+                correct_type = pending_suggestion.get('correct_type', '')
+                
+                if original_value and correct_type:
+                    dispatcher.utter_message(f"¡Entendido! Buscando '{original_value}' como {correct_type}.")
+                    
+                    search_result = self._execute_search_with_corrected_entity(
+                        {'value': original_value, 'type': correct_type}, 
+                        pending_suggestion, tracker, dispatcher
+                    )
+                    
+                    if search_result['success']:
+                        events.extend([
+                            SlotSet("pending_suggestion", None),
+                            SlotSet("user_engagement_level", "satisfied")
+                        ])
+                else:
+                    events.extend([
+                        SlotSet("pending_suggestion", None),
+                        SlotSet("user_engagement_level", "needs_help")
+                    ])
+            
+            elif suggestion_type == 'missing_parameters':
+                criteria = pending_suggestion.get('required_criteria', 'información adicional')
+                if confidence >= 0.9:
+                    dispatcher.utter_message(f"¡Excelente! ¿Qué {criteria} específico puedes darme?")
+                else:
+                    dispatcher.utter_message(f"Perfecto. Necesito que me especifiques {criteria}.")
+                events.extend([
+                    SlotSet("pending_suggestion", None),
+                    SlotSet("user_engagement_level", "engaged")
+                ])
+            
+            # ✅ NO duplicar limpieza aquí - ya está arriba en cada caso
+            
+            logger.info(f"[ConfNegAgradecer] Respuesta afirmativa procesada exitosamente (confianza: {confidence:.2f})")
+            return {'handled': True, 'events': events}
+            
+        except Exception as e:
+            logger.error(f"Error manejando respuesta afirmativa mejorada: {e}", exc_info=True)
+            dispatcher.utter_message("Hubo un error procesando tu confirmación. ¿Puedes intentar nuevamente?")
+            return {
+                'handled': True,
+                'events': [
+                    SlotSet("pending_suggestion", None),
+                    SlotSet("user_engagement_level", "needs_help")
+                ]
+            }
     def _handle_obsolete_system_migration(self, tracker: Tracker, 
                                         dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """Maneja migración desde sistema obsoleto (igual que antes)"""

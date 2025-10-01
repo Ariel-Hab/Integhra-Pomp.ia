@@ -4,9 +4,11 @@ config:
   fallback_action: action_fallback
 
 intents:
-  - saludo
+  #- saludo
+  - saludar
   - despedida
-  - agradecimiento
+  #- agradecimiento
+  - agradecer 
   - preguntar_como_estas
   - responder_como_estoy
   - pedir_chiste
@@ -14,7 +16,8 @@ intents:
   - responder_estoy_bien
   - buscar_producto
   - buscar_oferta
-  - consultar_recomendaciones
+  - consultar_novedades_producto  
+  - consultar_novedades_oferta    
   - modificar_busqueda
   - afirmar
   - denegar
@@ -26,12 +29,24 @@ intents:
 entities:
   # ✅ Entidades principales simplificadas
   - producto
-  - empresa                    # ✅ Unificado (antes proveedor)
+  
+  # 🆕 EMPRESA CON ROL
+  - empresa:
+      roles:
+        - proveedor
+  
   - categoria
   - animal
   - sintoma
   - dosis
-  - estado
+  
+  # 🆕 ESTADO CON 4 ROLES
+  - estado:
+      roles:
+        - nuevo
+        - poco_stock
+        - vence_pronto
+        - en_oferta
   
   # ✅ Entidades numéricas/comparativas que faltaban
   - cantidad
@@ -64,6 +79,15 @@ slots:
     mappings:
       - type: from_entity
         entity: empresa
+
+  # 🆕 SLOT PARA ROL DE EMPRESA (OPCIONAL)
+  empresa_role:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: empresa
+        role: proveedor
 
   categoria:
     type: text
@@ -99,6 +123,24 @@ slots:
     mappings:
       - type: from_entity
         entity: estado
+
+  # 🆕 SLOTS PARA ROLES DE ESTADO (OPCIONAL PERO ÚTIL)
+  estado_role:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: estado
+        role: nuevo
+      - type: from_entity
+        entity: estado
+        role: poco_stock
+      - type: from_entity
+        entity: estado
+        role: vence_pronto
+      - type: from_entity
+        entity: estado
+        role: en_oferta
 
   # --- Slots numéricos/comparativos ---
   cantidad:
@@ -229,7 +271,7 @@ slots:
     mappings:
       - type: from_text
   
-    # --- Slots faltantes reportados por logs ---
+  # --- Slots faltantes reportados por logs ---
   user_sentiment:
     type: text
     influence_conversation: false
@@ -238,9 +280,10 @@ slots:
 
   pending_suggestion:
     type: text
-    influence_conversation: false
+    influence_conversation: true
     initial_value: null
-    mappings: []
+    mappings: 
+      - type: custom
 
   suggestion_context:
     type: text
@@ -367,6 +410,7 @@ responses:
       ¡Claro! Te entiendo, buscás que te recomiende algo 🤝 
       Esa característica no está lista todavía, pero sí puedo ayudarte a encontrar productos si me decís qué necesitás.
       ¿Para qué animal o qué tipo de producto buscás?
+      
 actions:
   - action_busqueda_situacion
   - action_conf_neg_agradecer

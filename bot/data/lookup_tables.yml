@@ -303,7 +303,6 @@ nlu:
     - kuramicina
     - labyderm
     - librela
-    - mayor
     - medroxiprogesterona
     - meltra
     - moxidex
@@ -1322,3 +1321,19 @@ nlu:
     - diarrea con sangre
     - pérdida de peso
     - apatía
+
+- lookup: comparador
+  examples: |
+    - mayor
+    - menor
+    - igual
+    - más
+    - mas
+    - menos
+    - superior
+    - inferior
+    - hasta
+    - al menos
+    - como máximo
+    - mínimo
+    - máximo
