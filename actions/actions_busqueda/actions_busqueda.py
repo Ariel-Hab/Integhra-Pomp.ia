@@ -245,11 +245,86 @@ class ActionBusquedaSituacion(Action):
         except Exception as e:
             logger.error(f"[OperatorMap] Error: {e}")
             return None
-
+    def _handle_multiple_modifications(self, context, tracker, dispatcher):
+        """Maneja múltiples modificaciones en una oración"""
+        try:
+            entities = tracker.latest_message.get("entities", [])
+            previous_params = self._extract_previous_search_parameters(context)
+            search_type = previous_params.pop('_previous_search_type', 'producto')
+            
+            # Clasificar entidades por acción según role
+            to_add = []
+            to_remove = []
+            to_replace = {}
+            
+            for entity in entities:
+                entity_type = entity.get('entity')
+                entity_value = entity.get('value')
+                entity_role = entity.get('role')
+                
+                if entity_role == 'add':
+                    to_add.append({'type': entity_type, 'value': entity_value})
+                
+                elif entity_role == 'remove':
+                    to_remove.append(entity_type)
+                
+                elif entity_role == 'old':
+                    # Buscar el correspondiente 'new'
+                    if entity_type not in to_replace:
+                        to_replace[entity_type] = {}
+                    to_replace[entity_type]['old'] = entity_value
+                
+                elif entity_role == 'new':
+                    if entity_type not in to_replace:
+                        to_replace[entity_type] = {}
+                    to_replace[entity_type]['new'] = entity_value
+            
+            logger.info(f"[MultiMod] Agregar: {to_add}, Remover: {to_remove}, Reemplazar: {to_replace}")
+            
+            # Aplicar modificaciones en orden
+            # 1. Remover
+            for entity_type in to_remove:
+                self._remove_entire_parameter(previous_params, entity_type)
+            
+            # 2. Reemplazar
+            for entity_type, values in to_replace.items():
+                if 'old' in values and 'new' in values:
+                    if entity_type in previous_params:
+                        if isinstance(previous_params[entity_type], dict):
+                            previous_params[entity_type]['value'] = values['new']
+                        else:
+                            previous_params[entity_type] = values['new']
+            
+            # 3. Agregar
+            for item in to_add:
+                entity_type = item['type']
+                entity_value = item['value']
+                
+                if entity_type in previous_params:
+                    # Ya existe, concatenar
+                    current = previous_params[entity_type]
+                    if isinstance(current, dict):
+                        current['value'] += f", {entity_value}"
+                    else:
+                        previous_params[entity_type] += f", {entity_value}"
+                else:
+                    # No existe, crear
+                    previous_params[entity_type] = entity_value
+            
+            # Ejecutar búsqueda con todos los cambios
+            result = self._execute_search(search_type, previous_params, dispatcher, None, None)
+            result['modifications'] = {
+                'added': to_add,
+                'removed': to_remove,
+                'replaced': to_replace
+            }
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"[MultiMod] Error: {e}", exc_info=True)
+            return {'type': 'multi_mod_error'}
     def _extract_search_parameters_from_entities(self, tracker: Tracker) -> Dict[str, Any]:
-        """
-        ✅ OPTIMIZADO: Extrae parámetros con soporte completo para roles y grupos
-        """
         try:
             search_params = {}
             current_entities = tracker.latest_message.get("entities", [])
@@ -277,60 +352,117 @@ class ActionBusquedaSituacion(Action):
                 'fecha': 'fecha'
             }
             
-            # ✅ NUEVO: Procesar entidades agrupadas primero
-            grouped_comparisons = {}
-            ungrouped_entities = []
+            # ✅ NUEVO: Deduplicar por tipo+valor, priorizando las que tienen role
+            entity_map = {}  # key: "tipo:valor" → value: mejor entidad
             
             for entity in current_entities:
+                entity_type = entity.get("entity")
+                entity_value = entity.get("value", "").strip().lower()
+                entity_role = entity.get("role")
                 group = entity.get('group')
+                
+                if not entity_type or not entity_value:
+                    continue
+                
+                # Clave sin role (para deduplicar independiente del extractor)
+                entity_key = f"{entity_type}:{entity_value}"
+                
+                # Priorizar: con group > con role > sin role
+                if entity_key not in entity_map:
+                    entity_map[entity_key] = entity
+                else:
+                    existing = entity_map[entity_key]
+                    
+                    # Priorizar la que tiene group
+                    if group and not existing.get('group'):
+                        entity_map[entity_key] = entity
+                    # Priorizar la que tiene role
+                    elif entity_role and not existing.get('role'):
+                        entity_map[entity_key] = entity
+            
+            deduplicated_entities = list(entity_map.values())
+            logger.info(f"[EntityParams] Deduplicadas: {len(current_entities)} → {len(deduplicated_entities)}")
+            
+            # Agrupar entidades
+            entities_by_type = {}
+            grouped_comparisons = {}
+            
+            for entity in deduplicated_entities:
+                entity_type = entity.get("entity")
+                entity_value = entity.get("value", "").strip()
+                entity_role = entity.get("role")
+                group = entity.get('group')
+                
+                # Procesar grupos de comparación
                 if group:
                     if group not in grouped_comparisons:
                         grouped_comparisons[group] = []
                     grouped_comparisons[group].append(entity)
-                else:
-                    ungrouped_entities.append(entity)
+                    continue
+                
+                # Agrupar entidades sin grupo por tipo
+                if entity_type not in entities_by_type:
+                    entities_by_type[entity_type] = []
+                
+                entities_by_type[entity_type].append({
+                    'value': entity_value,
+                    'role': entity_role,
+                    'entity': entity
+                })
             
             # Procesar grupos de comparación
             for group_name, group_entities in grouped_comparisons.items():
                 self._process_comparison_group(group_name, group_entities, search_params)
             
-            # Procesar entidades sin grupo
-            for i, entity in enumerate(ungrouped_entities):
-                entity_type = entity.get("entity")
-                entity_value = entity.get("value", "").strip()
-                entity_role = entity.get("role")
-                
-                if not entity_type or not entity_value:
-                    continue
-                
+            # Procesar entidades agrupadas por tipo
+            for entity_type, entity_list in entities_by_type.items():
                 if entity_type not in entity_to_param:
                     continue
                 
                 param_name = entity_to_param[entity_type]
+                valid_values = []
+                common_role = None
                 
-                # Validar entidad
-                validation_result = validate_entity_detection(
-                    entity_type=entity_type,
-                    entity_value=entity_value,
-                    min_length=2,
-                    check_fragments=True
-                )
-                
-                if validation_result.get("valid"):
-                    normalized_value = validation_result.get("normalized", entity_value)
+                for item in entity_list:
+                    entity_value = item['value']
+                    entity_role = item['role']
                     
-                    # ✅ Guardar con role si aplica
-                    if entity_type in ["empresa", "dosis", "estado"]:
-                        search_params[param_name] = {
-                            "value": normalized_value,
-                            "role": entity_role or "unspecified"
-                        }
+                    validation_result = validate_entity_detection(
+                        entity_type=entity_type,
+                        entity_value=entity_value,
+                        min_length=2,
+                        check_fragments=True
+                    )
+                    
+                    if validation_result.get("valid"):
+                        normalized_value = validation_result.get("normalized", entity_value)
+                        valid_values.append(normalized_value)
+                        if entity_role and not common_role:
+                            common_role = entity_role
+                        logger.info(f"[EntityParams] ✅ {entity_type}='{entity_value}' válido")
                     else:
-                        search_params[param_name] = normalized_value
-                    
-                    logger.info(f"[EntityParams] ✅ {entity_type}='{entity_value}' válido")
-                else:
-                    logger.warning(f"[EntityParams] ❌ {entity_type}='{entity_value}' rechazado")
+                        logger.warning(f"[EntityParams] ❌ {entity_type}='{entity_value}' rechazado")
+                
+                # Guardar valores
+                if valid_values:
+                    if len(valid_values) > 1:
+                        if entity_type in ["empresa", "dosis", "estado"]:
+                            search_params[param_name] = {
+                                "value": ", ".join(valid_values),
+                                "role": common_role or "unspecified"
+                            }
+                        else:
+                            search_params[param_name] = ", ".join(valid_values)
+                        
+                        logger.info(f"[EntityParams] ✅ Múltiples {entity_type}: {valid_values}")
+                    else:
+                        if entity_type in ["empresa", "dosis", "estado"]:
+                            search_params[param_name] = {
+                                "value": valid_values[0],
+                                "role": common_role or "unspecified"
+                            }
+                        else:
+                            search_params[param_name] = valid_values[0]
             
             logger.info(f"[EntityParams] {len(search_params)} parámetros extraídos")
             return search_params
@@ -633,22 +765,37 @@ class ActionBusquedaSituacion(Action):
             logger.error(f"[NLUApply] Error: {e}")
             return current_params
 
-    # ... (resto de métodos sin cambios significativos)
     
     def _handle_search_intent(self, context: Dict[str, Any], tracker: Tracker, 
-                             dispatcher: CollectingDispatcher, comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
+                            dispatcher: CollectingDispatcher, 
+                            comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
         """Manejo principal de búsquedas"""
         try:
             intent_name = context['current_intent']
+            search_type = self._get_search_type(intent_name, context)
             user_message = context.get('user_message', '')
             
-            search_type = self._get_search_type(intent_name, context)
+            # ✅ Manejar sub-intents de modificación
+            if intent_name == 'modificar_busqueda:remover':
+                return self._handle_remove_filter(context, tracker, dispatcher)
+            eliif intent_name == 'modificar_busqueda:multiple':
+                return self._handle_multiple_modifications(context, tracker, dispatcher)
+            elif intent_name == 'modificar_busqueda:agregar':
+                # TODO: Implementar
+                pass
             
-            if intent_name == 'modificar_busqueda':
-                return self._handle_modify_search_intent(context, tracker, dispatcher, search_type, comparison_info)
+            elif intent_name == 'modificar_busqueda:reemplazar':
+                return self._handle_modify_search_intent(context, tracker, dispatcher, 
+                                                        search_type, comparison_info)
             
+            elif intent_name.startswith('modificar_busqueda'):
+                return self._handle_modify_search_intent(context, tracker, dispatcher, 
+                                                        search_type, comparison_info)
+            
+            # Búsqueda normal
             slot_cleanup_events = self._generate_slot_cleanup_events(tracker, intent_name)
             search_params = self._extract_search_parameters_from_entities(tracker)
+        
             
             if search_params:
                 # Validar coherencia de comparación
@@ -690,7 +837,11 @@ class ActionBusquedaSituacion(Action):
         return intent_name in search_intents
     
     def _is_search_or_modify_intent(self, intent_name: str) -> bool:
-        return self._is_search_intent(intent_name) or intent_name == 'modificar_busqueda'
+        """Detecta intents de búsqueda o modificación (incluyendo sub-intents)"""
+        return (
+            self._is_search_intent(intent_name) or 
+            intent_name.startswith('modificar_busqueda')  # ✅ Incluye todos los sub-intents
+        )
     
     def _get_search_type(self, intent_name: str, context: Dict[str, Any] = None) -> str:
         if intent_name == "modificar_busqueda":
@@ -705,7 +856,145 @@ class ActionBusquedaSituacion(Action):
             return "producto"
         else:
             return "producto"
-    
+    def _handle_remove_filter(self, context: Dict[str, Any], tracker: Tracker, 
+                         dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+        """Maneja remoción de filtros - VERSIÓN CORREGIDA"""
+        try:
+            entities = tracker.latest_message.get("entities", [])
+            
+            if not entities:
+                dispatcher.utter_message("No identifiqué qué filtro remover.")
+                return {'type': 'remove_error'}
+            
+            # Extraer parámetros de búsqueda anterior
+            previous_params = self._extract_previous_search_parameters(context)
+            search_type = previous_params.pop('_previous_search_type', 'producto')
+            
+            logger.info(f"[RemoveFilter] Parámetros previos: {previous_params}")
+            
+            # Agrupar entidades por tipo
+            entities_by_type = {}
+            for entity in entities:
+                entity_type = entity.get('entity')
+                entity_value = entity.get('value')
+                
+                if entity_type not in entities_by_type:
+                    entities_by_type[entity_type] = []
+                entities_by_type[entity_type].append(entity_value)
+            
+            # Procesar cada tipo de entidad
+            for entity_type, values in entities_by_type.items():
+                # ✅ NUEVO: Detectar si se está mencionando la categoría misma vs un valor específico
+                is_removing_category = self._is_category_removal(entity_type, values)
+                
+                if is_removing_category:
+                    # CASO 1: Remover categoría completa
+                    self._remove_entire_parameter(previous_params, entity_type)
+                    logger.info(f"[RemoveFilter] Categoría completa removida: {entity_type}")
+                else:
+                    # CASO 2: Remover valores específicos
+                    self._remove_specific_values(previous_params, entity_type, values)
+                    logger.info(f"[RemoveFilter] Valores específicos removidos de {entity_type}: {values}")
+            
+            logger.info(f"[RemoveFilter] Parámetros después: {previous_params}")
+            
+            if not previous_params:
+                dispatcher.utter_message("No quedan filtros. ¿Qué querés buscar?")
+                return {'type': 'no_filters_remaining'}
+            
+            # Ejecutar búsqueda sin los filtros removidos
+            result = self._execute_search(search_type, previous_params, dispatcher, None, None)
+            result['filters_removed'] = entities_by_type
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"[RemoveFilter] Error: {e}", exc_info=True)
+            dispatcher.utter_message("Hubo un error al remover el filtro.")
+            return {'type': 'remove_error', 'error': str(e)}
+
+    def _is_category_removal(self, entity_type: str, values: List[str]) -> bool:
+        """
+        ✅ NUEVO: Detecta si el usuario quiere remover la categoría completa
+        vs un valor específico dentro de ella
+        """
+        try:
+            # Si no hay valores o todos son None → remover categoría
+            if not values or all(v is None for v in values):
+                return True
+            
+            # Si el valor mencionado es el nombre de la categoría misma → remover categoría
+            # Ej: "sin estado" donde value='estado' y entity_type='estado'
+            category_names = [entity_type, entity_type.lower()]
+            
+            for value in values:
+                if value and value.lower() in category_names:
+                    return True
+            
+            # Casos especiales para ciertos tipos de entidad
+            generic_removal_terms = ['filtro', 'restriccion', 'limite', 'parametro']
+            for value in values:
+                if value and value.lower() in generic_removal_terms:
+                    return True
+            
+            return False
+            
+        except Exception as e:
+            logger.error(f"[CategoryRemoval] Error: {e}")
+            return True  # En caso de error, asumir remoción de categoría
+
+    def _remove_entire_parameter(self, params: Dict, entity_type: str):
+        """Remueve un parámetro completo y sus variantes"""
+        keys_to_remove = [
+            entity_type,
+            f"{entity_type}_min",
+            f"{entity_type}_max"
+        ]
+        
+        for key in keys_to_remove:
+            params.pop(key, None)
+
+    def _remove_specific_values(self, params: Dict, entity_type: str, values_to_remove: List[str]):
+        """Remueve valores específicos de un parámetro que puede tener múltiples valores"""
+        
+        # Buscar el parámetro en params
+        param_key = entity_type
+        if param_key not in params:
+            # Intentar con variantes
+            param_key = f"{entity_type}_min" if f"{entity_type}_min" in params else \
+                        f"{entity_type}_max" if f"{entity_type}_max" in params else None
+            
+            if not param_key:
+                return  # No existe el parámetro
+        
+        current_value = params[param_key]
+        
+        # Si es string simple, verificar si contiene múltiples valores separados por coma
+        if isinstance(current_value, str):
+            current_values = [v.strip() for v in current_value.split(',')]
+            
+            # Remover valores especificados
+            remaining_values = [v for v in current_values if v.lower() not in [r.lower() for r in values_to_remove]]
+            
+            if remaining_values:
+                # Actualizar con valores restantes
+                params[param_key] = ', '.join(remaining_values)
+            else:
+                # Si no quedan valores, remover el parámetro completo
+                params.pop(param_key)
+        
+        # Si es dict con value/role
+        elif isinstance(current_value, dict) and 'value' in current_value:
+            value_str = current_value['value']
+            current_values = [v.strip() for v in value_str.split(',')]
+            
+            remaining_values = [v for v in current_values if v.lower() not in [r.lower() for r in values_to_remove]]
+            
+            if remaining_values:
+                current_value['value'] = ', '.join(remaining_values)
+            else:
+                params.pop(param_key)
+
     def _handle_ignored_suggestions(self, context: Dict[str, Any], current_intent: str, 
                                    dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """Detecta y limpia sugerencias ignoradas automáticamente"""
@@ -1351,10 +1640,10 @@ class ActionBusquedaSituacion(Action):
                     
                     if key == 'estado':
                         role_display = {
-                            'nuevo': 'productos nuevos',
-                            'poco_stock': 'últimas unidades',
-                            'vence_pronto': 'próximos a vencer',
-                            'en_oferta': 'en oferta'
+                            'nuevo': 'nuevo',
+                            'poco_stock': 'poco_stock',
+                            'vence_pronto': 'vence_pronto',
+                            'en_oferta': 'en_oferta'
                         }.get(role, val)
                         formatted[key] = role_display
                     elif key == 'empresa':
