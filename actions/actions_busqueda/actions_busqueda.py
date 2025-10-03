@@ -778,7 +778,7 @@ class ActionBusquedaSituacion(Action):
             # ✅ Manejar sub-intents de modificación
             if intent_name == 'modificar_busqueda:remover':
                 return self._handle_remove_filter(context, tracker, dispatcher)
-            eliif intent_name == 'modificar_busqueda:multiple':
+            elif intent_name == 'modificar_busqueda:multiple':
                 return self._handle_multiple_modifications(context, tracker, dispatcher)
             elif intent_name == 'modificar_busqueda:agregar':
                 # TODO: Implementar

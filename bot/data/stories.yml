@@ -28,7 +28,7 @@ stories:
 
   - story: Usuario saluda y busca
     steps:
-    - intent: saludar
+    - intent: saludo
     - action: action_smalltalk_situacion
     - intent: buscar_producto
     - action: action_busqueda_situacion
