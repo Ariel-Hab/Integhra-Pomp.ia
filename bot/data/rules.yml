@@ -77,9 +77,54 @@ rules:
   - rule: Saludo
     steps:
     - intent: saludar
-    - action: action_conf_neg_agradecer
+    - action: action_smalltalk_situacion
   
   - rule: Despedida
     steps:
     - intent: despedida
-    - action: action_conf_neg_agradecer
+    - action: action_smalltalk_situacion
+
+  - rule: Modificar búsqueda - Remover filtro
+    steps:
+    - intent: modificar_busqueda:remover
+    - action: action_busqueda_situacion
+
+  - rule: Modificar búsqueda - Agregar filtro
+    steps:
+    - intent: modificar_busqueda:agregar
+    - action: action_busqueda_situacion
+
+  - rule: Modificar búsqueda - Reemplazar filtro
+    steps:
+    - intent: modificar_busqueda:reemplazar
+    - action: action_busqueda_situacion
+
+  - rule: Modificar búsqueda genérica
+    steps:
+    - intent: modificar_busqueda
+    - action: action_busqueda_situacion
+
+  - rule: Responder a preguntar_como_estas
+    steps:
+    - intent: preguntar_como_estas
+    - action: action_smalltalk_situacion
+
+  - rule: Responder a responder_como_estoy
+    steps:
+    - intent: responder_como_estoy
+    - action: action_smalltalk_situacion
+
+  - rule: Responder a pedir_chiste
+    steps:
+    - intent: pedir_chiste
+    - action: action_smalltalk_situacion
+
+  - rule: Responder a reirse_chiste
+    steps:
+    - intent: reirse_chiste
+    - action: action_smalltalk_situacion
+
+  - rule: Responder a responder_estoy_bien
+    steps:
+    - intent: responder_estoy_bien
+    - action: action_smalltalk_situacion

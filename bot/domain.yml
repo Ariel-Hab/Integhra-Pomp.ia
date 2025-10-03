@@ -4,10 +4,8 @@ config:
   fallback_action: action_fallback
 
 intents:
-  #- saludo
   - saludar
   - despedida
-  #- agradecimiento
   - agradecer 
   - preguntar_como_estas
   - responder_como_estoy
@@ -17,8 +15,11 @@ intents:
   - buscar_producto
   - buscar_oferta
   - consultar_novedades_producto  
-  - consultar_novedades_oferta    
+  - consultar_novedades_oferta
   - modificar_busqueda
+  - modificar_busqueda:reemplazar  # 🆕 Sub-intent para reemplazos
+  - modificar_busqueda:agregar     # 🆕 Sub-intent para adiciones
+  - modificar_busqueda:remover     # 🆕 Sub-intent para remociones
   - afirmar
   - denegar
   - completar_pedido
@@ -27,41 +28,132 @@ intents:
   - ambiguity_fallback
 
 entities:
-  # ✅ Entidades principales simplificadas
-  - producto
+  # ===== ENTIDADES BÁSICAS CON ROLES PARA MODIFICACIONES =====
   
-  # 🆕 EMPRESA CON ROL
+  - producto:
+      roles:
+        - old    # Para modificaciones: "reemplaza X por Y"
+        - new
+        - add
+        - remove
+  
   - empresa:
       roles:
-        - proveedor
+        - proveedor      # Para búsquedas: "de holliday"
+        - distribuidor   # Para futuro
+        - old           # Para modificaciones
+        - new
+        - add       
+        - remove 
   
-  - categoria
-  - animal
-  - sintoma
-  - dosis
+  - categoria:
+      roles:
+        - old
+        - new
+        - add
+        - remove
   
-  # 🆕 ESTADO CON 4 ROLES
+  - animal:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - sintoma:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - dosis:
+      roles:
+        - gramaje        # "500mg"
+        - volumen        # "100ml"
+        - forma          # "tabletas", "inyectable"
+        - old
+        - new
+        - add
+        - remove
+  
+  # ===== ESTADO CON 4 ROLES ESPECÍFICOS =====
   - estado:
       roles:
         - nuevo
         - poco_stock
         - vence_pronto
         - en_oferta
+        - old
+        - new
+        - add
+        - remove
   
-  # ✅ Entidades numéricas/comparativas que faltaban
+  # ===== ENTIDADES NUMÉRICAS/COMPARATIVAS CON GRUPOS =====
+  
+  # 🆕 COMPARADOR: Roles para operadores + Grupos para filtros
+  - comparador:
+      roles:
+        - gt      # mayor, más, superior
+        - lt      # menor, menos, inferior
+        - gte     # al menos, mínimo
+        - lte     # hasta, máximo
+        - eq      # igual, exactamente
+        - neq     # diferente
+      groups:
+        - descuento_filter
+        - bonificacion_filter
+        - stock_filter
+        - precio_filter
+  
+  # 🆕 Cantidades con grupos para comparaciones
+  - cantidad_descuento:
+      groups:
+        - descuento_filter
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - cantidad_bonificacion:
+      groups:
+        - bonificacion_filter
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - cantidad_stock:
+      groups:
+        - stock_filter
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  # Entidades simples (sin grupos, para uso directo)
   - cantidad
-  - precio
-  - descuento                  # ✅ Simplificado (antes cantidad_descuento)
-  - bonificacion              # ✅ Simplificado (antes cantidad_bonificacion)  
-  - stock                     # ✅ Simplificado (antes cantidad_stock)
-  - comparador
+  - precio:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+      groups:
+        - precio_filter
+  - descuento    # Para uso sin comparador
+  - bonificacion # Para uso sin comparador
+  - stock        # Para uso sin comparador
   
-  # ✅ Entidades temporales
+  # ===== ENTIDADES TEMPORALES =====
   - tiempo
   - fecha
   - dia
   
-  # ✅ Entidades de contexto
+  # ===== ENTIDADES DE CONTEXTO =====
   - sentimiento
 
 slots:
@@ -80,7 +172,6 @@ slots:
       - type: from_entity
         entity: empresa
 
-  # 🆕 SLOT PARA ROL DE EMPRESA (OPCIONAL)
   empresa_role:
     type: text
     influence_conversation: false
@@ -124,7 +215,6 @@ slots:
       - type: from_entity
         entity: estado
 
-  # 🆕 SLOTS PARA ROLES DE ESTADO (OPCIONAL PERO ÚTIL)
   estado_role:
     type: text
     influence_conversation: false
@@ -163,6 +253,8 @@ slots:
     mappings:
       - type: from_entity
         entity: descuento
+      - type: from_entity
+        entity: cantidad_descuento  # 🆕 También captura cantidad_descuento
 
   bonificacion:
     type: text
@@ -170,6 +262,8 @@ slots:
     mappings:
       - type: from_entity
         entity: bonificacion
+      - type: from_entity
+        entity: cantidad_bonificacion  # 🆕 También captura cantidad_bonificacion
 
   stock:
     type: text
@@ -177,6 +271,8 @@ slots:
     mappings:
       - type: from_entity
         entity: stock
+      - type: from_entity
+        entity: cantidad_stock  # 🆕 También captura cantidad_stock
 
   comparador:
     type: text
@@ -271,7 +367,6 @@ slots:
     mappings:
       - type: from_text
   
-  # --- Slots faltantes reportados por logs ---
   user_sentiment:
     type: text
     influence_conversation: false
@@ -309,74 +404,62 @@ slots:
     initial_value: []
     mappings: []
 
-
 responses:
   utter_saludo:
   - text: ¡Hola!🐶
   - text: Buenas, un gusto saludarte 🐾
   - text: ¡Hola! Encantado de verte por acá 🐾
+  
   utter_responder_como_estoy:
   - text: Espectacular!
   - text: Guau! Me alegro 🐶
   - text: ¡Sigue así! 💪
   - text: ¡Eres un campeón! 🏆
+  
   utter_reirse_chiste:
   - text: 😄 Me alegra que te haya sacado una sonrisa
   - text: 😂 jajaja, buenísimo
+  
   utter_preguntar_como_estas:
   - text: ¡Todo bien! ¿Y vos?
+  
   utter_responder_estoy_bien:
   - text: Espectacular! Necesitas buscar algo?
   - text: Buenisimoo! Necesitas ayuda?
   - text: Genial! Estoy aquí por si necesitas algo
+  
   utter_pedir_chiste:
-  - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué
-      hizo? —Vendí la bicicleta.'
-  - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene
-      miedo al *ratón*.'
-  - text: 'Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre
-      da el primer *click* del día.'
+  - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué hizo? —Vendí la bicicleta.'
+  - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene miedo al *ratón*.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre da el primer *click* del día.'
   - text: 'Aquí va uno: ¿Qué hace una vaca cuando escucha música? ¡Da leche condensada!'
-  - text: 'Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en
-      *escuela*.'
+  - text: 'Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en *escuela*.'
   - text: 'Aquí va uno: ¿Qué hace un perro con un taladro? ¡Hace agujeros a lo *guau*!'
-  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía
-      está en blanco y negro.'
-  - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas
-      emocionales*.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía está en blanco y negro.'
+  - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas emocionales*.'
   - text: 'Aquí va uno: ¿Qué hace un conejo cuando se aburre? ¡Ve *zanahorias* películas!'
   - text: 'Aquí va uno: ¿Cómo se despiden dos pulgas? Nos vemos en el perro'
-  - text: 'Aquí va uno: ¿Cuál es el animal más ordenado? El perro pastor, siempre
-      pone todo en fila.'
-  - text: 'Aquí va uno: ¿Por qué el loro nunca aprueba exámenes? Porque siempre repite.'
-  - text: 'Aquí va uno: ¿Qué le dijo el gato al veterinario? ¡Hoy vengo por curiosidad!'
-  - text: 'Aquí va uno: ¿Cuál es el pez más gracioso? El *pez payaso*... pero siempre
-      hace chistes *de mal gusto*.'
-  - text: 'Aquí va uno: ¿Qué hace un perro frente al aire acondicionado? ¡Esperar
-      que le dé un poco de *fres-canis*!'
-  - text: 'Aquí va uno: ¿Cómo llaman a un perro que sabe cantar? ¡Un *can-tante* profesional!'
-  - text: 'Aquí va uno: ¿Por qué los pollitos no usan Facebook? Porque ya tienen *pío-pío*.'
-  - text: 'Aquí va uno: ¿Qué le dice una oveja presumida a otra? ¡Soy la oveja más
-      *cool-la* del rebaño!'
-  - text: 'Aquí va uno: ¿Cómo se llama el gato que hace magia? ¡Miau-dini!'
-  - text: 'Aquí va uno: ¿Por qué la vaca fue astronauta? Porque quería ver la *Vía
-      Láctea* desde arriba.'
+  
   utter_despedida:
   - text: ¡Adiós! Que tengas un gran día ✨
   - text: Hasta luego, nos vemos pronto 🐾
   - text: Chao, cuidate mucho
+  
   utter_denegar:
   - text: Está bien, lo respeto 👍
   - text: Perfecto, no hay problema
   - text: De acuerdo, entendido
+  
   utter_agradecimiento:
   - text: ¡De nada! 😊
   - text: Siempre a disposición 🙌
   - text: Me alegra poder ayudarte
+  
   utter_afirmar:
   - text: ¡Perfecto!
   - text: Genial, entendido 👍
   - text: Claro que sí
+  
   utter_pedir_parametros_producto:
   - text: |
       Para buscar un producto necesito al menos un dato 🛒  
@@ -384,19 +467,18 @@ responses:
       ¿Cuál me pasás?
 
   utter_pedir_parametros_oferta:
-    - text: |
-        Para mostrarte ofertas necesito saber algun dato **de qué producto o categoría** 👌  
-        ¿Cuál te interesa?
+  - text: |
+      Para mostrarte ofertas necesito saber algun dato **de qué producto o categoría** 👌  
+      ¿Cuál te interesa?
 
   utter_pedir_criterio_oferta:
-    - text: |
-        ¿Qué tipo de oferta buscás? 🎯  
-        🔹 descuento  
-        🔹 bonificación  
-        🔹 o una fecha específica  
-        Así te muestro las más relevantes.
+  - text: |
+      ¿Qué tipo de oferta buscás? 🎯  
+      🔹 descuento  
+      🔹 bonificación  
+      🔹 o una fecha específica  
+      Así te muestro las más relevantes.
 
-  # 🆕 NUEVAS RESPUESTAS PARA RECOMENDACIONES UNIFICADAS
   utter_recomendaciones_no_disponible:
   - text: |
       Entiendo que buscás recomendaciones 🎯 
@@ -406,10 +488,6 @@ responses:
       Perfecto, capturo que querés recomendaciones 💡 
       Esa función está en desarrollo aún. Mientras tanto, puedo mostrarte productos por categoría o buscar ofertas.
       ¿Qué prefieres?
-  - text: |
-      ¡Claro! Te entiendo, buscás que te recomiende algo 🤝 
-      Esa característica no está lista todavía, pero sí puedo ayudarte a encontrar productos si me decís qué necesitás.
-      ¿Para qué animal o qué tipo de producto buscás?
       
 actions:
   - action_busqueda_situacion

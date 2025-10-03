@@ -32,6 +32,7 @@ pipeline:
   entity_recognition: true
   intent_classification: true
   entity_roles: true
+  entity_groups: true 
   number_of_transformer_layers: 2
   BILOU_flag: true    # ← Agrega esto para mejor detección de límites
   # === POST-PROCESAMIENTO ===

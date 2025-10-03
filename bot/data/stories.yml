@@ -1,57 +1,34 @@
 version: "3.1"
 
 stories:
-  # Solo las que NECESITAS, eliminando intents sin NLU data
-  
-  - story: Búsqueda de producto simple
+  # Historias mínimas para enseñar flujo de búsqueda
+  - story: Búsqueda de producto
     steps:
     - intent: buscar_producto
     - action: action_busqueda_situacion
 
-  - story: Búsqueda de oferta simple
+  - story: Búsqueda de oferta
     steps:
     - intent: buscar_oferta
     - action: action_busqueda_situacion
 
-  - story: Modificar búsqueda previa
+  - story: Usuario busca y luego modifica
     steps:
-    - intent: buscar_oferta
+    - intent: buscar_producto
     - action: action_busqueda_situacion
     - intent: modificar_busqueda
     - action: action_busqueda_situacion
 
-  - story: Búsqueda con sugerencia aceptada
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: afirmar
-    - action: action_conf_neg_agradecer
-    - action: action_listen
-
-  - story: Búsqueda con sugerencia rechazada
+  - story: Usuario busca y agradece
     steps:
     - intent: buscar_oferta
     - action: action_busqueda_situacion
-    - intent: denegar
-    - action: action_conf_neg_agradecer
-
-  - story: Usuario agradece después de búsqueda
-    steps:
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
-    - intent: agradecer  # ⚠️ CAMBIÓ
+    - intent: agradecer
     - action: action_conf_neg_agradecer
 
   - story: Usuario saluda y busca
     steps:
     - intent: saludar
-    - action: action_conf_neg_agradecer
+    - action: action_smalltalk_situacion
     - intent: buscar_producto
-    - action: action_busqueda_situacion
-
-  - story: Cambio de contexto
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: buscar_oferta
     - action: action_busqueda_situacion
