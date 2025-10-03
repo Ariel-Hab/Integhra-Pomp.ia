@@ -7,13 +7,42 @@ nlu:
     - buenas
     - qué tal
     - buen día
-    - che, cómo andás
+    - holaaaa
+    - q ondaaa
+    - holaa
+    - buenas tardes
+    - buenas noches
+    - hey
+    - hi
+    - hello
+    
 
 - intent: preguntar_como_estas
   examples: |
-    - cómo estás [bien](sentimiento:core)?
-    - cómo andás [regular](sentimiento:core)?
-    - qué tal todo [mal](sentimiento:core)?
+    - cómo estás?
+    - cómo andás?
+    - qué tal todo?
+    - que onda como andas?
+    - holaaa, como andas?
+    - holaa
+    - che, cómo andás
+    - todo bien
+    - todo bien?
+    - como va che
+    - como va??
+    - como andass???
+    - como va todo?
+    - cómo te va?
+    - qué tal va todo?
+    - qué tal andas?
+    - qué tal todo?
+    - qué tal?
+    - qué hay de nuevo?
+    - qué hay?
+    - qué contás?
+    - qué me contás?
+    - qué me cuentas?
+
 
 - intent: despedida
   examples: |
