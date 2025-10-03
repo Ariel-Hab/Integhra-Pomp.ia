@@ -74,9 +74,14 @@ rules:
     - intent: agradecer  # ⚠️ CAMBIÓ
     - action: action_conf_neg_agradecer
 
+  - rule: Modificar búsqueda múltiple
+    steps:
+    - intent: modificar_busqueda:multiple
+    - action: action_busqueda_situacion
+    
   - rule: Saludo
     steps:
-    - intent: saludar
+    - intent: saludo
     - action: action_smalltalk_situacion
   
   - rule: Despedida
