@@ -997,10 +997,8 @@ nlu:
     - nuevos
     - nueva
     - nuevas
+    - novedad
     - en oferta
-    - con descuento
-    - con bonificación
-    - con poco stock
     - disponible
     - disponibles
     - agotado
@@ -1012,8 +1010,9 @@ nlu:
     - rebajados
     - que está en promo
     - que tiene descuento
-    - en stock
-    - sin stock
+    - poco stock
+    - bajo stock
+    - stock bajo
     - promocional
     - promocionales
 
