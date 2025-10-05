@@ -3,6 +3,7 @@ import logging
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
+from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, EventType
@@ -28,7 +29,7 @@ class ActionConfNegAgradecer(Action):
             user_msg = context['user_message']
             
             logger.info(f"[ConfNegAgradecer] Intent: {current_intent}, Awaiting suggestion: {context['awaiting_suggestion_response']}")
-            
+            log_message(tracker, nlu_conf_threshold=0.6)
             events = []
             
             # 🆕 PRIORIDAD MÁXIMA: Manejar sugerencias pendientes con sistema mejorado
