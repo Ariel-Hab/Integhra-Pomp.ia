@@ -1,4 +1,5 @@
 # actions_smalltalk.py
+from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import EventType
@@ -19,6 +20,7 @@ class ActionSmallTalkSituacion(Action):
         domain: dict
     ) -> list[EventType]:
         try:
+            log_message(tracker, nlu_conf_threshold=0.6)
             current_intent = tracker.latest_message.get("intent", {}).get("name", "")
             user_message = tracker.latest_message.get("text", "")
 
