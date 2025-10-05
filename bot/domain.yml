@@ -4,6 +4,7 @@ config:
   fallback_action: action_fallback
 
 intents:
+  - saludo
   - saludar
   - despedida
   - agradecer 
@@ -20,12 +21,14 @@ intents:
   - modificar_busqueda:reemplazar  # 🆕 Sub-intent para reemplazos
   - modificar_busqueda:agregar     # 🆕 Sub-intent para adiciones
   - modificar_busqueda:remover     # 🆕 Sub-intent para remociones
+  - modificar_busqueda:multiple
   - afirmar
   - denegar
   - completar_pedido
   - off_topic
   - out_of_scope
   - ambiguity_fallback
+  - consulta_veterinaria_profesional
 
 entities:
   # ===== ENTIDADES BÁSICAS CON ROLES PARA MODIFICACIONES =====
@@ -497,6 +500,7 @@ actions:
   - action_fallback
   - action_smalltalk_situacion
   - action_recomendaciones
+  - action_handle_out_of_context
 
 session_config:
   session_expiration_time: 300
