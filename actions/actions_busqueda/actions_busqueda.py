@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime, timedelta
 import re
 
+from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, EventType
@@ -48,6 +49,8 @@ class ActionBusquedaSituacion(Action):
             logger.info(f"[ActionBusquedaSituacion] Procesando intent: {intent_name}")
             
             events = []
+
+            log_message(tracker, nlu_conf_threshold=0.6)
             
             # Detectar y limpiar sugerencias ignoradas
             ignored_suggestion_cleanup = self._handle_ignored_suggestions(context, intent_name, dispatcher)

@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 from xml.dom.minidom import Text
 
 from actions.helpers import validate_entities_for_intent
+from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, EventType
@@ -19,6 +20,7 @@ class ActionFallback(Action):
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[EventType]:
         # Obtener contexto de conversación
+        log_message(tracker, nlu_conf_threshold=0.6)
         context = ConversationState.get_conversation_context(tracker)
         user_msg = context['user_message']
         sentiment = context['detected_sentiment']
