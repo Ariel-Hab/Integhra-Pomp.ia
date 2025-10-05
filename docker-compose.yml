@@ -14,7 +14,7 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-    command: sh -c "poetry install && poetry run manage bot"
+    command: sh -c "poetry lock && poetry install && poetry run manage bot"
 
   rasa_actions:
     build:
@@ -27,5 +27,5 @@ services:
       - "5055:5055"
     volumes:
       - .:/app
-    command: sh -c "poetry install && poetry run manage actions"
+    command: sh -c "poetry lock && poetry install && poetry run manage actions"
  
