@@ -1,49 +1,39 @@
-# model_manager.py
-from transformers import pipeline
-import logging
+# models/model_manager.py
 
-logger = logging.getLogger(__name__)
+import os
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-# Variable global del generador (se carga una vez)
-_generator = None
+model_name = "tiiuae/falcon-7b-instruct"
 
-def load_model(model_name: str = "bigscience/bloomz-560m"):
-    """
-    Carga el modelo y lo deja en memoria.
-    Si ya está cargado, no lo vuelve a cargar.
-    """
-    global _generator
-    if _generator is None:
-        try:
-            logger.info(f"Cargando modelo {model_name}...")
-            _generator = pipeline("text-generation", model=model_name)
-            logger.info("✅ Modelo cargado correctamente")
-        except Exception as e:
-            logger.error(f"❌ Error cargando modelo {model_name}: {e}", exc_info=True)
-            raise e
-    return _generator
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+offload_path = "./model_offload"
+os.makedirs(offload_path, exist_ok=True)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float16,
+    device_map="auto",
+    trust_remote_code=False,
+    low_cpu_mem_usage=True,
+    offload_folder=offload_path,
+)
 
-def generate_text(prompt: str, max_new_tokens: int = 80) -> str:
-    """
-    Genera texto a partir de un prompt usando el modelo cargado.
-    """
-    global _generator
-    if _generator is None:
-        load_model()  # Carga por defecto BLOOMZ 560M
-
-    salida = _generator(
-        prompt,
+def generate_text(prompt, max_new_tokens=100):
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+    
+    outputs = model.generate(
+        **inputs,
         max_new_tokens=max_new_tokens,
-        do_sample=True,
-        top_p=0.9,
         temperature=0.7,
+        top_p=0.9,
+        do_sample=True,
+        repetition_penalty=1.15,
+        pad_token_id=tokenizer.eos_token_id
     )
-
-    # Extraer texto generado
-    return salida[0]["generated_text"].replace(prompt, "").strip()
-
-if __name__ == "__main__":
-
-    print("Probando modelo...")
-    resp = generate_text("Hola, ¿puedes contarme un chiste corto?")
-    print("Respuesta:", resp)
+    
+    response = tokenizer.decode(
+        outputs[0][len(inputs.input_ids[0]):],
+        skip_special_tokens=True
+    )
+    
+    return response.strip()
