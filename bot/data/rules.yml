@@ -43,7 +43,7 @@ rules:
       - pending_suggestion:
           is_not: null
     steps:
-    - intent: agradecer  # ⚠️ CAMBIÓ: era "agradecimiento"
+    - intent: agradecer
     - action: action_conf_neg_agradecer
 
   # ========================================
@@ -71,24 +71,18 @@ rules:
     - slot_was_set:
       - pending_suggestion: null
     steps:
-    - intent: agradecer  # ⚠️ CAMBIÓ
+    - intent: agradecer
     - action: action_conf_neg_agradecer
 
+  # ========================================
+  # MODIFICACIONES DE BÚSQUEDA
+  # ========================================
+  
   - rule: Modificar búsqueda múltiple
     steps:
     - intent: modificar_busqueda:multiple
     - action: action_busqueda_situacion
     
-  - rule: Saludo
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-  
-  - rule: Despedida
-    steps:
-    - intent: despedida
-    - action: action_smalltalk_situacion
-
   - rule: Modificar búsqueda - Remover filtro
     steps:
     - intent: modificar_busqueda:remover
@@ -108,6 +102,20 @@ rules:
     steps:
     - intent: modificar_busqueda
     - action: action_busqueda_situacion
+
+  # ========================================
+  # SMALL TALK
+  # ========================================
+  
+  - rule: Saludo
+    steps:
+    - intent: saludo
+    - action: action_smalltalk_situacion
+  
+  - rule: Despedida
+    steps:
+    - intent: despedida
+    - action: action_smalltalk_situacion
 
   - rule: Responder a preguntar_como_estas
     steps:
@@ -133,3 +141,22 @@ rules:
     steps:
     - intent: responder_estoy_bien
     - action: action_smalltalk_situacion
+
+  # ========================================
+  # MENSAJES FUERA DE CONTEXTO
+  # ========================================
+  
+  - rule: Manejar conversación casual (off-topic)
+    steps:
+    - intent: off_topic
+    - action: action_handle_out_of_context
+
+  - rule: Manejar consultas fuera de dominio
+    steps:
+    - intent: out_of_scope
+    - action: action_handle_out_of_context
+
+  - rule: Manejar consultas veterinarias profesionales
+    steps:
+    - intent: consulta_veterinaria_profesional
+    - action: action_handle_out_of_context
