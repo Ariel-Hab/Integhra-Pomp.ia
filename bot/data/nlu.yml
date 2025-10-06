@@ -1365,66 +1365,756 @@ nlu:
 
 - intent: off_topic
   examples: |
-    - Hola, ¿sabés qué hora es?
-    - ¿Qué opinás del clima hoy?
-    - Me aburrí
-    - Contame un secreto
-    - ¿Quién ganó el partido anoche?
-    - Estoy triste
-    - ¿Qué es la vida?
-    - ¿Cuál es la capital de Francia?
-    - ¿Conocés algún chiste?
-    - Quiero hablar de otra cosa
-    - ¿Podés contarme algo divertido?
-    - Estoy cansado de todo
-    - Me siento solo
-    - ¿Qué opinás de la política?
-    - ¿Me podés dar un consejo amoroso?
-    - Estoy confundido con mis estudios
-    - ¿Cuál es tu película favorita?
-    - Hablemos de música
-    - Estoy aburrido en casa
-    - Quiero desahogarme
-    - ¿Tenés mascotas?
-    - Decime algo curioso
-    - Hablemos de cualquier cosa
-    - ¿Cuál es tu comida favorita?
-    - Contame una anécdota
-    - ¿Qué soñaste anoche?
-    - Estoy medio bajón
-    - ¿Qué opinás de los videojuegos?
-    - Hablemos de series o pelis
-    - ¿Qué harías si fueras humano?
+    # ============================================
+    # CATEGORÍA 1: SALUDOS EXPANDIDOS Y CONVERSACIÓN CASUAL
+    # ============================================
+    - che, ¿cómo venís?
+    - todo tranqui con vos?
+    - qué tal tu día?
+    - che, ¿qué onda? ¿todo piola?
+    - holaa, como andas hoy?
+    - ¿cómo te fue en el día?
+    - che, contame, ¿qué tal todo?
+    - ¿cómo va tu semana?
+    - qe tal andas?
+    - todo bien x ahi?
+    - che, ¿cómo está el día para vos?
+    - ¿qué tal el finde?
+    - che boludo, ¿cómo venís?
+    - ¿todo ok por allá?
+    - che, ¿vos bien?
+    - q onda loco, como andas
+    - ¿cómo te trata la vida?
+    - che, ¿qué tal el clima por tu zona?
+    - ¿hace frío ahí también?
+    - uf, qué día de mierda tengo
+    - estoy re cansado hoy
+    - qué semana larga lpm
+    - che, hace un calor insoportable
+    - ¿viste que lindo día?
+    - me levante con toda la onda hoy
+    
+    # ============================================
+    # CATEGORÍA 2: HUMOR Y ENTRETENIMIENTO
+    # ============================================
+    - contame un chiste
+    - decime algo gracioso
+    - che, tenés algún chiste?
+    - haceme reir un toque
+    - contame algo copado
+    - sabés alguna historia graciosa?
+    - che, decime un chiste de gallegos
+    - contame uno de politicos
+    - tenés algún meme para compartir?
+    - che, ¿viste alguna peli buena?
+    - qué serie me recomendás?
+    - che, ¿escuchaste el nuevo disco de [artista]?
+    - ¿viste el último capítulo de [serie]?
+    - che, ¿qué opinás de Stranger Things?
+    - ¿viste Game of Thrones?
+    - che boludo, ¿viste lo de Messi?
+    - contame algo interesante
+    - che, ¿conocés alguna anécdota?
+    - decime algo q no sepa
+    - sorprendeme con algo
+    
+    # ============================================
+    # CATEGORÍA 3: PREGUNTAS SOBRE EL BOT
+    # ============================================
+    - ¿quién sos?
+    - ¿qué sos vos?
+    - che, ¿sos un robot?
+    - ¿sos humano o IA?
+    - ¿cómo funcionás?
+    - ¿quién te creó?
+    - che, ¿sos inteligente?
+    - ¿tenés sentimientos?
+    - ¿qué podés hacer?
+    - ¿para qué servís?
+    - che, ¿entendés todo lo que te digo?
+    - ¿sos mejor que ChatGPT?
+    - ¿qué tan inteligente sos?
+    - che, ¿pensás como un humano?
+    - ¿tenés consciencia?
+    - ¿soñás?
+    - che, ¿te aburrís?
+    - ¿qué se siente ser una IA?
+    - ¿vas a dominar el mundo?
+    - che, ¿las IAs van a reemplazar a los humanos?
+    - ¿cuál es tu propósito?
+    - che, ¿tenés nombre?
+    - ¿cómo te llamas?
+    
+    # ============================================
+    # CATEGORÍA 4: TEMAS SOCIALES GENERALES
+    # ============================================
+    - ¿viste el partido ayer?
+    - che, ¿qué te pareció el gol de Messi?
+    - ¿quién ganó el clásico?
+    - che boludo, ¿viste lo de River?
+    - ¿Boca o River?
+    - che, ¿qué opinás de Milei?
+    - ¿viste las noticias hoy?
+    - che, ¿qué pensás de la política argentina?
+    - ¿viste lo que pasó en la tele?
+    - che, ¿qué opinás del dólar?
+    - ¿viste el escándalo ese?
+    - che, ¿leíste sobre lo que pasó?
+    - ¿qué pensás de la inflación?
+    - che, ¿tocás algún instrumento?
+    - ¿qué hobbie tenés?
+    - che, ¿te gusta el asado?
+    - ¿tomás mate?
+    - che, ¿sos de Buenos Aires?
+    - ¿de qué provincia sos?
+    - che, ¿cuál es tu comida favorita?
+    
+    # ============================================
+    # CATEGORÍA 5: ESTADOS EMOCIONALES
+    # ============================================
+    - estoy aburrido
+    - che, me estoy aburriendo mal
+    - qué embole todo
+    - no tengo nada q hacer
+    - estoy re cansado
+    - che, estoy muerto de sueño
+    - estoy re bajón
+    - che, estoy medio triste hoy
+    - me siento solo
+    - che, no sé qué hacer
+    - estoy re contento hoy
+    - che, estoy feliz
+    - que buen día tengo
+    - estoy de buen humor
+    - che, estoy re motivado
+    - no tengo ganas de nada
+    - che, estoy al pedo
+    - qué paja todo
+    - estoy sin onda
+    
+    # ============================================
+    # CATEGORÍA 6: PREGUNTAS EXISTENCIALES/FILOSÓFICAS
+    # ============================================
+    - ¿cuál es el sentido de la vida?
+    - che, ¿para qué vivimos?
+    - ¿qué es la felicidad?
+    - che, ¿existe el destino?
+    - ¿hay vida después de la muerte?
+    - che, ¿existe Dios?
+    - ¿qué pasa cuando morimos?
+    - che, ¿el tiempo es real?
+    - ¿qué es la realidad?
+    - che, ¿somos libres o todo está determinado?
+    - ¿existe el alma?
+    - che, ¿qué es la consciencia?
+    - ¿por qué existimos?
+    - che, ¿cuál es mi propósito?
+    - ¿tiene sentido todo esto?
+    
+    # ============================================
+    # CATEGORÍA 7: DATOS ALEATORIOS
+    # ============================================
+    - ¿qué hora es?
+    - che, ¿sabés qué hora es?
+    - ¿qué día es hoy?
+    - che, ¿qué fecha es?
+    - ¿cuándo es el feriado?
+    - che, ¿cuándo es el próximo fin de semana largo?
+    - ¿mañana es feriado?
+    - che, ¿en qué mes estamos?
+    - ¿qué estación del año es?
+    - che, ¿hace cuánto empezó el año?
+    - ¿cuántos días faltan para navidad?
+    - che, ¿cuándo es mi cumpleaños?
+    - ¿qué día de la semana es?
+    
+    # ============================================
+    # CASOS LÍMITE (pueden confundirse con otros intents)
+    # ============================================
+    - che, ¿cómo estás? todo bien con los productos?
+    - hola, ¿qué tal? che, tenés tiempo para charlar?
+    - che boludo, antes de preguntarte, ¿viste el partido?
+    - buen día, che, ¿cómo va todo por ahí?
+    - hola, ¿vos bien? ah, y otra cosa...
+    - che, ¿qué hacés? nada, chusmeando nomás
+    - hola, che, ¿me ayudás o estás ocupado?
+    - che, ¿tenés un minuto? es para charlar
+    - hola crack, ¿cómo andás hoy?
+    - che, ¿todo piola? solo curiosidad
+    - hola, ¿qué onda? no es nada importante
+    - che, ¿te puedo preguntar algo personal?
+    - hola, ¿sos argentino vos?
+    - che, ¿trabajás todo el día?
+    - hola, ¿descansás alguna vez?
+    - che, ¿te pagan por esto?
+    - hola, ¿cuánta gente te habla por día?
+    - che, ¿te hacen preguntas raras seguido?
 
 - intent: out_of_scope
   examples: |
-    - Necesito ayuda con mi computadora
-    - ¿Cómo se cocina un risotto?
-    - Quiero información sobre vuelos
-    - ¿Me podés dar la receta de un pastel?
-    - Necesito consejos financieros
-    - Quiero aprender a programar en Python
-    - Me duele la cabeza
-    - ¿Cuál es la distancia entre la Tierra y Marte?
-    - Quiero hacer ejercicio en casa
-    - ¿Qué opinás de los autos eléctricos?
-    - ¿Cómo hago para plantar un árbol?
-    - Necesito ayuda con matemáticas
-    - ¿Cuál es el último libro de Borges?
-    - Quiero tips para dormir mejor
-    - ¿Qué series me recomendás?
-    - Quiero hablar de astrología
-    - ¿Cómo aprender francés rápido?
-    - Estoy buscando información sobre arte
-    - Me interesa la historia de Argentina
-    - Quiero practicar meditación
-    - ¿Cómo consigo trabajo remoto?
-    - ¿Sabés de criptomonedas?
-    - ¿Qué opinás de Messi?
-    - Necesito consejos de cocina
-    - Quiero aprender a tocar guitarra
-    - ¿Me decís cómo tramitar el pasaporte?
-    - Necesito ayuda con mi impresora
-    - ¿Cuánto cuesta un auto eléctrico?
-    - Quiero organizar mis finanzas personales
-    - ¿Cómo cuidar a un bebé recién nacido?
+    # ============================================
+    # CATEGORÍA 1: TECNOLOGÍA
+    # ============================================
+    - necesito ayuda con mi computadora
+    - che, se me tildo la PC
+    - mi celular no anda
+    - che, ¿cómo reseteo el router?
+    - no puedo conectarme al wifi
+    - che, ¿cómo instalo Windows?
+    - mi notebook no prende
+    - che, ¿sabés arreglar celulares?
+    - se me rompió la pantalla del celu
+    - che, ¿cómo hago para formatear?
+    - tengo un virus en la compu
+    - che, ¿cómo borro un virus?
+    - no me funciona WhatsApp
+    - che, ¿por qué Instagram no carga?
+    - se me borró todo del celular
+    - che, ¿cómo recupero archivos borrados?
+    - necesito ayuda con Excel
+    - che, ¿sabés de programación?
+    - ¿cómo hago una página web?
+    - che, ¿me enseñás a programar?
+    - qué juego me recomendás para PC
+    - che, ¿sabés de videojuegos?
+    
+    # ============================================
+    # CATEGORÍA 2: COCINA Y GASTRONOMÍA
+    # ============================================
+    - ¿cómo se hace un risotto?
+    - che, ¿tenés la receta de empanadas?
+    - quiero hacer un asado pero no sé cómo
+    - che, ¿cómo se cocina un bife?
+    - necesito una receta de torta
+    - che, ¿cómo hago fideos caseros?
+    - ¿cuánto tiempo se cocina el pollo?
+    - che, ¿cómo se hace dulce de leche?
+    - qué restaurante me recomendás en Palermo
+    - che, ¿dónde se come bien y barato?
+    - ¿conocés alguna parrilla buena?
+    - che, ¿qué delivery está bueno?
+    - cómo hago para que la pizza quede crocante
+    - che, ¿cuál es el secreto del asado perfecto?
+    - necesito tips de cocina
+    - che, ¿qué vino va con el asado?
+    - cómo se hace una buena salsa
+    - che, ¿me das tu receta de milanesas?
+    
+    # ============================================
+    # CATEGORÍA 3: SALUD HUMANA
+    # ============================================
+    - me duele la cabeza
+    - che, tengo fiebre, ¿qué tomo?
+    - me duele el estómago hace días
+    - che, ¿será apendicitis?
+    - tengo tos y mocos
+    - che, ¿qué me tomo para el resfrío?
+    - me salió un sarpullido
+    - che, ¿qué crema uso para una quemadura?
+    - tengo dolor de muelas
+    - che, ¿conocés algún dentista?
+    - me duele la espalda
+    - che, ¿qué hago para el dolor lumbar?
+    - creo que tengo covid
+    - che, ¿dónde me hago el test?
+    - necesito bajar de peso
+    - che, ¿qué dieta me recomendás?
+    - tengo insomnio
+    - che, ¿qué puedo tomar para dormir?
+    - me siento ansioso
+    - che, ¿conocés algún psicólogo?
+    
+    # ============================================
+    # CATEGORÍA 4: EDUCACIÓN Y APRENDIZAJE
+    # ============================================
+    - ayudame con esta tarea de matemática
+    - che, ¿cómo resuelvo esta ecuación?
+    - necesito ayuda con física
+    - che, ¿me explicás qué es la fotosíntesis?
+    - tengo que hacer un trabajo de historia
+    - che, ¿me ayudás con una monografía?
+    - quiero aprender inglés
+    - che, ¿cómo estudio para el examen?
+    - necesito traducir esto al francés
+    - che, ¿sabés alemán?
+    - cómo memorizo todo para el parcial
+    - che, ¿me recomendás algún curso online?
+    - quiero aprender a tocar guitarra
+    - che, ¿dónde puedo estudiar marketing?
+    - necesito mejorar mi ortografía
+    - che, ¿cómo aprendo más rápido?
+    
+    # ============================================
+    # CATEGORÍA 5: FINANZAS Y NEGOCIOS
+    # ============================================
+    - ¿cómo invierto en la bolsa?
+    - che, ¿me conviene comprar dólares?
+    - quiero invertir en criptomonedas
+    - che, ¿sabés de Bitcoin?
+    - cómo hago para pagar menos impuestos
+    - che, ¿conocés algún contador?
+    - necesito un préstamo
+    - che, ¿qué banco me recomendás?
+    - quiero emprender un negocio
+    - che, ¿cómo hago un plan de negocios?
+    - necesito facturar como monotributista
+    - che, ¿cómo me inscribo en AFIP?
+    - ¿me conviene comprar o alquilar?
+    - che, ¿sabés de inversiones inmobiliarias?
+    
+    # ============================================
+    # CATEGORÍA 6: VIAJES Y TURISMO
+    # ============================================
+    - ¿qué lugar me recomendás para vacacionar?
+    - che, ¿conocés Bariloche?
+    - quiero viajar a Europa
+    - che, ¿cuánto sale un pasaje a España?
+    - dónde busco vuelos baratos
+    - che, ¿conocés alguna agencia de viajes?
+    - necesito sacar el pasaporte
+    - che, ¿cómo tramito la visa?
+    - qué hotel me recomendás en Mar del Plata
+    - che, ¿dónde me conviene alojarme?
+    - quiero hacer el Camino Inca
+    - che, ¿qué necesito para viajar a Brasil?
+    - cómo llego desde el aeropuerto al centro
+    - che, ¿conocés Airbnb?
+    
+    # ============================================
+    # CATEGORÍA 7: HOGAR Y CONSTRUCCIÓN
+    # ============================================
+    - se me rompió la canilla
+    - che, ¿cómo arreglo una pérdida de agua?
+    - tengo humedad en la pared
+    - che, ¿conocés algún plomero?
+    - quiero pintar mi casa
+    - che, ¿qué color me recomendás?
+    - necesito arreglar el techo
+    - che, ¿cómo tapo una gotera?
+    - se me quemó una lamparita
+    - che, ¿cómo cambio un enchufe?
+    - quiero remodelar el baño
+    - che, ¿conocés algún albañil?
+    - tengo que cortar el pasto
+    - che, ¿qué cortadora de césped me recomendás?
+    
+    # ============================================
+    # CATEGORÍA 8: SERVICIOS PROFESIONALES
+    # ============================================
+    - necesito un abogado
+    - che, ¿conocés algún estudio jurídico?
+    - quiero hacer una denuncia
+    - che, ¿dónde tramito el DNI?
+    - necesito renovar el registro
+    - che, ¿cómo saco turno en el consulado?
+    - estoy buscando trabajo
+    - che, ¿dónde subo mi CV?
+    - quiero cambiarme de carrera
+    - che, ¿qué me recomendás estudiar?
+    - necesito un escribano
+    - che, ¿cuánto cobra un contador?
+    
+    # ============================================
+    # CATEGORÍA 9: ENTRETENIMIENTO ESPECÍFICO
+    # ============================================
+    - qué serie está buena en Netflix
+    - che, ¿viste Dark?
+    - recomendame una peli de terror
+    - che, ¿cuál es tu película favorita?
+    - qué libro me recomendás
+    - che, ¿leíste Borges?
+    - quiero aprender a jugar ajedrez
+    - che, ¿jugás al FIFA?
+    - dónde puedo ver el partido gratis
+    - che, ¿tenés algún streaming?
+    - qué música está sonando ahora
+    - che, ¿conocés [banda]?
+    
+    # ============================================
+    # CATEGORÍA 10: RELACIONES Y VIDA PERSONAL
+    # ============================================
+    - cómo le digo que me gusta
+    - che, ¿qué hago con mi ex?
+    - tengo problemas con mi pareja
+    - che, ¿cómo conquisto a alguien?
+    - me peleé con mi viejo
+    - che, ¿cómo mejoro la relación con mi familia?
+    - no sé si seguir con mi novia
+    - che, ¿cómo termino una relación?
+    - mi amigo me traicionó
+    - che, ¿qué hago cuando te decepcionan?
+    
+    # ============================================
+    # CASOS LÍMITE
+    # ============================================
+    - necesito ayuda pero no es sobre animales
+    - che, esto no tiene que ver con veterinaria pero...
+    - sé que no es tu tema pero ¿me ayudás con algo?
+    - che, perdón si no es tu área, pero...
+    - capaz no sea lo tuyo pero te consulto igual
+    - che, sé que esto no va acá pero necesito ayuda con...
+    - no tiene nada que ver con productos pero...
+    - che, ¿sabés algo de [tema no relacionado]?
+    - perdón por cambiar de tema pero...
+    - che, una consulta off-topic...
+    - esto es medio random pero...
+    - che, ¿puedo preguntarte algo que no tiene que ver?
+    - sé que no es tu especialidad pero igual te pregunto
+    - che, capaz me podés ayudar aunque no sea tu tema
+    - no sé si está bien preguntar esto acá pero...
+
+- intent: consulta_veterinaria_profesional
+  examples: |
+    # ============================================
+    # CATEGORÍA 1: EMERGENCIAS VETERINARIAS
+    # ============================================
+    - AYUDA! mi perro está convulsionando
+    - che, mi gato no respira bien, URGENTE
+    - mi perra está echando sangre por la boca
+    - che, mi perro se cayó del techo
+    - mi gato fue atropellado
+    - che, mi perro está tieso y no reacciona
+    - SOCORRO, mi cachorro se comió veneno para ratas
+    - che, mi perro está temblando y babeando mucho
+    - mi gata está teniendo convulsiones
+    - che, mi perro no puede pararse y llora
+    - URGENTE: mi perro se comió chocolate
+    - che, mi gato cayó del balcón
+    - mi perra está sangrando mucho
+    - che, mi perro vomita sangre hace una hora
+    - mi cachorro no respira bien y está morado
+    - che, creo que mi gato se intoxicó
+    - mi perro está muy hinchado y no puede respirar
+    - che, mi gata está en shock
+    - AYUDA: mi perro lo mordió otro perro mal
+    - che, mi cachorro está inconsciente
+    - mi vaca se cayó y no se levanta
+    - che, mi caballo está tirado y sudando frío
+    - mi ternero no puede respirar
+    - che, mi yegua se rompió una pata
+    - mi vaca está con el parto trabado hace horas
+    - che, mi toro se clavó un alambre profundo
+    - URGENTE: mi oveja está convulsionando
+    - che, mi caballo se cortó feo con un alambre
+    - mi ternero está todo hinchado
+    - che, mi vaca no para de sangrar
+    - mi potrillo se fracturó la pata
+    - che, mi ternera está tirada y respira mal
+    - mi vaca tiene timpanismo y está mal
+    - che, mi caballo se descompensó de golpe
+    - mi ternero está con diarrea con sangre
+    - che, mi oveja parió pero quedó algo adentro
+    - AYUDA: mi caballo se envenenó
+    - che, mi vaca tiene mastitis y está re mal
+    - mi ternero lo picó una víbora
+    - che, mi perro se está ahogando con algo
+    - mi gato tiene algo atorado en la garganta
+    - che, mi perra está hinchada y respira raro
+    - mi cachorro se electrocutó
+    - che, mi gato se quemó con agua hirviendo
+    
+    # ============================================
+    # CATEGORÍA 2: SOLICITUDES DE DIAGNÓSTICO
+    # ============================================
+    - ¿qué enfermedad tiene mi perro?
+    - che, ¿por qué mi gato vomita tanto?
+    - ¿será parvovirus lo que tiene mi cachorro?
+    - che, ¿cómo sé si tiene moquillo?
+    - mi perro tose mucho, ¿qué puede ser?
+    - che, ¿qué le pasa a mi gato que no come?
+    - ¿tiene rabia mi perro?
+    - che, ¿cómo sé si tiene leishmaniasis?
+    - mi gata está rara, ¿qué tiene?
+    - che, ¿por qué mi perro se rasca tanto?
+    - ¿será sarna lo que tiene?
+    - che, ¿cómo diagnostico si tiene diabetes?
+    - mi perro cojea, ¿qué puede tener?
+    - che, ¿será displasia de cadera?
+    - mi gato orina con sangre, ¿qué es?
+    - che, ¿cómo sé si tiene cálculos?
+    - mi perra está hinchada, ¿será piometra?
+    - che, ¿qué enfermedad causa estos síntomas?
+    - mi cachorro tiene diarrea hace días, ¿qué es?
+    - che, ¿cómo sé si es grave?
+    - mi gato tiene los ojos raros, ¿qué le pasa?
+    - che, ¿será conjuntivitis o algo peor?
+    - mi perro respira raro, ¿qué puede ser?
+    - che, ¿tiene problemas cardíacos?
+    - mi vaca no come, ¿qué tiene?
+    - che, ¿será fiebre aftosa?
+    - mi ternero tiene diarrea, ¿qué enfermedad es?
+    - che, ¿cómo diagnostico brucelosis?
+    - mi caballo cojea, ¿qué puede tener?
+    - che, ¿será laminitis?
+    - mi vaca bota leche rara, ¿tiene mastitis?
+    - che, ¿cómo sé si es carbunclo?
+    - mi ternero tiembla, ¿qué le pasa?
+    - che, ¿será rabia paresiante?
+    - mi oveja está flaca, ¿qué tiene?
+    - che, ¿cómo sé si tiene parásitos internos?
+    
+    # ============================================
+    # CATEGORÍA 3: DOSIFICACIÓN MÉDICA SIN CONTEXTO
+    # ============================================
+    - ¿cuánta ivermectina le doy a mi perro?
+    - che, ¿cuál es la dosis de amoxicilina?
+    - ¿cada cuántas horas aplico el antibiótico?
+    - che, ¿cuánto le pongo de ivermectina al ternero?
+    - ¿le puedo dar 10ml de penicilina?
+    - che, ¿cuántas pastillas le doy por día?
+    - mi perro pesa 20kg, ¿cuánto le doy?
+    - che, ¿la dosis es por kilo o es fija?
+    - ¿puedo mezclar amoxicilina con meloxicam?
+    - che, ¿se puede dar ibuprofeno con antibiótico?
+    - ¿le doy la dosis de adulto o de cachorro?
+    - che, ¿cuánto dura el tratamiento?
+    - ¿repito la dosis si vomitó?
+    - che, ¿le doy más si no mejoró?
+    - encontré estas pastillas, ¿le sirven?
+    - che, ¿le puedo dar medicamentos humanos?
+    - tengo ivermectina vieja, ¿le doy igual?
+    - che, ¿cuántos mg por kilo?
+    - ¿le doy una o dos cucharadas?
+    - che, ¿con comida o en ayunas?
+    - ¿cuántos días le tengo que dar?
+    - che, ¿puedo cortar el tratamiento si mejoró?
+    - ¿le aumento la dosis si sigue igual?
+    - che, ¿cada cuánto se repite?
+    - ¿le doy ivermectina a mi gata preñada?
+    - che, ¿puedo darle este antibiótico que me sobró?
+    - ya le di amoxicilina pero no mejora, ¿le doy más?
+    - che, ¿cuánto enrofloxacina le corresponde?
+    - ¿le inyecto 5ml o 10ml?
+    - che, ¿la dosis es subcutánea o intramuscular?
+    - ¿cada cuántos días repito la ivermectina?
+    - che, ¿le puedo dar dexametasona?
+    - ¿qué dosis de doxiciclina para un gato?
+    - che, ¿combino estos dos medicamentos?
+    - tengo ketoprofeno, ¿cuánto le aplico?
+    - che, ¿puedo darle esto que tiene vencimiento cercano?
+    
+    # ============================================
+    # CATEGORÍA 4: PROCEDIMIENTOS MÉDICOS/QUIRÚRGICOS
+    # ============================================
+    - ¿cómo suturo una herida?
+    - che, ¿cómo coso a mi perro?
+    - ¿cómo castro a un gato?
+    - che, ¿me enseñás a castrar?
+    - ¿cómo pongo una inyección intramuscular?
+    - che, ¿dónde pincho para aplicar?
+    - ¿cómo extraigo una espina clavada?
+    - che, ¿cómo saco un anzuelo?
+    - ¿cómo dreno un absceso?
+    - che, ¿puedo abrirlo yo?
+    - ¿cómo hago para descolmillar?
+    - che, ¿cómo se cortan los dientes?
+    - ¿cómo le corto las uñas sin lastimarlo?
+    - che, ¿hasta dónde corto?
+    - ¿cómo limpio una herida profunda?
+    - che, ¿con qué desinfecto?
+    - ¿cómo coloco una sonda?
+    - che, ¿puedo intubar yo?
+    - ¿cómo reduzco una fractura?
+    - che, ¿cómo entablillo?
+    - ¿cómo hago RCP a un perro?
+    - che, ¿cuántas compresiones por minuto?
+    - ¿cómo extraigo un diente?
+    - che, ¿puedo sacar una muela yo?
+    - ¿cómo opero un tumor?
+    - che, ¿con qué instrumento corto?
+    - ¿cómo curo una herida abierta?
+    - che, ¿la dejo abierta o la cierro?
+    - ¿cómo saco garrapatas encastradas?
+    - che, ¿las arranco o uso algo?
+    - ¿cómo descuerno a un ternero?
+    - che, ¿cómo se castra un toro?
+    - ¿cómo ayudo en un parto complicado?
+    - che, ¿tiro del ternero?
+    - ¿cómo hago una cesárea?
+    - che, ¿por dónde corto?
+    
+    # ============================================
+    # CATEGORÍA 5: INTERPRETACIÓN DE ANÁLISIS
+    # ============================================
+    - ¿qué significan estos valores de sangre?
+    - che, ¿está bien este resultado?
+    - los glóbulos blancos están en 18000, ¿es malo?
+    - che, ¿qué significa urea alta?
+    - la creatinina salió elevada, ¿qué implica?
+    - che, ¿estos valores de hígado están bien?
+    - el hemograma dice anemia, ¿es grave?
+    - che, ¿qué significa leucocitosis?
+    - las plaquetas están bajas, ¿qué pasa?
+    - che, ¿cómo interpreto estos resultados?
+    - me dieron esta analítica, ¿la leés?
+    - che, ¿qué quiere decir esto del laboratorio?
+    - salió positivo en el test, ¿qué hago?
+    - che, ¿este resultado significa que tiene la enfermedad?
+    - la ecografía muestra algo raro, ¿qué puede ser?
+    - che, ¿me explicás esta radiografía?
+    - en la placa se ve una sombra, ¿qué es?
+    - che, ¿cómo se lee un análisis de orina?
+    
+    # ============================================
+    # CATEGORÍA 6: REPRODUCCIÓN Y PARTOS
+    # ============================================
+    - mi perra está de parto y no sale nada
+    - che, hace 3 horas que puja y nada
+    - ¿cómo ayudo en el parto?
+    - che, ¿tiro del cachorro?
+    - mi gata tuvo un gatito pero parece que hay más
+    - che, ¿cuánto espero entre cachorros?
+    - salió un cachorro muerto, ¿qué hago?
+    - che, ¿sigo esperando o voy al vet?
+    - mi perra no corta el cordón, ¿lo corto yo?
+    - che, ¿cómo se corta bien?
+    - los cachorros no lloran, ¿están vivos?
+    - che, ¿cómo los reanimo?
+    - ¿cuándo insemino a mi vaca?
+    - che, ¿cómo sé el momento exacto?
+    - mi yegua está de parto, ¿qué hago?
+    - che, ¿cuánto dura un parto normal?
+    - la placenta no salió, ¿es grave?
+    - che, ¿cuánto espero?
+    - mi perra sangra mucho post-parto, ¿es normal?
+    - che, ¿cuándo preocuparme?
+    - ¿cómo sé si quedaron cachorros adentro?
+    - che, ¿puedo palpar?
+    
+    # ============================================
+    # CATEGORÍA 7: SÍNTOMAS PREOCUPANTES (NO URGENTES)
+    # ============================================
+    - mi perro no come hace 3 días
+    - che, ¿es normal que no coma?
+    - mi gato adelgazó mucho
+    - che, ¿cuánto peso es preocupante?
+    - mi perra toma mucha agua últimamente
+    - che, ¿será diabetes?
+    - mi perro se lame las patas constantemente
+    - che, ¿por qué hace eso?
+    - mi gato orina fuera de la caja
+    - che, ¿será algo médico o conductual?
+    - mi cachorro tiene la panza muy hinchada
+    - che, ¿serán lombrices?
+    - mi perro tiene mal aliento horrible
+    - che, ¿puede ser algo grave?
+    - mi gata maúlla mucho de noche
+    - che, ¿le duele algo?
+    - mi perro se cansa al caminar
+    - che, ¿tendrá problema cardíaco?
+    - mi gato estornuda mucho
+    - che, ¿será alergia o infección?
+    - mi perra tiene bultos en las mamas
+    - che, ¿pueden ser tumores?
+    - mi perro arrastra el culo por el piso
+    - che, ¿qué significa eso?
+    - mi vaca bota leche con sangre
+    - che, ¿qué puede tener?
+    - mi ternero tiene los ojos llorosos
+    - che, ¿es grave?
+    - mi caballo suda mucho sin hacer nada
+    - che, ¿estará enfermo?
+    
+    # ============================================
+    # CATEGORÍA 8: DECISIONES MÉDICAS CRÍTICAS
+    # ============================================
+    - ¿tengo que eutanasiar a mi perro?
+    - che, ¿cómo sé si es el momento?
+    - mi gato está muy viejo y sufre, ¿qué hago?
+    - che, ¿es mejor dormirlo?
+    - ¿vale la pena operar si es tan caro?
+    - che, ¿hay alternativas?
+    - el vet me dijo que hay 50% de chances, ¿opero?
+    - che, ¿vos qué harías?
+    - mi perro necesita quimio, ¿lo someto a eso?
+    - che, ¿vale la pena el sufrimiento?
+    - ¿espero a ver si mejora o voy al vet?
+    - che, ¿es urgente o puede esperar?
+    - el vet dice que es grave pero no confío, ¿segunda opinión?
+    - che, ¿me está chamuyando?
+    - mi perro está sufriendo, ¿lo duermo en casa?
+    - che, ¿cómo se hace?
+    - ¿abandono el tratamiento porque es muy caro?
+    - che, ¿hay opciones más baratas?
+    
+    # ============================================
+    # CATEGORÍA 9: NUTRICIÓN MÉDICA ESPECÍFICA
+    # ============================================
+    - mi perro tiene insuficiencia renal, ¿qué le doy de comer?
+    - che, ¿qué dieta para problemas de riñón?
+    - mi gato es diabético, ¿cómo lo alimento?
+    - che, ¿qué comida especial necesita?
+    - mi perro tiene pancreatitis, ¿qué puede comer?
+    - che, ¿qué está prohibido?
+    - mi gato tiene problemas hepáticos, ¿qué dieta?
+    - che, ¿qué alimento medicado compro?
+    - mi perro tiene alergia alimentaria, ¿qué le doy?
+    - che, ¿cómo hago una dieta hipoalergénica?
+    - mi cachorro tiene diarrea, ¿qué le doy de comer?
+    - che, ¿dieta blanda?
+    - mi gato no quiere comer después de la cirugía
+    - che, ¿cómo lo alimento a la fuerza?
+    
+    # ============================================
+    # CATEGORÍA 10: PREVENCIÓN MÉDICA COMPLEJA
+    # ============================================
+    - ¿cuándo vacuno a mi cachorro?
+    - che, ¿qué vacunas necesita y cuándo?
+    - mi gatito tiene 2 meses, ¿lo vacuno ya?
+    - che, ¿cuál es el calendario?
+    - ¿cada cuánto desparasito?
+    - che, ¿con qué producto?
+    - mi perro viaja conmigo, ¿qué vacunas necesita?
+    - che, ¿certificado de salud cómo lo saco?
+    - ¿cuándo castro a mi perra?
+    - che, ¿antes o después del primer celo?
+    - mi gato sale a la calle, ¿qué prevenciones necesita?
+    - che, ¿vacuna de leucemia felina?
+    - tengo varios perros, ¿cómo prevengo contagios?
+    - che, ¿qué hago si uno se enferma?
+    - vivo en zona de garrapatas, ¿cómo prevengo ehrlichia?
+    - che, ¿qué antiparasitario uso?
+    - hay rabia en mi zona, ¿qué hago?
+    - che, ¿vacuno urgente?
+    
+    # ============================================
+    # CASOS LÍMITE Y PELIGROSOS
+    # ============================================
+    - ya le di ivermectina pero sigue mal, ¿era la correcta?
+    - che, ¿le doy otra cosa?
+    - probé con amoxicilina que me sobró, ¿cuánto espero?
+    - che, ¿ya debería mejorar?
+    - le apliqué lo que dice internet, ¿está bien?
+    - che, ¿o le hago otra cosa?
+    - no quiero gastar en el vet, ¿lo curo en casa?
+    - che, ¿con qué?
+    - es solo un rasguño pero se infectó, ¿qué antibiótico le pongo?
+    - che, ¿tengo que llevarlo?
+    - el vet me dijo una cosa pero yo creo otra
+    - che, ¿le hago caso?
+    - mi vecino me dijo que le dé esto, ¿está bien?
+    - che, ¿o es una locura?
+    - vi en YouTube cómo hacerlo, ¿pruebo?
+    - che, ¿qué puede salir mal?
+    - no es tan grave, ¿vos qué me recomendás que haga?
+    - che, ¿realmente tengo que ir al vet?
+    - mi perro está así hace días, ¿mejorará solo?
+    - che, ¿o necesita medicación?
+    - prefiero preguntarte a vos antes que pagar el vet
+    - che, ¿me orientás?
+    - estoy en el campo lejos, no hay vet cerca
+    - che, ¿qué hago yo mismo?
+    - es fin de semana largo y está cerrado todo
+    - che, ¿cómo lo trato hasta el martes?
+    - mi perro se peleó, tiene mordidas, ¿es grave?
+    - che, ¿las limpio nomás?
+    - creo que se quebró algo, ¿cómo lo entablillo?
+    - che, ¿puedo hacerlo yo?
+    - le salió pus de una herida, ¿qué hago?
+    - che, ¿la aprieto?
+    - mi gato no puede orinar, ¿lo ayudo?
+    - che, ¿cómo le saco la obstrucción?
+    - mi perro tiene algo en el ojo, ¿se lo saco?
+    - che, ¿con qué?
+    - encontré un perro atropellado, ¿cómo lo estabilizo?
+    - che, ¿qué primeros auxilios le hago?
