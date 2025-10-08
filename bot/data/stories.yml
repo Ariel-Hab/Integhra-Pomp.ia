@@ -203,3 +203,29 @@ stories:
     - action: action_conf_neg_agradecer
     - intent: buscar_oferta
     - action: action_busqueda_situacion
+
+
+  - story: Usuario pide ayuda al inicio
+    steps:
+    - intent: saludo
+    - action: action_smalltalk_situacion
+    - intent: pedir_ayuda
+    - action: action_explicar_ayuda  # Ahora una sola action
+    - intent: buscar_producto
+    - action: action_busqueda_situacion
+
+  - story: Usuario pide ayuda durante búsqueda
+    steps:
+    - intent: buscar_producto
+    - action: action_busqueda_situacion
+    - intent: pedir_ayuda
+    - action: action_explicar_ayuda  # La misma action detecta el contexto
+    - intent: modificar_busqueda
+    - action: action_busqueda_situacion
+
+  - story: Usuario confundido después de oferta
+    steps:
+    - intent: buscar_oferta
+    - action: action_busqueda_situacion
+    - intent: pedir_ayuda
+    - action: action_explicar_ayuda  # La misma action

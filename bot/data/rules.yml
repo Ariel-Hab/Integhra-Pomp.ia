@@ -127,20 +127,24 @@ rules:
     - intent: responder_como_estoy
     - action: action_smalltalk_situacion
 
-  - rule: Responder a pedir_chiste
+  - rule: Pedir chiste
     steps:
     - intent: pedir_chiste
     - action: action_smalltalk_situacion
 
-  - rule: Responder a reirse_chiste
+  - rule: Usuario se ríe
     steps:
-    - intent: reirse_chiste
+    - intent: reirse
     - action: action_smalltalk_situacion
-
   - rule: Responder a responder_estoy_bien
     steps:
     - intent: responder_estoy_bien
     - action: action_smalltalk_situacion
+
+  - rule: Pedir ayuda
+    steps:
+    - intent: pedir_ayuda
+    - action: action_explicar_ayuda
 
   # ========================================
   # MENSAJES FUERA DE CONTEXTO

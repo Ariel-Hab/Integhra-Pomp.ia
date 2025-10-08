@@ -824,7 +824,7 @@ class ActionBusquedaSituacion(Action):
                         'slot_cleanup_events': slot_cleanup_events
                     }
                 else:
-                    dispatcher.utter_message("No pude validar los términos de tu búsqueda.")
+                    dispatcher.utter_message("Por favor indicame parametros para realizar la busqueda")
                     return {'type': 'validation_error', 'slot_cleanup_events': slot_cleanup_events}
                 
         except Exception as e:

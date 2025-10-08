@@ -11,7 +11,7 @@ intents:
   - preguntar_como_estas
   - responder_como_estoy
   - pedir_chiste
-  - reirse_chiste
+  - reirse
   - responder_estoy_bien
   - buscar_producto
   - buscar_oferta
@@ -29,6 +29,7 @@ intents:
   - out_of_scope
   - ambiguity_fallback
   - consulta_veterinaria_profesional
+  - pedir_ayuda
 
 entities:
   # ===== ENTIDADES BÁSICAS CON ROLES PARA MODIFICACIONES =====
@@ -501,6 +502,7 @@ actions:
   - action_smalltalk_situacion
   - action_recomendaciones
   - action_handle_out_of_context
+  - action_explicar_ayuda
 
 session_config:
   session_expiration_time: 300
