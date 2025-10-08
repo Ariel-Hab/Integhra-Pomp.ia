@@ -635,7 +635,7 @@ nlu:
     - y stock [mayor](comparador){"entity": "comparador", "role": "gt", "group": "stock_filter"} a [50](cantidad_stock){"entity": "cantidad_stock", "group": "stock_filter"}
     - con precio [hasta](comparador){"entity": "comparador", "role": "lte", "group": "precio_filter"} [1200](precio){"entity": "precio", "group": "precio_filter"}
     - filtrá con descuento [superior](comparador){"entity": "comparador", "role": "gt", "group": "descuento_filter"} a [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
-    - agregá stock [menor](comparador){"entity": "comparador", "role": "lt", "group": "stock_filter"} a [30](cantidad_stock){"entity": "cantidad_stock", "group": "stock_filter"}
+    - agrega stock [menor](comparador){"entity": "comparador", "role": "lt", "group": "stock_filter"} a [30](cantidad_stock){"entity": "cantidad_stock", "group": "stock_filter"}
     
     # --- Con estado ---
     - y que tenga [poco_stock]{"entity": "estado", "role": "poco_stock"}
@@ -644,7 +644,7 @@ nlu:
     - además [en_oferta]{"entity": "estado", "role": "en_oferta"}
     - filtrá también por [últimas unidades]{"entity": "estado", "role": "poco_stock"}
     - y que sean [novedades]{"entity": "estado", "role": "nuevo"}
-    - agregá [rebajados]{"entity": "estado", "role": "en_oferta"}
+    - agrega [rebajados]{"entity": "estado", "role": "en_oferta"}
     
     # --- Patrón "también" ---
     - también para [perros](animal)
@@ -661,14 +661,14 @@ nlu:
     
     # --- Casual coloquial ---
     - dale, agregá [perros](animal)
-    - che, sumá [vitaminas](categoria)
+    - che, suma [vitaminas](categoria)
     - y poneme [bayer]{"entity": "empresa", "role": "proveedor"}
     - también necesito [gatos](animal)
     - fijate si tiene [poco stock]{"entity": "estado", "role": "poco_stock"}
     
     # --- Combinaciones múltiples ---
     - agregá [perros](animal) con descuento [mayor](comparador){"entity": "comparador", "role": "gt", "group": "descuento_filter"} a [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
-    - sumá [vitaminas](categoria) [nuevas]{"entity": "estado", "role": "nuevo"}
+    - suma [vitaminas](categoria) [nuevas]{"entity": "estado", "role": "nuevo"}
     - incluí [bayer]{"entity": "empresa", "role": "proveedor"} con [poco stock]{"entity": "estado", "role": "poco_stock"}
     - agregá filtro de [500mg](dosis){"entity": "dosis", "role": "gramaje"} para [gatos](animal)
     - y que sean [antibióticos](categoria) [en oferta]{"entity": "estado", "role": "en_oferta"}
@@ -1067,6 +1067,29 @@ nlu:
     - Qué opciones hay disponibles?
     - Mostrame productos populares
     - Qué tenés para casos urgentes?
+    - quiero buscar productos
+    - necesito buscar productos
+    - quiero ver productos
+    - mostrame productos
+    - buscar productos
+    - ver productos
+    - quiero productos
+    - necesito productos
+    - dame productos
+    - listame productos
+    - catálogo de productos
+    - quiero comprar productos
+    - estoy buscando productos
+    - ando buscando productos
+    - che, quiero buscar algo
+    - necesito ver qué tienen
+    - mostrame qué hay
+    - qué productos tenés
+    - qué tienen disponible
+    - quiero ver el catálogo
+    - mostrame el stock
+    - qué hay en stock
+    - qué tienen para ofrecer
 
     # --- Búsquedas por urgencia/tiempo ---
     - Necesito algo urgente para [fiebre](sintoma)
@@ -1363,6 +1386,92 @@ nlu:
     - che, gracias
     - gracias por todo
 
+
+- intent: pedir_ayuda
+  examples: |
+    - ayuda
+    - ayudame
+    - no entiendo
+    - no sé cómo buscar
+    - cómo funciona esto
+    - qué puedo hacer
+    - qué me podés ayudar
+    - cómo te uso
+    - qué sabés hacer
+    - para qué servís
+    - cómo busco productos
+    - cómo busco ofertas
+    - explicame cómo funciona
+    - no sé qué buscar
+    - estoy perdido
+    - no sé qué hacer
+    - qué opciones tengo
+    - qué puedo pedirte
+    - cómo hago para buscar
+    - me perdí
+    - necesito ayuda
+    - no entiendo cómo usarte
+    - qué cosas puedo buscar
+    - cómo encuentro productos
+    - qué información necesitás
+    - qué datos te tengo que dar
+    - cómo te digo lo que busco
+    - ayuda por favor
+    - no sé usar esto
+    - cómo busco ofertas
+    - cómo funcionan las ofertas
+    - qué ofertas hay
+    - cómo filtro por descuento
+    - cómo busco bonificaciones
+    - qué tipos de ofertas tienen
+    - cómo veo ofertas con porcentaje
+    - cómo busco 2x1
+    - cómo filtro ofertas por empresa
+
+- intent: pedir_chiste
+  examples: |
+    - contame un chiste
+    - decime un chiste
+    - sabés algún chiste
+    - chiste
+    - contá un chiste
+    - decime algo gracioso
+    - haceme reír
+    - tenés chistes
+    - algún chiste
+    - dame un chiste
+    - quiero un chiste
+    - contame algo gracioso
+    - me contas un chiste?
+    - conta un chiste
+    - chiste porfa
+    - algo divertido
+    - qué gracioso sabés
+    - animate a un chiste
+    - largá un chiste
+    - tirame un chiste
+
+- intent: reirse
+  examples: |
+    - jaja
+    - jajaja
+    - jajajaja
+    - jeje
+    - jejeje
+    - lol
+    - jajaj
+    - jajaj que bueno
+    - jajaja me hiciste reir
+    - jajaja que gracioso
+    - me reí
+    - qué bueno
+    - muy gracioso
+    - me causó gracia
+    - 😂
+    - jajaj buenisimo
+    - jaja que chistoso
+    - jajaaj genial
+
 - intent: off_topic
   examples: |
     # ============================================
@@ -1397,13 +1506,10 @@ nlu:
     # ============================================
     # CATEGORÍA 2: HUMOR Y ENTRETENIMIENTO
     # ============================================
-    - contame un chiste
     - decime algo gracioso
-    - che, tenés algún chiste?
     - haceme reir un toque
     - contame algo copado
     - sabés alguna historia graciosa?
-    - che, decime un chiste de gallegos
     - contame uno de politicos
     - tenés algún meme para compartir?
     - che, ¿viste alguna peli buena?

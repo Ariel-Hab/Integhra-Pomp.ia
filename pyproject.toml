@@ -13,6 +13,7 @@ python = ">=3.9.0,<3.11"
 make = "^0.1.6.post2"
 packaging = ">=20.0,<21.0"
 pyyaml = "^6.0.2"
+python-dotenv = "^1.1.1"
 
 [tool.poetry.group.dev.dependencies]
 tomli = "^2.2.1"
@@ -30,12 +31,14 @@ uvicorn = "^0.35.0"
 
 [tool.poetry.group.actions.dependencies]
 rasa-sdk = "^3.6.1"
-# NO incluir rasa aquí, solo rasa-sdk
+rasa = "^3.6.21"
 transformers = ">=4.31.0,<4.34.0"  # Versión compatible con Rasa
 torch = "^2.5.1"
 sentencepiece = "^0.2.0"
+groq = "^0.4.0"
 accelerate = "^0.20.0"
-# scipy se instalará como dependencia transitiva con la versión correcta
+httpx = ">=0.24.0,<0.28.0"
+httpcore = ">=0.17.0"
 
 # Scripts
 [tool.poetry.scripts]

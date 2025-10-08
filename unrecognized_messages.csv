@@ -1,0 +1,2 @@
+timestamp,user_message,detected_intent,confidence,sender_id
+2025-10-07T12:37:01.212439,holaa,saludo,0.5454956889152527,console_user
