@@ -2,74 +2,232 @@
 version: "3.1"
 
 nlu:
-# ============== SOLO ENTIDADES REALES ==============
+# ============================================================================
+# REGEX PARA EXTRACCIÓN DE ENTIDADES
+# Estos patterns extraen valores específicos y los mapean a entidades/slots
+# ============================================================================
 
-# Cantidades (entidades en domain)
+# ============== PORCENTAJES (DESCUENTOS) ==============
+
 - regex: cantidad_descuento
   examples: |
-    - (\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?descuento
-    - (\d+(?:\.\d+)?)\s*%\s*dto
-    - descuento\s*(?:del?\s*)?(\d+(?:\.\d+)?)\s*%
+    - (\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?(?:descuento|dto|desc|off)
+    - (?:descuento|dto|desc)\s*(?:del?\s*)?(\d+(?:\.\d+)?)\s*%
+    - (?:con|tiene)\s+(\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?(?:descuento|dto|desc|off)
+    - (\d+(?:\.\d+)?)\s*por\s*ciento\s*(?:de\s*)?(?:descuento|dto|desc)
+    - (\d+(?:\.\d+)?)\s*%
+    - (\d+)\s+(?:porciento|por\s+ciento)
+
+# ============== PORCENTAJES (BONIFICACIONES) ==============
 
 - regex: cantidad_bonificacion
   examples: |
-    - (\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?bonificación
-    - bonificación\s*(?:del?\s*)?(\d+(?:\.\d+)?)\s*%
+    - (\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?(?:bonificación|bonificacion|bonif|bonus)
+    - (?:bonificación|bonificacion|bonif|bonus)\s*(?:del?\s*)?(\d+(?:\.\d+)?)\s*%
+    - (?:con|tiene)\s+(\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?(?:bonificación|bonificacion|bonif)
+    - bonif(?:icación|icacion)?\s+(\d+(?:\.\d+)?)\s*%
+
+# ============== STOCK (CANTIDADES NUMÉRICAS) ==============
 
 - regex: cantidad_stock
   examples: |
     - (\d+)\s*unidades?
-    - stock\s*limitado
-    - pocas?\s*unidades?
-    - últimas?\s*unidades?
+    - stock\s*(?:de\s*)?(\d+)
+    - (\d+)\s*(?:en|de)\s*stock
+    - (\d+)\s*disponibles?
+    - quedan?\s+(\d+)
+    - hay\s+(\d+)
 
-# Comparadores (parte de entity "comparador")
-- regex: comparador_lt
+# ============== COMPARADORES (con contexto de qué comparan) ==============
+
+# Menor/Inferior (lt)
+- regex: comparador_lt_descuento
   examples: |
-    - menor\s+(?:a|que|de)
-    - inferior\s+a
-    - menos\s+(?:de|que)
+    - (?:descuento|dto|desc)\s+(?:menor|menos|inferior)\s+(?:a|que|de)
+    - (?:menor|menos|inferior)\s+(?:a|que|de)\s+\d+\s*%
 
-- regex: comparador_gt
+- regex: comparador_lt_precio
   examples: |
-    - mayor\s+(?:a|que|de)
-    - superior\s+a
-    - mas\s+(?:de|que)
-    - más\s+(?:de|que)
+    - precio\s+(?:menor|menos|inferior)\s+(?:a|que|de)
+    - (?:menor|menos|inferior)\s+(?:a|que|de)\s+(?:\$|pesos?)
+    - por\s+debajo\s+de\s+(?:\$|pesos?)
 
-- regex: comparador_lte
+- regex: comparador_lt_generico
   examples: |
-    - hasta
-    - máximo
-    - como\s+máximo
+    - (?:menor|menos|inferior)\s+(?:a|que|de)
+    - 
 
-- regex: comparador_gte
+# Mayor/Superior (gt)
+- regex: comparador_gt_descuento
   examples: |
-    - al\s+menos
-    - mínimo
-    - como\s+mínimo
+    - (?:descuento|dto|desc)\s+(?:mayor|mas|más|superior)\s+(?:a|que|de)
+    - (?:mayor|mas|más|superior)\s+(?:a|que|de)\s+\d+\s*%
 
-# Estados (entity "estado" en domain)
+- regex: comparador_gt_precio
+  examples: |
+    - precio\s+(?:mayor|mas|más|superior)\s+(?:a|que|de)
+    - (?:mayor|mas|más|superior)\s+(?:a|que|de)\s+(?:\$|pesos?)
+    - por\s+encima\s+de\s+(?:\$|pesos?)
+
+- regex: comparador_gt_generico
+  examples: |
+    - (?:mayor|mas|más|superior)\s+(?:a|que|de)
+    - >
+
+# Hasta/Máximo (lte)
+- regex: comparador_lte_descuento
+  examples: |
+    - (?:descuento|dto|desc)\s+(?:hasta|máximo|maximo|como\s+máximo|como\s+maximo)
+    - (?:hasta|máximo|maximo)\s+\d+\s*%
+
+- regex: comparador_lte_precio
+  examples: |
+    - precio\s+(?:hasta|máximo|maximo)
+    - (?:hasta|máximo|maximo)\s+(?:\$|pesos?)
+
+- regex: comparador_lte_generico
+  examples: |
+    - (?:hasta|máximo|maximo|como\s+máximo|como\s+maximo)
+    - <=
+
+# Al menos/Mínimo (gte)
+- regex: comparador_gte_descuento
+  examples: |
+    - (?:descuento|dto|desc)\s+(?:al\s+menos|mínimo|minimo|como\s+mínimo|como\s+minimo)
+    - (?:al\s+menos|mínimo|minimo)\s+\d+\s*%
+
+- regex: comparador_gte_precio
+  examples: |
+    - precio\s+(?:al\s+menos|mínimo|minimo)
+    - (?:al\s+menos|mínimo|minimo)\s+(?:\$|pesos?)
+
+- regex: comparador_gte_generico
+  examples: |
+    - (?:al\s+menos|mínimo|minimo|como\s+mínimo|como\s+minimo|por\s+lo\s+menos)
+    - >=
+
+# ============== PRECIOS ==============
+
+- regex: precio
+  examples: |
+    - \$\s*(\d+(?:[.,]\d{3})*(?:[.,]\d{2})?)
+    - (\d+(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:pesos?|pe|ARS|ars)
+    - (\d+)\s*(?:lucas|palos|mil|k)
+    - precio\s*(?:de\s*)?(\d+)
+
+# ============== ESTADOS ==============
+
+# Estado: nuevo
 - regex: estado_nuevo
   examples: |
-    - nuevos?
-    - novedades?
-    - recientes?
+    - (?:^|\s)nuevos?(?:\s|$)
+    - (?:^|\s)nueva|nuevas(?:\s|$)
+    - (?:producto|artículo|articulo)s?\s+nuevos?
+    - recién\s+(?:llegados?|ingresados?)
+    - ingresó|ingresaron|ingreso
+    - llegó|llegaron|llego
 
-- regex: estado_oferta
-  examples: |
-    - en\s+oferta
-    - promoción
-    - promo
-
+# Estado: poco_stock
 - regex: estado_poco_stock
   examples: |
     - poco\s+stock
-    - stock\s+bajo
-    - últimas\s+unidades
+    - stock\s+(?:bajo|limitado|reducido|escaso)
+    - (?:pocas?|últimas?|ultimas?)\s+unidades?
+    - por\s+agotar(?:se)?
+    - quedan?\s+pocos?
 
+# Estado: vence_pronto
 - regex: estado_vence_pronto
   examples: |
-    - vence(?:n)?\s+pronto
+    - vence(?:n)?\s+(?:pronto|próximamente|proximamente)
     - por\s+vencer
-    - vencimiento\s+próximo
+    - vencimiento\s+(?:próximo|proximo|cercano)
+    - fecha\s+(?:cercana|próxima|proxima)
+    - vencen?\s+(?:en|dentro\s+de)
+
+# Estado: en_oferta
+- regex: estado_en_oferta
+  examples: |
+    - en\s+oferta
+    - en\s+promoción|en\s+promocion
+    - en\s+promo
+    - (?:está|esta|están|estan)\s+(?:rebajados?|en\s+descuento)
+    - con\s+(?:descuento|oferta|promoción|promocion)
+
+# ============== DOSIS/PRESENTACIONES ==============
+
+- regex: dosis_gramaje
+  examples: |
+    - (\d+(?:\.\d+)?)\s*(?:mg|gr?|g|kg)
+    - (\d+)\s*(?:miligramos?|gramos?|kilogramos?)
+
+- regex: dosis_volumen
+  examples: |
+    - (\d+(?:\.\d+)?)\s*(?:ml|cc|lt?|l)
+    - (\d+)\s*(?:mililitros?|centímetros?\s+cúbicos?|litros?)
+
+- regex: dosis_forma
+  examples: |
+    - (?:comprimidos?|tabletas?|cápsulas?|capsulas?)
+    - (?:inyectable|jeringa|ampolla)
+    - (?:suspensión|suspension|jarabe|gotas?)
+    - (?:crema|gel|ungüento|unguento|pomada)
+    - (?:polvo|granulado)
+
+# ============== TIEMPO/FECHAS ==============
+
+- regex: tiempo_relativo
+  examples: |
+    - (?:hoy|ayer|mañana)
+    - (?:esta|este)\s+(?:semana|mes|año)
+    - (?:última|ultimo|próxima|proximo)\s+(?:semana|mes)
+    - hace\s+\d+\s+(?:días?|semanas?|meses?)
+    - en\s+\d+\s+(?:días?|semanas?|meses?)
+
+- regex: dia_semana
+  examples: |
+    - (?:lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)
+
+# ============== ANIMALES (complemento a lookup tables) ==============
+
+- regex: animal_perro
+  examples: |
+    - perros?
+    - caninos?
+    - cachorros?
+    - lomitos?
+
+- regex: animal_gato
+  examples: |
+    - gatos?
+    - felinos?
+    - gatitos?
+    - michis?
+    - mininos?
+
+# ============================================================================
+# NOTAS IMPORTANTES:
+# 
+# 1. GRUPOS Y ROLES:
+#    - Los grupos (descuento_filter, precio_filter, etc.) se asignan en el 
+#      componente custom o en actions, NO en el regex
+#    - Los roles (old, new, add, remove) se aprenden de ejemplos en nlu.yml
+# 
+# 2. PRIORIDAD DE EXTRACCIÓN:
+#    - RegexEntityExtractor se ejecuta ANTES de DIETClassifier
+#    - Si regex captura algo, DIET respeta esa extracción
+# 
+# 3. CAPTURA DE GRUPOS:
+#    - Usá paréntesis () para capturar el valor que querés extraer
+#    - Ejemplo: (\d+)\s*% captura "5" de "5%"
+#    - El resto del pattern es contexto para matchear
+# 
+# 4. TESTING:
+#    - Probá cada pattern aislado antes de entrenar
+#    - Usá https://regex101.com con flavor "Python"
+# 
+# 5. ORDEN IMPORTA:
+#    - Patterns más específicos PRIMERO (cantidad_descuento)
+#    - Patterns genéricos DESPUÉS (comparador_generico)
+# 
+# ============================================================================
