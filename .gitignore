@@ -8,4 +8,4 @@ __pycache__/
 .env/
 venv/
 poetry.lock
-.bot/models
+.models/
