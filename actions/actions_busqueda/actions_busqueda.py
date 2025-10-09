@@ -1439,9 +1439,24 @@ class ActionBusquedaSituacion(Action):
             
             logger.info(f"[InvalidMod] Procesando {len(invalid_actions)} entidades inválidas")
             
-            if len(invalid_actions) == 1:
-                invalid_action = invalid_actions[0]
-                entity_type = invalid_action.get('entity_type') if isinstance(invalid_action, dict) else invalid_action.entity_type
+            # ✅ NUEVO: Serializar invalid_actions a diccionarios
+            serialized_invalid_actions = []
+            for action in invalid_actions:
+                if isinstance(action, dict):
+                    serialized_invalid_actions.append(action)
+                else:
+                    # Convertir objeto ModificationAction a dict
+                    serialized_invalid_actions.append({
+                        'action_type': action.action_type.value if hasattr(action.action_type, 'value') else str(action.action_type),
+                        'entity_type': action.entity_type,
+                        'old_value': action.old_value,
+                        'new_value': action.new_value,
+                        'confidence': getattr(action, 'confidence', None)
+                    })
+            
+            if len(serialized_invalid_actions) == 1:
+                invalid_action = serialized_invalid_actions[0]
+                entity_type = invalid_action.get('entity_type')
                 valid_for = validation_errors[0].get('valid_for', []) if validation_errors else []
                 
                 if valid_for:
@@ -1454,10 +1469,7 @@ class ActionBusquedaSituacion(Action):
                 else:
                     message = f"'{entity_type}' no es válido para buscar {search_type}s."
             else:
-                invalid_list = ', '.join([
-                    f"'{a.get('entity_type') if isinstance(a, dict) else a.entity_type}'" 
-                    for a in invalid_actions
-                ])
+                invalid_list = ', '.join([f"'{a.get('entity_type')}'" for a in serialized_invalid_actions])
                 message = f"Los siguientes parámetros no son válidos para buscar {search_type}s: {invalid_list}."
             
             dispatcher.utter_message(message)
@@ -1465,7 +1477,7 @@ class ActionBusquedaSituacion(Action):
             suggestion_data = {
                 'suggestion_type': 'invalid_entity_modification',
                 'search_type': search_type,
-                'invalid_actions': invalid_actions,
+                'invalid_actions': serialized_invalid_actions,  # ✅ Usar versión serializada
                 'validation_errors': validation_errors,
                 'timestamp': datetime.now().isoformat(),
                 'awaiting_response': True

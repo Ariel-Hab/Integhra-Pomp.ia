@@ -550,6 +550,75 @@ nlu:
     - Catálogo de productos que [vensen pronto]{"entity": "estado", "role": "vence_pronto"}
     - Necesito [antibiotcos](categoria) [nuebos]{"entity": "estado", "role": "nuevo"}
     - Qué está [rebajdo]{"entity": "estado", "role": "en_oferta"} para [perrs](animal)?
+
+    # === EJEMPLOS CON MÍNIMO/MÁXIMO PARA DESCUENTOS ===
+    - ofertas con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} de [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - promos con descuento [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [30](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - ofertas con al [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [10](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de descuento
+    - promos con [como máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [25](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% off
+    - ofertas con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - promos con rebaja [máxima](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [40](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - ofertas entre [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [10](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% y [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [30](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de descuento
+    - descuentos de [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [18](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - promos que no superen el [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [35](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - ofertas con [como mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [12](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de rebaja
+    
+    # === EJEMPLOS CON MÍNIMO/MÁXIMO PARA BONIFICACIONES ===
+    - ofertas con bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} de [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - promos con bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - ofertas con [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bonificación
+    - promos con [como máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [10](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades gratis
+    - ofertas con bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - promos con bono [máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [8](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - ofertas entre [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} y [máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades de bonificación
+    - bonificaciones de [al menos](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} productos
+    - promos que no superen [máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [7](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bono
+    - ofertas con [como mínimo](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} gratis
+    
+    # === COMBINACIONES CON PRODUCTOS + MÍNIMO/MÁXIMO ===
+    - [ivermectina](producto) con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} de [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [amoxicilina](producto) con bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} de [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - [cefalexina](producto) con descuento [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [25](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [enrofloxacina](producto) con bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [doxiciclina](producto) con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% off
+    - [fipronil](producto) con [como máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bono
+    
+    # === COMBINACIONES CON CATEGORÍAS + MÍNIMO/MÁXIMO ===
+    - [antibióticos](categoria) con descuento [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [25](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [vacunas](categoria) con bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [antiparasitarios](categoria) con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [18](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [vitaminas](categoria) con bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [analgésicos](categoria) con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de descuento
+    - [antiinflamatorios](categoria) con [hasta](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} gratis
+    
+    # === COMBINACIONES CON EMPRESAS + MÍNIMO/MÁXIMO ===
+    - [Biogenesis]{"entity": "empresa", "role": "proveedor"} con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [Zoetis]{"entity": "empresa", "role": "proveedor"} con bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [Elanco]{"entity": "empresa", "role": "proveedor"} con descuento [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [30](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [Bayer]{"entity": "empresa", "role": "proveedor"} con bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [8](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [Merial]{"entity": "empresa", "role": "proveedor"} con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [12](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - [Virbac]{"entity": "empresa", "role": "proveedor"} con [como máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bono
+    
+    # === VARIACIONES COLOQUIALES CON MÍNIMO/MÁXIMO ===
+    - ofertas con [como mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [10](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de descuento
+    - promos con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades gratis
+    - ofertas con [hasta](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [35](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% máximo
+    - promos con [por lo menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [12](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - ofertas que tengan [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bono
+    - promos con [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [50](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de rebaja
+    - descuentos [mínimos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} de [8](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - bonificaciones [máximas](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [10](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - que tenga [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [25](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de rebaja
+    - con [hasta](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [7](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} productos gratis
+    
+    # === COMBINACIONES COMPLEJAS ===
+    - [ivermectina](producto) de [Biogenesis]{"entity": "empresa", "role": "proveedor"} con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% para [bovinos](animal)
+    - [antibióticos](categoria) [inyectables](dosis){"entity": "dosis", "role": "forma"} con bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [vacunas](categoria) de [Zoetis]{"entity": "empresa", "role": "proveedor"} con descuento [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [30](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% para [perros](animal)
+    - [amoxicilina](producto) [500mg](dosis){"entity": "dosis", "role": "gramaje"} con bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - [antiparasitarios](categoria) [nuevos]{"entity": "estado", "role": "nuevo"} con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% off
+
+
 # ============================================
 # INTENT: modificar_busqueda:reemplazar
 # ============================================
@@ -611,7 +680,79 @@ nlu:
     - cambiá de [nuevos]{"entity": "estado", "role": "nuevo", "role": "old"} a [poco stock]{"entity": "estado", "role": "poco_stock", "role": "new"}
     - mejor [rebajados]{"entity": "estado", "role": "en_oferta", "role": "new"} que [que vencen]{"entity": "estado", "role": "vence_pronto", "role": "old"}
     - prefiero [novedades]{"entity": "estado", "role": "nuevo", "role": "new"} en vez de [en oferta]{"entity": "estado", "role": "en_oferta", "role": "old"}
+    
+    # === REEMPLAZAR COMPARADORES CON MÍNIMO/MÁXIMO ===
+    - en vez de descuento [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [10](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% usa [mínimo](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - reemplazá [menor](comparador){"entity": "comparador", "role": "old", "role": "lt", "group": "descuento_filter"} a [20](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "descuento_filter"} [25](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - cambiá [superior](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [15](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [al menos](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [18](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - mejor [hasta](comparador){"entity": "comparador", "role": "old", "role": "lte", "group": "descuento_filter"} [30](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% que [como máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "descuento_filter"} [35](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - probá con [mínimo](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [12](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}% en lugar de [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [10](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}%
+    
+    # === REEMPLAZAR BONIFICACIÓN CON MÍNIMO/MÁXIMO ===
+    - en vez de bonificación [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "bonificacion_filter"} a [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} usa [mínima](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "bonificacion_filter"} [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - reemplazá [menor](comparador){"entity": "comparador", "role": "old", "role": "lt", "group": "bonificacion_filter"} a [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} por [máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "bonificacion_filter"} [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - cambiá [superior](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "bonificacion_filter"} a [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} por [al menos](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "bonificacion_filter"} [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - mejor [hasta](comparador){"entity": "comparador", "role": "old", "role": "lte", "group": "bonificacion_filter"} [8](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} que [como máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "bonificacion_filter"} [10](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - probá con [mínimo](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"} en lugar de [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "bonificacion_filter"} a [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"}
+    
+    # === VARIACIONES CASUALES ===
+    - che, mejor [mínimo](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}% que [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [10](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}%
+    - dale, cambiá a [máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"} en vez de [menor](comparador){"entity": "comparador", "role": "old", "role": "lt", "group": "bonificacion_filter"} a [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"}
+    - uh no, mejor [al menos](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}% que [superior](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [18](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}%
+    - mmm, que sea [hasta](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "bonificacion_filter"} [7](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"} no [menor](comparador){"entity": "comparador", "role": "old", "role": "lt", "group": "bonificacion_filter"} a [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"}
+    # --- Reemplazos con "poco stock" ---
+    - en vez de [nuevos]{"entity": "estado", "role": "old"} quiero con [poco stock]{"entity": "estado", "role": "new"}
+    - en vez de [nuevas]{"entity": "estado", "role": "old"} quiero con [poco stock]{"entity": "estado", "role": "new"}
+    - reemplazá [nuevos]{"entity": "estado", "role": "old"} por [poco stock]{"entity": "estado", "role": "new"}
+    - cambiá de [nuevas]{"entity": "estado", "role": "old"} a [poco stock]{"entity": "estado", "role": "new"}
+    - mejor [poco stock]{"entity": "estado", "role": "new"} que [nuevos]{"entity": "estado", "role": "old"}
+    - no [nuevos]{"entity": "estado", "role": "old"}, dame los de [poco stock]{"entity": "estado", "role": "new"}
+    - olvidate de [nuevas]{"entity": "estado", "role": "old"}, mostrame [poco stock]{"entity": "estado", "role": "new"}
+    - sacá [nuevos]{"entity": "estado", "role": "old"} y poné [poco stock]{"entity": "estado", "role": "new"}
 
+    # --- Reemplazos con "que vencen" / "vence pronto" ---
+    - en vez de [nuevos]{"entity": "estado", "role": "old"} quiero los [que vencen]{"entity": "estado", "role": "new"}
+    - reemplazá [poco stock]{"entity": "estado", "role": "old"} por [vence pronto]{"entity": "estado", "role": "new"}
+    - cambiá de [en oferta]{"entity": "estado", "role": "old"} a [que vencen pronto]{"entity": "estado", "role": "new"}
+    - mejor [vencen pronto]{"entity": "estado", "role": "new"} que [nuevas]{"entity": "estado", "role": "old"}
+    - no [poco stock]{"entity": "estado", "role": "old"}, dame los [que vencen]{"entity": "estado", "role": "new"}
+
+    # --- Reemplazos con "en oferta" / "rebajados" ---
+    - en vez de [nuevos]{"entity": "estado", "role": "old"} quiero [en oferta]{"entity": "estado", "role": "new"}
+    - reemplazá [poco stock]{"entity": "estado", "role": "old"} por [rebajados]{"entity": "estado", "role": "new"}
+    - cambiá de [vence pronto]{"entity": "estado", "role": "old"} a [en oferta]{"entity": "estado", "role": "new"}
+    - mejor [rebajados]{"entity": "estado", "role": "new"} que [nuevos]{"entity": "estado", "role": "old"}
+    - no [nuevos]{"entity": "estado", "role": "old"}, dame los [en oferta]{"entity": "estado", "role": "new"}
+
+    # --- Variaciones casuales con frases completas ---
+    - che, en vez de [nuevos]{"entity": "estado", "role": "old"} quiero con [poco stock]{"entity": "estado", "role": "new"}
+    - dale, cambiá [nuevas]{"entity": "estado", "role": "old"} por [poco stock]{"entity": "estado", "role": "new"}
+    - uh no, mejor [poco stock]{"entity": "estado", "role": "new"} que [nuevos]{"entity": "estado", "role": "old"}
+    - mmm, que sean de [poco stock]{"entity": "estado", "role": "new"} no [nuevos]{"entity": "estado", "role": "old"}
+    - no no, de [poco stock]{"entity": "estado", "role": "new"} en vez de [nuevas]{"entity": "estado", "role": "old"}
+
+    # --- Con justificaciones ---
+    - pasá a [poco stock]{"entity": "estado", "role": "new"} porque [nuevos]{"entity": "estado", "role": "old"} no hay
+    - cambiá a [vence pronto]{"entity": "estado", "role": "new"} ya que [nuevos]{"entity": "estado", "role": "old"} están caros
+    - mejor usá [en oferta]{"entity": "estado", "role": "new"} dado que [poco stock]{"entity": "estado", "role": "old"} no conviene
+    - optá por [rebajados]{"entity": "estado", "role": "new"} en vez de [nuevos]{"entity": "estado", "role": "old"} que es mejor precio
+
+    # ============================================
+    # PATRONES ADICIONALES CON "QUIERO"
+    # ============================================
+
+    # El problema específico: "en vez de X quiero Y"
+    - en vez de [nuevos]{"entity": "estado", "role": "old"} quiero [poco stock]{"entity": "estado", "role": "new"}
+    - en vez de [nuevas]{"entity": "estado", "role": "old"} quiero los de [poco stock]{"entity": "estado", "role": "new"}
+    - en vez de [nuevos]{"entity": "estado", "role": "old"} quiero ver [poco stock]{"entity": "estado", "role": "new"}
+    - en vez de [en oferta]{"entity": "estado", "role": "old"} quiero con [poco stock]{"entity": "estado", "role": "new"}
+    - en vez de [rebajados]{"entity": "estado", "role": "old"} quiero [vence pronto]{"entity": "estado", "role": "new"}
+    - en vez de [que vencen]{"entity": "estado", "role": "old"} quiero [nuevos]{"entity": "estado", "role": "new"}
+
+    # Con "con" explícito
+    - en vez de [nuevos]{"entity": "estado", "role": "old"} quiero con [poco stock]{"entity": "estado", "role": "new"}
+    - en vez de [rebajados]{"entity": "estado", "role": "old"} quiero con [vence pronto]{"entity": "estado", "role": "new"}
+    - en vez de [en oferta]{"entity": "estado", "role": "old"} quiero con [nuevos]{"entity": "estado", "role": "new"}
 # ============================================
 # INTENT: modificar_busqueda:agregar
 # ============================================
@@ -627,6 +768,32 @@ nlu:
     - y de paso, [bayer]{"entity": "empresa", "role": "proveedor"}
     - poné filtro de [10mg](dosis){"entity": "dosis", "role": "gramaje"}
     - además filtrá por [suplemento](categoria)
+
+    - agregá descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} de [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - sumá descuento [máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [30](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - además con [al mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [10](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de descuento
+    - y que tenga [como máximo](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [25](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% off
+    - incluí descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - agregá rebaja [máxima](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} de [40](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - filtrá con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [18](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% de descuento
+    - sumá [hasta](comparador){"entity": "comparador", "role": "lte", "group": "descuento_filter"} [35](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}% máximo
+    
+    # === CON MÍNIMO/MÁXIMO PARA BONIFICACIONES ===
+    - agregá bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} de [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - sumá bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - además con [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bonificación
+    - y que tenga [como máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [10](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} gratis
+    - incluí bonificación [mínima](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - agregá bono [máximo](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} de [8](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - filtrá con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "bonificacion_filter"} [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} productos gratis
+    - sumá [hasta](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [7](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} de bono
+    
+    # === COMBINACIONES ===
+    - agregá [ivermectina](producto) con descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - sumá [antibióticos](categoria) con bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - incluí [Biogenesis]{"entity": "empresa", "role": "proveedor"} con [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - además [perros](animal) con [hasta](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} gratis
+
     
     # --- Con comparadores ---
     - con descuento [mayor](comparador){"entity": "comparador", "role": "gt", "group": "descuento_filter"} al [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
@@ -638,10 +805,10 @@ nlu:
     - agrega stock [menor](comparador){"entity": "comparador", "role": "lt", "group": "stock_filter"} a [30](cantidad_stock){"entity": "cantidad_stock", "group": "stock_filter"}
     
     # --- Con estado ---
-    - y que tenga [poco_stock]{"entity": "estado", "role": "poco_stock"}
+    - y que tenga [poco stock]{"entity": "estado", "role": "poco_stock"}
     - agregá filtro de [nuevo]{"entity": "estado", "role": "nuevo"}
     - sumá [vence_pronto]{"entity": "estado", "role": "vence_pronto"}
-    - además [en_oferta]{"entity": "estado", "role": "en_oferta"}
+    - además [en oferta]{"entity": "estado", "role": "en_oferta"}
     - filtrá también por [últimas unidades]{"entity": "estado", "role": "poco_stock"}
     - y que sean [novedades]{"entity": "estado", "role": "nuevo"}
     - agrega [rebajados]{"entity": "estado", "role": "en_oferta"}
@@ -679,6 +846,31 @@ nlu:
 # ============================================
 - intent: modificar_busqueda:multiple
   examples: |
+
+    # === CAMBIAR COMPARADORES DE DESCUENTO CON MÍNIMO/MÁXIMO ===
+    - cambia descuento [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [10](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [mínimo](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - modifica descuento [menor](comparador){"entity": "comparador", "role": "old", "role": "lt", "group": "descuento_filter"} a [20](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "descuento_filter"} [25](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - reemplaza [superior](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [15](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [al menos](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "descuento_filter"} [18](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    - cambia [hasta](comparador){"entity": "comparador", "role": "old", "role": "lte", "group": "descuento_filter"} [30](cantidad_descuento){"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [como máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "descuento_filter"} [35](cantidad_descuento){"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
+    
+    # === CAMBIAR COMPARADORES DE BONIFICACIÓN CON MÍNIMO/MÁXIMO ===
+    - cambia bonificación [mayor](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "bonificacion_filter"} a [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} por [mínima](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "bonificacion_filter"} [4](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - modifica bono [menor](comparador){"entity": "comparador", "role": "old", "role": "lt", "group": "bonificacion_filter"} a [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} por [máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "bonificacion_filter"} [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - reemplaza [superior](comparador){"entity": "comparador", "role": "old", "role": "gt", "group": "bonificacion_filter"} a [2](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} por [al menos](comparador){"entity": "comparador", "role": "new", "role": "gte", "group": "bonificacion_filter"} [3](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    - cambia [hasta](comparador){"entity": "comparador", "role": "old", "role": "lte", "group": "bonificacion_filter"} [8](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "old", "group": "bonificacion_filter"} por [como máximo](comparador){"entity": "comparador", "role": "new", "role": "lte", "group": "bonificacion_filter"} [10](cantidad_bonificacion){"entity": "cantidad_bonificacion", "role": "new", "group": "bonificacion_filter"}
+    
+    # === AGREGAR FILTROS CON MÍNIMO/MÁXIMO ===
+    - saca el filtro de descuento y agrega [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - quita bonificación y suma [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - elimina precio y agrega descuento [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - saca stock y suma bonificación [hasta](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [7](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    
+    # === COMBINACIONES CON PRODUCTOS ===
+    - cambia [ivermectina](producto){"entity": "producto", "role": "old"} por [amoxicilina](producto){"entity": "producto", "role": "new"} y agrega descuento [mínimo](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [15](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - reemplaza [antibióticos](categoria){"entity": "categoria", "role": "old"} por [vacunas](categoria){"entity": "categoria", "role": "new"} y suma bonificación [máxima](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [5](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
+    - cambia [Biogenesis]{"entity": "empresa", "role": "old"} por [Zoetis]{"entity": "empresa", "role": "new"} y agrega [al menos](comparador){"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20](cantidad_descuento){"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - modifica [perros](animal){"entity": "animal", "role": "old"} por [gatos](animal){"entity": "animal", "role": "new"} y suma [hasta](comparador){"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [6](cantidad_bonificacion){"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} gratis
+
     # ==========================================
     # PRODUCTO: Reemplazar + Agregar/Remover
     # ==========================================

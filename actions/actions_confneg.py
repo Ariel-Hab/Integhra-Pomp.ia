@@ -10,7 +10,7 @@ from rasa_sdk.events import SlotSet, EventType
 
 from .conversation_state import ConversationState, analyze_user_confirmation, get_slot_safely
 from .helpers import get_intent_info
-from .models.model_manager import generate_text  # ✅ NUEVO
+from .models.model_manager import generate_text_with_context  # ✅ CORREGIDO
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class ActionConfNegAgradecer(Action):
         try:
             response = generate_text_with_context(
                 prompt=prompt,
-                tracker=tracker,  # ✅ Pasar tracker para contexto
+                tracker=tracker,
                 max_new_tokens=max_tokens,
                 temperature=0.7
             )
@@ -82,7 +82,7 @@ class ActionConfNegAgradecer(Action):
                 actual_pending = get_slot_safely(tracker, "pending_suggestion")
                 if not actual_pending:
                     logger.info("[ConfNegAgradecer] Sugerencia limpiada, respuesta estándar")
-                    return self._handle_standard_responses(current_intent, dispatcher)
+                    return self._handle_standard_responses(current_intent, dispatcher, tracker)  # ✅ CORREGIDO
                 
                 suggestion_result = self._handle_pending_suggestions_improved(
                     context, current_intent, user_msg, actual_pending, tracker, dispatcher
@@ -100,7 +100,7 @@ class ActionConfNegAgradecer(Action):
                     return events
             
             # Respuestas estándar
-            standard_response_events = self._handle_standard_responses(current_intent, dispatcher)
+            standard_response_events = self._handle_standard_responses(current_intent, dispatcher, tracker)  # ✅ CORREGIDO
             events.extend(standard_response_events)
             
             return events
@@ -108,12 +108,11 @@ class ActionConfNegAgradecer(Action):
         except Exception as e:
             logger.error(f"Error en ActionConfNegAgradecer: {e}", exc_info=True)
             
-            # ✅ Usar Groq para mensaje de error
             self._send_message(
                 dispatcher,
                 prompt="Usuario: [error técnico]\nPedí disculpas brevemente y ofrecé ayuda.",
                 fallback="Disculpa, hubo un error. ¿Puedes intentar nuevamente?",
-                tracker=tracker,  # ✅ AGREGAR
+                tracker=tracker,
                 max_tokens=50
             )
             
@@ -140,15 +139,15 @@ class ActionConfNegAgradecer(Action):
                 )
             elif response_analysis['is_negative'] and confidence >= 0.7:
                 return self._handle_negative_response_improved(
-                    pending_suggestion, response_analysis, dispatcher
+                    pending_suggestion, response_analysis, tracker, dispatcher
                 )
             elif response_analysis['is_ambiguous'] or confidence < 0.7:
                 return self._handle_ambiguous_response_improved(
-                    pending_suggestion, response_analysis, user_msg, dispatcher
+                    pending_suggestion, response_analysis, user_msg, tracker, dispatcher
                 )
             else:
                 return self._handle_unrecognized_response_improved(
-                    pending_suggestion, user_msg, dispatcher
+                    pending_suggestion, user_msg, tracker, dispatcher
                 )
                 
         except Exception as e:
@@ -176,7 +175,6 @@ class ActionConfNegAgradecer(Action):
                 entity_type = pending_suggestion.get('entity_type', '')
                 
                 if corrected_value and entity_type:
-                    # ✅ Groq genera confirmación natural
                     self._send_message(
                         dispatcher,
                         prompt=f"Usuario aceptó usar '{corrected_value}' como {entity_type}. "
@@ -207,8 +205,8 @@ class ActionConfNegAgradecer(Action):
                         dispatcher,
                         prompt="Hubo un problema técnico. Pedí disculpas y sugerí intentar de nuevo.",
                         fallback="Hubo un problema. ¿Podrías intentar nuevamente?",
-                        max_tokens=50,
                         tracker=tracker,
+                        max_tokens=50
                     )
                     events.extend([
                         SlotSet("pending_suggestion", None),
@@ -220,7 +218,6 @@ class ActionConfNegAgradecer(Action):
                 correct_type = pending_suggestion.get('correct_type', '')
                 
                 if original_value and correct_type:
-                    # ✅ Groq genera confirmación de tipo
                     self._send_message(
                         dispatcher,
                         prompt=f"Usuario confirmó que '{original_value}' es un {correct_type}. "
@@ -249,7 +246,6 @@ class ActionConfNegAgradecer(Action):
             elif suggestion_type == 'missing_parameters':
                 criteria = pending_suggestion.get('required_criteria', 'información')
                 
-                # ✅ Groq pide información adicional
                 self._send_message(
                     dispatcher,
                     prompt=f"Usuario acepta dar más info. Pedí que especifique {criteria}.",
@@ -287,6 +283,7 @@ class ActionConfNegAgradecer(Action):
     
     def _handle_negative_response_improved(self, pending_suggestion: Dict[str, Any], 
                                          response_analysis: Dict[str, Any],
+                                         tracker: Tracker,
                                          dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """✅ CON GROQ: Respuestas negativas"""
         suggestion_type = pending_suggestion.get('suggestion_type', '')
@@ -294,7 +291,6 @@ class ActionConfNegAgradecer(Action):
         
         try:
             if suggestion_type in ['entity_correction', 'type_correction']:
-                # ✅ Groq genera respuesta empática a rechazo
                 self._send_message(
                     dispatcher,
                     prompt="Usuario rechazó la sugerencia. Aceptá su decisión y pedí que escriba el término correcto o use otros criterios.",
@@ -329,6 +325,7 @@ class ActionConfNegAgradecer(Action):
     
     def _handle_ambiguous_response_improved(self, pending_suggestion: Dict[str, Any], 
                                           response_analysis: Dict[str, Any], user_msg: str,
+                                          tracker: Tracker,
                                           dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """✅ CON GROQ: Respuestas ambiguas"""
         try:
@@ -341,7 +338,6 @@ class ActionConfNegAgradecer(Action):
             logger.info(f"[ConfNegAgradecer] Ambiguo - Intento {attempts}, Conf: {confidence:.2f}")
             
             if attempts >= 3:
-                # ✅ Groq genera mensaje de reinicio amigable
                 self._send_message(
                     dispatcher,
                     prompt="Usuario no responde claramente después de 3 intentos. "
@@ -360,7 +356,6 @@ class ActionConfNegAgradecer(Action):
                     'suggestion_abandoned': True
                 }
             
-            # ✅ Groq genera clarificación específica según contexto
             if suggestion_type == 'entity_correction':
                 suggestions = pending_suggestion.get('suggestions', [])
                 original_value = pending_suggestion.get('original_value', '')
@@ -386,7 +381,7 @@ class ActionConfNegAgradecer(Action):
                 prompt = "Respuesta ambigua. Pedí aclaración directa."
                 fallback = "No entendí. ¿Puedes ser más específico?"
             
-            self._send_message(dispatcher, prompt, fallback, max_tokens=70, tracker=tracker,)
+            self._send_message(dispatcher, prompt, fallback, tracker, max_tokens=70)
             
             return {
                 'handled': True,
@@ -410,6 +405,7 @@ class ActionConfNegAgradecer(Action):
     
     def _handle_unrecognized_response_improved(self, pending_suggestion: Dict[str, Any], 
                                              user_msg: str,
+                                             tracker: Tracker,
                                              dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """✅ CON GROQ: Respuestas no reconocidas"""
         try:
@@ -418,7 +414,6 @@ class ActionConfNegAgradecer(Action):
             logger.warning(f"[ConfNegAgradecer] No reconocido - Intento {attempts}: '{user_msg[:50]}'")
             
             if attempts >= 3:
-                # ✅ Groq genera mensaje de reinicio
                 self._send_message(
                     dispatcher,
                     prompt="Después de 3 intentos no se entiende. "
@@ -437,7 +432,6 @@ class ActionConfNegAgradecer(Action):
                     'suggestion_abandoned': True
                 }
             else:
-                # ✅ Groq genera último intento muy claro
                 self._send_message(
                     dispatcher,
                     prompt="No reconociste la respuesta. Pedí MUY claramente que responda SOLO sí o no.",
@@ -529,7 +523,7 @@ class ActionConfNegAgradecer(Action):
                 dispatcher,
                 prompt="Error ejecutando búsqueda. Pedí disculpas y sugerí reintentar.",
                 fallback="Hubo un error. Inténtalo de nuevo.",
-                 tracker=tracker,
+                tracker=tracker,
                 max_tokens=40
             )
             
@@ -541,17 +535,16 @@ class ActionConfNegAgradecer(Action):
         return {'migrated': False, 'events': []}
     
     def _handle_standard_responses(self, current_intent: str, 
-                                 dispatcher: CollectingDispatcher) -> List[EventType]:
+                                 dispatcher: CollectingDispatcher,
+                                 tracker: Tracker) -> List[EventType]:  # ✅ CORREGIDO
         """✅ CON GROQ: Respuestas estándar"""
         try:
             intent_info = get_intent_info(current_intent)
             responses = intent_info.get("responses", [])
             
             if responses:
-                # Si hay respuestas configuradas, usar la primera
                 dispatcher.utter_message(text=responses[0])
             else:
-                # ✅ Groq genera respuesta según intent
                 intent_prompts = {
                     "agradecimiento": "Usuario agradeció. Respondé cordialmente y ofrecé ayuda.",
                     "afirmar": "Usuario confirmó. Preguntá en qué podés ayudar.",
@@ -574,7 +567,7 @@ class ActionConfNegAgradecer(Action):
                     "¡Gracias! ¿En qué más puedo ayudarte?"
                 )
                 
-                self._send_message(dispatcher, prompt, fallback, max_tokens=50, tracker=tracker,)
+                self._send_message(dispatcher, prompt, fallback, tracker, max_tokens=50)
             
             return []
             
