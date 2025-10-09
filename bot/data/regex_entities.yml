@@ -1,30 +1,75 @@
+# data/regex_entities.yml
 version: "3.1"
 
 nlu:
+# ============== SOLO ENTIDADES REALES ==============
+
+# Cantidades (entidades en domain)
 - regex: cantidad_descuento
   examples: |
-    - \d+\s*%\s*de\s*descuento
-    - \d+\s*%\s*descuento
-    - \d+\s*%\s*dto
-    - \d+\s*%\s*off
+    - (\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?descuento
+    - (\d+(?:\.\d+)?)\s*%\s*dto
+    - descuento\s*(?:del?\s*)?(\d+(?:\.\d+)?)\s*%
 
-- regex: cantidad_bonificacion  
+- regex: cantidad_bonificacion
   examples: |
-    - \d+\s*%\s*de\s*bonificación
-    - \d+\s*%\s*bonificación
-    - \d+\s*%\s*bonus
+    - (\d+(?:\.\d+)?)\s*%\s*(?:de\s*)?bonificación
+    - bonificación\s*(?:del?\s*)?(\d+(?:\.\d+)?)\s*%
 
 - regex: cantidad_stock
   examples: |
-    - \d+\s*unidades
+    - (\d+)\s*unidades?
     - stock\s*limitado
-    - stock\s*agotado
-    - stock\s*disponible
-    - stock\s*amplio
-    - pocas\s*unidades
-    - muchas\s*unidades
-    - últimas\s*unidades
-    - sin\s*stock
-    - con\s*stock
-    - agotado
-    - disponible
+    - pocas?\s*unidades?
+    - últimas?\s*unidades?
+
+# Comparadores (parte de entity "comparador")
+- regex: comparador_lt
+  examples: |
+    - menor\s+(?:a|que|de)
+    - inferior\s+a
+    - menos\s+(?:de|que)
+
+- regex: comparador_gt
+  examples: |
+    - mayor\s+(?:a|que|de)
+    - superior\s+a
+    - mas\s+(?:de|que)
+    - más\s+(?:de|que)
+
+- regex: comparador_lte
+  examples: |
+    - hasta
+    - máximo
+    - como\s+máximo
+
+- regex: comparador_gte
+  examples: |
+    - al\s+menos
+    - mínimo
+    - como\s+mínimo
+
+# Estados (entity "estado" en domain)
+- regex: estado_nuevo
+  examples: |
+    - nuevos?
+    - novedades?
+    - recientes?
+
+- regex: estado_oferta
+  examples: |
+    - en\s+oferta
+    - promoción
+    - promo
+
+- regex: estado_poco_stock
+  examples: |
+    - poco\s+stock
+    - stock\s+bajo
+    - últimas\s+unidades
+
+- regex: estado_vence_pronto
+  examples: |
+    - vence(?:n)?\s+pronto
+    - por\s+vencer
+    - vencimiento\s+próximo
