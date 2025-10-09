@@ -1,67 +1,198 @@
-# config.yml
+# data/regex_features.yml
 version: "3.1"
-language: "es"
 
-pipeline:
-  # === TOKENIZACIÓN ===
-  - name: WhitespaceTokenizer
-  
-  # === EXTRACTORES (PRIMERO, antes de featurizers) ===
-  - name: RegexEntityExtractor
-    use_lookup_tables: true
-    use_regexes: true
-    case_sensitive: false
-    use_word_boundaries: true
-  
-  # === FEATURIZERS ===
-  - name: RegexFeaturizer
-  - name: LexicalSyntacticFeaturizer
-  - name: CountVectorsFeaturizer
-  - name: CountVectorsFeaturizer
-    analyzer: "char_wb"
-    min_ngram: 1
-    max_ngram: 4
-  
-  # ❌ ELIMINAR BERT (muy pesado para tu caso)
-  # - name: LanguageModelFeaturizer
-  #   model_name: "bert"
-  #   model_weights: "bert-base-multilingual-cased"
-  
-  # === CLASIFICADORES ===
-  - name: DIETClassifier
-    epochs: 100              # ← Reducir a 100 (suficiente con buen regex)
-    constrain_similarities: true
-    entity_recognition: true
-    intent_classification: true
-    entity_roles: true       # ← CRÍTICO para tu domain
-    entity_groups: true      # ← CRÍTICO para tu domain
-    number_of_transformer_layers: 2
-    transformer_size: 256
-    BILOU_flag: true
-    use_masked_language_model: false  # Sin BERT, no necesitas esto
-  
-  # === POST-PROCESAMIENTO ===
-  - name: EntitySynonymMapper
-  - name: ResponseSelector
-    epochs: 50
+nlu:
+# ============================================================================
+# FEATURES PARA DETECTAR INTENTS (NO son entidades)
+# Estas regex ayudan a DIETClassifier a clasificar intents con mayor confianza
+# ============================================================================
 
-# === POLICIES (DESCOMENTAR Y AJUSTAR) ===
-policies:
-  - name: MemoizationPolicy
-    max_history: 3
-  
-  - name: RulePolicy
-    core_fallback_threshold: 0.3
-    core_fallback_action_name: "action_fallback"
-  
-  - name: UnexpecTEDIntentPolicy
-    max_history: 5
-    epochs: 50
-  
-  - name: TEDPolicy
-    max_history: 5
-    epochs: 100
-    constrain_similarities: true
+# ============== MODIFICADORES (CRÍTICO para modificar_busqueda) ==============
 
-# === CONFIGURACIÓN ASISTENTE ===
-assistant_id: pompi_v2
+- regex: modificador_reemplazar
+  examples: |
+    - (?:^|\s)(?:reemplaza|reemplazar|reemplazá|cambia|cambiar|cambiá|sustituye|sustituir|sustituí|intercambia|intercambiar)(?:\s|$)
+
+- regex: modificador_agregar
+  examples: |
+    - (?:^|\s)(?:agrega|agregar|agregá|añade|añadir|añadí|incluye|incluir|incluí|suma|sumar|sumá|incorpora|incorporar|incorporá)(?:\s|$)
+
+- regex: modificador_remover
+  examples: |
+    - (?:^|\s)(?:saca|sacar|sacá|quita|quitar|quitá|elimina|eliminar|eliminá|remueve|remover|removê|borra|borrar|borrá)(?:\s|$)
+
+- regex: conector_por
+  examples: |
+    - \s+(?:por|x|con)\s+
+
+# ============== BÚSQUEDAS (buscar_producto) ==============
+
+- regex: keyword_buscar
+  examples: |
+    - (?:^|\s)(?:busco|buscar|buscá|necesito|necesitar|quiero|mostrame|mostrá|dame|decime|encontrá|encontrar)(?:\s|$)
+
+- regex: keyword_producto
+  examples: |
+    - producto|productos
+    - artículo|articulo|artículos|articulos
+    - item|items
+    - cosa|cosas
+
+# ============== OFERTAS (buscar_oferta) ==============
+
+- regex: keyword_oferta
+  examples: |
+    - oferta|ofertas
+    - descuento|descuentos|dto|desc
+    - promoción|promocion|promociones|promociones|promo|promos
+    - bonificación|bonificacion|bonif
+    - rebaja|rebajas
+    - sale|sales
+    - descuenta|descuentan
+    - en\s+oferta
+    - con\s+descuento
+
+# ============== NOVEDADES (consultar_novedades_*) ==============
+
+- regex: keyword_novedad
+  examples: |
+    - novedad|novedades
+    - nuevo|nuevos|nueva|nuevas
+    - reciente|recientes
+    - último|ultimos|última|ultimas
+    - lo\s+nuevo
+    - lo\s+último
+    - qué\s+hay\s+de\s+nuevo
+    - que\s+hay\s+de\s+nuevo
+
+- regex: keyword_ingresado
+  examples: |
+    - ingresó|ingreso|ingresaron
+    - llegó|llego|llegaron
+    - entró|entro|entraron
+    - vino|vinieron
+
+# ============== COMPLETAR PEDIDO ==============
+
+- regex: keyword_comprar
+  examples: |
+    - comprar|compro|compra|compré
+    - llevar|llevo|lleva|llevé
+    - pedir|pido|pedí
+    - quiero\s+(?:ese|eso|esa|esos|esas|este|esta|estos|estas)
+    - me\s+(?:llevo|quedo|interesa)
+    - dame\s+(?:ese|eso|esa|esos|esas)
+    - confirmar|confirmo|confirmá
+
+# ============== SALUDOS ==============
+
+- regex: keyword_saludo
+  examples: |
+    - (?:^|\s)(?:hola|hey|buenas|buenos\s+días|buen\s+día|buenas\s+tardes|buenas\s+noches)(?:\s|$|\!|\?)
+
+- regex: keyword_como_estas
+  examples: |
+    - (?:cómo|como)\s+(?:estás|estas|andas|andás|te\s+va|va)
+    - qué\s+tal
+    - que\s+tal
+    - todo\s+bien
+
+# ============== DESPEDIDAS ==============
+
+- regex: keyword_despedida
+  examples: |
+    - (?:^|\s)(?:chau|adiós|adios|hasta\s+luego|nos\s+vemos|me\s+voy|bay|bye)(?:\s|$|\!|\?)
+
+# ============== AGRADECIMIENTOS ==============
+
+- regex: keyword_agradecer
+  examples: |
+    - gracias|graciela|grax|thanks|thx
+    - te\s+agradezco
+    - muy\s+amable
+    - genial|perfecto|excelente|bárbaro|barbaro
+
+# ============== AFIRMACIONES ==============
+
+- regex: keyword_afirmar
+  examples: |
+    - (?:^|\s)(?:sí|si|dale|ok|okay|perfecto|claro|exacto|correcto|eso|afirmativo|sep|sepa|ajá|aja)(?:\s|$|\!|\?)
+
+# ============== NEGACIONES ==============
+
+- regex: keyword_denegar
+  examples: |
+    - (?:^|\s)(?:no|nop|nope|negativo|para\s+nada|ni\s+ahí|ni\s+ahi|nanai|naa)(?:\s|$|\!|\?)
+
+# ============== CONSULTAS VETERINARIAS ==============
+
+- regex: keyword_consulta_veterinaria
+  examples: |
+    - (?:consulta|pregunta)\s+(?:veterinaria|médica|medica)
+    - (?:mi|el|la)\s+(?:perro|perra|gato|gata|mascota)\s+(?:está|esta|tiene|sufre)
+    - síntoma|sintoma|enfermo|enferma
+    - diagnóstico|diagnostico|tratamiento
+    - (?:está|esta)\s+(?:mal|enfermo|enferma|decaído|decaida)
+
+# ============== PEDIR AYUDA ==============
+
+- regex: keyword_ayuda
+  examples: |
+    - ayuda
+    - ayudame|ayúdame
+    - no\s+(?:entiendo|comprendo|sé|se)
+    - (?:cómo|como)\s+funciona
+    - qué\s+(?:puedo|podés|podes)\s+(?:buscar|hacer|pedir)
+    - que\s+(?:puedo|podes)\s+(?:buscar|hacer|pedir)
+
+# ============== CHISTES ==============
+
+- regex: keyword_chiste
+  examples: |
+    - chiste
+    - contame\s+un\s+chiste
+    - decime\s+un\s+chiste
+    - dame\s+un\s+chiste
+    - haceme\s+reír|haceme\s+reir
+
+- regex: keyword_reirse
+  examples: |
+    - (?:ja|ah|eh|ji|jo)+
+    - (?:😂|😄|😆|🤣|😅)
+    - (?:jaj|jej|jij|joj)+
+    - lol|xd
+    - me\s+reí|me\s+rei
+    - buenísimo|buenisimo|buenazo
+
+# ============== RESPUESTAS SOBRE ESTADO ==============
+
+- regex: keyword_estoy_bien
+  examples: |
+    - (?:estoy|ando|voy|me\s+va)\s+(?:bien|espectacular|genial|bárbaro|barbaro|excelente|perfecto|joya)
+    - todo\s+(?:bien|joya|ok|perfecto)
+    - de\s+(?:10|diez)
+
+# ============== OUT OF SCOPE / OFF TOPIC ==============
+
+- regex: keyword_off_topic
+  examples: |
+    - (?:clima|tiempo|hora|fecha|dónde|donde|cuándo|cuando|quién|quien)
+    - (?:fútbol|futbol|política|politica|economía|economia)
+    - (?:película|pelicula|música|musica|canción|cancion)
+    - (?:receta|cocinar|comida\s+humana)
+
+# ============================================================================
+# NOTAS DE USO:
+# 
+# 1. Estos regex NO extraen entidades (eso lo hace RegexEntityExtractor)
+# 2. Solo crean FEATURES binarias (match=1, no match=0) para DIETClassifier
+# 3. Ayudan a reducir ejemplos necesarios en nlu.yml
+# 4. Especialmente útiles para intents con keywords específicas
+# 
+# EJEMPLO:
+# Usuario: "reemplaza royal canin por holliday"
+# - modificador_reemplazar: 1 (match)
+# - conector_por: 1 (match)
+# → DIET tiene señal fuerte para clasificar como modificar_busqueda:reemplazar
+# 
+# ============================================================================
