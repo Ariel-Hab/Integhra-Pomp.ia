@@ -1604,21 +1604,21 @@
 #     - amoxivet
 #     - clamoxyl
 
-# - synonym: "fiebre"
-#   examples: |
-#     - calentura
-#     - temperatura alta
-#     - hipertermia
+- synonym: "fiebre"
+  examples: |
+    - calentura
+    - temperatura alta
+    - hipertermia
 
-# - synonym: "diarrea"
-#   examples: |
-#     - diarreas
-#     - deposiciones liquidas
-#     - deposiciones líquidas
+- synonym: "diarrea"
+  examples: |
+    - diarreas
+    - deposiciones liquidas
+    - deposiciones líquidas
 
-# - synonym: "disponible"
-#   examples: |
-#     - en stock
-#     - hay
-#     - tiene
-#     - existe
+- synonym: "disponible"
+  examples: |
+    - en stock
+    - hay
+    - tiene
+    - existe
