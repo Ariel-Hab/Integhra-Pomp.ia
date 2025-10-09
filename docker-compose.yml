@@ -9,12 +9,16 @@ services:
     environment:
       - PORT=8000
       - ACTION_SERVER_URL=http://rasa_actions:5055/webhook
+      - HYBRID_NLU_URL=http://hybrid_nlu:5056/parse
       - RASA_MODEL_PATH=models
     ports:
       - "8000:8000"
     volumes:
       - .:/app
-    command: sh -c "poetry lock && poetry install && poetry run manage bot"
+    depends_on:
+      - rasa_actions
+      - hybrid_nlu
+    command: sh -c "poetry install --with bot && poetry run manage bot"
 
   rasa_actions:
     build:
@@ -23,9 +27,27 @@ services:
     container_name: rasa_actions
     environment:
       - PORT=5055
+      - GROQ_API_KEY=${GROQ_API_KEY}
     ports:
       - "5055:5055"
     volumes:
       - .:/app
-    command: sh -c "poetry lock && poetry install && poetry run manage actions"
- 
+    env_file:
+      - .env
+    command: sh -c "poetry install --with actions && poetry run manage actions"
+
+  hybrid_nlu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hybrid_nlu
+    environment:
+      - PORT=5056
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    ports:
+      - "5056:5056"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: sh -c "poetry install --with nlu && python -m spacy download es_core_news_md && poetry run python hybrid_nlu/app.py"
