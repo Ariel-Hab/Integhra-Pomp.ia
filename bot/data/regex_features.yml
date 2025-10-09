@@ -1,0 +1,21 @@
+version: "3.1"
+nlu:
+- regex: modificador_reemplazar
+  examples: |
+    - (?:^|\s)(?:reemplaza|reemplazar|cambia|cambiar|sustituye|sustituir|intercambia|intercambiar)(?:\s|$)
+
+- regex: modificador_agregar
+  examples: |
+    - (?:^|\s)(?:agrega|agregar|añade|añadir|añadí|incluye|incluir|suma|sumar|incorpora|incorporar)(?:\s|$)
+
+- regex: modificador_remover
+  examples: |
+    - (?:^|\s)(?:saca|sacar|quita|quitar|elimina|eliminar|remueve|remover|borra|borrar)(?:\s|$)
+
+- regex: conector_por
+  examples: |
+    - \s+(?:por|x|con)\s+
+
+- regex: keyword_oferta
+  examples: |
+    - (?:oferta|descuento|promoción|promo|bonificación|bonif|rebaja|dto|desc)
