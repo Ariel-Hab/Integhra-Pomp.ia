@@ -1,2 +1,4 @@
 timestamp,user_message,detected_intent,confidence,sender_id
 2025-10-07T12:37:01.212439,holaa,saludo,0.5454956889152527,console_user
+2025-10-09T19:20:16.850205,con descuento mayor a 5%,buscar_oferta,0.5346729159355164,103
+2025-10-09T19:22:58.142736,reset,afirmar,0.2824834883213043,103
