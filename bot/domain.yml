@@ -503,6 +503,13 @@ actions:
   - action_recomendaciones
   - action_handle_out_of_context
   - action_explicar_ayuda
+  
+nlu:
+  - data/nlu.yml
+  - data/lookup_tables.yml
+  - data/synonyms.yml
+  - data/regex_entities.yml
+  - data/regex_features.yml   
 
 session_config:
   session_expiration_time: 300

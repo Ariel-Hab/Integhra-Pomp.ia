@@ -50,136 +50,37 @@ class ComparisonDetector:
     """Detector de comparaciones en búsquedas"""
     
     def __init__(self):
-        # Patrones para detectar comparaciones numéricas
+        # Patrones para detectar cantidades y operadores numéricos (porcentajes, unidades, pesos, etc.)
         self.numeric_patterns = {
             ComparisonOperator.GREATER_THAN: [
                 r"(?:más|mayor|superior|arriba|encima)\s+(?:de|que|a)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:con|que\s+tenga|que\s+sea)\s+(?:más|mayor)\s+(?:de|que|a)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:superar|exceder|por\s+encima\s+de)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
                 r"(?:mínimo|como\s+mínimo|al\s+menos)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
             ],
             ComparisonOperator.LESS_THAN: [
                 r"(?:menos|menor|inferior|abajo|debajo)\s+(?:de|que|a)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:con|que\s+tenga|que\s+sea)\s+(?:menos|menor)\s+(?:de|que|a)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:por\s+debajo\s+de|no\s+superar|máximo)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:como\s+máximo|hasta)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
+                r"(?:máximo|como\s+máximo|hasta)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
             ],
             ComparisonOperator.EQUAL_TO: [
-                r"(?:igual\s+a|exactamente|justo)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?\s+(?:exactos?|justos?)"
+                r"(?:igual\s+a|exactamente|justo)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
             ]
         }
-        
-        # Patrones para detectar comparaciones de precio
-        self.price_patterns = {
-            ComparisonOperator.LESS_THAN: [
-                r"(?:más\s+)?(?:barato|económico|accesible)\s+que",
-                r"(?:menor|más\s+bajo)\s+precio\s+que",
-                r"(?:cuesta|vale)\s+menos\s+que",
-                r"(?:ofertas?|promociones?|descuentos?)\s+(?:más\s+)?(?:grandes?|importantes?)",
-                r"(?:mejor\s+)?(?:precio|oferta)"
-            ],
-            ComparisonOperator.GREATER_THAN: [
-                r"(?:más\s+)?(?:caro|costoso|premium)\s+que",
-                r"(?:mayor|más\s+alto)\s+precio\s+que",
-                r"(?:cuesta|vale)\s+más\s+que",
-                r"(?:calidad\s+)?premium",
-                r"(?:gama\s+)?alta"
-            ]
-        }
-        
-        # Patrones para detectar comparaciones de calidad
-        self.quality_patterns = {
-            ComparisonOperator.GREATER_THAN: [
-                r"mejor\s+que",
-                r"superior\s+(?:en\s+calidad\s+)?a",
-                r"de\s+(?:mayor|mejor)\s+calidad\s+que",
-                r"más\s+(?:efectivo|eficaz|potente|confiable)\s+que",
-                r"(?:mayor|mejor)\s+(?:rendimiento|efectividad|potencia)",
-                r"(?:alta|superior)\s+calidad"
-            ],
-            ComparisonOperator.LESS_THAN: [
-                r"peor\s+que",
-                r"inferior\s+(?:en\s+calidad\s+)?a",
-                r"de\s+(?:menor|peor)\s+calidad\s+que",
-                r"menos\s+(?:efectivo|eficaz|potente|confiable)\s+que",
-                r"(?:menor|peor)\s+(?:rendimiento|efectividad|potencia)"
-            ]
-        }
-        
-        # Nuevos patrones para detectar comparaciones temporales
-        self.temporal_patterns = {
-            ComparisonOperator.LESS_THAN: [  # Más reciente
-                r"(?:más\s+)?(?:recientes?|nuevos?|actuales?)",
-                r"(?:de\s+)?(?:esta\s+semana|esta\s+quincena|este\s+mes)",
-                r"(?:últimos?|pasados?)\s+(?:\d+\s+)?(?:días?|semanas?|meses?)",
-                r"(?:desde\s+)?(?:hace\s+poco|recientemente)",
-                r"(?:productos?\s+)?(?:del\s+)?(?:2024|2025)",
-                r"(?:lanzamientos?\s+)?(?:recientes?|nuevos?)"
-            ],
-            ComparisonOperator.GREATER_THAN: [  # Más antiguo
-                r"(?:más\s+)?(?:antiguos?|viejos?|anteriores?)",
-                r"(?:de\s+)?(?:antes\s+de|anterior\s+a)",
-                r"(?:hace\s+más\s+de)\s+(?:\d+\s+)?(?:días?|semanas?|meses?)",
-                r"(?:productos?\s+)?(?:clásicos?|tradicionales?)"
-            ],
-            ComparisonOperator.EQUAL_TO: [  # Periodo específico
-                r"(?:de\s+|del\s+|en\s+)?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)",
-                r"(?:del\s+año\s+)?(?:2023|2024|2025)",
-                r"(?:de\s+)?(?:esta\s+temporada|este\s+trimestre)",
-                r"(?:vigentes?|válidos?)\s+(?:hasta|por)"
-            ]
-        }
-        
-        # Patrones para detectar comparaciones de cantidad
-        self.quantity_patterns = {
-            ComparisonOperator.GREATER_THAN: [
-                r"(?:más|mayor|superior)\s+(?:cantidad|stock|existencias?|unidades?)",
-                r"(?:con\s+)?(?:más|mayor)\s+(?:disponibilidad|inventario)",
-                r"(?:abundante|suficiente)\s+stock",
-                r"(?:gran|alta)\s+disponibilidad"
-            ],
-            ComparisonOperator.LESS_THAN: [
-                r"(?:menos|menor|poca?)\s+(?:cantidad|stock|existencias?|unidades?)",
-                r"(?:con\s+)?(?:menor|poca?)\s+(?:disponibilidad|inventario)",
-                r"(?:poco|limitado)\s+stock",
-                r"(?:últimas?\s+)?unidades?"
-            ]
-        }
-        
-        # Patrones para detectar comparaciones de tamaño
-        self.size_patterns = {
-            ComparisonOperator.GREATER_THAN: [
-                r"(?:más\s+)?(?:grandes?|amplios?|extensos?)",
-                r"(?:mayor|superior)\s+(?:tamaño|dimensión|capacidad)",
-                r"(?:de\s+)?(?:gran|mayor)\s+(?:tamaño|capacidad)"
-            ],
-            ComparisonOperator.LESS_THAN: [
-                r"(?:más\s+)?(?:pequeños?|compactos?|reducidos?)",
-                r"(?:menor|inferior)\s+(?:tamaño|dimensión|capacidad)",
-                r"(?:de\s+)?(?:pequeño|menor)\s+(?:tamaño|capacidad)"
-            ]
-        }
-        
-        # Patrones para detectar grupos y roles
+
+        # Patrones opcionales para grupos y roles (no afectan tipo de comparación)
         self.group_patterns = [
             r"(?:entre|de)\s+(?:los|las)\s+(\w+)s?",
-            r"dentro\s+(?:del|de\s+la)\s+(?:grupo|categoría|familia)\s+(?:de\s+)?(\w+)",
-            r"comparado\s+con\s+(?:otros|otras)\s+(\w+)s?",
-            r"(?:del\s+grupo|de\s+la\s+línea)\s+(?:de\s+)?(\w+)"
+            r"dentro\s+(?:del|de\s+la)\s+(?:grupo|categoría|familia)\s+(?:de\s+)?(\w+)"
         ]
-        
-        # Palabras que indican roles específicos
+
         self.role_indicators = {
-            "reference": ["comparado con", "versus", "vs", "frente a", "respecto a", "en relación a"],
-            "target": ["que sea", "que tenga", "del tipo", "como", "similar a", "parecido a"],
-            "group": ["entre", "dentro de", "del grupo", "de la familia", "de la línea", "de la marca"]
+            "reference": ["comparado con", "versus", "vs", "frente a", "respecto a"],
+            "target": ["que sea", "que tenga", "del tipo", "como", "similar a"],
+            "group": ["entre", "dentro de", "del grupo", "de la familia"]
         }
-        
-        # Patrones para normalizar fechas
+
+        # Patrones para normalizar fechas (temporal)
         self.date_patterns = {
             r"(\d{1,2})/(\d{1,2})/(\d{4})": lambda m: f"{m.group(3)}-{m.group(2).zfill(2)}-{m.group(1).zfill(2)}",
-            r"(\d{4})-(\d{1,2})-(\d{1,2})": lambda m: f"{m.group(1)}-{m.group(2).zfill(2)}-{m.group(3).zfill(2)}",
+            r"(\d{4})-(\d{1,2})-(\d{1,2})": lambda m: f"{m.group(1)}-{m.group(2).zfill(2)}-{m.group(3).zfill(2)}"
         }
     
     def detect_comparison(self, text: str, entities: List[Dict[str, Any]]) -> ComparisonResult:
@@ -302,9 +203,9 @@ class ComparisonDetector:
                 logger.info(f"[ComparisonDetector] Comparación detectada exitosamente - Tipo: {result.comparison_type.value if result.comparison_type else 'None'}, Confianza: {result.confidence:.2f}")
             else:
                 logger.debug(f"[ComparisonDetector] No se detectaron comparaciones en: '{text[:50]}...'")
-            
+            logger.debug(f"[DEBUG FINAL] Operador final: {result.operator.value if result.operator else None}")   
             return result
-            
+         
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error durante detección: {e}", exc_info=True)
             # Retornar resultado vacío en caso de error
@@ -340,7 +241,7 @@ class ComparisonDetector:
                             "operator": operator,
                             "quantity": quantity
                         }
-            
+            logger.debug(f"[DEBUG NUMERIC] Probando patrón {pattern}")
             return {"detected": False}
             
         except Exception as e:
