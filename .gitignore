@@ -10,4 +10,4 @@ venv/
 poetry.lock
 .models/
 .bot/models
-
+.bot/.rasa
