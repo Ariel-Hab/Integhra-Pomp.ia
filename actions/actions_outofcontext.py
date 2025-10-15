@@ -289,9 +289,9 @@ class ActionHandleOutOfContext(Action):
         
         fallbacks = {
             "off_topic": [
-                "¡Che, copado! Pero yo te ayudo con productos veterinarios. ¿Necesitás algo?",
-                "¡Dale! Mi fuerte son productos para animales. ¿Te ayudo con algo?",
-                "¡Buenísimo! Yo manejo productos veterinarios. ¿Buscás algo específico?"
+                "Prefiero que hablemos de productos veterinarios. ¿Necesitás algo?",
+                "Mi fuerte son productos para animales. ¿Te ayudo con algo?",
+                "Yo manejo productos veterinarios. ¿Buscás algo específico?"
             ],
             
             "out_of_scope": [

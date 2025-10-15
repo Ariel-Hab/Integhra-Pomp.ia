@@ -21,6 +21,8 @@ class ModificationAction:
     new_value: Optional[str] = None
     confidence: float = 0.0
 
+# actions/actions_busqueda/modification_detector.py
+
 @dataclass
 class ModificationResult:
     detected: bool
@@ -30,10 +32,16 @@ class ModificationResult:
     confidence: float = 0.0
     raw_text: str = ""
     
-    # ✅ NUEVOS: Validación de entidades
+    # ✅ Validación de entidades
     validation_errors: List[Dict[str, Any]] = None
     valid_actions: List[ModificationAction] = None
     invalid_actions: List[ModificationAction] = None
+    
+    # ✅ NUEVO: Información de confirmación
+    needs_confirmation: bool = False
+    confirmation_reason: Optional[str] = None
+    confirmation_message: Optional[str] = None
+    ambiguity_details: Optional[Dict[str, Any]] = None
     
     def __post_init__(self):
         if self.actions is None:
@@ -46,11 +54,23 @@ class ModificationResult:
             self.valid_actions = []
         if self.invalid_actions is None:
             self.invalid_actions = []
+        if self.ambiguity_details is None:
+            self.ambiguity_details = {}
     
     @property
     def has_invalid_entities(self) -> bool:
         """Verifica si hay entidades inválidas"""
         return len(self.invalid_actions) > 0
+    
+    @property
+    def can_proceed_directly(self) -> bool:
+        """Verifica si puede proceder sin confirmación"""
+        return (
+            self.detected and 
+            not self.needs_confirmation and 
+            not self.has_invalid_entities and
+            self.confidence >= 0.75
+        )
 
 class ModificationDetector:
     
@@ -85,6 +105,20 @@ class ModificationDetector:
                 'precio', 'fecha', 'tiempo'
             ]
         }
+        # ✅ NUEVO: Thresholds configurables
+        self.confidence_threshold_high = 0.85  # No confirmar
+        self.confidence_threshold_low = 0.65   # Siempre confirmar
+        self.max_entities_without_confirmation = 3
+        
+        # ✅ NUEVO: Patrones de conjunciones
+        self.conjunction_patterns = [
+            r'\s+y\s+',
+            r'\s+e\s+',
+            r',\s*y\s+',
+            r'\s+pero\s+',
+            r'\s+además\s+',
+            r',\s+(?:saca|quita|elimina|agrega|añade)',
+        ]
         
         # Entidades comunes a ambos
         self.common_entities = ['producto', 'empresa', 'categoria', 'animal']
@@ -106,10 +140,14 @@ class ModificationDetector:
                 valid_types.append(search_type)
         
         return valid_types
+    
+        
     def detect_and_rebuild(self, text: str, entities: List[Dict[str, Any]], 
-                          current_params: Dict[str, Any],search_type: str = 'producto') -> ModificationResult:
+                          current_params: Dict[str, Any],
+                          search_type: str = 'producto',
+                          user_experience_level: str = 'beginner') -> ModificationResult:
         """
-        Detecta modificaciones y rearma los parámetros de búsqueda
+        Detecta modificaciones, valida y determina si necesita confirmación
         """
         try:
             text_lower = text.lower()
@@ -142,6 +180,8 @@ class ModificationDetector:
             if not actions:
                 logger.warning("[ModificationDetector] No se detectaron acciones válidas")
                 return ModificationResult(detected=False, raw_text=text)
+            
+            # ✅ Validar entidades
             invalid_actions = []
             valid_actions = []
             for action in actions:
@@ -152,58 +192,73 @@ class ModificationDetector:
                     logger.warning(
                         f"[ModificationDetector] ⚠️ Entidad '{action.entity_type}' NO válida para búsqueda de {search_type}"
                     )
-
-            # Si hay acciones inválidas, retornar resultado especial
-            if invalid_actions:
-                logger.info(f"[ModificationDetector] {len(invalid_actions)} acciones inválidas detectadas")
+            
+            # Calcular confianza general
+            if valid_actions:
+                confidence = sum(action.confidence for action in valid_actions) / len(valid_actions)
+            else:
+                confidence = 0.0
+            
+            # ✅ NUEVO: Detectar ambigüedad y decidir si necesita confirmación
+            ambiguity_check = self._check_ambiguity(
+                text=text,
+                actions=actions,
+                valid_actions=valid_actions,
+                invalid_actions=invalid_actions,
+                confidence=confidence,
+                search_type=search_type,
+                user_experience_level=user_experience_level
+            )
+            
+            # Si hay entidades inválidas O necesita confirmación por ambigüedad
+            if invalid_actions or ambiguity_check['needs_confirmation']:
+                logger.info(f"[ModificationDetector] ⚠️ Requiere confirmación")
                 
                 result = ModificationResult(
                     detected=True,
-                    modification_type=ModificationType.MIXED if len(actions) > 1 else actions[0].action_type,
-                    actions=actions,  # Todas las acciones (válidas e inválidas)
-                    rebuilt_params={},  # No rearmar aún
-                    confidence=0.5,  # Baja confianza por tener entidades inválidas
+                    modification_type=self._determine_modification_type(actions),
+                    actions=actions,
+                    valid_actions=valid_actions,
+                    invalid_actions=invalid_actions,
+                    rebuilt_params={},  # No rearmar hasta confirmar
+                    confidence=confidence,
                     raw_text=text,
+                    # ✅ Información de confirmación
+                    needs_confirmation=True,
+                    confirmation_reason=ambiguity_check['reason'],
+                    confirmation_message=ambiguity_check['message'],
+                    ambiguity_details=ambiguity_check['details']
                 )
                 
-                # Agregar metadata de validación
-                result.validation_errors = [
-                    {
-                        'entity_type': action.entity_type,
-                        'value': action.new_value or action.old_value,
-                        'reason': f'not_valid_for_{search_type}',
-                        'valid_for': self._get_valid_search_types(action.entity_type)
-                    }
-                    for action in invalid_actions
-                ]
-                result.valid_actions = valid_actions
-                result.invalid_actions = invalid_actions
+                # Agregar errores de validación si hay
+                if invalid_actions:
+                    result.validation_errors = [
+                        {
+                            'entity_type': action.entity_type,
+                            'value': action.new_value or action.old_value,
+                            'reason': f'not_valid_for_{search_type}',
+                            'valid_for': self._get_valid_search_types(action.entity_type)
+                        }
+                        for action in invalid_actions
+                    ]
                 
                 return result
-            # Rearmar parámetros aplicando modificaciones
             
+            # ✅ Si pasa todas las validaciones, rearmar parámetros
             rebuilt_params = self._rebuild_parameters(current_params, valid_actions)
-            
-            # Determinar tipo de modificación
-            action_types = [action.action_type for action in actions]
-            if len(set(action_types)) > 1:
-                modification_type = ModificationType.MIXED
-            else:
-                modification_type = action_types[0]
-            
-            confidence = sum(action.confidence for action in actions) / len(actions)
             
             result = ModificationResult(
                 detected=True,
-                modification_type=modification_type,
-                actions=actions,
+                modification_type=self._determine_modification_type(valid_actions),
+                actions=valid_actions,
+                valid_actions=valid_actions,
                 rebuilt_params=rebuilt_params,
                 confidence=confidence,
-                raw_text=text
+                raw_text=text,
+                needs_confirmation=False
             )
             
-            logger.info(f"[ModificationDetector] ✅ Modificación detectada: {modification_type.value}")
-            logger.info(f"[ModificationDetector] ✅ Parámetros rearmados: {list(rebuilt_params.keys())}")
+            logger.info(f"[ModificationDetector] ✅ Modificación validada y lista")
             logger.info(f"[ModificationDetector] ✅ Confianza: {confidence:.2f}")
             
             return result
@@ -211,6 +266,188 @@ class ModificationDetector:
         except Exception as e:
             logger.error(f"[ModificationDetector] Error: {e}", exc_info=True)
             return ModificationResult(detected=False, raw_text=text)
+    
+    def _check_ambiguity(
+        self,
+        text: str,
+        actions: List[ModificationAction],
+        valid_actions: List[ModificationAction],
+        invalid_actions: List[ModificationAction],
+        confidence: float,
+        search_type: str,
+        user_experience_level: str
+    ) -> Dict[str, Any]:
+        """
+        Verifica si hay ambigüedad y decide si necesita confirmación
+        
+        Returns:
+            {
+                'needs_confirmation': bool,
+                'reason': str,
+                'message': str,
+                'details': dict
+            }
+        """
+        
+        # ✅ 1. Confianza muy baja -> SIEMPRE confirmar
+        if confidence < self.confidence_threshold_low:
+            return {
+                'needs_confirmation': True,
+                'reason': 'low_confidence',
+                'message': self._build_confirmation_message(actions, 'low_confidence'),
+                'details': {'confidence': confidence}
+            }
+        
+        # ✅ 2. Usuario experto + confianza alta -> NO confirmar
+        if user_experience_level == 'expert' and confidence >= self.confidence_threshold_high:
+            return {
+                'needs_confirmation': False,
+                'reason': None,
+                'message': None,
+                'details': {}
+            }
+        
+        # ✅ 3. Entidades inválidas -> CONFIRMAR (para informar)
+        if invalid_actions:
+            return {
+                'needs_confirmation': True,
+                'reason': 'invalid_entities',
+                'message': self._build_confirmation_message(actions, 'invalid_entities', invalid_actions),
+                'details': {
+                    'invalid_count': len(invalid_actions),
+                    'invalid_entities': [a.entity_type for a in invalid_actions]
+                }
+            }
+        
+        # ✅ 4. Detectar ambigüedad intent: tiene conjunción pero solo 1 acción
+        has_conjunction = self._has_conjunction(text)
+        if has_conjunction and len(actions) == 1:
+            return {
+                'needs_confirmation': True,
+                'reason': 'conjunction_mismatch',
+                'message': (
+                    f"Veo que usaste 'y' en tu frase, pero solo detecté UNA operación. "
+                    f"¿Querés solo **{self._action_to_text(actions[0])}**?"
+                ),
+                'details': {'has_conjunction': True, 'action_count': 1}
+            }
+        
+        # ✅ 5. No tiene conjunción pero detectó múltiples acciones
+        if not has_conjunction and len(actions) > 1:
+            return {
+                'needs_confirmation': True,
+                'reason': 'multiple_without_conjunction',
+                'message': (
+                    f"Detecté {len(actions)} operaciones, ¿es correcto?\n" +
+                    "\n".join([f"{i+1}. {self._action_to_text(a)}" for i, a in enumerate(actions)])
+                ),
+                'details': {'has_conjunction': False, 'action_count': len(actions)}
+            }
+        
+        # ✅ 6. Demasiadas entidades -> confirmar
+        if len(actions) > self.max_entities_without_confirmation:
+            return {
+                'needs_confirmation': True,
+                'reason': 'too_many_entities',
+                'message': self._build_confirmation_message(actions, 'too_many_entities'),
+                'details': {'action_count': len(actions)}
+            }
+        
+        # ✅ 7. Confianza media -> confirmar (solo para beginners)
+        if user_experience_level == 'beginner' and confidence < self.confidence_threshold_high:
+            return {
+                'needs_confirmation': True,
+                'reason': 'medium_confidence',
+                'message': self._build_confirmation_message(actions, 'medium_confidence'),
+                'details': {'confidence': confidence}
+            }
+        
+        # ✅ Todo OK, no necesita confirmación
+        return {
+            'needs_confirmation': False,
+            'reason': None,
+            'message': None,
+            'details': {}
+        }
+    
+    def _has_conjunction(self, text: str) -> bool:
+        """Detecta si hay conjunciones en el texto"""
+        return any(
+            re.search(pattern, text, re.IGNORECASE) 
+            for pattern in self.conjunction_patterns
+        )
+    
+    def _action_to_text(self, action: ModificationAction) -> str:
+        """Convierte una acción a texto legible"""
+        if action.action_type == ModificationType.REPLACE:
+            return f"Cambiar {action.entity_type} de '{action.old_value}' a '{action.new_value}'"
+        elif action.action_type == ModificationType.ADD_FILTER:
+            return f"Agregar filtro {action.entity_type} = '{action.new_value}'"
+        elif action.action_type == ModificationType.REMOVE_FILTER:
+            return f"Quitar filtro {action.entity_type}"
+        else:
+            return f"Modificar {action.entity_type}"
+    
+    def _build_confirmation_message(
+        self,
+        actions: List[ModificationAction],
+        reason: str,
+        invalid_actions: List[ModificationAction] = None
+    ) -> str:
+        """Construye mensaje de confirmación según el motivo"""
+        
+        if reason == 'invalid_entities':
+            invalid_list = "\n".join([
+                f"  • {a.entity_type}: '{a.new_value or a.old_value}'"
+                for a in invalid_actions
+            ])
+            return (
+                f"⚠️ Detecté entidades que no son válidas para este tipo de búsqueda:\n"
+                f"{invalid_list}\n\n"
+                f"¿Querés continuar solo con los filtros válidos?"
+            )
+        
+        elif reason == 'too_many_entities':
+            action_list = "\n".join([
+                f"  {i+1}. {self._action_to_text(a)}"
+                for i, a in enumerate(actions)
+            ])
+            return (
+                f"Detecté {len(actions)} operaciones:\n"
+                f"{action_list}\n\n"
+                f"¿Es correcto?"
+            )
+        
+        elif reason == 'low_confidence':
+            return (
+                f"No estoy 100% seguro de lo que querés hacer. "
+                f"¿Podrías confirmarlo?"
+            )
+        
+        elif reason == 'medium_confidence':
+            if len(actions) == 1:
+                return f"¿Querés **{self._action_to_text(actions[0])}**?"
+            else:
+                action_list = "\n".join([
+                    f"  {i+1}. {self._action_to_text(a)}"
+                    for i, a in enumerate(actions)
+                ])
+                return f"¿Querés hacer esto?\n{action_list}"
+        
+        # Fallback genérico
+        return "¿Es esto lo que querés hacer?"
+    
+    def _determine_modification_type(self, actions: List[ModificationAction]) -> ModificationType:
+        """Determina el tipo de modificación general"""
+        if not actions:
+            return None
+        
+        action_types = [action.action_type for action in actions]
+        
+        if len(set(action_types)) > 1:
+            return ModificationType.MIXED
+        else:
+            return action_types[0]
     
     def _detect_replacements(self, text: str, entities: List[Dict[str, Any]], 
                             current_params: Dict[str, Any]) -> List[ModificationAction]:

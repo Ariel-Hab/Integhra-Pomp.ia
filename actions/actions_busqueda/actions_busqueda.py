@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime, timedelta
 import re
 
+import actions
 from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -372,6 +373,84 @@ class ActionBusquedaSituacion(Action):
         except Exception as e:
             logger.error(f"[OperatorMap] Error: {e}")
             return None
+        
+    def _handle_add_modifications(self, context, tracker, dispatcher):
+        """Maneja agregados simples de nuevos parámetros a la búsqueda existente"""
+        try:
+            entities = tracker.latest_message.get("entities", [])
+            previous_params = self._extract_previous_search_parameters(context)
+            search_type = previous_params.pop('_previous_search_type', 'producto')
+
+            to_add = []
+
+            # Clasificar y normalizar entidades
+            for entity in entities:
+                entity_type = entity.get('entity')
+                entity_value = entity.get('value')
+                entity_role = entity.get('role')
+                entity_group = entity.get('group')
+
+                # Consideramos 'add' o sin rol explícito como agregado
+                if entity_role in (None, 'add', 'nuevo', 'en_oferta', 'poco_stock', 'vence_pronto'):
+                    to_add.append({
+                        'type': entity_type,
+                        'value': entity_value,
+                        'role': entity_role,
+                        'group': entity_group
+                    })
+
+            logger.info(f"[AddMod] Agregar: {to_add}")
+
+            # Aplicar agregados
+            for item in to_add:
+                entity_type = item['type']
+                entity_value = item['value']
+                entity_role = item['role']
+                entity_group = item['group']
+
+                # Caso especial: descuento con comparador y cantidad
+                if entity_group == 'descuento_filter':
+                    discount_data = previous_params.get('descuento_filter', {})
+                    if entity_type == 'comparador':
+                        discount_data['comparador'] = entity_value
+                    elif entity_type == 'cantidad_descuento':
+                        discount_data['cantidad'] = entity_value
+                    previous_params['descuento_filter'] = discount_data
+                    continue
+
+                # Si ya existe el tipo, concatenar (por ejemplo, múltiples categorías o animales)
+                if entity_type in previous_params:
+                    current = previous_params[entity_type]
+                    if isinstance(current, dict) and 'value' in current:
+                        current['value'] += f", {entity_value}"
+                    elif isinstance(current, str):
+                        previous_params[entity_type] = f"{current}, {entity_value}"
+                    else:
+                        previous_params[entity_type] = entity_value
+                else:
+                    # Si el rol sirve como subclave (e.g., dosis->gramaje/forma)
+                    if entity_role and entity_role not in ('add', None):
+                        previous_params.setdefault(entity_type, {})[entity_role] = entity_value
+                    else:
+                        previous_params[entity_type] = entity_value
+
+            # Ejecutar búsqueda actualizada
+            result = self._execute_search(
+                search_type,
+                previous_params,
+                dispatcher,
+                None,
+                None,
+                is_modification=True
+            )
+
+            result['modifications'] = {'added': to_add}
+            return result
+
+        except Exception as e:
+            logger.error(f"[AddMod] Error: {e}", exc_info=True)
+            return {'type': 'add_mod_error'}
+
     def _handle_multiple_modifications(self, context, tracker, dispatcher):
         """Maneja múltiples modificaciones en una oración"""
         try:
@@ -439,7 +518,7 @@ class ActionBusquedaSituacion(Action):
                     previous_params[entity_type] = entity_value
             
             # Ejecutar búsqueda con todos los cambios
-            result = self._execute_search(search_type, previous_params, dispatcher, None, None)
+            result = self._execute_search(search_type, previous_params, dispatcher, None, None, is_modification=True)
             result['modifications'] = {
                 'added': to_add,
                 'removed': to_remove,
@@ -767,22 +846,22 @@ class ActionBusquedaSituacion(Action):
     def _handle_modify_search_intent(self, context: Dict[str, Any], tracker: Tracker, 
                                     dispatcher: CollectingDispatcher, search_type: str,
                                     comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
-        """
-        ✅ OPTIMIZADO: Maneja modificaciones usando roles old/new del NLU
-        """
         try:
             user_message = context.get('user_message', '')
             
             logger.info(f"[ModifySearch] Procesando modificación (tipo: {search_type})")
             
-            # ✅ NUEVO: Extraer modificaciones directamente del NLU
+            # ✅ NUEVO: Determinar nivel de experiencia del usuario
+            search_history = context.get('search_history', [])
+            modification_count = len([h for h in search_history if h.get('status') == 'completed'])
+            user_level = 'expert' if modification_count > 10 else 'beginner'
+            
+            # Extraer modificaciones del NLU
             nlu_modifications = self._extract_nlu_modifications(tracker)
             
-            # PASO 1: Si hay modificaciones del NLU, usarlas prioritariamente
             if nlu_modifications['detected']:
                 logger.info(f"[ModifySearch] Usando {len(nlu_modifications['actions'])} modificaciones del NLU")
                 
-                # Validar entidades para el tipo de búsqueda
                 validation_result = self._validate_modification_entities(
                     nlu_modifications['actions'], search_type
                 )
@@ -792,12 +871,46 @@ class ActionBusquedaSituacion(Action):
                         validation_result, search_type, dispatcher
                     )
                 
-                # Aplicar modificaciones
+                # ✅ NUEVO: Crear un pseudo modification_result para validar ambigüedad
+                from .modification_detector import ModificationAction, ModificationType
+                
+                pseudo_actions = []
+                for action_dict in nlu_modifications['actions']:
+                    action_obj = ModificationAction(
+                        action_type=ModificationType.REPLACE if action_dict['type'] == 'replace' else ModificationType.ADD_FILTER,
+                        entity_type=action_dict['entity_type'],
+                        old_value=action_dict.get('old_value'),
+                        new_value=action_dict.get('new_value'),
+                        confidence=0.9  # Alta confianza del NLU
+                    )
+                    pseudo_actions.append(action_obj)
+                
+                # ✅ NUEVO: Verificar ambigüedad
+                ambiguity_check = self.modification_detector._check_ambiguity(
+                    text=user_message,
+                    actions=pseudo_actions,
+                    valid_actions=pseudo_actions,
+                    invalid_actions=[],
+                    confidence=0.9,
+                    search_type=search_type,
+                    user_experience_level=user_level
+                )
+                
+                # ✅ NUEVO: Si necesita confirmación, crear sugerencia
+                if ambiguity_check['needs_confirmation']:
+                    return self._create_modification_confirmation_suggestion(
+                        actions=nlu_modifications['actions'],
+                        ambiguity_check=ambiguity_check,
+                        search_type=search_type,
+                        dispatcher=dispatcher
+                    )
+                
+                # Si no necesita confirmación, aplicar directamente
                 previous_params = self._extract_previous_search_parameters(context)
                 rebuilt_params = self._apply_nlu_modifications(
                     previous_params, nlu_modifications['actions']
                 )
-                
+            
             else:
                 # Fallback: usar detector de modificaciones
                 logger.info("[ModifySearch] No hay modificaciones NLU, usando detector")
@@ -810,14 +923,30 @@ class ActionBusquedaSituacion(Action):
                 previous_params = self._extract_previous_search_parameters(context)
                 entities = tracker.latest_message.get("entities", [])
                 
+                # ✅ MODIFICAR: Pasar user_level
                 modification_result = self.modification_detector.detect_and_rebuild(
-                    user_message, entities, previous_params, search_type=search_type
+                    user_message, entities, previous_params, 
+                    search_type=search_type,
+                    user_experience_level=user_level  # ✅ NUEVO
                 )
                 
                 if not modification_result.detected:
                     logger.warning("[ModifySearch] No se detectaron modificaciones")
                     dispatcher.utter_message("No pude identificar qué modificar.")
                     return {'type': 'modify_error', 'reason': 'no_detection'}
+                
+                # ✅ NUEVO: Verificar si necesita confirmación
+                if modification_result.needs_confirmation:
+                    return self._create_modification_confirmation_suggestion(
+                        actions=modification_result.actions,
+                        ambiguity_check={
+                            'reason': modification_result.confirmation_reason,
+                            'message': modification_result.confirmation_message,
+                            'details': modification_result.ambiguity_details
+                        },
+                        search_type=search_type,
+                        dispatcher=dispatcher
+                    )
                 
                 if modification_result.has_invalid_entities:
                     return self._handle_invalid_entity_modification(
@@ -826,7 +955,7 @@ class ActionBusquedaSituacion(Action):
                 
                 rebuilt_params = modification_result.rebuilt_params
             
-            # PASO 2: Ejecutar búsqueda modificada
+            # PASO 2: Ejecutar búsqueda modificada (código existente sin cambios)
             if not rebuilt_params:
                 dispatcher.utter_message("No hay parámetros válidos para modificar.")
                 return {'type': 'modify_error', 'reason': 'no_params'}
@@ -834,9 +963,16 @@ class ActionBusquedaSituacion(Action):
             temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
             
             logger.info(f"[ModifySearch] Ejecutando búsqueda modificada de {search_type}")
-            result = self._execute_search(search_type, rebuilt_params, dispatcher, comparison_info, temporal_filters)
+            result = self._execute_search(
+                search_type, rebuilt_params, dispatcher, 
+                comparison_info, temporal_filters,
+                is_modification=True,
+                modification_details={
+                    'actions': nlu_modifications.get('actions', []),
+                    'previous_params': previous_params
+                }
+            )
             
-            # Marcar como modificación
             result['modification_applied'] = True
             result['combined_params'] = rebuilt_params
             
@@ -845,6 +981,53 @@ class ActionBusquedaSituacion(Action):
         except Exception as e:
             logger.error(f"[ModifySearch] Error: {e}", exc_info=True)
             dispatcher.utter_message("Hubo un error modificando tu búsqueda.")
+            return {'type': 'modify_error', 'error': str(e)}
+
+    # ✅ NUEVO: Agregar este método
+    def _create_modification_confirmation_suggestion(self, actions: List[Dict[str, Any]],
+                                                    ambiguity_check: Dict[str, Any],
+                                                    search_type: str,
+                                                    dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+        """Crea una sugerencia de confirmación para modificación"""
+        try:
+            confirmation_message = ambiguity_check.get('message')
+            
+            # Enviar mensaje
+            dispatcher.utter_message(text=confirmation_message)
+            
+            # Serializar actions
+            serialized_actions = []
+            for action in actions:
+                if isinstance(action, dict):
+                    serialized_actions.append(action)
+                else:
+                    serialized_actions.append({
+                        'type': action.action_type.value if hasattr(action, 'action_type') else 'unknown',
+                        'entity_type': action.entity_type if hasattr(action, 'entity_type') else '',
+                        'old_value': action.old_value if hasattr(action, 'old_value') else None,
+                        'new_value': action.new_value if hasattr(action, 'new_value') else None
+                    })
+            
+            suggestion_data = {
+                'suggestion_type': 'modification_confirmation',  # ✅ NUEVO TIPO
+                'search_type': search_type,
+                'actions': serialized_actions,
+                'ambiguity_reason': ambiguity_check.get('reason'),
+                'ambiguity_details': ambiguity_check.get('details', {}),
+                'timestamp': datetime.now().isoformat(),
+                'awaiting_response': True
+            }
+            
+            logger.info(f"[ConfirmSuggestion] Creada sugerencia de confirmación")
+            
+            return {
+                'type': 'entity_suggestion',  # Reutilizar flujo existente
+                'suggestion_data': suggestion_data,
+                'slot_cleanup_events': []
+            }
+            
+        except Exception as e:
+            logger.error(f"[ConfirmSuggestion] Error: {e}")
             return {'type': 'modify_error', 'error': str(e)}
 
     def _extract_nlu_modifications(self, tracker: Tracker) -> Dict[str, Any]:
@@ -1003,8 +1186,8 @@ class ActionBusquedaSituacion(Action):
 
     
     def _handle_search_intent(self, context: Dict[str, Any], tracker: Tracker, 
-                            dispatcher: CollectingDispatcher, 
-                            comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
+                        dispatcher: CollectingDispatcher, 
+                        comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
         """Manejo principal de búsquedas"""
         try:
             intent_name = context['current_intent']
@@ -1017,8 +1200,7 @@ class ActionBusquedaSituacion(Action):
             elif intent_name == 'modificar_busqueda:multiple':
                 return self._handle_multiple_modifications(context, tracker, dispatcher)
             elif intent_name == 'modificar_busqueda:agregar':
-                # TODO: Implementar
-                pass
+                return self._handle_add_modifications(context, tracker, dispatcher)
             
             elif intent_name == 'modificar_busqueda:reemplazar':
                 return self._handle_modify_search_intent(context, tracker, dispatcher, 
@@ -1031,10 +1213,13 @@ class ActionBusquedaSituacion(Action):
             # Búsqueda normal
             slot_cleanup_events = self._generate_slot_cleanup_events(tracker, intent_name)
             search_params = self._extract_search_parameters_from_entities(tracker)
-        
+            
+            # ✅ NUEVO: Detectar si hay entidades en el mensaje original
+            entities = tracker.latest_message.get("entities", [])
+            has_entities = len(entities) > 0
             
             if search_params:
-                # Validar coherencia de comparación
+                # CASO 1: Hay parámetros válidos → ejecutar búsqueda
                 if comparison_info and comparison_info.get('detected'):
                     is_coherent = self._validate_comparison_coherence(comparison_info, search_params)
                     if not is_coherent:
@@ -1043,11 +1228,38 @@ class ActionBusquedaSituacion(Action):
                 
                 temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
                 
-                result = self._execute_search(search_type, search_params, dispatcher, comparison_info, temporal_filters)
+                result = self._execute_search(
+                    search_type, 
+                    search_params, 
+                    dispatcher, 
+                    comparison_info, 
+                    temporal_filters,
+                    is_modification=False
+                )
                 result['slot_cleanup_events'] = slot_cleanup_events
                 return result
+            
+            elif not has_entities:
+                # CASO 2: No hay parámetros Y no hay entidades → búsqueda sin filtros
+                logger.info(f"[Search] Búsqueda sin parámetros solicitada para {search_type}")
+                
+                temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
+                
+                result = self._execute_search(
+                    search_type, 
+                    {},  # ✅ Parámetros vacíos
+                    dispatcher, 
+                    comparison_info, 
+                    temporal_filters,
+                    is_modification=False
+                )
+                result['slot_cleanup_events'] = slot_cleanup_events
+                return result
+            
             else:
-                # Sin parámetros válidos - validar y sugerir
+                # CASO 3: Hay entidades pero no son válidas → validar y sugerir
+                logger.info(f"[Search] Entidades detectadas pero inválidas, solicitando corrección")
+                
                 validation_result = self._validate_entities_with_helper(tracker, intent_name, dispatcher)
                 
                 if validation_result.get('has_suggestions'):
@@ -1057,8 +1269,21 @@ class ActionBusquedaSituacion(Action):
                         'slot_cleanup_events': slot_cleanup_events
                     }
                 else:
-                    dispatcher.utter_message("Por favor indicame parametros para realizar la busqueda")
-                    return {'type': 'validation_error', 'slot_cleanup_events': slot_cleanup_events}
+                    # Si hay entidades pero no hay sugerencias, permitir búsqueda sin filtros
+                    logger.info(f"[Search] Sin sugerencias válidas, permitiendo búsqueda sin filtros")
+                    
+                    temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
+                    
+                    result = self._execute_search(
+                        search_type, 
+                        {},
+                        dispatcher, 
+                        comparison_info, 
+                        temporal_filters,
+                        is_modification=False
+                    )
+                    result['slot_cleanup_events'] = slot_cleanup_events
+                    return result
                 
         except Exception as e:
             logger.error(f"[Search] Error: {e}", exc_info=True)
@@ -1728,7 +1953,8 @@ class ActionBusquedaSituacion(Action):
             return {'type': 'modify_error', 'error': str(e)}
 
     def _execute_search(self, search_type: str, parameters: Dict[str, str], dispatcher: CollectingDispatcher, 
-                       comparison_info: Dict[str, Any] = None, temporal_filters: Dict[str, Any] = None) -> Dict[str, Any]:
+                       comparison_info: Dict[str, Any] = None, temporal_filters: Dict[str, Any] = None,is_modification: bool = False,  # ✅ NUEVO
+                   modification_details: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         ✅ OPTIMIZADO: Ejecuta búsqueda usando información de grupos y roles
         """
@@ -1769,10 +1995,10 @@ class ActionBusquedaSituacion(Action):
                 "search_type": search_type,
                 "parameters": self._serialize_parameters(parameters),
                 "validated": True,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
+                "search_action": "modify" if is_modification else "new",
+                "modification_details": modification_details if is_modification else None
             }
-            
-            # ✅ NUEVO: Agregar información de grupos si está disponible
             if comparison_info:
                 nlu_groups = comparison_info.get('nlu_groups', {})
                 if nlu_groups:
