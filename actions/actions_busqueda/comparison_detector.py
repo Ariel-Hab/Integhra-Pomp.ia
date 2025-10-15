@@ -46,307 +46,354 @@ class ComparisonResult:
     temporal_filters: Optional[Dict[str, Any]] = None
     normalized_dates: Optional[Dict[str, str]] = None
 
+# actions/actions_busqueda/comparison_detector.py
+
+import re
+import logging
+from typing import Dict, Any, Optional, List
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
 class ComparisonDetector:
-    """Detector de comparaciones en búsquedas"""
+    """Detecta y procesa comparaciones en el texto del usuario"""
     
     def __init__(self):
-        # Patrones para detectar cantidades y operadores numéricos (porcentajes, unidades, pesos, etc.)
+        """✅ INICIALIZAR TODOS LOS PATRONES"""
+        
+        # ========== PATRONES NUMÉRICOS (descuento/bonificación) ==========
         self.numeric_patterns = {
-            ComparisonOperator.GREATER_THAN: [
-                r"(?:más|mayor|superior|arriba|encima)\s+(?:de|que|a)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:mínimo|como\s+mínimo|al\s+menos)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
+            'greater_than': [
+                r'(?:mayor|mas|más|superior|arriba)\s+(?:de|del|a|al?)\s+(\d+)',
+                r'(\d+)\s*%?\s+(?:o|ó)\s+(?:mas|más|mayor)',
+                r'(?:supera|excede)\s+(?:el?\s+)?(\d+)'
             ],
-            ComparisonOperator.LESS_THAN: [
-                r"(?:menos|menor|inferior|abajo|debajo)\s+(?:de|que|a)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?",
-                r"(?:máximo|como\s+máximo|hasta)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
+            'less_than': [
+                r'(?:menor|menos)\s+(?:de|del|a|al?)\s+(\d+)',
+                r'(?:hasta|máximo|como\s+máximo)\s+(\d+)',
+                r'(?:no\s+(?:mas|más)\s+de|debajo\s+de)\s+(\d+)'
             ],
-            ComparisonOperator.EQUAL_TO: [
-                r"(?:igual\s+a|exactamente|justo)\s+(\d+(?:\.\d+)?)\s*(%|pesos?|usd?|dólares?|unidades?)?"
+            'equal_to': [
+                r'(?:igual\s+a|exactamente|justo)\s+(\d+)',
+                r'(?:de|del)\s+(\d+)\s*%',
+                r'^(\d+)\s*%?\s*$'
+            ],
+            'between': [
+                r'entre\s+(\d+)\s+y\s+(\d+)',
+                r'de\s+(\d+)\s+a\s+(\d+)',
+                r'desde\s+(\d+)\s+hasta\s+(\d+)'
             ]
         }
-
-        # Patrones opcionales para grupos y roles (no afectan tipo de comparación)
-        self.group_patterns = [
-            r"(?:entre|de)\s+(?:los|las)\s+(\w+)s?",
-            r"dentro\s+(?:del|de\s+la)\s+(?:grupo|categoría|familia)\s+(?:de\s+)?(\w+)"
-        ]
-
-        self.role_indicators = {
-            "reference": ["comparado con", "versus", "vs", "frente a", "respecto a"],
-            "target": ["que sea", "que tenga", "del tipo", "como", "similar a"],
-            "group": ["entre", "dentro de", "del grupo", "de la familia"]
+        
+        # ========== PATRONES DE PRECIO ==========
+        self.price_patterns = {
+            'less_than': [
+                r'(?:menos|menor|más\s+barato|hasta)\s+(?:de\s+)?(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)',
+                r'(?:no\s+(?:más|mas)\s+de|máximo)\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)',
+                r'(?:que\s+cueste\s+menos\s+de)\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)'
+            ],
+            'greater_than': [
+                r'(?:más|mas|mayor)\s+(?:de|a)\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)',
+                r'(?:arriba\s+de|superior\s+a)\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)'
+            ],
+            'equal_to': [
+                r'(?:a|de|por)\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)\s*(?:pesos?)?',
+                r'(?:precio|cuesta|vale)\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)'
+            ],
+            'between': [
+                r'entre\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)\s+y\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)',
+                r'de\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)\s+a\s+(?:\$|pesos?)?\s*(\d+(?:\.\d+)?)'
+            ]
         }
-
-        # Patrones para normalizar fechas (temporal)
-        self.date_patterns = {
-            r"(\d{1,2})/(\d{1,2})/(\d{4})": lambda m: f"{m.group(3)}-{m.group(2).zfill(2)}-{m.group(1).zfill(2)}",
-            r"(\d{4})-(\d{1,2})-(\d{1,2})": lambda m: f"{m.group(1)}-{m.group(2).zfill(2)}-{m.group(3).zfill(2)}"
+        
+        # ========== PATRONES DE CALIDAD ==========
+        self.quality_patterns = {
+            'greater_than': [
+                r'(?:mejor|superior|más\s+(?:bueno|buena))\s+(?:que|a)',
+                r'(?:de\s+)?(?:mayor|mejor)\s+calidad'
+            ],
+            'less_than': [
+                r'(?:peor|inferior|más\s+(?:malo|mala))\s+(?:que|a)',
+                r'(?:de\s+)?(?:menor|peor)\s+calidad'
+            ],
+            'equal_to': [
+                r'(?:igual|misma|mismo)\s+(?:que|a|de)',
+                r'(?:tan\s+(?:bueno|buena)\s+como)'
+            ]
         }
+        
+        # ========== PATRONES TEMPORALES ==========
+        self.temporal_patterns = {
+            'vigente': [
+                r'vigente', r'válid[oa]', r'activ[oa]', r'disponible',
+                r'en\s+curso', r'actual'
+            ],
+            'vencimiento': [
+                r'venc[ie]', r'expira', r'caduc', r'hasta\s+(?:el\s+)?(\d{1,2}[/-]\d{1,2})',
+                r'antes\s+de', r'por\s+vencer'
+            ],
+            'periodo': [
+                r'(?:este|del)\s+(mes|año|semana|trimestre)',
+                r'(?:en|de|del)\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)',
+                r'(?:en|de)\s+(\d{4})'
+            ]
+        }
+        
+        # ========== PATRONES DE CANTIDAD ==========
+        self.quantity_patterns = {
+            'greater_than': [
+                r'(?:más|mas)\s+de\s+(\d+)\s*(?:unidades?|productos?|items?)?',
+                r'(?:mayor|superior)\s+a\s+(\d+)',
+                r'(?:arriba\s+de|por\s+encima\s+de)\s+(\d+)'
+            ],
+            'less_than': [
+                r'(?:menos|menor)\s+(?:de|que|a)\s+(\d+)',
+                r'(?:hasta|máximo)\s+(\d+)',
+                r'(?:no\s+más\s+de)\s+(\d+)'
+            ],
+            'equal_to': [
+                r'(?:exactamente|justo)\s+(\d+)',
+                r'^(\d+)\s*(?:unidades?|productos?)?$'
+            ],
+            'between': [
+                r'entre\s+(\d+)\s+y\s+(\d+)',
+                r'de\s+(\d+)\s+a\s+(\d+)'
+            ]
+        }
+        
+        # ========== PATRONES DE TAMAÑO ==========
+        self.size_patterns = {
+            'greater_than': [
+                r'(?:mayor|más\s+grande)\s+(?:que|de|a)\s+(\d+(?:\.\d+)?)\s*(ml|l|kg|g|mg|cm|m)?',
+                r'(?:superior|arriba)\s+(?:de|a)\s+(\d+(?:\.\d+)?)\s*(ml|l|kg|g|mg|cm|m)?'
+            ],
+            'less_than': [
+                r'(?:menor|más\s+chico|más\s+pequeño)\s+(?:que|de|a)\s+(\d+(?:\.\d+)?)\s*(ml|l|kg|g|mg|cm|m)?',
+                r'(?:hasta|máximo)\s+(\d+(?:\.\d+)?)\s*(ml|l|kg|g|mg|cm|m)?'
+            ],
+            'equal_to': [
+                r'(?:de|del?)\s+(\d+(?:\.\d+)?)\s*(ml|l|kg|g|mg|cm|m)',
+                r'^(\d+(?:\.\d+)?)\s*(ml|l|kg|g|mg|cm|m)$'
+            ]
+        }
+        
+        logger.info("[ComparisonDetector] ✅ Inicializado con todos los patrones")
     
-    def detect_comparison(self, text: str, entities: List[Dict[str, Any]]) -> ComparisonResult:
+    def detect_comparison(self, text: str, entities: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Detecta comparaciones en el texto y entidades
+        Detecta comparaciones en el texto
         
         Args:
-            text: Texto del mensaje del usuario
-            entities: Lista de entidades detectadas por Rasa
+            text: Texto del usuario
+            entities: Entidades detectadas por NLU
             
         Returns:
-            ComparisonResult con toda la información detectada
+            Dict con información de comparación detectada
         """
         try:
-            text_lower = text.lower()
+            logger.info(f"[ComparisonDetector] Analizando texto: '{text[:50]}...'")
             
-            logger.info(f"[ComparisonDetector] Analizando texto: '{text[:100]}...'")
+            results = {
+                'numeric': self._detect_numeric_comparison(text, entities),
+                'price': self._detect_price_comparison(text),
+                'quality': self._detect_quality_comparison(text),
+                'temporal': self._detect_temporal_comparison(text),
+                'quantity': self._detect_quantity_comparison(text),
+                'size': self._detect_size_comparison(text)
+            }
             
-            # Inicializar resultado
-            result = ComparisonResult(
-                detected=False,
-                comparison_type=None,
-                operator=None,
-                entities=[],
-                quantity=None,
-                groups_detected=[],
-                roles_detected=[],
-                confidence=0.0,
-                raw_expression=text,
-                temporal_filters=None,
-                normalized_dates=None
-            )
+            # Encontrar la comparación con mayor confianza
+            best_comparison = self._select_best_comparison(results)
             
-            # 1. Detectar comparaciones numéricas
-            numeric_result = self._detect_numeric_comparison(text_lower)
-            if numeric_result["detected"]:
-                result.detected = True
-                result.comparison_type = ComparisonType.NUMERIC
-                result.operator = numeric_result["operator"]
-                result.quantity = numeric_result["quantity"]
-                result.confidence += 0.4
-                logger.info(f"[ComparisonDetector] Comparación numérica detectada: {result.operator.value} {result.quantity}")
-            
-            # 2. Detectar comparaciones de precio
-            price_result = self._detect_price_comparison(text_lower)
-            if price_result["detected"]:
-                result.detected = True
-                if result.comparison_type is None:
-                    result.comparison_type = ComparisonType.PRICE
-                result.operator = price_result["operator"]
-                result.confidence += 0.3
-                logger.info(f"[ComparisonDetector] Comparación de precio detectada: {result.operator.value}")
-            
-            # 3. Detectar comparaciones de calidad
-            quality_result = self._detect_quality_comparison(text_lower)
-            if quality_result["detected"]:
-                result.detected = True
-                if result.comparison_type is None:
-                    result.comparison_type = ComparisonType.QUALITY
-                result.operator = quality_result["operator"]
-                result.confidence += 0.3
-                logger.info(f"[ComparisonDetector] Comparación de calidad detectada: {result.operator.value}")
-            
-            # 4. Detectar comparaciones temporales (NUEVA FUNCIONALIDAD)
-            temporal_result = self._detect_temporal_comparison(text_lower)
-            if temporal_result["detected"]:
-                result.detected = True
-                if result.comparison_type is None:
-                    result.comparison_type = ComparisonType.TEMPORAL
-                result.operator = temporal_result["operator"]
-                result.temporal_filters = temporal_result.get("filters")
-                result.normalized_dates = temporal_result.get("normalized_dates")
-                result.confidence += 0.35
-                logger.info(f"[ComparisonDetector] Comparación temporal detectada: {result.operator.value}, filtros: {result.temporal_filters}")
-            
-            # 5. Detectar comparaciones de cantidad
-            quantity_result = self._detect_quantity_comparison(text_lower)
-            if quantity_result["detected"]:
-                result.detected = True
-                if result.comparison_type is None:
-                    result.comparison_type = ComparisonType.QUANTITY
-                result.operator = quantity_result["operator"]
-                result.confidence += 0.3
-                logger.info(f"[ComparisonDetector] Comparación de cantidad detectada: {result.operator.value}")
-            
-            # 6. Detectar comparaciones de tamaño
-            size_result = self._detect_size_comparison(text_lower)
-            if size_result["detected"]:
-                result.detected = True
-                if result.comparison_type is None:
-                    result.comparison_type = ComparisonType.SIZE
-                result.operator = size_result["operator"]
-                result.confidence += 0.25
-                logger.info(f"[ComparisonDetector] Comparación de tamaño detectada: {result.operator.value}")
-            
-            # 7. Procesar entidades y detectar roles
-            if result.detected and entities:
-                result.entities = self._process_entities_with_roles(entities, text_lower)
-                result.confidence += 0.2 if result.entities else 0
-                logger.debug(f"[ComparisonDetector] Entidades procesadas: {len(result.entities)}")
-            
-            # 8. Detectar grupos
-            groups = self._detect_groups(text_lower)
-            if groups:
-                result.groups_detected = groups
-                result.confidence += 0.1
-                logger.debug(f"[ComparisonDetector] Grupos detectados: {groups}")
-            
-            # 9. Detectar roles
-            roles = self._detect_roles(text_lower)
-            if roles:
-                result.roles_detected = roles
-                result.confidence += 0.1
-                logger.debug(f"[ComparisonDetector] Roles detectados: {roles}")
-            
-            # Ajustar confianza final
-            result.confidence = min(result.confidence, 1.0)
-            
-            if result.detected:
-                logger.info(f"[ComparisonDetector] Comparación detectada exitosamente - Tipo: {result.comparison_type.value if result.comparison_type else 'None'}, Confianza: {result.confidence:.2f}")
+            if best_comparison:
+                logger.info(
+                    f"[ComparisonDetector] Comparación detectada - "
+                    f"Tipo: {best_comparison['type']}, "
+                    f"Confianza: {best_comparison.get('confidence', 0):.2f}"
+                )
             else:
-                logger.debug(f"[ComparisonDetector] No se detectaron comparaciones en: '{text[:50]}...'")
-            logger.debug(f"[DEBUG FINAL] Operador final: {result.operator.value if result.operator else None}")   
-            return result
-         
+                logger.debug("[ComparisonDetector] No se detectó comparación")
+            
+            return best_comparison or {'detected': False}
+            
         except Exception as e:
-            logger.error(f"[ComparisonDetector] Error durante detección: {e}", exc_info=True)
-            # Retornar resultado vacío en caso de error
-            return ComparisonResult(
-                detected=False,
-                comparison_type=None,
-                operator=None,
-                entities=[],
-                quantity=None,
-                groups_detected=[],
-                roles_detected=[],
-                confidence=0.0,
-                raw_expression=text,
-                temporal_filters=None,
-                normalized_dates=None
-            )
+            logger.error(f"[ComparisonDetector] Error general: {e}", exc_info=True)
+            return {'detected': False}
     
-    def _detect_numeric_comparison(self, text: str) -> Dict[str, Any]:
-        """Detecta comparaciones numéricas"""
+    def _detect_numeric_comparison(self, text: str, entities: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """Detecta comparaciones numéricas (descuento/bonificación)"""
         try:
+            # Buscar entidades numéricas relacionadas
+            numeric_entities = [
+                e for e in entities 
+                if e.get('entity') in ['cantidad_descuento', 'cantidad_bonificacion', 'descuento', 'bonificacion']
+            ]
+            
+            if not numeric_entities:
+                return None
+            
+            # Intentar detectar operador
             for operator, patterns in self.numeric_patterns.items():
                 for pattern in patterns:
-                    match = re.search(pattern, text)
+                    match = re.search(pattern, text, re.IGNORECASE)
                     if match:
-                        quantity_value = match.group(1)
-                        unit = match.group(2) if len(match.groups()) > 1 and match.group(2) else ""
-                        quantity = f"{quantity_value}{unit}" if unit else quantity_value
-                        
-                        logger.debug(f"[ComparisonDetector] Patrón numérico encontrado: '{match.group(0)}' -> {quantity}")
-                        
+                        value = match.group(1)
                         return {
-                            "detected": True,
-                            "operator": operator,
-                            "quantity": quantity
+                            'detected': True,
+                            'type': 'numeric',
+                            'operator': operator,
+                            'value': value,
+                            'confidence': 0.9
                         }
-            logger.debug(f"[DEBUG NUMERIC] Probando patrón {pattern}")
-            return {"detected": False}
+            
+            # Si hay entidad pero no operador, asumir equal_to
+            return {
+                'detected': True,
+                'type': 'numeric',
+                'operator': 'equal_to',
+                'value': numeric_entities[0].get('value'),
+                'confidence': 0.7
+            }
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error en detección numérica: {e}")
-            return {"detected": False}
+            return None
     
-    def _detect_price_comparison(self, text: str) -> Dict[str, Any]:
+    def _detect_price_comparison(self, text: str) -> Optional[Dict[str, Any]]:
         """Detecta comparaciones de precio"""
         try:
             for operator, patterns in self.price_patterns.items():
                 for pattern in patterns:
-                    if re.search(pattern, text):
-                        logger.debug(f"[ComparisonDetector] Patrón de precio encontrado: '{pattern}'")
+                    match = re.search(pattern, text, re.IGNORECASE)
+                    if match:
                         return {
-                            "detected": True,
-                            "operator": operator
+                            'detected': True,
+                            'type': 'price',
+                            'operator': operator,
+                            'value': match.group(1),
+                            'confidence': 0.85
                         }
-            
-            return {"detected": False}
+            return None
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error en detección de precio: {e}")
-            return {"detected": False}
+            return None
     
-    def _detect_quality_comparison(self, text: str) -> Dict[str, Any]:
+    def _detect_quality_comparison(self, text: str) -> Optional[Dict[str, Any]]:
         """Detecta comparaciones de calidad"""
         try:
             for operator, patterns in self.quality_patterns.items():
                 for pattern in patterns:
-                    if re.search(pattern, text):
-                        logger.debug(f"[ComparisonDetector] Patrón de calidad encontrado: '{pattern}'")
+                    if re.search(pattern, text, re.IGNORECASE):
                         return {
-                            "detected": True,
-                            "operator": operator
+                            'detected': True,
+                            'type': 'quality',
+                            'operator': operator,
+                            'confidence': 0.8
                         }
-            
-            return {"detected": False}
+            return None
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error en detección de calidad: {e}")
-            return {"detected": False}
+            return None
     
-    def _detect_temporal_comparison(self, text: str) -> Dict[str, Any]:
-        """
-        NUEVA FUNCIÓN: Detecta comparaciones temporales y genera filtros de fecha
-        """
+    def _detect_temporal_comparison(self, text: str) -> Optional[Dict[str, Any]]:
+        """Detecta comparaciones temporales"""
         try:
-            for operator, patterns in self.temporal_patterns.items():
+            # Validar palabras clave temporales primero
+            temporal_keywords = [
+                'mes', 'semana', 'día', 'año', 'fecha', 'periodo',
+                'vigente', 'vence', 'expira', 'válido', 'actual'
+            ]
+            
+            if not any(keyword in text.lower() for keyword in temporal_keywords):
+                return None
+            
+            # Evitar confundir porcentajes con meses
+            if re.search(r'\d+\s*%', text):
+                logger.debug("[ComparisonDetector] Descartado temporal: contiene porcentajes")
+                return None
+            
+            for comparison_type, patterns in self.temporal_patterns.items():
                 for pattern in patterns:
-                    match = re.search(pattern, text)
+                    match = re.search(pattern, text, re.IGNORECASE)
                     if match:
-                        logger.debug(f"[ComparisonDetector] Patrón temporal encontrado: '{match.group(0)}'")
-                        
-                        # Generar filtros temporales basados en el patrón
-                        filters = self._generate_temporal_filters(match.group(0), operator)
-                        normalized_dates = self._normalize_temporal_expression(match.group(0))
-                        
                         return {
-                            "detected": True,
-                            "operator": operator,
-                            "filters": filters,
-                            "normalized_dates": normalized_dates
+                            'detected': True,
+                            'type': 'temporal',
+                            'operator': comparison_type,
+                            'confidence': 0.75
                         }
             
-            return {"detected": False}
+            return None
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error en detección temporal: {e}")
-            return {"detected": False}
+            return None
     
-    def _detect_quantity_comparison(self, text: str) -> Dict[str, Any]:
+    def _detect_quantity_comparison(self, text: str) -> Optional[Dict[str, Any]]:
         """Detecta comparaciones de cantidad"""
         try:
             for operator, patterns in self.quantity_patterns.items():
                 for pattern in patterns:
-                    if re.search(pattern, text):
-                        logger.debug(f"[ComparisonDetector] Patrón de cantidad encontrado: '{pattern}'")
+                    match = re.search(pattern, text, re.IGNORECASE)
+                    if match:
                         return {
-                            "detected": True,
-                            "operator": operator
+                            'detected': True,
+                            'type': 'quantity',
+                            'operator': operator,
+                            'value': match.group(1),
+                            'confidence': 0.8
                         }
-            
-            return {"detected": False}
+            return None
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error en detección de cantidad: {e}")
-            return {"detected": False}
+            return None
     
-    def _detect_size_comparison(self, text: str) -> Dict[str, Any]:
+    def _detect_size_comparison(self, text: str) -> Optional[Dict[str, Any]]:
         """Detecta comparaciones de tamaño"""
         try:
             for operator, patterns in self.size_patterns.items():
                 for pattern in patterns:
-                    if re.search(pattern, text):
-                        logger.debug(f"[ComparisonDetector] Patrón de tamaño encontrado: '{pattern}'")
+                    match = re.search(pattern, text, re.IGNORECASE)
+                    if match:
+                        value = match.group(1)
+                        unit = match.group(2) if match.lastindex >= 2 else None
+                        
                         return {
-                            "detected": True,
-                            "operator": operator
+                            'detected': True,
+                            'type': 'size',
+                            'operator': operator,
+                            'value': value,
+                            'unit': unit,
+                            'confidence': 0.8
                         }
-            
-            return {"detected": False}
+            return None
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error en detección de tamaño: {e}")
-            return {"detected": False}
+            return None
+    
+    def _select_best_comparison(self, results: Dict[str, Optional[Dict[str, Any]]]) -> Optional[Dict[str, Any]]:
+        """Selecciona la mejor comparación basándose en confianza"""
+        try:
+            valid_comparisons = [
+                comp for comp in results.values() 
+                if comp and comp.get('detected')
+            ]
+            
+            if not valid_comparisons:
+                return None
+            
+            # Ordenar por confianza
+            best = max(valid_comparisons, key=lambda x: x.get('confidence', 0))
+            
+            return best
+            
+        except Exception as e:
+            logger.error(f"[ComparisonDetector] Error seleccionando mejor comparación: {e}")
+            return None
     
     def _generate_temporal_filters(self, expression: str, operator: ComparisonOperator) -> Dict[str, Any]:
         """

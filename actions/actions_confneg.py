@@ -132,7 +132,11 @@ class ActionConfNegAgradecer(Action):
                        f"Afirmativo: {response_analysis['is_affirmative']}, "
                        f"Negativo: {response_analysis['is_negative']}, "
                        f"Confianza: {confidence:.2f}")
-            
+            # ✅ NUEVO: Manejar confirmación de modificación
+            if suggestion_type == 'modification_confirmation':
+                return self._handle_modification_confirmation(
+                    pending_suggestion, response_analysis, tracker, dispatcher
+                )
             if response_analysis['is_affirmative'] and confidence >= 0.7:
                 return self._handle_affirmative_response_improved(
                     pending_suggestion, response_analysis, tracker, dispatcher
@@ -159,7 +163,139 @@ class ActionConfNegAgradecer(Action):
                     SlotSet("user_engagement_level", "needs_help")
                 ]
             }
-    
+    def _handle_modification_confirmation(self, pending_suggestion: Dict[str, Any],
+                                        response_analysis: Dict[str, Any],
+                                        tracker: Tracker,
+                                        dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+        """Maneja confirmación de modificaciones ambiguas"""
+        try:
+            is_affirmative = response_analysis.get('is_affirmative', False)
+            is_negative = response_analysis.get('is_negative', False)
+            confidence = response_analysis.get('confidence', 0.0)
+            
+            if is_affirmative and confidence >= 0.7:
+                # Usuario confirmó la modificación
+                actions = pending_suggestion.get('actions', [])
+                search_type = pending_suggestion.get('search_type', 'producto')
+                
+                self._send_message(
+                    dispatcher,
+                    prompt="Usuario confirmó la modificación. Decí que vas a buscar.",
+                    fallback="¡Perfecto! Aplicando los cambios...",
+                    tracker=tracker,
+                    max_tokens=40
+                )
+                
+                # Ejecutar la modificación ahora
+                context = ConversationState.get_conversation_context(tracker)
+                previous_params = self._extract_previous_params_from_history(context)
+                
+                # Aplicar modificaciones
+                rebuilt_params = self._apply_confirmed_modifications(previous_params, actions)
+                
+                # Ejecutar búsqueda
+                self._execute_search_from_confirmation(
+                    search_type, rebuilt_params, dispatcher, tracker
+                )
+                
+                return {
+                    'handled': True,
+                    'events': [
+                        SlotSet("pending_suggestion", None),
+                        SlotSet("user_engagement_level", "satisfied")
+                    ]
+                }
+            
+            elif is_negative and confidence >= 0.7:
+                # Usuario rechazó la modificación
+                self._send_message(
+                    dispatcher,
+                    prompt="Usuario rechazó la modificación. Aceptá y pedí que reformule o use otros términos.",
+                    fallback="Entendido. ¿Podés reformular tu solicitud o usar otros términos?",
+                    tracker=tracker,
+                    max_tokens=50
+                )
+                
+                return {
+                    'handled': True,
+                    'events': [
+                        SlotSet("pending_suggestion", None),
+                        SlotSet("user_engagement_level", "needs_help")
+                    ]
+                }
+            
+            else:
+                # Respuesta ambigua
+                self._send_message(
+                    dispatcher,
+                    prompt="Respuesta ambigua a confirmación de modificación. Pedí clarificación sí/no.",
+                    fallback="No entendí. ¿Querés que aplique estos cambios? Respondé 'sí' o 'no'.",
+                    tracker=tracker,
+                    max_tokens=50
+                )
+                
+                return {
+                    'handled': True,
+                    'events': []  # Mantener pending_suggestion
+                }
+            
+        except Exception as e:
+            logger.error(f"[ModConfirmation] Error: {e}")
+            
+            self._send_message(
+                dispatcher,
+                prompt="Error procesando confirmación. Pedí disculpas.",
+                fallback="Hubo un error. ¿Puedes intentar de nuevo?",
+                tracker=tracker,
+                max_tokens=40
+            )
+            
+            return {
+                'handled': True,
+                'events': [SlotSet("pending_suggestion", None)]
+            }
+
+    # ✅ NUEVO: Métodos auxiliares
+    def _extract_previous_params_from_history(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Extrae parámetros de búsqueda anterior del historial"""
+        search_history = context.get('search_history', [])
+        if search_history:
+            return search_history[-1].get('parameters', {})
+        return {}
+
+    def _apply_confirmed_modifications(self, previous_params: Dict[str, Any], 
+                                    actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Aplica modificaciones confirmadas"""
+        rebuilt = previous_params.copy()
+        
+        for action in actions:
+            action_type = action.get('type')
+            entity_type = action.get('entity_type')
+            
+            if action_type == 'replace':
+                rebuilt[entity_type] = action.get('new_value')
+            elif action_type == 'add':
+                rebuilt[entity_type] = action.get('new_value')
+        
+        return rebuilt
+
+    def _execute_search_from_confirmation(self, search_type: str, params: Dict[str, Any],
+                                        dispatcher: CollectingDispatcher, tracker: Tracker):
+        """Ejecuta búsqueda después de confirmación"""
+        formatted_params = ", ".join([f"{k}: {v}" for k, v in params.items()])
+        message = f"Buscando {search_type}s con {formatted_params}"
+        
+        dispatcher.utter_message(
+            text=message,
+            json_message={
+                "type": "search_results",
+                "search_type": search_type,
+                "parameters": params,
+                "validated": True,
+                "from_confirmation": True,
+                "timestamp": datetime.now().isoformat()
+            }
+        )
     def _handle_affirmative_response_improved(self, pending_suggestion: Dict[str, Any], 
                                             response_analysis: Dict[str, Any], tracker: Tracker,
                                             dispatcher: CollectingDispatcher) -> Dict[str, Any]:
