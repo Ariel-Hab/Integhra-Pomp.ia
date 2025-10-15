@@ -39,6 +39,130 @@ class ActionBusquedaSituacion(Action):
     def name(self) -> str:
         return "action_busqueda_situacion"
     
+    # Agregar al inicio de la clase ActionBusquedaSituacion, después de __init__
+
+    def _normalize_regex_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        ✅ NUEVO: Normaliza entidades específicas de regex a formato genérico
+        
+        Convierte:
+        - comparador_lt_descuento → comparador (role=lt, group=descuento_filter)
+        - estado_nuevo → estado (value=nuevo, role=nuevo)
+        - dosis_gramaje → dosis (type=gramaje)
+        """
+        try:
+            normalized = []
+            
+            for entity in entities:
+                entity_type = entity.get('entity')
+                entity_value = entity.get('value')
+                
+                # CASO 1: Comparadores con contexto (comparador_lt_descuento, comparador_gt_precio)
+                if entity_type.startswith('comparador_'):
+                    parts = entity_type.split('_')  # ['comparador', 'lt', 'descuento']
+                    
+                    if len(parts) >= 3:
+                        operator_role = parts[1]  # 'lt', 'gt', 'lte', 'gte'
+                        context = parts[2]        # 'descuento', 'precio', 'stock', 'bonificacion'
+                        
+                        # Mapear contexto a grupo
+                        group_map = {
+                            'descuento': 'descuento_filter',
+                            'precio': 'precio_filter',
+                            'stock': 'stock_filter',
+                            'bonificacion': 'bonificacion_filter'
+                        }
+                        
+                        normalized_entity = {
+                            **entity,
+                            'entity': 'comparador',  # ← Normalizado
+                            'value': operator_role,
+                            'role': operator_role,
+                            'group': group_map.get(context, f"{context}_filter"),
+                            '_original_entity': entity_type  # Preservar original
+                        }
+                        
+                        logger.debug(f"[Normalize] {entity_type} → comparador (role={operator_role}, group={group_map.get(context)})")
+                        normalized.append(normalized_entity)
+                    
+                    elif len(parts) == 2:
+                        # comparador_lt_generico o comparador_lt
+                        operator_role = parts[1].replace('generico', '').strip()
+                        
+                        normalized_entity = {
+                            **entity,
+                            'entity': 'comparador',
+                            'value': operator_role,
+                            'role': operator_role,
+                            '_original_entity': entity_type
+                        }
+                        
+                        logger.debug(f"[Normalize] {entity_type} → comparador (role={operator_role})")
+                        normalized.append(normalized_entity)
+                    
+                    else:
+                        # Mantener sin cambios si no matchea patrón esperado
+                        normalized.append(entity)
+                
+                # CASO 2: Estados específicos (estado_nuevo, estado_poco_stock, etc.)
+                elif entity_type.startswith('estado_'):
+                    estado_role = entity_type.replace('estado_', '')  # 'nuevo', 'poco_stock', etc.
+                    
+                    normalized_entity = {
+                        **entity,
+                        'entity': 'estado',  # ← Normalizado
+                        'value': entity_value or estado_role,
+                        'role': estado_role,
+                        '_original_entity': entity_type
+                    }
+                    
+                    logger.debug(f"[Normalize] {entity_type} → estado (role={estado_role})")
+                    normalized.append(normalized_entity)
+                
+                # CASO 3: Dosis específicas (dosis_gramaje, dosis_volumen, dosis_forma)
+                elif entity_type.startswith('dosis_'):
+                    dosis_type = entity_type.replace('dosis_', '')  # 'gramaje', 'volumen', 'forma'
+                    
+                    normalized_entity = {
+                        **entity,
+                        'entity': 'dosis',  # ← Normalizado
+                        'value': entity_value,
+                        'dosis_type': dosis_type,  # ← Info adicional
+                        '_original_entity': entity_type
+                    }
+                    
+                    logger.debug(f"[Normalize] {entity_type} → dosis (type={dosis_type})")
+                    normalized.append(normalized_entity)
+                
+                # CASO 4: Animales específicos (animal_perro, animal_gato)
+                elif entity_type.startswith('animal_'):
+                    animal_value = entity_type.replace('animal_', '')  # 'perro', 'gato'
+                    
+                    normalized_entity = {
+                        **entity,
+                        'entity': 'animal',  # ← Normalizado
+                        'value': entity_value or animal_value,
+                        '_original_entity': entity_type
+                    }
+                    
+                    logger.debug(f"[Normalize] {entity_type} → animal")
+                    normalized.append(normalized_entity)
+                
+                # CASO 5: Mantener entidades genéricas sin cambios
+                else:
+                    normalized.append(entity)
+            
+            if len(normalized) != len(entities):
+                logger.warning(f"[Normalize] ⚠️ Perdida de entidades: {len(entities)} → {len(normalized)}")
+            else:
+                logger.info(f"[Normalize] ✅ {len(normalized)} entidades normalizadas")
+            
+            return normalized
+            
+        except Exception as e:
+            logger.error(f"[Normalize] Error: {e}", exc_info=True)
+            return entities  # Fallback: retornar originales
+    
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[str, Any]) -> List[EventType]:
         """Punto de entrada principal"""
         try:
@@ -337,6 +461,10 @@ class ActionBusquedaSituacion(Action):
             
             logger.info(f"[EntityParams] Procesando {len(current_entities)} entidades")
             
+            # ✅ NUEVO: Normalizar entidades específicas de regex
+            normalized_entities = self._normalize_regex_entities(current_entities)
+            logger.info(f"[EntityParams] Entidades normalizadas: {len(normalized_entities)}")
+            
             entity_to_param = {
                 'producto': 'nombre',
                 'empresa': 'empresa',
@@ -355,8 +483,8 @@ class ActionBusquedaSituacion(Action):
                 'fecha': 'fecha'
             }
             
-            # ✅ NUEVO: Deduplicar por tipo+valor, priorizando las que tienen role
-            entity_map = {}  # key: "tipo:valor" → value: mejor entidad
+            # ✅ Usar normalized_entities en lugar de current_entities
+            entity_map = {}
             
             for entity in current_entities:
                 entity_type = entity.get("entity")
@@ -425,7 +553,12 @@ class ActionBusquedaSituacion(Action):
                 param_name = entity_to_param[entity_type]
                 valid_values = []
                 common_role = None
-                
+                if entity_type == 'estado':
+                    # Procesar estados con roles
+                    for item in entity_list:
+                        entity_obj = item['entity']
+                        self._process_estado_entity(entity_obj, search_params)
+                    continue  # ← No procesar con lógica genérica
                 for item in entity_list:
                     entity_value = item['value']
                     entity_role = item['role']
@@ -474,10 +607,60 @@ class ActionBusquedaSituacion(Action):
             logger.error(f"[EntityParams] Error: {e}", exc_info=True)
             return {}
 
-    def _process_comparison_group(self, group_name: str, group_entities: List[Dict[str, Any]], 
-                                   search_params: Dict[str, Any]) -> None:
+    def _process_dosis_entity(self, entity: Dict[str, Any], search_params: Dict[str, Any]) -> None:
         """
-        ✅ NUEVO: Procesa un grupo de comparación del NLU
+        ✅ NUEVO: Procesa entidades de dosis con tipos específicos
+        """
+        try:
+            dosis_value = entity.get('value')
+            dosis_type = entity.get('dosis_type')  # 'gramaje', 'volumen', 'forma'
+            
+            if dosis_type:
+                # Guardar con tipo para filtrado más específico
+                search_params['dosis'] = {
+                    'value': dosis_value,
+                    'type': dosis_type
+                }
+                
+                logger.info(f"[DosisProcess] Dosis con tipo: {dosis_type} = {dosis_value}")
+            else:
+                # Dosis genérica
+                search_params['dosis'] = dosis_value
+                
+                logger.info(f"[DosisProcess] Dosis genérica: {dosis_value}")
+            
+        except Exception as e:
+            logger.error(f"[DosisProcess] Error: {e}")
+
+    def _process_estado_entity(self, entity: Dict[str, Any], search_params: Dict[str, Any]) -> None:
+        """
+        ✅ NUEVO: Procesa entidades de estado con roles específicos
+        """
+        try:
+            estado_role = entity.get('role')  # 'nuevo', 'poco_stock', 'vence_pronto', 'en_oferta'
+            estado_value = entity.get('value')
+            
+            if estado_role:
+                # Guardar con role para que actions lo procesen correctamente
+                search_params['estado'] = {
+                    'value': estado_value or estado_role,
+                    'role': estado_role
+                }
+                
+                logger.info(f"[EstadoProcess] Estado con role: {estado_role}")
+            else:
+                # Estado genérico sin role
+                search_params['estado'] = estado_value
+                
+                logger.info(f"[EstadoProcess] Estado genérico: {estado_value}")
+            
+        except Exception as e:
+            logger.error(f"[EstadoProcess] Error: {e}")
+
+    def _process_comparison_group(self, group_name: str, group_entities: List[Dict[str, Any]], 
+                               search_params: Dict[str, Any]) -> None:
+        """
+        ✅ OPTIMIZADO: Procesa grupos explícitos (NLU) e implícitos (regex normalizado)
         """
         try:
             logger.debug(f"[CompGroup] Procesando grupo '{group_name}' con {len(group_entities)} entidades")
@@ -487,13 +670,45 @@ class ActionBusquedaSituacion(Action):
             
             # Separar operador y valor
             for entity in group_entities:
-                if entity.get('entity') == 'comparador':
+                entity_type = entity.get('entity')
+                
+                if entity_type == 'comparador':
                     operator_entity = entity
                 else:
                     value_entity = entity
             
+            # ✅ NUEVO: Si solo hay comparador sin value, buscar en el contexto
+            if operator_entity and not value_entity:
+                # El comparador tiene group pero falta el valor → buscar en otras entidades
+                comparador_group = operator_entity.get('group')
+                
+                if comparador_group:
+                    # Buscar entidad relacionada por grupo
+                    for other_entity in group_entities:
+                        if other_entity.get('group') == comparador_group and other_entity != operator_entity:
+                            value_entity = other_entity
+                            break
+            
             if not operator_entity or not value_entity:
-                logger.warning(f"[CompGroup] Grupo '{group_name}' incompleto")
+                logger.warning(f"[CompGroup] Grupo '{group_name}' incompleto (op={operator_entity is not None}, val={value_entity is not None})")
+                
+                # ✅ NUEVO: Si hay comparador con group pero sin valor, inferir del group_name
+                if operator_entity and not value_entity:
+                    group = operator_entity.get('group')
+                    if group:
+                        # Crear pseudo-entidad para el filtro
+                        filter_key = group  # 'descuento_filter', 'precio_filter', etc.
+                        operator_role = operator_entity.get('role')
+                        
+                        search_params[filter_key] = {
+                            'operator': operator_role,
+                            'value': None,  # Será completado después
+                            'type': 'comparison',
+                            'group': group
+                        }
+                        
+                        logger.info(f"[CompGroup] ✅ Comparador sin valor explícito: {filter_key} {operator_role}")
+                
                 return
             
             # Extraer información
@@ -501,8 +716,26 @@ class ActionBusquedaSituacion(Action):
             value_type = value_entity.get('entity')
             value = value_entity.get('value')
             
+            # ✅ NUEVO: Usar group del comparador normalizado si existe
+            group_from_comparador = operator_entity.get('group')
+            
             # Determinar tipo de filtro
-            if 'descuento' in group_name:
+            if group_from_comparador:
+                # Usar group del comparador normalizado (más confiable)
+                filter_key = group_from_comparador
+                
+                if 'descuento' in filter_key:
+                    param_name = 'descuento'
+                elif 'precio' in filter_key:
+                    param_name = 'precio'
+                elif 'stock' in filter_key:
+                    param_name = 'stock'
+                elif 'bonificacion' in filter_key:
+                    param_name = 'bonificacion'
+                else:
+                    param_name = value_type
+            
+            elif 'descuento' in group_name:
                 filter_key = 'descuento_filter'
                 param_name = 'descuento'
             elif 'precio' in group_name:
@@ -523,7 +756,7 @@ class ActionBusquedaSituacion(Action):
                 'operator': operator_role,
                 'value': value,
                 'type': value_type,
-                'group': group_name
+                'group': group_from_comparador or group_name
             }
             
             logger.info(f"[CompGroup] ✅ {filter_key}: {operator_role} {value}")
@@ -824,7 +1057,7 @@ class ActionBusquedaSituacion(Action):
                         'slot_cleanup_events': slot_cleanup_events
                     }
                 else:
-                    dispatcher.utter_message("No pude validar los términos de tu búsqueda.")
+                    dispatcher.utter_message("Por favor indicame parametros para realizar la busqueda")
                     return {'type': 'validation_error', 'slot_cleanup_events': slot_cleanup_events}
                 
         except Exception as e:
@@ -1439,9 +1672,24 @@ class ActionBusquedaSituacion(Action):
             
             logger.info(f"[InvalidMod] Procesando {len(invalid_actions)} entidades inválidas")
             
-            if len(invalid_actions) == 1:
-                invalid_action = invalid_actions[0]
-                entity_type = invalid_action.get('entity_type') if isinstance(invalid_action, dict) else invalid_action.entity_type
+            # ✅ NUEVO: Serializar invalid_actions a diccionarios
+            serialized_invalid_actions = []
+            for action in invalid_actions:
+                if isinstance(action, dict):
+                    serialized_invalid_actions.append(action)
+                else:
+                    # Convertir objeto ModificationAction a dict
+                    serialized_invalid_actions.append({
+                        'action_type': action.action_type.value if hasattr(action.action_type, 'value') else str(action.action_type),
+                        'entity_type': action.entity_type,
+                        'old_value': action.old_value,
+                        'new_value': action.new_value,
+                        'confidence': getattr(action, 'confidence', None)
+                    })
+            
+            if len(serialized_invalid_actions) == 1:
+                invalid_action = serialized_invalid_actions[0]
+                entity_type = invalid_action.get('entity_type')
                 valid_for = validation_errors[0].get('valid_for', []) if validation_errors else []
                 
                 if valid_for:
@@ -1454,10 +1702,7 @@ class ActionBusquedaSituacion(Action):
                 else:
                     message = f"'{entity_type}' no es válido para buscar {search_type}s."
             else:
-                invalid_list = ', '.join([
-                    f"'{a.get('entity_type') if isinstance(a, dict) else a.entity_type}'" 
-                    for a in invalid_actions
-                ])
+                invalid_list = ', '.join([f"'{a.get('entity_type')}'" for a in serialized_invalid_actions])
                 message = f"Los siguientes parámetros no son válidos para buscar {search_type}s: {invalid_list}."
             
             dispatcher.utter_message(message)
@@ -1465,7 +1710,7 @@ class ActionBusquedaSituacion(Action):
             suggestion_data = {
                 'suggestion_type': 'invalid_entity_modification',
                 'search_type': search_type,
-                'invalid_actions': invalid_actions,
+                'invalid_actions': serialized_invalid_actions,  # ✅ Usar versión serializada
                 'validation_errors': validation_errors,
                 'timestamp': datetime.now().isoformat(),
                 'awaiting_response': True
@@ -1549,7 +1794,7 @@ class ActionBusquedaSituacion(Action):
             
             if temporal_filters:
                 json_message["temporal_filters"] = temporal_filters
-            
+            enriched_message = "Ya me pongo a buscar!"
             # Enviar respuesta
             dispatcher.utter_message(
                 text=enriched_message,
@@ -1557,7 +1802,7 @@ class ActionBusquedaSituacion(Action):
             )
             
             logger.info("[ExecuteSearch] Respuesta enviada exitosamente")
-            
+           
             return {
                 'type': 'search_success',
                 'search_type': search_type,
@@ -1631,30 +1876,65 @@ class ActionBusquedaSituacion(Action):
 
     def _format_parameters_for_display(self, parameters: Dict[str, Any]) -> Dict[str, str]:
         """
-        ✅ OPTIMIZADO: Formatea parámetros con roles para display
+        ✅ OPTIMIZADO: Formatea parámetros incluyendo tipos específicos
         """
         try:
             formatted = {}
             
             for key, value in parameters.items():
-                if isinstance(value, dict) and 'value' in value and 'role' in value:
-                    role = value['role']
-                    val = value['value']
+                if isinstance(value, dict):
+                    # Casos con estructura
+                    if 'value' in value and 'role' in value:
+                        role = value['role']
+                        val = value['value']
+                        
+                        if key == 'estado':
+                            role_display = {
+                                'nuevo': 'productos nuevos',
+                                'poco_stock': 'poco stock',
+                                'vence_pronto': 'vence pronto',
+                                'en_oferta': 'en oferta'
+                            }.get(role, val)
+                            formatted[key] = role_display
+                        
+                        elif key == 'empresa':
+                            formatted[key] = f"{val}" if role == 'proveedor' else f"{val} ({role})"
+                        
+                        else:
+                            formatted[key] = val
                     
-                    if key == 'estado':
-                        role_display = {
-                            'nuevo': 'nuevo',
-                            'poco_stock': 'poco_stock',
-                            'vence_pronto': 'vence_pronto',
-                            'en_oferta': 'en_oferta'
-                        }.get(role, val)
-                        formatted[key] = role_display
-                    elif key == 'empresa':
-                        formatted[key] = f"{val}" if role == 'proveedor' else f"{val} ({role})"
-                    elif key == 'dosis':
-                        formatted[key] = f"{val} ({role})" if role != 'unspecified' else val
+                    # ✅ NUEVO: Dosis con tipo
+                    elif 'value' in value and 'type' in value:
+                        dosis_type = value['type']
+                        val = value['value']
+                        
+                        type_display = {
+                            'gramaje': 'mg/g',
+                            'volumen': 'ml/l',
+                            'forma': ''
+                        }.get(dosis_type, '')
+                        
+                        formatted[key] = f"{val} {type_display}".strip()
+                    
+                    # ✅ NUEVO: Filtros de comparación
+                    elif 'operator' in value and 'value' in value:
+                        operator = value['operator']
+                        val = value['value']
+                        
+                        op_display = {
+                            'lt': 'menor a',
+                            'gt': 'mayor a',
+                            'lte': 'hasta',
+                            'gte': 'al menos',
+                            'eq': 'igual a'
+                        }.get(operator, operator)
+                        
+                        formatted[key] = f"{op_display} {val}"
+                    
                     else:
-                        formatted[key] = val
+                        # Dict sin estructura conocida
+                        formatted[key] = str(value.get('value', value))
+                
                 else:
                     formatted[key] = str(value)
             
@@ -1663,7 +1943,6 @@ class ActionBusquedaSituacion(Action):
         except Exception as e:
             logger.error(f"[FormatDisplay] Error: {e}")
             return parameters
-
     def _serialize_parameters(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
         """
         ✅ OPTIMIZADO: Serializa parámetros preservando estructura de roles
