@@ -163,7 +163,7 @@ class ModificationDetector:
                     actions=actions,  # Todas las acciones (válidas e inválidas)
                     rebuilt_params={},  # No rearmar aún
                     confidence=0.5,  # Baja confianza por tener entidades inválidas
-                    raw_text=text
+                    raw_text=text,
                 )
                 
                 # Agregar metadata de validación
