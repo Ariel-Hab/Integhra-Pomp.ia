@@ -378,7 +378,7 @@ nlu:
     # === PRODUCTO: Reemplazar + Remover ===
     - reemplaza [meloxivet]{"entity": "producto", "role": "old"} por [artrin]{"entity": "producto", "role": "new"} y saca [estado]{"entity": "estado", "role": "remove"}
     - en vez de [doxiciclina]{"entity": "producto", "role": "old"} busca [enrofloxacina]{"entity": "producto", "role": "new"} y quita [descuento](descuento){"entity": "descuento", "role": "remove"}
-    - cambia [ivermectina]{"entity": "producto", "role": "old"} por [frontline]{"entity": "producto", "role": "new"} y elimina [precio]{"entity": "precio", "role": "remove"}
+    - cambia [ivermectina]{"entity": "producto", "role": "old"} por [frontline]{"entity": "producto", "role": "new"} y elimina [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     
     # === EMPRESA: Reemplazar + Agregar ===
     - cambia [holliday]{"entity": "empresa", "role": "old"} por [brouwer]{"entity": "empresa", "role": "new"} y agrega [nuevo]{"entity": "estado", "role": "add", "role": "nuevo"}
@@ -402,7 +402,7 @@ nlu:
     
     # === CATEGORIA: Reemplazar + Remover ===
     - reemplaza [vacunas]{"entity": "categoria", "role": "old"} por [analgesicos]{"entity": "categoria", "role": "new"} y quita [estado]{"entity": "estado", "role": "remove"}
-    - cambia [vitaminas]{"entity": "categoria", "role": "old"} por [antibioticos]{"entity": "categoria", "role": "new"} y saca [precio]{"entity": "precio", "role": "remove"}
+    - cambia [vitaminas]{"entity": "categoria", "role": "old"} por [antibioticos]{"entity": "categoria", "role": "new"} y saca [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     
     # === CATEGORIA: Múltiples agregar/remover ===
     - saca [vitaminas]{"entity": "categoria", "role": "remove"} y agrega [vacunas]{"entity": "categoria", "role": "add"}
@@ -414,7 +414,7 @@ nlu:
     - en vez de [cachorros]{"entity": "animal", "role": "old"} busca [adultos]{"entity": "animal", "role": "new"} y añade [pipetas]{"entity": "categoria", "role": "add"}
     
     # === ANIMAL: Reemplazar + Remover ===
-    - reemplaza [bovino]{"entity": "animal", "role": "old"} por [equino]{"entity": "animal", "role": "new"} y saca [precio]{"entity": "precio", "role": "remove"}
+    - reemplaza [bovino]{"entity": "animal", "role": "old"} por [equino]{"entity": "animal", "role": "new"} y saca [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     - cambia [perro]{"entity": "animal", "role": "old"} por [gato]{"entity": "animal", "role": "new"} y quita [estado]{"entity": "estado", "role": "remove"}
     
     # === ANIMAL: Múltiples agregar/remover ===
@@ -428,7 +428,7 @@ nlu:
     
     # === DOSIS: Reemplazar + Remover ===
     - reemplaza [100ml]{"entity": "dosis", "role": "old", "role": "volumen"} por [50ml]{"entity": "dosis", "role": "new", "role": "volumen"} y quita [estado]{"entity": "estado", "role": "remove"}
-    - cambia la dosis de [500mg]{"entity": "dosis", "role": "old", "role": "gramaje"} a [100ml]{"entity": "dosis", "role": "new", "role": "volumen"} y saca [precio]{"entity": "precio", "role": "remove"}
+    - cambia la dosis de [500mg]{"entity": "dosis", "role": "old", "role": "gramaje"} a [100ml]{"entity": "dosis", "role": "new", "role": "volumen"} y saca [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     
     # === ESTADO: Reemplazar + Agregar ===
     - cambia [nuevo]{"entity": "estado", "role": "old", "role": "nuevo"} por [poco stock]{"entity": "estado", "role": "new", "role": "poco_stock"} y agrega [holliday]{"entity": "empresa", "role": "add"}
@@ -474,7 +474,7 @@ nlu:
     # ========================================
     - cambia [holliday]{"entity": "empresa", "role": "old"} por [brouwer]{"entity": "empresa", "role": "new"}, agrega [vitaminas]{"entity": "categoria", "role": "add"} y saca [estado]{"entity": "estado", "role": "remove"}
     - reemplaza [perro]{"entity": "animal", "role": "old"} por [gato]{"entity": "animal", "role": "new"}, añade [bayer]{"entity": "empresa", "role": "add"} y quita [descuento](descuento){"entity": "descuento", "role": "remove"}
-    - en vez de [500mg]{"entity": "dosis", "role": "old", "role": "gramaje"} busca [100ml]{"entity": "dosis", "role": "new", "role": "volumen"}, agrega [zoetis]{"entity": "empresa", "role": "add"} y elimina [precio]{"entity": "precio", "role": "remove"}
+    - en vez de [500mg]{"entity": "dosis", "role": "old", "role": "gramaje"} busca [100ml]{"entity": "dosis", "role": "new", "role": "volumen"}, agrega [zoetis]{"entity": "empresa", "role": "add"} y elimina [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     - cambia [vitaminas]{"entity": "categoria", "role": "old"} por [antibioticos]{"entity": "categoria", "role": "new"}, incluí [holliday]{"entity": "empresa", "role": "add"} y saca [bonificacion](bonificacion){"entity": "bonificacion", "role": "remove"}
     - cambia [pipetas]{"entity": "categoria", "role": "old"} por [collares]{"entity": "categoria", "role": "new"}, agrega [perro]{"entity": "animal", "role": "add"} y quita [estado]{"entity": "estado", "role": "remove"}
     
@@ -490,7 +490,7 @@ nlu:
     # ========================================
     # MÚLTIPLES REMOCIONES (3+)
     # ========================================
-    - saca [estado]{"entity": "estado", "role": "remove"}, [precio]{"entity": "precio", "role": "remove"} y [descuento](descuento){"entity": "descuento", "role": "remove"}
+    - saca [estado]{"entity": "estado", "role": "remove"}, [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"} y [descuento](descuento){"entity": "descuento", "role": "remove"}
     - quita [categoria]{"entity": "categoria", "role": "remove"} y [animal]{"entity": "animal", "role": "remove"}
     - elimina [bonificacion](bonificacion){"entity": "bonificacion", "role": "remove"}, [stock](stock){"entity": "stock", "role": "remove"} y [dosis]{"entity": "dosis", "role": "remove"}
     
@@ -507,7 +507,7 @@ nlu:
     # ========================================
     - che, cambia [holliday]{"entity": "empresa", "role": "old"} por [brouwer]{"entity": "empresa", "role": "new"} y poneme [vitaminas]{"entity": "categoria", "role": "add"}
     - dale, saca [estado]{"entity": "estado", "role": "remove"} y agrega [bayer]{"entity": "empresa", "role": "add"}
-    - mejor cambia [perro]{"entity": "animal", "role": "old"} por [gato]{"entity": "animal", "role": "new"} y quitá [precio]{"entity": "precio", "role": "remove"}
+    - mejor cambia [perro]{"entity": "animal", "role": "old"} por [gato]{"entity": "animal", "role": "new"} y quitá [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     - uh, reemplaza [500mg]{"entity": "dosis", "role": "old"} por [250mg]{"entity": "dosis", "role": "new"} y sacá [descuento](descuento){"entity": "descuento", "role": "remove"}
     - che, cambia [pipetas]{"entity": "categoria", "role": "old"} por [collares]{"entity": "categoria", "role": "new"} y suma [perro]{"entity": "animal", "role": "add"}
     
@@ -515,7 +515,7 @@ nlu:
     # CON JUSTIFICACIONES
     # ========================================
     - cambia [bayer]{"entity": "empresa", "role": "old"} por [zoetis]{"entity": "empresa", "role": "new"} porque no tiene stock y agrega [nuevo]{"entity": "estado", "role": "add", "role": "nuevo"}
-    - reemplaza [vitaminas]{"entity": "categoria", "role": "old"} por [antibioticos]{"entity": "categoria", "role": "new"} ya que es más efectivo y saca [precio]{"entity": "precio", "role": "remove"}
+    - reemplaza [vitaminas]{"entity": "categoria", "role": "old"} por [antibioticos]{"entity": "categoria", "role": "new"} ya que es más efectivo y saca [precio]{"entity": "precio", "role": "remove", "group": "precio_filter"}
     - en vez de [500mg]{"entity": "dosis", "role": "old", "role": "gramaje"} mejor [250mg]{"entity": "dosis", "role": "new", "role": "gramaje"} y agrega [holliday]{"entity": "empresa", "role": "add"}
     
     # ========================================
@@ -539,7 +539,7 @@ nlu:
     # === Patrones de "Reemplazar y Agregar/Quitar" más complejos ===
     - cambiame [perros]{"entity": "animal", "role": "old"} por [gatos]{"entity": "animal", "role": "new"} y además sumá que sea de [holliday]{"entity": "empresa", "role": "add"}
     - en vez de [vitaminas]{"entity": "categoria", "role": "old"} ponele [antibioticos]{"entity": "categoria", "role": "new"}, y sacá el filtro de [precio](filter_name){"entity": "filter_name", "role": "remove"}
-    - mejor [zoetis]{"entity": "empresa", "role": "new"} en lugar de [bayer]{"entity": "empresa", "role": "old"}, y que tenga [más de]{"entity": "comparador", "role": "add", "role": "gt"} [20]{"entity": "cantidad_descuento", "role": "add"}% de descuento
+    - mejor [zoetis]{"entity": "empresa", "role": "new"} en lugar de [bayer]{"entity": "empresa", "role": "old"}, y que tenga [más de]{"entity": "comparador", "role": "add", "role": "gt", "group": "descuento_filter"} [20]{"entity": "cantidad_descuento", "role": "add", "group": "descuento_filter"}% de descuento
     - corregí el proveedor a [virbac]{"entity": "empresa", "role": "new"} en vez de [richmond]{"entity": "empresa", "role": "old"} y eliminá el filtro de [animal](filter_name){"entity": "filter_name", "role": "remove"}
 
     # === Múltiples acciones con lenguaje natural ===

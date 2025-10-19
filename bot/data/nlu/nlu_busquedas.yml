@@ -411,47 +411,23 @@ nlu:
     - Listado de productos con [vencimiento cercano]{"entity": "estado", "role": "vence_pronto"} [inyectables]{"entity": "dosis", "role": "forma"}
     - Busco [enrofloxacina](producto) que [expira esta semana]{"entity": "estado", "role": "vence_pronto"} [100ml]{"entity": "dosis", "role": "volumen"}
 
-    - Qué hay [nuevo]{"entity": "estado", "role": "nuevo"} en promos?
-    - Mostrame lo [nuevo]{"entity": "estado", "role": "nuevo"} rebajado
-    - Hay algo con [poco stock]{"entity": "estado", "role": "poco_stock"} en oferta?
-    - Qué se está [por vencer]{"entity": "estado", "role": "vence_pronto"} con descuento?
-    - Mostrame lo [rebajado]{"entity": "estado", "role": "en_oferta"} de [Zoetis]{"entity": "empresa", "role": "proveedor"}
-    - Algo [nuevo]{"entity": "estado", "role": "nuevo"} para [perros](animal) en promo?
-    - Qué [últimas unidades]{"entity": "estado", "role": "poco_stock"} tenés?
-    - Hay promos de cosas que [vencen pronto]{"entity": "estado", "role": "vence_pronto"}?
-    - Mostrame lo [nuevo]{"entity": "estado", "role": "nuevo"} de [antibióticos](categoria)
-    - Qué tenés [en oferta]{"entity": "estado", "role": "en_oferta"} con [poco stock]{"entity": "estado", "role": "poco_stock"}?
-    - Algo [recién llegado]{"entity": "estado", "role": "nuevo"} rebajado?
-    - Hay [ivermectina](producto) [nueva]{"entity": "estado", "role": "nuevo"}?
-    - Qué se está [agotando]{"entity": "estado", "role": "poco_stock"} con descuento?
-    - Mostrame productos [por vencer]{"entity": "estado", "role": "vence_pronto"}
-    - Hay algo [nuevo]{"entity": "estado", "role": "nuevo"} de [Bayer]{"entity": "empresa", "role": "proveedor"} en promo?
-
     # --- DOSIS CON ROLES EXPLÍCITOS (MÁS EJEMPLOS) ---
     # Gramaje
     - [Amoxicilina](producto) de [500mg]{"entity": "dosis", "role": "gramaje"}
     - [Cefalexina](producto) [250mg]{"entity": "dosis", "role": "gramaje"}
-    - [Enrofloxacina](producto) [100mg]{"entity": "dosis", "role": "gramaje"} en oferta
     - Busco [ivermectina](producto) [1g]{"entity": "dosis", "role": "gramaje"}
-    - [Doxiciclina](producto) [200mg]{"entity": "dosis", "role": "gramaje"} rebajada
     - Promos de [meloxicam](producto) [15mg]{"entity": "dosis", "role": "gramaje"}
-    - [Sulfametoxazol](producto) [400mg]{"entity": "dosis", "role": "gramaje"} en descuento
 
     # Forma
     - [Amoxicilina](producto) [inyectable]{"entity": "dosis", "role": "forma"}
     - [Cefalexina](producto) en [tabletas]{"entity": "dosis", "role": "forma"}
-    - [Ivermectina](producto) [oral]{"entity": "dosis", "role": "forma"} en oferta
     - Busco [fipronil](producto) en [spray]{"entity": "dosis", "role": "forma"}
-    - [Penicilina](producto) [inyectable]{"entity": "dosis", "role": "forma"} rebajada
     - Promos de [vitaminas](categoria) en [polvo]{"entity": "dosis", "role": "forma"}
-    - [Antiparasitarios](categoria) [tópicos]{"entity": "dosis", "role": "forma"} en descuento
 
     # Volumen
     - [Penicilina](producto) de [100ml]{"entity": "dosis", "role": "volumen"}
     - [Ivermectina](producto) [50ml]{"entity": "dosis", "role": "volumen"}
-    - [Oxitetraciclina](producto) [250ml]{"entity": "dosis", "role": "volumen"} en oferta
     - Busco [enrofloxacina](producto) [10ml]{"entity": "dosis", "role": "volumen"}
-    - [Fipronil](producto) [30ml]{"entity": "dosis", "role": "volumen"} rebajado
 
 
 - intent: buscar_oferta
@@ -1054,6 +1030,6 @@ nlu:
     - descuentos [250ml]{"entity": "dosis", "role": "volumen"}
     
     # === COMBINACIONES COMPLEJAS ===
-    - ofertas de [ivermectina](producto) de [Biogenesis]{"entity": "empresa", "role": "proveedor"} [nuevas]{"entity": "estado", "role": "nuevo"} con descuento [mayor]{"entity": "comparador", "role": "gt"} a [15](cantidad_descuento)%
-    - promos de [amoxicilina](producto) [500mg]{"entity": "dosis", "role": "gramaje"} [inyectable]{"entity": "dosis", "role": "forma"} con precio [hasta]{"entity": "comparador", "role": "lte"} [2000](precio)
+    - ofertas de [ivermectina](producto) de [Biogenesis]{"entity": "empresa", "role": "proveedor"} [nuevas]{"entity": "estado", "role": "nuevo"} con descuento [mayor]{"entity": "comparador", "role": "gt", "group": "descuento_filter"} a [15](cantidad_descuento)%
+    - promos de [amoxicilina](producto) [500mg]{"entity": "dosis", "role": "gramaje"} [inyectable]{"entity": "dosis", "role": "forma"} con precio [hasta]{"entity": "comparador", "role": "lte", "group": "precio_filter"} [2000](precio)
     - descuentos [antibióticos](categoria) [nuevos]{"entity": "estado", "role": "nuevo"} con [poco stock]{"entity": "estado", "role": "poco_stock"} para [perros](animal)

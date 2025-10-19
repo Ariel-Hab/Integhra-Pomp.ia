@@ -1,14 +1,19 @@
+# Archivos de Python
 __pycache__/
 *.py[cod]
+
+# Archivos y carpetas de Rasa
 .rasa/
+bot/models/  # <-- Ruta corregida
+
+# Carpetas de entorno y dependencias
 .keras/
 .config/
-*.log
-*.tmp
+venv/
 .env/
 .env
-venv/
 poetry.lock
-.models/
-.bot/models
-.bot/.rasa
+
+# Logs y temporales
+*.log
+*.tmp
