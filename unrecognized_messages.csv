@@ -2,3 +2,16 @@ timestamp,user_message,detected_intent,confidence,sender_id
 2025-10-14T15:57:12.812380,busco ofertas en estado nuevo,buscar_oferta,0.4948508143424988,103
 2025-10-14T18:27:46.194408,y de librela??,afirmar,0.27390435338020325,103
 2025-10-14T18:30:26.177113,como estas??,preguntar_como_estas,0.5786325335502625,103
+2025-10-15T16:01:49.577207,te odio,afirmar,0.2932957410812378,103
+2025-10-15T21:51:32.827522,qué vacunas para perros tenés?,nlu_fallback,0.7,test_user_123
+2025-10-16T13:29:13.486198,saca holliday,nlu_fallback,0.7,test_user_123
+2025-10-16T13:29:21.957150,cambiá holliday por zoetis,nlu_fallback,0.7,test_user_123
+2025-10-16T13:30:30.442450,qué hora es?,nlu_fallback,0.7,test_user_123
+2025-10-16T14:36:28.864440,ofertas nuevas y con poco stock,nlu_fallback,0.7,test_user_123
+2025-10-16T14:38:19.589036,agrega gato y saca perro,nlu_fallback,0.7,test_user_123
+2025-10-16T19:32:35.325863,quiero ofertas nuevas y con poco stock,nlu_fallback,0.7,console_user
+2025-10-17T19:22:00.916201,que sabes hacer?,nlu_fallback,0.7,console_tester
+2025-10-17T19:39:17.665128,holaa,nlu_fallback,0.7,console_tester
+2025-10-17T20:08:12.690575,holaa,nlu_fallback,0.7,console_tester
+2025-10-17T20:30:47.901111,que sabes hacer?,nlu_fallback,0.7,console_user
+2025-10-18T23:33:19.653322,que sabes hacer?,nlu_fallback,0.7,103

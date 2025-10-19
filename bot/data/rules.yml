@@ -164,3 +164,8 @@ rules:
     steps:
     - intent: consulta_veterinaria_profesional
     - action: action_handle_out_of_context
+    
+  - rule: Activar fallback
+    steps:
+      - intent: nlu_fallback
+      - action: action_fallback

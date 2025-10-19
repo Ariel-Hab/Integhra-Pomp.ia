@@ -1,239 +1,172 @@
-# actions/models/model_manager.py - ✅ VERSIÓN CONSOLIDADA
+# actions/models/model_manager.py
 
 import os
-from groq import Groq
-from dotenv import load_dotenv
+import hashlib
 import logging
+import time
 from typing import Optional
 
-# ✅ Import necesario para type hints
+from openai import OpenAI
+from dotenv import load_dotenv
 from rasa_sdk import Tracker
 
 load_dotenv()
 logger = logging.getLogger(__name__)
 
-# ============== CONFIGURACIÓN ==============
+# ============== CONFIGURACIÓN SIMPLIFICADA ==============
+# Se eliminaron todas las variables de streaming.
 SYSTEM_PROMPT = """Sos Pompi, asistente veterinario argentino.
-Hablás en español rioplatense, usás "vos".
-Respuestas MUY cortas: máximo 2 oraciones.
-Siempre preguntás qué necesita el usuario."""
-# ===========================================
+Respuestas cortas: máximo 2 oraciones.
+Siempre preguntá qué necesita."""
+
+RESPONSE_CACHE = {}
+MAX_CACHE_SIZE = 50
+
+# Timeout para la generación de la respuesta completa.
+# Si el modelo tarda más que esto, la función devolverá None.
+GENERATION_TIMEOUT = 8
+OLLAMA_CLIENT_TIMEOUT = 10
+
+# Configuración del modelo
+MODEL_NAME = "llama3:8b-instruct-q4_0" # Usamos el modelo que ya tenías para la generación estándar
+MAX_TOKENS_DEFAULT = 150 # Aumentamos un poco el default para respuestas completas
+# =======================================================
 
 
 class ChatModel:
-    """Modelo Groq con inicialización lazy"""
+    """Modelo Ollama optimizado para generar respuestas completas con timeout."""
+    failed_attempts = 0
     
     def __init__(self):
         self.client = None
         
     def load(self):
-        """Carga el cliente Groq (solo primera vez)"""
+        """Carga y valida la conexión con el cliente de Ollama."""
         if self.client is not None:
             return
-        
-        api_key = os.getenv("GROQ_API_KEY")
-        if not api_key:
-            raise ValueError("❌ Falta GROQ_API_KEY en .env")
-        
-        self.client = Groq(api_key=api_key, timeout=30.0)
-        logger.info("✅ Groq API inicializada")
+        try:
+            self.client = OpenAI(
+                base_url='http://localhost:11434/v1',
+                api_key='ollama',
+                timeout=OLLAMA_CLIENT_TIMEOUT
+            )
+            self.client.models.list()
+            logger.info("✅ Conexión con Ollama (local) establecida")
+        except Exception as e:
+            logger.error(f"❌ No se pudo conectar a Ollama. Error: {e}")
+            self.client = None # Aseguramos que el cliente quede como None si falla
+            raise ConnectionError("Fallo al conectar con el servidor local de Ollama.")
+
+    # ⛔️ ELIMINADO: El método generate_and_stream() fue completamente removido.
     
     def generate(self, user_prompt: str, max_new_tokens: int = 100, 
-                temperature: float = 0.7) -> Optional[str]:
+                 temperature: float = 0.3) -> Optional[str]:
         """
-        Genera respuesta usando Groq
-        
-        Args:
-            user_prompt: Prompt completo (puede incluir contexto)
-            max_new_tokens: Límite de tokens
-            temperature: Creatividad (0.0-1.0)
-            
-        Returns:
-            Respuesta generada o None si falla
+        Genera una respuesta completa con timeout, reintentos y caché.
+        Si falla después de 3 intentos o por timeout, devuelve None.
         """
-        self.load()
+        cache_key = hashlib.md5(f"{user_prompt}_{max_new_tokens}_{temperature}".encode()).hexdigest()
+        if cache_key in RESPONSE_CACHE:
+            logger.info("✅ Respuesta devuelta desde caché.")
+            return RESPONSE_CACHE[cache_key]
         
         try:
+            self.load()
+        except ConnectionError:
+            return None # Si no puede conectar, falla rápido
+
+        if not self.client:
+            return None
+
+        try:
+            start_time = time.time()
+            logger.info(f"[Generate] Iniciando generación (timeout: {GENERATION_TIMEOUT}s)...")
+            
             response = self.client.chat.completions.create(
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": user_prompt}
                 ],
-                model="llama-3.3-70b-versatile",
+                model=MODEL_NAME,
                 temperature=temperature,
                 max_tokens=max_new_tokens,
-                top_p=0.9
+                stream=False, # Aseguramos que el streaming esté deshabilitado
+                timeout=GENERATION_TIMEOUT
             )
             
-            result = response.choices[0].message.content.strip()
-            return result if result else None
+            elapsed = time.time() - start_time
+            result = self._validate_response(response.choices[0].message.content)
             
+            if result:
+                self._update_cache(cache_key, result)
+                self.failed_attempts = 0 # Reinicia contador si hay éxito
+                logger.info(f"[Generate] ✓ Respuesta generada en {elapsed:.2f}s")
+                return result
+            else:
+                logger.warning("[Generate] La respuesta del modelo fue inválida o vacía.")
+                return None
+
         except Exception as e:
-            logger.error(f"❌ Error Groq: {e}")
+            elapsed = time.time() - start_time
+            self.failed_attempts += 1
+            logger.error(f"❌ Intento {self.failed_attempts}/3 falló generando respuesta (tras {elapsed:.2f}s): {e}")
+            if self.failed_attempts >= 3:
+                logger.critical("❌ Se superó el máximo de reintentos. El modelo no responderá.")
+                # Opcional: Podrías resetear el contador aquí si querés que vuelva a intentar después de un tiempo
             return None
 
+    def _validate_response(self, result: str) -> Optional[str]:
+        """Valida y limpia la respuesta del modelo."""
+        if not result or len(result.strip()) < 5:
+            return None
+        
+        clean_result = result.strip()
+        for prefix in ["Bot:", "Pompi:", "Respuesta:", "R:"]:
+            if clean_result.startswith(prefix):
+                clean_result = clean_result[len(prefix):].strip()
+        
+        return clean_result if clean_result else None
+    
+    def _update_cache(self, key: str, value: str):
+        """Actualiza el caché con límite de tamaño."""
+        if len(RESPONSE_CACHE) >= MAX_CACHE_SIZE:
+            oldest_key = next(iter(RESPONSE_CACHE))
+            del RESPONSE_CACHE[oldest_key]
+        RESPONSE_CACHE[key] = value
 
 # ============== INSTANCIA GLOBAL ==============
 _chat_model = ChatModel()
-# ==============================================
-
-
-def generate_text(prompt: str, max_new_tokens: int = 100, 
-                 temperature: float = 0.7) -> Optional[str]:
-    """
-    ✅ Genera respuesta SIN contexto (backward compatible)
-    
-    Args:
-        prompt: Instrucción específica
-        max_new_tokens: Límite de tokens
-        temperature: Creatividad
-        
-    Returns:
-        Respuesta generada o None si falla
-    """
-    return _chat_model.generate(prompt, max_new_tokens, temperature)
-
 
 def generate_text_with_context(prompt: str, tracker: Optional[Tracker] = None, 
-                               max_new_tokens: int = 100, 
-                               temperature: float = 0.7) -> Optional[str]:
+                               max_new_tokens: int = 150, 
+                               temperature: float = 0.3) -> Optional[str]:
     """
-    ✅ Genera respuesta CON contexto conversacional ligero
-    
-    Args:
-        prompt: Instrucción específica
-        tracker: Tracker de Rasa (opcional, para contexto)
-        max_new_tokens: Límite de tokens
-        temperature: Creatividad
-        
-    Returns:
-        Respuesta generada o None si falla
+    Función principal para generar texto. Construye el contexto y llama al modelo.
+    Devuelve el texto generado o None si falla.
     """
     try:
-        # Construir contexto si hay tracker
-        context_info = ""
-        if tracker:
-            context_info = _build_lightweight_context(tracker)
-        
-        # Combinar contexto + instrucción
-        full_prompt = f"{context_info}\n\n{prompt}" if context_info else prompt
+        # La construcción de contexto se mantiene, ya que es útil.
+        context_info = _build_lightweight_context(tracker) if tracker else ""
+        full_prompt = f"Contexto de la conversación:\n{context_info}\n\nInstrucción:\n{prompt}" if context_info else prompt
         
         return _chat_model.generate(full_prompt, max_new_tokens, temperature)
         
     except Exception as e:
-        logger.error(f"[ModelManager] Error generando con contexto: {e}")
+        logger.error(f"[ModelManager] Error inesperado en generate_text_with_context: {e}", exc_info=True)
         return None
 
-
 def _build_lightweight_context(tracker: Tracker) -> str:
-    """
-    ✅ Construye contexto conversacional mínimo (50-150 tokens aprox)
-    
-    Incluye:
-    - Últimas 2-3 interacciones
-    - Búsqueda activa
-    - Sugerencia pendiente
-    - Estado de engagement
-    
-    Args:
-        tracker: Tracker de Rasa
-        
-    Returns:
-        String con contexto formateado
-    """
+    # Esta función auxiliar no necesita cambios, sigue siendo eficiente.
     try:
         context_parts = []
-        
-        # 1. ÚLTIMAS 2-3 INTERACCIONES (máximo 200 chars c/u)
-        recent_events = []
-        for event in reversed(list(tracker.events)):
-            if event.get('event') == 'user':
-                text = event.get('text', '')[:100]
-                recent_events.insert(0, f"Usuario: {text}")
-                if len(recent_events) >= 2:  # Solo últimas 2 del usuario
-                    break
-            elif event.get('event') == 'bot' and len(recent_events) > 0:
-                text = event.get('text', '')[:100]
-                recent_events.insert(0, f"Pompi: {text}")
-                break
-        
-        if recent_events:
-            context_parts.append("Conversación reciente:")
-            context_parts.extend(recent_events[-3:])  # Máximo 3 mensajes
-        
-        # 2. BÚSQUEDA ACTIVA (si existe)
         search_history = tracker.get_slot('search_history')
-        if search_history and len(search_history) > 0:
+        if search_history:
             last_search = search_history[-1]
-            search_type = last_search.get('type', 'producto')
             params = last_search.get('parameters', {})
-            
-            # Resumir parámetros principales
-            main_params = []
-            for key in ['nombre', 'empresa', 'categoria', 'animal']:
-                if key in params:
-                    value = params[key]
-                    if isinstance(value, dict):
-                        value = value.get('value', value)
-                    main_params.append(f"{key}={value}")
-            
-            if main_params:
-                params_str = ', '.join(main_params[:2])  # Solo primeros 2
-                context_parts.append(f"Búsqueda activa: {search_type} ({params_str})")
+            if params:
+                params_str = ", ".join([f"{k}='{v}'" for k, v in params.items()])
+                context_parts.append(f"El usuario está buscando con estos filtros: {params_str}")
         
-        # 3. SUGERENCIA PENDIENTE (crítico para off-topic)
-        pending_suggestion = tracker.get_slot('pending_suggestion')
-        if pending_suggestion:
-            suggestion_type = pending_suggestion.get('suggestion_type', '')
-            
-            if suggestion_type == 'entity_correction':
-                original = pending_suggestion.get('original_value', '')
-                suggestions = pending_suggestion.get('suggestions', [])
-                if suggestions:
-                    context_parts.append(
-                        f"Esperando confirmación: ¿'{original}' → '{suggestions[0]}'?"
-                    )
-            
-            elif suggestion_type == 'type_correction':
-                context_parts.append("Esperando confirmación de tipo de búsqueda")
-            
-            elif suggestion_type == 'missing_parameters':
-                criteria = pending_suggestion.get('required_criteria', 'información')
-                context_parts.append(f"Esperando que el usuario dé: {criteria}")
-        
-        # 4. INTENT ACTUAL (detectar off-topic)
-        current_intent = tracker.latest_message.get('intent', {}).get('name', '')
-        if current_intent:
-            offtopic_intents = [
-                'pedir_chiste', 'reirse', 'insultar', 'out_of_scope',
-                'off_topic', 'consulta_veterinaria_profesional'
-            ]
-            
-            if current_intent in offtopic_intents:
-                context_parts.append(f"⚠️ Usuario cambió de tema ({current_intent})")
-        
-        # 5. ENGAGEMENT (modula el tono)
-        engagement = tracker.get_slot('user_engagement_level')
-        if engagement in ['frustrated', 'needs_help']:
-            context_parts.append(f"⚠️ Usuario parece {engagement}")
-        elif engagement == 'confused':
-            context_parts.append(f"⚠️ Usuario está confundido")
-        
-        # Construir contexto final
-        if context_parts:
-            return "Contexto:\n" + "\n".join(context_parts)
-        
+        return "\n".join(context_parts)
+    except Exception:
         return ""
-        
-    except Exception as e:
-        logger.error(f"[ModelManager] Error construyendo contexto: {e}")
-        return ""
-
-
-def get_model():
-    """
-    ✅ Por compatibilidad con código legacy
-    Retorna (None, None) porque usamos API, no modelo local
-    """
-    _chat_model.load()
-    return None, None

@@ -404,16 +404,52 @@ nlu:
 - lookup: categoria
   examples: |
     - accesorio
+    - accesorios
     - alimento
+    - alimentos
+    - balanceado
+    - comida
     - antiartrosico
+    - antiartrosicos
+    - analgesico
+    - analgesicos
+    - antiinflamatorio
     - antiparasitario externo
+    - antiparasitarios externos
+    - pipeta
+    - pipetas
+    - pulguicida
+    - garrapaticida
+    - collar
     - antiparasitario interno
+    - antiparasitarios internos
+    - desparasitante
+    - pastilla para parasitos
+    - antibiotico
+    - antibioticos
     - biologico
+    - biologicos
+    - vacuna
+    - vacunas
+    - suero
     - cardiologico
+    - cardiologicos
+    - remedio para el corazon
     - clinico
     - farmacos
+    - farmaco
+    - medicamento
+    - remedio
     - higiene y belleza
+    - shampoo
+    - perfume
     - higiene y belleza odontologico
+    - dental
+    - pasta dental
+    - cepillo de dientes
+    - vitamina
+    - vitaminas
+    - suplemento
     - sin categoria
 
 - lookup: compuesto
@@ -1015,6 +1051,15 @@ nlu:
     - stock bajo
     - promocional
     - promocionales
+    - recién llegado
+    - en oferta
+    - rebajado
+    - en promoción
+    - poco stock
+    - stock limitado
+    - últimas unidades
+    - vence pronto
+    - por vencer
 
 - lookup: dosis
   examples: |

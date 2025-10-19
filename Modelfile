@@ -1,0 +1,5 @@
+# Modelfile
+FROM llama3.2:3b
+
+# Mantiene el modelo en memoria por 2 horas (o usa -1 para indefinido)
+PARAMETER keep_alive 120m

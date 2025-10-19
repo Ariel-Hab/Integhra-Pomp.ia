@@ -32,8 +32,8 @@ intents:
   - pedir_ayuda
 
 entities:
+  - filter_name
   # ===== ENTIDADES BÁSICAS CON ROLES PARA MODIFICACIONES =====
-  
   - producto:
       roles:
         - old    # Para modificaciones: "reemplaza X por Y"
@@ -407,6 +407,39 @@ slots:
     influence_conversation: false
     initial_value: []
     mappings: []
+  
+  # Para ESTADO (4 slots booleanos)
+estado_nuevo:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: nuevo
+
+estado_poco_stock:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: poco_stock
+
+estado_vence_pronto:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: vence_pronto
+
+estado_en_oferta:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: en_oferta
 
 responses:
   utter_saludo:
@@ -431,7 +464,7 @@ responses:
   - text: Espectacular! Necesitas buscar algo?
   - text: Buenisimoo! Necesitas ayuda?
   - text: Genial! Estoy aquí por si necesitas algo
-  
+
   utter_pedir_chiste:
   - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué hizo? —Vendí la bicicleta.'
   - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene miedo al *ratón*.'
@@ -443,27 +476,27 @@ responses:
   - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas emocionales*.'
   - text: 'Aquí va uno: ¿Qué hace un conejo cuando se aburre? ¡Ve *zanahorias* películas!'
   - text: 'Aquí va uno: ¿Cómo se despiden dos pulgas? Nos vemos en el perro'
-  
+
   utter_despedida:
   - text: ¡Adiós! Que tengas un gran día ✨
   - text: Hasta luego, nos vemos pronto 🐾
   - text: Chao, cuidate mucho
-  
+
   utter_denegar:
   - text: Está bien, lo respeto 👍
   - text: Perfecto, no hay problema
   - text: De acuerdo, entendido
-  
+
   utter_agradecimiento:
   - text: ¡De nada! 😊
   - text: Siempre a disposición 🙌
   - text: Me alegra poder ayudarte
-  
+
   utter_afirmar:
   - text: ¡Perfecto!
   - text: Genial, entendido 👍
   - text: Claro que sí
-  
+
   utter_pedir_parametros_producto:
   - text: |
       Para buscar un producto necesito al menos un dato 🛒  
@@ -505,7 +538,10 @@ actions:
   - action_explicar_ayuda
   
 nlu:
-  - data/nlu.yml
+  - data/nlu/nlu_basics.yml
+  - data/nlu/nlu_busquedas.yml
+  - data/nlu/nlu_modificaciones.yml
+  - data/nlu/nlu_fuera_contexto.yml
   - data/lookup_tables.yml
   - data/synonyms.yml
   - data/regex_entities.yml

@@ -203,22 +203,37 @@ class ComparisonDetector:
             }
             
             # Encontrar la comparación con mayor confianza
-            best_comparison = self._select_best_comparison(results)
+            best_comparison_dict = self._select_best_comparison(results)
             
-            if best_comparison:
+            if best_comparison_dict:
                 logger.info(
                     f"[ComparisonDetector] Comparación detectada - "
-                    f"Tipo: {best_comparison['type']}, "
-                    f"Confianza: {best_comparison.get('confidence', 0):.2f}"
+                    f"Tipo: {best_comparison_dict['type']}, "
+                    f"Confianza: {best_comparison_dict.get('confidence', 0):.2f}"
+                )
+                # ✅ CONSTRUIMOS EL OBJETO A PARTIR DEL DICCIONARIO
+                return ComparisonResult(
+                    detected=True,
+                    comparison_type=ComparisonType(best_comparison_dict.get('type')) if best_comparison_dict.get('type') else None,
+                    operator=ComparisonOperator(best_comparison_dict.get('operator')) if best_comparison_dict.get('operator') else None,
+                    quantity=best_comparison_dict.get('value'),
+                    confidence=best_comparison_dict.get('confidence', 0.0),
+                    raw_expression=text
                 )
             else:
-                logger.debug("[ComparisonDetector] No se detectó comparación")
-            
-            return best_comparison or {'detected': False}
+                return ComparisonResult(
+                    detected=False,
+                    raw_expression=text
+                )
+                
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error general: {e}", exc_info=True)
-            return {'detected': False}
+            # ✅ DEVOLVEMOS UN OBJETO DE ERROR
+            return ComparisonResult(
+                detected=False,
+                raw_expression=text
+            )
     
     def _detect_numeric_comparison(self, text: str, entities: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Detecta comparaciones numéricas (descuento/bonificación)"""

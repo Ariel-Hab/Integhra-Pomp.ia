@@ -1,4 +1,4 @@
-# actions/actions_out_of_context.py (✅ CON CONTEXTO)
+# actions/actions_out_of_context.py (✅ CON PATRÓN COMPLETO)
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -6,12 +6,12 @@ from rasa_sdk.events import EventType
 import logging
 import random
 
-from .models.model_manager import generate_text_with_context  # ✅ CAMBIO
+from .models.model_manager import _chat_model, generate_text_with_context
 
 logger = logging.getLogger(__name__)
 
 class ActionHandleOutOfContext(Action):
-    """✅ MEJORADO: Manejo de off-topic con contexto conversacional"""
+    """✅ MEJORADO: Manejo de off-topic con patrón streaming + fallback completo"""
     
     def name(self) -> str:
         return "action_handle_out_of_context"
@@ -19,16 +19,21 @@ class ActionHandleOutOfContext(Action):
     def _get_contextual_prompt(self, intent: str, user_message: str, tracker: Tracker) -> str:
         """
         ✅ NUEVO: Prompts que aprovechan el contexto automático
-        El contexto se agrega automáticamente en generate_text_with_context()
         """
         
-        # Detectar si hay búsqueda activa
-        search_history = tracker.get_slot('search_history')
-        has_active_search = search_history and len(search_history) > 0
+        # ✅ Detectar si hay búsqueda activa (acceso seguro)
+        try:
+            search_history = tracker.get_slot('search_history')
+            has_active_search = search_history and len(search_history) > 0
+        except:
+            has_active_search = False
         
-        # Detectar si hay sugerencia pendiente
-        pending_suggestion = tracker.get_slot('pending_suggestion')
-        has_pending = pending_suggestion is not None
+        # ✅ Detectar si hay sugerencia pendiente (acceso seguro)
+        try:
+            pending_suggestion = tracker.get_slot('pending_suggestion')
+            has_pending = pending_suggestion is not None
+        except:
+            has_pending = False
         
         prompts = {
             "off_topic": self._build_offtopic_prompt(
@@ -127,84 +132,78 @@ class ActionHandleOutOfContext(Action):
         try:
             current_intent = tracker.latest_message.get("intent", {}).get("name", "")
             user_message = tracker.latest_message.get("text", "")
+            user_id = tracker.sender_id
 
             logger.info(f"[OutOfContext] Intent: {current_intent}, Mensaje: '{user_message[:50]}...'")
 
-            # ✅ Construir prompt contextual
+            # Construir prompt contextual
             prompt = self._get_contextual_prompt(current_intent, user_message, tracker)
             
-            # ✅ Generar CON contexto automático
-            max_tokens = 70 if current_intent == "consulta_veterinaria_profesional" else 60
+            # ✅ Definir max_tokens según el intent (OPTIMIZADO para < 10s)
+            max_tokens = 50 if current_intent == "consulta_veterinaria_profesional" else 40
             
-            respuesta = generate_text_with_context(
-                prompt=prompt,
-                tracker=tracker,  # ✅ Contexto automático
+            # ✅ PASO 1: Intentar streaming
+            logger.info("[OutOfContext] Intentando streaming...")
+            success = _chat_model.generate_and_stream(
+                user_prompt=prompt,
+                user_id=user_id,
                 max_new_tokens=max_tokens,
                 temperature=0.7
             )
 
-            # Limpieza
-            if respuesta:
-                respuesta = respuesta.strip()
+            # ✅ PASO 2: Si streaming falla, usar generación estándar
+            if not success:
+                logger.warning("[OutOfContext] Streaming falló. Usando generación estándar...")
+                response = generate_text_with_context(
+                    prompt=prompt,
+                    tracker=tracker,
+                    max_new_tokens=max_tokens,
+                    temperature=0.7
+                )
                 
-                # Remover prefijos comunes
-                for prefix in ["Bot:", "Pompi:", "Respuesta:", "Asistente:"]:
-                    if respuesta.startswith(prefix):
-                        respuesta = respuesta[len(prefix):].strip()
-                
-                # Validación de longitud
-                if len(respuesta) < 10 or len(respuesta) > 250:
-                    logger.warning(f"[OutOfContext] Respuesta fuera de rango: {len(respuesta)} chars")
-                    respuesta = None
+                if response and response.strip():
+                    dispatcher.utter_message(text=response.strip())
+                    logger.info("[OutOfContext] ✓ Respuesta estándar enviada")
+                else:
+                    # ✅ PASO 3: Si todo falla, usar fallback hardcoded
+                    logger.error("[OutOfContext] Generación estándar también falló. Usando fallback.")
+                    fallback_response = self._get_fallback_response(current_intent)
+                    dispatcher.utter_message(text=fallback_response)
+            else:
+                logger.info("[OutOfContext] ✓ Streaming exitoso")
+
+            # Enviar botones de seguimiento (independiente del método de generación)
+            logger.info(f"[OutOfContext] Enviando botones de seguimiento...")
             
-            # Fallback si falla generación
-            if not respuesta:
-                respuesta = self._get_fallback_response(current_intent)
-                logger.warning(f"[OutOfContext] Usando fallback")
-            
-            logger.info(f"[OutOfContext] ✓ Respuesta: '{respuesta[:60]}...'")
-            
-            # ✅ Responder según tipo
             if current_intent == "consulta_veterinaria_profesional":
-                self._handle_medical_consultation(
-                    dispatcher, respuesta, user_message, tracker
-                )
+                self._handle_medical_consultation(dispatcher, user_message, tracker)
             elif current_intent == "off_topic":
-                self._handle_offtopic(
-                    dispatcher, respuesta, tracker
-                )
+                self._handle_offtopic(dispatcher, tracker)
             else:  # out_of_scope
-                self._handle_out_of_scope(
-                    dispatcher, respuesta, tracker
-                )
+                self._handle_out_of_scope(dispatcher, tracker)
 
         except Exception as e:
-            logger.error(f"[OutOfContext] Error: {e}", exc_info=True)
-            fallback = self._get_fallback_response(current_intent)
+            logger.error(f"[OutOfContext] Error crítico en run: {e}", exc_info=True)
+            fallback = self._get_fallback_response(tracker.latest_message.get("intent", {}).get("name", ""))
             dispatcher.utter_message(text=fallback)
 
         return []
     
     def _handle_medical_consultation(self, dispatcher: CollectingDispatcher, 
-                                    respuesta: str, user_message: str, 
-                                    tracker: Tracker):
-        """Maneja consultas médicas con mayor detalle"""
+                                     user_message: str, tracker: Tracker):
+        """Maneja el seguimiento de consultas médicas (solo botones y alertas)."""
         
-        # Respuesta principal
-        dispatcher.utter_message(text=respuesta)
-        
-        # Alert si es emergencia
         if self._detect_emergency(user_message):
             dispatcher.utter_message(
                 text="🚨 ESTO PARECE URGENTE. Andá al veterinario INMEDIATAMENTE."
             )
-        
-        # Botones de acción (solo si NO es emergencia)
         else:
-            search_history = tracker.get_slot('search_history')
-            
-            if search_history and len(search_history) > 0:
-                # Tenía búsqueda activa
+            try:
+                search_history = tracker.get_slot('search_history')
+            except:
+                search_history = None
+                
+            if search_history:
                 dispatcher.utter_message(
                     text="Después de consultar con el vet, ¿querés volver a tu búsqueda anterior?",
                     buttons=[
@@ -213,7 +212,6 @@ class ActionHandleOutOfContext(Action):
                     ]
                 )
             else:
-                # Sin búsqueda previa
                 dispatcher.utter_message(
                     text="Después del veterinario, si necesitás productos, avisame.",
                     buttons=[
@@ -222,35 +220,31 @@ class ActionHandleOutOfContext(Action):
                     ]
                 )
     
-    def _handle_offtopic(self, dispatcher: CollectingDispatcher, 
-                        respuesta: str, tracker: Tracker):
-        """Maneja off-topic con reconducción contextual"""
+    def _handle_offtopic(self, dispatcher: CollectingDispatcher, tracker: Tracker):
+        """Maneja el seguimiento de off-topic (solo botones)."""
         
-        # Respuesta principal
-        dispatcher.utter_message(text=respuesta)
+        try:
+            pending_suggestion = tracker.get_slot('pending_suggestion')
+        except:
+            pending_suggestion = None
         
-        # Botones según contexto
-        pending_suggestion = tracker.get_slot('pending_suggestion')
-        search_history = tracker.get_slot('search_history')
+        try:
+            search_history = tracker.get_slot('search_history')
+        except:
+            search_history = None
         
         if pending_suggestion:
-            # Hay sugerencia pendiente - no agregar botones (ya está en la respuesta)
-            pass
-        
-        elif search_history and len(search_history) > 0:
-            # Había búsqueda activa
+            pass # No se envían botones extra si ya hay una sugerencia activa
+        elif search_history:
             last_search = search_history[-1]
             search_type = last_search.get('type', 'producto')
-            
             dispatcher.utter_message(
                 buttons=[
                     {"title": f"Seguir con {search_type}s", "payload": "/afirmar"},
                     {"title": "Nueva búsqueda", "payload": f"/buscar_{search_type}"}
                 ]
             )
-        
         else:
-            # Sin contexto previo - botones generales
             dispatcher.utter_message(
                 buttons=[
                     {"title": "Ver productos", "payload": "/buscar_producto"},
@@ -258,17 +252,15 @@ class ActionHandleOutOfContext(Action):
                 ]
             )
     
-    def _handle_out_of_scope(self, dispatcher: CollectingDispatcher, 
-                           respuesta: str, tracker: Tracker):
-        """Maneja out of scope con redirección"""
+    def _handle_out_of_scope(self, dispatcher: CollectingDispatcher, tracker: Tracker):
+        """Maneja el seguimiento de out_of_scope (solo botones)."""
         
-        # Respuesta principal
-        dispatcher.utter_message(text=respuesta)
-        
-        # Siempre ofrecer ayuda veterinaria
-        search_history = tracker.get_slot('search_history')
-        
-        if search_history and len(search_history) > 0:
+        try:
+            search_history = tracker.get_slot('search_history')
+        except:
+            search_history = None
+            
+        if search_history:
             dispatcher.utter_message(
                 text="¿Querés volver a lo que estabas buscando?",
                 buttons=[

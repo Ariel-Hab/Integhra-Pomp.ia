@@ -35,7 +35,7 @@ rasa = "^3.6.21"
 transformers = ">=4.31.0,<4.34.0"  # Versión compatible con Rasa
 torch = "^2.5.1"
 sentencepiece = "^0.2.0"
-groq = "^0.4.0"
+openai = "2.3.0"
 accelerate = "^0.20.0"
 httpx = ">=0.24.0,<0.28.0"
 httpcore = ">=0.17.0"

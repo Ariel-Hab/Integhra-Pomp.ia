@@ -2,7 +2,7 @@ import os
 import threading
 import uvicorn
 import asyncio
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rasa.core.agent import Agent
@@ -94,6 +94,26 @@ def reload_agent():
         agent = old_agent
     return success
 
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, WebSocket] = {}
+
+    async def connect(self, websocket: WebSocket, user_id: str):
+        await websocket.accept()
+        self.active_connections[user_id] = websocket
+        print(f"🔌 WebSocket conectado para user_id: {user_id}")
+
+    def disconnect(self, user_id: str):
+        if user_id in self.active_connections:
+            del self.active_connections[user_id]
+            print(f"🔌 WebSocket desconectado para user_id: {user_id}")
+
+    async def send_personal_message(self, message: str, user_id: str):
+        if user_id in self.active_connections:
+            await self.active_connections[user_id].send_text(message)
+
+manager = ConnectionManager()
+
 # ---------- FastAPI ----------
 app = FastAPI(title="Rasa Chat API", version="1.0.0")
 
@@ -159,34 +179,46 @@ async def health_check():
         "action_server": ACTION_SERVER_URL,
         "model_folder": MODEL_FOLDER
     }
+# En main.py, reemplaza tu función reset_context por esta:
 @app.post("/reset_context")
 async def reset_context(user_id: str):
     """
-    Reinicia el contexto y los slots de un usuario específico.
+    Reinicia la conversación para un usuario específico enviando el evento /restart.
+    Esta es la forma recomendada por Rasa.
     """
     if agent is None:
         raise HTTPException(status_code=503, detail="Rasa agent not loaded")
 
     try:
-        # Reinicia la sesión (contexto de conversación)
+        # La forma canónica de reiniciar es enviar un mensaje /restart
         await agent.handle_message(UserMessage(
-            text=None,
+            text="/restart",
             output_channel=LoggingOutputChannel(),
-            sender_id=user_id,
-            input_channel=None,
+            sender_id=user_id
         ))
-
-        # Reinicia todos los slots a None
-        tracker = await agent.tracker_store.get_or_create_tracker(user_id)
-        events = [SlotSet(slot, None) for slot in tracker.slots.keys()]
-        for e in events:
-            tracker.update(e)
-        await agent.tracker_store.save(tracker)
-
-        return {"status": "success", "message": f"Contexto y slots reiniciados para user_id: {user_id}"}
+        return {"status": "success", "message": f"Contexto reiniciado para user_id: {user_id}"}
     except Exception as e:
+        print(f"Error en reset_context: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    
+class ParseRequest(BaseModel):
+    text: str
+@app.post("/model/parse")
+async def parse_message(payload: ParseRequest):
+    """
+    Analiza un texto para extraer intent y entidades sin afectar el tracker.
+    Ideal para testing de NLU.
+    """
+    if agent is None:
+        raise HTTPException(status_code=503, detail="Rasa agent not loaded")
+
+    try:
+        # Usamos el método `parse_message` del agente
+        result = await agent.parse_message(payload.text)
+        return result
+    except Exception as e:
+        print(f"Error en /model/parse: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+      
 @app.get("/models")
 async def list_models():
     """List available models in the models directory"""
@@ -205,6 +237,32 @@ async def list_models():
             })
     
     return {"models": sorted(models, key=lambda x: x["modified"], reverse=True)}
+# @app.websocket("/ws/{user_id}")
+# async def websocket_endpoint(websocket: WebSocket, user_id: str):
+#     await manager.connect(websocket, user_id)
+#     try:
+#         while True:
+#             # Mantenemos la conexión abierta escuchando.
+#             # Podrías usar esto para recibir pings del cliente.
+#             await websocket.receive_text()
+#     except WebSocketDisconnect:
+#         manager.disconnect(user_id)
+
+# =================================================================
+# ✅ PASO 3: CREAR UN ENDPOINT INTERNO PARA EL ACTION SERVER
+# =================================================================
+# class StreamChunk(BaseModel):
+#     user_id: str
+#     chunk: str
+
+# @app.post("/internal/stream_chunk")
+# async def stream_chunk_to_user(payload: StreamChunk):
+#     """
+#     Endpoint que SÓLO el action server debe llamar.
+#     Recibe un pedazo de texto y lo envía por el WebSocket correcto.
+#     """
+#     await manager.send_personal_message(payload.chunk, payload.user_id)
+#     return {"status": "chunk sent"}
 
 @app.post("/reload_model")
 async def reload_model_endpoint():
@@ -223,7 +281,24 @@ async def reload_model_endpoint():
                 "models_available": len(glob.glob(os.path.join(MODEL_FOLDER, "*"))) > 0
             }
         )
+# En main.py, agrega este nuevo endpoint
+@app.get("/tracker/{user_id}")
+async def get_tracker(user_id: str):
+    """
+    Retorna el tracker actual de un usuario en formato JSON.
+    """
+    if agent is None:
+        raise HTTPException(status_code=503, detail="Rasa agent not loaded")
 
+    try:
+        tracker = await agent.tracker_store.retrieve(user_id)
+        if tracker:
+            return tracker.current_state()
+        else:
+            raise HTTPException(status_code=404, detail=f"Tracker for user_id '{user_id}' not found.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 @app.post("/message", response_model=ChatResponse)
 async def chat(payload: ChatRequest):
     if agent is None:

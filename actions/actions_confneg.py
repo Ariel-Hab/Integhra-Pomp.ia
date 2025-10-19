@@ -10,60 +10,47 @@ from rasa_sdk.events import SlotSet, EventType
 
 from .conversation_state import ConversationState, analyze_user_confirmation, get_slot_safely
 from .helpers import get_intent_info
-from .models.model_manager import generate_text_with_context  # ✅ CORREGIDO
+from .models.model_manager import generate_text_with_context
 
 logger = logging.getLogger(__name__)
 
 class ActionConfNegAgradecer(Action):
     """
-    ✅ VERSIÓN CON GROQ: Lógica intacta, respuestas generadas por LLM
+    ✅ VERSIÓN CON PATRÓN: Try streaming → fallback to standard generation
     """
     
     def name(self) -> str:
         return "action_conf_neg_agradecer"
     
-    def _generate_response(self, prompt: str, tracker: Tracker, max_tokens: int = 80) -> str:
+    def _send_message(self, dispatcher: CollectingDispatcher, prompt: str, 
+                      fallback: str, tracker: Tracker, max_tokens: int = 50):
         """
-        ✅ ACTUALIZADO: Genera respuesta CON contexto
+        Genera un mensaje usando el model_manager y utiliza un fallback si la generación falla.
         """
         try:
+            logger.debug(f"[LLM] Intentando generar respuesta para: '{prompt[:70]}...'")
+            
+            # PASO 1: Intentar generar la respuesta completa.
             response = generate_text_with_context(
                 prompt=prompt,
                 tracker=tracker,
                 max_new_tokens=max_tokens,
-                temperature=0.7
+                temperature=0.5
             )
             
-            if not response or len(response.strip()) < 5:
-                logger.warning(f"[Groq] Respuesta vacía")
-                return None
-            
-            return response.strip()
-            
+            # PASO 2: Si la generación devuelve una respuesta válida, la enviamos.
+            #         Si no (es None o está vacía), usamos el fallback.
+            if response and response.strip():
+                dispatcher.utter_message(text=response.strip())
+                logger.debug(f"[LLM] ✓ Respuesta generada enviada: '{response[:50]}...'")
+            else:
+                logger.warning(f"[LLM] La generación falló o devolvió una respuesta vacía. Usando fallback.")
+                dispatcher.utter_message(text=fallback)
+        
         except Exception as e:
-            logger.error(f"[Groq] Error: {e}")
-            return None
-    
-    def _send_message(self, dispatcher: CollectingDispatcher, prompt: str, 
-                 fallback: str, tracker: Tracker, max_tokens: int = 80):
-        """
-        ✅ Envía mensaje generado por Groq con fallback
-        
-        Args:
-            dispatcher: Dispatcher de Rasa
-            prompt: Prompt para Groq
-            fallback: Mensaje de respaldo si Groq falla
-            tracker: Tracker de Rasa para contexto
-            max_tokens: Límite de tokens
-        """
-        response = self._generate_response(prompt, tracker, max_tokens)
-        
-        if response:
-            dispatcher.utter_message(text=response)
-            logger.debug(f"[Groq] ✓ Respuesta: '{response[:50]}...'")
-        else:
+            # Fallback de seguridad para cualquier error inesperado.
+            logger.error(f"[LLM] Error crítico generando respuesta en _send_message: {e}", exc_info=True)
             dispatcher.utter_message(text=fallback)
-            logger.warning(f"[Groq] ✗ Usando fallback")
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, 
             domain: Dict[str, Any]) -> List[EventType]:
@@ -82,7 +69,7 @@ class ActionConfNegAgradecer(Action):
                 actual_pending = get_slot_safely(tracker, "pending_suggestion")
                 if not actual_pending:
                     logger.info("[ConfNegAgradecer] Sugerencia limpiada, respuesta estándar")
-                    return self._handle_standard_responses(current_intent, dispatcher, tracker)  # ✅ CORREGIDO
+                    return self._handle_standard_responses(current_intent, dispatcher, tracker)
                 
                 suggestion_result = self._handle_pending_suggestions_improved(
                     context, current_intent, user_msg, actual_pending, tracker, dispatcher
@@ -100,7 +87,7 @@ class ActionConfNegAgradecer(Action):
                     return events
             
             # Respuestas estándar
-            standard_response_events = self._handle_standard_responses(current_intent, dispatcher, tracker)  # ✅ CORREGIDO
+            standard_response_events = self._handle_standard_responses(current_intent, dispatcher, tracker)
             events.extend(standard_response_events)
             
             return events
@@ -132,11 +119,12 @@ class ActionConfNegAgradecer(Action):
                        f"Afirmativo: {response_analysis['is_affirmative']}, "
                        f"Negativo: {response_analysis['is_negative']}, "
                        f"Confianza: {confidence:.2f}")
-            # ✅ NUEVO: Manejar confirmación de modificación
+            
             if suggestion_type == 'modification_confirmation':
                 return self._handle_modification_confirmation(
                     pending_suggestion, response_analysis, tracker, dispatcher
                 )
+            
             if response_analysis['is_affirmative'] and confidence >= 0.7:
                 return self._handle_affirmative_response_improved(
                     pending_suggestion, response_analysis, tracker, dispatcher
@@ -163,6 +151,7 @@ class ActionConfNegAgradecer(Action):
                     SlotSet("user_engagement_level", "needs_help")
                 ]
             }
+    
     def _handle_modification_confirmation(self, pending_suggestion: Dict[str, Any],
                                         response_analysis: Dict[str, Any],
                                         tracker: Tracker,
@@ -174,7 +163,6 @@ class ActionConfNegAgradecer(Action):
             confidence = response_analysis.get('confidence', 0.0)
             
             if is_affirmative and confidence >= 0.7:
-                # Usuario confirmó la modificación
                 actions = pending_suggestion.get('actions', [])
                 search_type = pending_suggestion.get('search_type', 'producto')
                 
@@ -186,14 +174,10 @@ class ActionConfNegAgradecer(Action):
                     max_tokens=40
                 )
                 
-                # Ejecutar la modificación ahora
                 context = ConversationState.get_conversation_context(tracker)
                 previous_params = self._extract_previous_params_from_history(context)
-                
-                # Aplicar modificaciones
                 rebuilt_params = self._apply_confirmed_modifications(previous_params, actions)
                 
-                # Ejecutar búsqueda
                 self._execute_search_from_confirmation(
                     search_type, rebuilt_params, dispatcher, tracker
                 )
@@ -207,7 +191,6 @@ class ActionConfNegAgradecer(Action):
                 }
             
             elif is_negative and confidence >= 0.7:
-                # Usuario rechazó la modificación
                 self._send_message(
                     dispatcher,
                     prompt="Usuario rechazó la modificación. Aceptá y pedí que reformule o use otros términos.",
@@ -225,7 +208,6 @@ class ActionConfNegAgradecer(Action):
                 }
             
             else:
-                # Respuesta ambigua
                 self._send_message(
                     dispatcher,
                     prompt="Respuesta ambigua a confirmación de modificación. Pedí clarificación sí/no.",
@@ -236,7 +218,7 @@ class ActionConfNegAgradecer(Action):
                 
                 return {
                     'handled': True,
-                    'events': []  # Mantener pending_suggestion
+                    'events': []
                 }
             
         except Exception as e:
@@ -255,7 +237,6 @@ class ActionConfNegAgradecer(Action):
                 'events': [SlotSet("pending_suggestion", None)]
             }
 
-    # ✅ NUEVO: Métodos auxiliares
     def _extract_previous_params_from_history(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Extrae parámetros de búsqueda anterior del historial"""
         search_history = context.get('search_history', [])
@@ -296,10 +277,11 @@ class ActionConfNegAgradecer(Action):
                 "timestamp": datetime.now().isoformat()
             }
         )
+    
     def _handle_affirmative_response_improved(self, pending_suggestion: Dict[str, Any], 
                                             response_analysis: Dict[str, Any], tracker: Tracker,
                                             dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """✅ CON GROQ: Respuestas afirmativas"""
+        """Respuestas afirmativas con patrón streaming+fallback"""
         suggestion_type = pending_suggestion.get('suggestion_type', '')
         confidence = response_analysis.get('confidence', 0.0)
         events = []
@@ -317,7 +299,7 @@ class ActionConfNegAgradecer(Action):
                                f"Confirmá brevemente y decí que vas a buscar.",
                         fallback=f"¡Perfecto! Buscando con '{corrected_value}'.",
                         tracker=tracker,
-                        max_tokens=60
+                        max_tokens=40  # ✅ Reducido de 60 a 40
                     )
                     
                     search_result = self._execute_search_with_corrected_entity(
@@ -342,7 +324,7 @@ class ActionConfNegAgradecer(Action):
                         prompt="Hubo un problema técnico. Pedí disculpas y sugerí intentar de nuevo.",
                         fallback="Hubo un problema. ¿Podrías intentar nuevamente?",
                         tracker=tracker,
-                        max_tokens=50
+                        max_tokens=35  # ✅ Reducido de 50 a 35
                     )
                     events.extend([
                         SlotSet("pending_suggestion", None),
@@ -360,7 +342,7 @@ class ActionConfNegAgradecer(Action):
                                f"Confirmá y decí que vas a buscar.",
                         fallback=f"¡Entendido! Buscando '{original_value}' como {correct_type}.",
                         tracker=tracker,
-                        max_tokens=60
+                        max_tokens=40  # ✅ Reducido de 60 a 40
                     )
                     
                     search_result = self._execute_search_with_corrected_entity(
@@ -387,7 +369,7 @@ class ActionConfNegAgradecer(Action):
                     prompt=f"Usuario acepta dar más info. Pedí que especifique {criteria}.",
                     fallback=f"Perfecto. ¿Qué {criteria} específico necesitás?",
                     tracker=tracker,
-                    max_tokens=50
+                    max_tokens=35  # ✅ Reducido de 50 a 35
                 )
                 
                 events.extend([
@@ -421,7 +403,7 @@ class ActionConfNegAgradecer(Action):
                                          response_analysis: Dict[str, Any],
                                          tracker: Tracker,
                                          dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """✅ CON GROQ: Respuestas negativas"""
+        """Respuestas negativas con patrón streaming+fallback"""
         suggestion_type = pending_suggestion.get('suggestion_type', '')
         confidence = response_analysis.get('confidence', 0.0)
         
@@ -463,7 +445,7 @@ class ActionConfNegAgradecer(Action):
                                           response_analysis: Dict[str, Any], user_msg: str,
                                           tracker: Tracker,
                                           dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """✅ CON GROQ: Respuestas ambiguas"""
+        """Respuestas ambiguas con patrón streaming+fallback"""
         try:
             suggestion_type = pending_suggestion.get('suggestion_type', '')
             confidence = response_analysis.get('confidence', 0.0)
@@ -543,7 +525,7 @@ class ActionConfNegAgradecer(Action):
                                              user_msg: str,
                                              tracker: Tracker,
                                              dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """✅ CON GROQ: Respuestas no reconocidas"""
+        """Respuestas no reconocidas con patrón streaming+fallback"""
         try:
             attempts = pending_suggestion.get('clarification_attempts', 0) + 1
             
@@ -603,7 +585,7 @@ class ActionConfNegAgradecer(Action):
     def _execute_search_with_corrected_entity(self, corrected_entity: Dict[str, str], 
                                         pending_suggestion: Dict[str, Any], tracker: Tracker,
                                         dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """Ejecuta búsqueda con entidad corregida (lógica intacta)"""
+        """Ejecuta búsqueda con entidad corregida"""
         try:
             search_context = pending_suggestion.get('search_context', {})
             search_type = search_context.get('search_type', 'producto')
@@ -672,8 +654,8 @@ class ActionConfNegAgradecer(Action):
     
     def _handle_standard_responses(self, current_intent: str, 
                                  dispatcher: CollectingDispatcher,
-                                 tracker: Tracker) -> List[EventType]:  # ✅ CORREGIDO
-        """✅ CON GROQ: Respuestas estándar"""
+                                 tracker: Tracker) -> List[EventType]:
+        """Respuestas estándar con patrón streaming+fallback"""
         try:
             intent_info = get_intent_info(current_intent)
             responses = intent_info.get("responses", [])
