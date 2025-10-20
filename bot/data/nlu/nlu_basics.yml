@@ -4,6 +4,7 @@ nlu:
 - intent: saludo
   examples: |
     - hola
+    - holaa
     - buenas
     - qué tal
     - buen día
@@ -15,7 +16,14 @@ nlu:
     - hey
     - hi
     - hello
+    - holis
+    - holaas
+    - buen dia pompi
+    - buen dia bot
+    - saludos
+    - saludooooos
     
+
 
 - intent: preguntar_como_estas
   examples: |

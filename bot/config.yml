@@ -16,7 +16,7 @@ pipeline:
 
     # === CLASIFICADORES ===
   - name: DIETClassifier
-    epochs: 100
+    epochs: 200
     constrain_similarities: true
     entity_recognition: true
     role_recognition: true
@@ -27,6 +27,7 @@ pipeline:
     transformer_size: 256
     BILOU_flag: true
     use_masked_language_model: false
+    number_of_negative_examples: 20
   
   # === EXTRACTORES ===
   - name: RegexEntityExtractor

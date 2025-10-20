@@ -1,84 +1,65 @@
-import asyncio
-import websockets
 import requests
-import threading
 import sys
 
 # ---------- CONFIGURACIÓN ----------
-# Asegurate de que coincidan con tu servidor
-RASA_SERVER_URL = "http://localhost:8000"
-WEBSOCKET_URL = "ws://localhost:8000/ws"
-USER_ID = "console_tester"
+# URL del conector REST de Rasa
+RASA_SERVER_URL = "http://localhost:8000/webhooks/rest/webhook"
+SENDER_ID = "console_tester"
 # -----------------------------------
 
-async def listen_to_websocket():
+def start_chat():
     """
-    Se conecta al WebSocket y escucha mensajes del servidor.
-    Esta función corre de forma asíncrona y para siempre.
+    Inicia un bucle de chat interactivo con el servidor Rasa
+    usando el endpoint REST (petición-respuesta).
     """
-    uri = f"{WEBSOCKET_URL}/{USER_ID}"
-    print(f"📡 Conectando al WebSocket en {uri}...")
-    
-    try:
-        async with websockets.connect(uri) as websocket:
-            print("✅ Conexión WebSocket establecida. ¡Listo para recibir respuestas!")
-            # Bucle infinito para escuchar mensajes
-            async for message in websocket:
-                if message == "[END_OF_STREAM]":
-                    # Cuando llega el marcador de fin, imprimimos una nueva línea
-                    # para separar la respuesta del siguiente prompt de usuario.
-                    print("\n>> Tú: ", end="", flush=True)
-                else:
-                    # Imprime cada chunk sin saltar de línea
-                    print(message, end="", flush=True)
-    except Exception as e:
-        print(f"\n❌ Error de WebSocket: {e}")
-        print("   Asegurate de que tu servidor FastAPI esté corriendo.")
-        sys.exit()
-
-def send_messages():
-    """
-    Toma la entrada del usuario y la envía al servidor Rasa vía HTTP POST.
-    Esta función es síncrona y bloqueante.
-    """
-    url = f"{RASA_SERVER_URL}/message"
-    print("⌨️  Escribí tu mensaje y presioná Enter. Escribí 'salir' para terminar.")
-    print(">> Tú: ", end="", flush=True)
+    print("✅ Chat iniciado. Escribí tu mensaje y presioná Enter.")
+    print("   Para terminar, escribí 'salir'.")
 
     while True:
         try:
-            message = input()
+            # 1. Obtener mensaje del usuario
+            message = input(">> Tú: ")
+
+            # Salir si el usuario lo pide
             if message.lower() in ["salir", "exit", "quit"]:
                 break
-            if not message:
-                print(">> Tú: ", end="", flush=True)
+            
+            # No enviar mensajes vacíos
+            if not message.strip():
                 continue
 
-            # Enviar el mensaje al endpoint de Rasa
-            response = requests.post(url, json={"message": message, "user_id": USER_ID})
-            response.raise_for_status() # Lanza un error si la petición falla
+            # 2. Enviar el mensaje a Rasa
+            # El payload para el conector REST usa 'sender' y 'message'
+            payload = {
+                "sender": SENDER_ID,
+                "message": message
+            }
+            response = requests.post(RASA_SERVER_URL, json=payload)
+            response.raise_for_status() # Lanza un error si la petición falla (ej. 404, 500)
+
+            # 3. Recibir y mostrar la(s) respuesta(s) del bot
+            bot_responses = response.json()
+            if not bot_responses:
+                print("🤖 Pompi: (No hubo respuesta)")
+            
+            for resp in bot_responses:
+                # Rasa puede enviar múltiples mensajes (texto, imágenes, botones, etc.)
+                # Aquí solo mostramos el texto.
+                bot_text = resp.get("text", "(Respuesta sin texto)")
+                print(f"🤖 Pompi: {bot_text}")
 
         except requests.exceptions.RequestException as e:
-            print(f"\n❌ Error enviando mensaje HTTP: {e}")
-        except (KeyboardInterrupt, EOFError):
+            print(f"\n❌ Error de conexión: No se pudo conectar a {RASA_SERVER_URL}.")
+            print(f"   Asegurate de que tu servidor Rasa esté corriendo.")
             break
-    
+        except (KeyboardInterrupt, EOFError):
+            # Permite salir con Ctrl+C o Ctrl+D
+            break
+        except Exception as e:
+            print(f"\n❌ Ocurrió un error inesperado: {e}")
+            break
+
     print("\n👋 ¡Hasta luego!")
-    sys.exit()
-
-def main():
-    """
-    Orquesta el cliente, corriendo el listener de input en un hilo
-    y el listener de WebSocket en el bucle de eventos principal.
-    """
-    # La función input() es "bloqueante", paraliza todo.
-    # El truco es correrla en su propio hilo para que no interfiera
-    # con el listener asíncrono del WebSocket.
-    input_thread = threading.Thread(target=send_messages, daemon=True)
-    input_thread.start()
-
-    # El listener del WebSocket corre en el hilo principal
-    asyncio.run(listen_to_websocket())
 
 if __name__ == "__main__":
-    main()
+    start_chat()

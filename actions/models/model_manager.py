@@ -88,7 +88,7 @@ class ChatModel:
                     {"role": "user", "content": user_prompt}
                 ],
                 model=MODEL_NAME,
-                temperature=temperature,
+                temperature=0.1,
                 max_tokens=max_new_tokens,
                 stream=False, # Aseguramos que el streaming esté deshabilitado
                 timeout=GENERATION_TIMEOUT

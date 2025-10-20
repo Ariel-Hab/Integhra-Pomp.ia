@@ -149,6 +149,8 @@ nlu:
     - el proveedor correcto es [holliday]{"entity": "empresa", "role": "new"}, no [bayer]{"entity": "empresa", "role": "old"}
     - perdón, el animal era [equino]{"entity": "animal", "role": "new"}
 
+    
+
 - intent: modificar_busqueda:agregar
   examples: |
 

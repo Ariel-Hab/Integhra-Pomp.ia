@@ -1622,3 +1622,24 @@
     - hay
     - tiene
     - existe
+
+- synonym: "mayor"
+  examples: |
+    - superior
+    - más de
+    - más que
+    - arriba de
+
+- synonym: "mínimo"
+  examples: |
+    - al menos
+    - como mínimo
+    - por lo menos
+    - mínimamente
+
+- synonym: "máximo"
+  examples: |
+    - hasta
+    - como máximo
+    - no más de
+    - tope de

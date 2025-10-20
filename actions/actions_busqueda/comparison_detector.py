@@ -179,7 +179,7 @@ class ComparisonDetector:
         
         logger.info("[ComparisonDetector] ✅ Inicializado con todos los patrones")
     
-    def detect_comparison(self, text: str, entities: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def detect_comparison(self, text: str, entities: List[Dict[str, Any]]) -> ComparisonResult:
         """
         Detecta comparaciones en el texto
         
@@ -188,7 +188,7 @@ class ComparisonDetector:
             entities: Entidades detectadas por NLU
             
         Returns:
-            Dict con información de comparación detectada
+            ComparisonResult con información de comparación detectada
         """
         try:
             logger.info(f"[ComparisonDetector] Analizando texto: '{text[:50]}...'")
@@ -211,29 +211,55 @@ class ComparisonDetector:
                     f"Tipo: {best_comparison_dict['type']}, "
                     f"Confianza: {best_comparison_dict.get('confidence', 0):.2f}"
                 )
-                # ✅ CONSTRUIMOS EL OBJETO A PARTIR DEL DICCIONARIO
+                
+                # ✅ CONSTRUIR OBJETO CON TODOS LOS CAMPOS REQUERIDOS
                 return ComparisonResult(
                     detected=True,
                     comparison_type=ComparisonType(best_comparison_dict.get('type')) if best_comparison_dict.get('type') else None,
                     operator=ComparisonOperator(best_comparison_dict.get('operator')) if best_comparison_dict.get('operator') else None,
+                    entities=[],  # ✅ LISTA VACÍA POR DEFECTO
                     quantity=best_comparison_dict.get('value'),
+                    groups_detected=[],  # ✅ LISTA VACÍA POR DEFECTO
+                    roles_detected=[],  # ✅ LISTA VACÍA POR DEFECTO
                     confidence=best_comparison_dict.get('confidence', 0.0),
-                    raw_expression=text
+                    raw_expression=text,
+                    temporal_filters=None,
+                    normalized_dates=None
                 )
             else:
+                logger.debug("[ComparisonDetector] No se detectó comparación")
+                # ✅ RETORNAR OBJETO CON TODOS LOS CAMPOS (NO DETECTADO)
                 return ComparisonResult(
                     detected=False,
-                    raw_expression=text
+                    comparison_type=None,
+                    operator=None,
+                    entities=[],
+                    quantity=None,
+                    groups_detected=[],
+                    roles_detected=[],
+                    confidence=0.0,
+                    raw_expression=text,
+                    temporal_filters=None,
+                    normalized_dates=None
                 )
-                
             
         except Exception as e:
             logger.error(f"[ComparisonDetector] Error general: {e}", exc_info=True)
-            # ✅ DEVOLVEMOS UN OBJETO DE ERROR
+            # ✅ RETORNAR OBJETO DE ERROR CON TODOS LOS CAMPOS
             return ComparisonResult(
                 detected=False,
-                raw_expression=text
+                comparison_type=None,
+                operator=None,
+                entities=[],
+                quantity=None,
+                groups_detected=[],
+                roles_detected=[],
+                confidence=0.0,
+                raw_expression=text,
+                temporal_filters=None,
+                normalized_dates=None
             )
+            
     
     def _detect_numeric_comparison(self, text: str, entities: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Detecta comparaciones numéricas (descuento/bonificación)"""

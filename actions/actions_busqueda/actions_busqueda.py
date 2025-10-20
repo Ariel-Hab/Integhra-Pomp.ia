@@ -174,7 +174,6 @@ class ActionBusquedaSituacion(Action):
             logger.info(f"[ActionBusquedaSituacion] Procesando intent: {intent_name}")
             
             events = []
-
             log_message(tracker, nlu_conf_threshold=0.6)
             
             # Detectar y limpiar sugerencias ignoradas
@@ -192,24 +191,32 @@ class ActionBusquedaSituacion(Action):
                 dispatcher.utter_message("Lo siento, no pude entender tu solicitud.")
                 return events
             
-            # ✅ NUEVO: Detectar comparaciones con grupos
+            # ✅ NUEVA LÓGICA: Solo detectar comparaciones si hay indicadores
             comparison_info = None
-            if self._is_search_intent(intent_name):
+            if self._is_search_intent(intent_name) and self._has_comparison_indicators(user_message):
+                logger.info("[ActionBusquedaSituacion] Indicadores de comparación detectados, analizando...")
                 comparison_info = self._analyze_comparison_with_groups(tracker)
-                logger.debug(f"[ActionBusquedaSituacion] Comparación con grupos: {comparison_info}")
+                logger.debug(f"[ActionBusquedaSituacion] Resultado comparación: {comparison_info}")
+            elif self._is_search_intent(intent_name):
+                logger.debug("[ActionBusquedaSituacion] Búsqueda sin indicadores de comparación")
             
             # Actualizar sentimiento
             if context['detected_sentiment'] != context['current_sentiment_slot']:
                 events.append(SlotSet("user_sentiment", context['detected_sentiment']))
             
-            # Procesar según tipo de intent
-            if self._is_search_or_modify_intent(intent_name):
+            # ✅ CORRECCIÓN: Procesar según tipo de intent
+            if intent_name.startswith('modificar_busqueda'):
+                # Es una modificación
                 result = self._handle_modification_intent(context, tracker, dispatcher)
+            elif self._is_search_intent(intent_name):
+                # Es una búsqueda
+                result = self._handle_search_intent(context, tracker, dispatcher, comparison_info)
+            elif intent_name not in ['afirmar', 'denegar', 'agradecer']:
+                # Intent genérico
+                dispatcher.utter_message("¿En qué puedo ayudarte hoy?")
+                result = {'type': 'generic_response'}
             else:
-                if intent_name not in ['afirmar', 'denegar', 'agradecer']:
-                    dispatcher.utter_message("¿En qué puedo ayudarte hoy?")
-                else:
-                    result = self._handle_search_intent(context, tracker, dispatcher, comparison_info)
+                # Otros intents
                 result = {'type': 'generic_response'}
             
             events.extend(self._process_result(result, context))
@@ -224,6 +231,70 @@ class ActionBusquedaSituacion(Action):
             except:
                 pass
             return []
+
+    def _has_comparison_indicators(self, text: str) -> bool:
+        """
+        ✅ NUEVO: Detecta si el texto tiene palabras clave que indiquen comparación
+        
+        Evita ejecutar el detector innecesariamente en búsquedas simples.
+        """
+        try:
+            if not text:
+                return False
+            
+            text_lower = text.lower()
+            
+            # Palabras clave de comparación
+            comparison_keywords = [
+                # Operadores numéricos
+                'mayor', 'menor', 'más', 'menos', 'superior', 'inferior',
+                'arriba', 'debajo', 'entre', 'desde', 'hasta',
+                
+                # Calidad
+                'mejor', 'peor', 'igual',
+                
+                # Cantidades con operadores
+                'más de', 'menos de', 'al menos', 'como máximo', 'máximo',
+                
+                # Temporal
+                'este mes', 'esta semana', 'reciente', 'vigente', 'vence',
+                
+                # Porcentajes explícitos con operadores
+                '% o más', '% o menos', 'supera', 'excede'
+            ]
+            
+            # ✅ FILTROS: Evitar falsos positivos
+            
+            # 1. Si solo pregunta por ofertas/productos sin operadores → NO ES COMPARACIÓN
+            simple_search_patterns = [
+                r'^tenes?\s+(ofertas?|productos?)',
+                r'^(muestra|mostrame|lista|dame)\s+(ofertas?|productos?)',
+                r'^quiero\s+(ver|buscar)\s+(ofertas?|productos?)',
+                r'^(hay|existe[n]?)\s+(ofertas?|productos?)'
+            ]
+            
+            for pattern in simple_search_patterns:
+                if re.match(pattern, text_lower):
+                    logger.debug(f"[CompIndicators] Descartado: búsqueda simple (patrón: {pattern})")
+                    return False
+            
+            # 2. Si contiene operadores de comparación → ES COMPARACIÓN
+            for keyword in comparison_keywords:
+                if keyword in text_lower:
+                    logger.debug(f"[CompIndicators] ✅ Detectado indicador: '{keyword}'")
+                    return True
+            
+            # 3. Si hay números seguidos de % pero sin contexto de comparación → NO ES COMPARACIÓN
+            if re.search(r'\d+\s*%', text_lower) and not any(op in text_lower for op in ['más', 'menos', 'mayor', 'menor']):
+                logger.debug("[CompIndicators] Porcentaje sin operador → no es comparación")
+                return False
+            
+            logger.debug("[CompIndicators] No se detectaron indicadores de comparación")
+            return False
+            
+        except Exception as e:
+            logger.error(f"[CompIndicators] Error: {e}")
+            return False  # En caso de error, asumir que NO hay comparación
 
     def _analyze_comparison_with_groups(self, tracker: Tracker) -> Dict[str, Any]:
         """
@@ -1803,15 +1874,15 @@ class ActionBusquedaSituacion(Action):
             return {'type': 'modify_error', 'error': str(e)}
 
     def _execute_search(self, search_type: str, parameters: Dict[str, str], dispatcher: CollectingDispatcher, 
-                       comparison_info: Dict[str, Any] = None, temporal_filters: Dict[str, Any] = None,is_modification: bool = False,  # ✅ NUEVO
+                   comparison_info: Dict[str, Any] = None, temporal_filters: Dict[str, Any] = None,
+                   is_modification: bool = False,
                    modification_details: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        ✅ OPTIMIZADO: Ejecuta búsqueda usando información de grupos y roles
+        ✅ CORREGIDO: Ejecuta búsqueda y envía respuesta en formato compatible con Flutter
         """
         try:
             cleaned_parameters = self._clean_duplicate_parameters(parameters)
             logger.info(f"[ExecuteSearch] Después de limpieza: {len(cleaned_parameters)} parámetros")
-        
             
             # Validar comparación
             if comparison_info and comparison_info.get('detected'):
@@ -1823,7 +1894,7 @@ class ActionBusquedaSituacion(Action):
             # Formatear parámetros para mensaje
             formatted_params = self._format_parameters_for_display(parameters)
             
-            # Construir mensaje
+            # Construir mensaje de texto simple
             if formatted_params:
                 criteria_text = ", ".join([f"{k}: {v}" for k, v in formatted_params.items()])
                 base_message = f"Buscando {search_type}s con {criteria_text}"
@@ -1841,20 +1912,24 @@ class ActionBusquedaSituacion(Action):
                 if temporal_description:
                     enriched_message += f" {temporal_description}"
             
-            # Preparar JSON message
-            json_message = {
-                "type": "search_results",
+            # ✅ NUEVO: Preparar search_data en formato correcto
+            search_data = {
                 "search_type": search_type,
                 "parameters": self._serialize_parameters(cleaned_parameters),
                 "validated": True,
                 "timestamp": datetime.now().isoformat(),
-                "search_action": "modify" if is_modification else "new",
-                "modification_details": modification_details if is_modification else None
+                "search_action": "modify" if is_modification else "new"
             }
+            
+            # Agregar información de modificación si aplica
+            if is_modification and modification_details:
+                search_data["modification_details"] = modification_details
+            
+            # Agregar grupos del NLU si existen
             if comparison_info:
                 nlu_groups = comparison_info.get('nlu_groups', {})
                 if nlu_groups:
-                    json_message["nlu_groups"] = {
+                    search_data["nlu_groups"] = {
                         group_name: [
                             {
                                 'entity': e['entity'],
@@ -1868,19 +1943,28 @@ class ActionBusquedaSituacion(Action):
                 
                 grouped_entities = comparison_info.get('grouped_entities', {})
                 if grouped_entities:
-                    json_message["grouped_filters"] = grouped_entities
+                    search_data["grouped_filters"] = grouped_entities
             
+            # Agregar filtros temporales
             if temporal_filters:
-                json_message["temporal_filters"] = temporal_filters
+                search_data["temporal_filters"] = temporal_filters
+            
+            # ✅ CRÍTICO: Enviar en formato compatible con Flutter
+            # El frontend espera 'custom' con 'search_data' e 'is_search'
             enriched_message = "Ya me pongo a buscar!"
-            # Enviar respuesta
+            
             dispatcher.utter_message(
                 text=enriched_message,
-                json_message=json_message
+                json_message={
+                    "custom": {
+                        "is_search": True,
+                        "search_data": search_data
+                    }
+                }
             )
             
-            logger.info("[ExecuteSearch] Respuesta enviada exitosamente")
-           
+            logger.info("[ExecuteSearch] ✅ Respuesta enviada con search_data")
+            
             return {
                 'type': 'search_success',
                 'search_type': search_type,

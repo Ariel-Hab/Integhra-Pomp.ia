@@ -1033,3 +1033,13 @@ nlu:
     - ofertas de [ivermectina](producto) de [Biogenesis]{"entity": "empresa", "role": "proveedor"} [nuevas]{"entity": "estado", "role": "nuevo"} con descuento [mayor]{"entity": "comparador", "role": "gt", "group": "descuento_filter"} a [15](cantidad_descuento)%
     - promos de [amoxicilina](producto) [500mg]{"entity": "dosis", "role": "gramaje"} [inyectable]{"entity": "dosis", "role": "forma"} con precio [hasta]{"entity": "comparador", "role": "lte", "group": "precio_filter"} [2000](precio)
     - descuentos [antibióticos](categoria) [nuevos]{"entity": "estado", "role": "nuevo"} con [poco stock]{"entity": "estado", "role": "poco_stock"} para [perros](animal)
+
+    # === RANGOS CON "ENTRE...Y" ===
+    - ofertas con descuento entre [10]{"entity": "cantidad_descuento", "group": "descuento_filter"} y [25]{"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - promos con precio entre [500]{"entity": "precio", "group": "precio_filter"} y [2500]{"entity": "precio", "group": "precio_filter"}
+    - ofertas con bonificación entre [2]{"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} y [6]{"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} unidades
+    - promos con stock entre [20]{"entity": "cantidad_stock", "group": "stock_filter"} y [80]{"entity": "cantidad_stock", "group": "stock_filter"}
+
+    # === RANGOS IMPLÍCITOS (más de X y menos de Y) ===
+    - ofertas con descuento mayor a [5]{"entity": "cantidad_descuento", "group": "descuento_filter"}% y menor a [20]{"entity": "cantidad_descuento", "group": "descuento_filter"}%
+    - promos con precio mínimo [800]{"entity": "precio", "group": "precio_filter"} y máximo [2000]{"entity": "precio", "group": "precio_filter"}

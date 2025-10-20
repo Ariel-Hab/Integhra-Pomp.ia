@@ -1,3 +1,5 @@
+# actions/utils/config.py
+
 import logging
 import yaml
 import unicodedata
@@ -5,12 +7,15 @@ import os
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
+# <<< NUEVO: Importamos la instancia del modelo de chat desde tu model_manager
+from actions.models.model_manager import _chat_model as pompi_chat_model
+
 logger = logging.getLogger(__name__)
 
 class DomainBasedConfigurationManager:
     """
-    Gestor de configuración que extrae TODO del domain.yml
-    Sin dependencias circulares, usando domain como fuente única de verdad
+    Gestor de configuración que extrae TODO del domain.yml y carga el modelo de chat.
+    Sin dependencias circulares, usando domain como fuente única de verdad.
     """
     
     _instance = None
@@ -28,6 +33,9 @@ class DomainBasedConfigurationManager:
             self.lookup_tables = {}
             self.intent_config = {}
             
+            # <<< NUEVO: Propiedad para almacenar la instancia del modelo cargado
+            self.chat_model_instance = None 
+            
             # Mapeos derivados
             self.intent_to_slots = {}
             self.intent_to_action = {}
@@ -41,6 +49,7 @@ class DomainBasedConfigurationManager:
             self._load_all_configs()
             DomainBasedConfigurationManager._config_loaded = True
     
+    # ... (los métodos _detect_project_root, _get_domain_paths, _get_lookup_paths no cambian) ...
     def _detect_project_root(self) -> Path:
         """Detecta automáticamente la raíz del proyecto Rasa"""
         root = Path(__file__).parent.parent / "bot"
@@ -48,7 +57,6 @@ class DomainBasedConfigurationManager:
         max_depth = 5
         
         for _ in range(max_depth):
-            # Buscar archivos indicadores de proyecto Rasa
             rasa_indicators = ['domain.yml', 'config.yml', 'endpoints.yml', 'credentials.yml']
             if any((current / indicator).exists() for indicator in rasa_indicators):
                 logger.info(f"Raíz del proyecto Rasa detectada: {current}")
@@ -58,7 +66,6 @@ class DomainBasedConfigurationManager:
                 break
             current = current.parent
         
-        # Fallback
         fallback = root
         logger.warning(f"No se detectó raíz del proyecto, usando: {fallback}")
         return fallback
@@ -67,30 +74,20 @@ class DomainBasedConfigurationManager:
         """Genera lista de paths posibles para domain.yml"""
         project_root = self._detect_project_root()
         current_dir = Path(__file__).parent
-        
         paths = [
-            # Variable de entorno
             Path(os.environ.get('RASA_DOMAIN_PATH', '')),
-            
-            # Desde raíz del proyecto
             project_root / "domain.yml",
             project_root / "domain.yaml",
-            
-            # En subdirectorios comunes
             project_root / "bot" / "domain.yml",
             project_root / "data" / "domain.yml",
-            
-            # Desde directorio actual
             current_dir / "domain.yml",
             current_dir.parent / "domain.yml"
         ]
-        
         return [p for p in paths if p and p != Path('')]
     
     def _get_lookup_paths(self) -> List[Path]:
         """Genera lista de paths para lookup tables (igual que antes)"""
         project_root = self._detect_project_root()
-        
         paths = [
             Path(os.environ.get('RASA_LOOKUP_PATH', '')),
             project_root / "bot" / "data" / "lookup_tables.yml",
@@ -98,15 +95,15 @@ class DomainBasedConfigurationManager:
             project_root / "lookup_tables.yml",
             project_root / "data" / "nlu.yml"
         ]
-        
         return [p for p in paths if p and p != Path('')]
-    
+
     def _load_all_configs(self):
-        """Carga configuración basada en domain.yml"""
+        """Carga toda la configuración: domain, lookups y el modelo de chat."""
         try:
             self._health_status = {
                 'domain_loaded': False,
                 'lookup_tables_loaded': False,
+                'model_loaded': False, # <<< NUEVO: Estado para el modelo
                 'critical_errors': [],
                 'warnings': [],
                 'paths_tried': {'domain': [], 'lookup': []}
@@ -124,20 +121,101 @@ class DomainBasedConfigurationManager:
             lookup_loaded = self._load_lookup_tables()
             self._health_status['lookup_tables_loaded'] = lookup_loaded
             
-            # 4. Construir mapeos inteligentes
+            # <<< NUEVO: 4. Cargar el modelo de chat
+            model_loaded = self._load_chat_model()
+            self._health_status['model_loaded'] = model_loaded
+            
+            # 5. Construir mapeos inteligentes
             self._build_intelligent_mappings()
             
-            # 5. Validar estado del sistema
+            # 6. Validar estado del sistema
             self._validate_system_health()
             
-            # 6. Reportar estado
+            # 7. Reportar estado
             self._report_loading_status()
             
         except Exception as e:
             logger.error(f"Error crítico cargando configuración: {e}", exc_info=True)
             self._health_status['critical_errors'].append(str(e))
             self._set_fallback_config()
-    
+
+    def _load_chat_model(self) -> bool:
+        """Carga, precalienta y valida la conexión con el modelo de chat (Ollama)."""
+        try:
+            logger.info("🧠 Intentando cargar el modelo de chat (Ollama)...")
+            
+            # 1. Cargar el modelo
+            pompi_chat_model.load()
+            self.chat_model_instance = pompi_chat_model
+            logger.info("✅ Modelo de chat cargado.")
+            
+            # 2. Warmup: hacer una consulta de prueba
+            logger.info("🔥 Precalentando el modelo...")
+            warmup_success = self._warmup_model()
+            
+            if warmup_success:
+                logger.info("✅ Modelo precalentado y listo para usar.")
+                return True
+            else:
+                logger.warning("⚠️ El modelo se cargó pero el warmup falló.")
+                return False
+                
+        except Exception as e:
+            error_msg = f"No se pudo cargar el modelo de chat: {e}"
+            logger.error(f"❌ {error_msg}")
+            self._health_status['critical_errors'].append(error_msg)
+            return False
+
+    def _warmup_model(self, retries: int = 2, timeout: int = 30) -> bool:
+        """
+        Precalienta el modelo con una consulta simple.
+        
+        Args:
+            retries: Número de intentos (default: 2)
+            timeout: Tiempo máximo de espera en segundos (default: 30)
+            
+        Returns:
+            bool: True si el warmup fue exitoso
+        """
+        import time
+        
+        for attempt in range(1, retries + 1):
+            try:
+                logger.info(f"🔥 Intento de warmup {attempt}/{retries}")
+                
+                start_time = time.time()
+                warmup_prompt = "Hola"
+                
+                logger.info(f"   → Enviando prompt de warmup: '{warmup_prompt}'")
+                
+                # Usar el método generate() con el parámetro correcto: user_prompt
+                response = self.chat_model_instance.generate(
+                    user_prompt=warmup_prompt,  # ✅ Parámetro correcto
+                    max_new_tokens=10,           # Respuesta muy corta
+                    temperature=0.3
+                )
+                
+                elapsed = time.time() - start_time
+                logger.info(f"   → Warmup completado en {elapsed:.2f}s")
+                
+                if response:
+                    logger.debug(f"   → Respuesta de warmup: {response[:50]}...")
+                    logger.info(f"✅ Warmup exitoso en intento {attempt}")
+                    return True
+                else:
+                    logger.warning("   → La respuesta del warmup fue None o vacía")
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ Intento {attempt} falló: {e}")
+            
+            if attempt < retries:
+                logger.info("   Reintentando en 2 segundos...")
+                time.sleep(2)
+        
+        logger.error("❌ Todos los intentos de warmup fallaron")
+        return False
+
+
     def _load_domain(self) -> bool:
         """Carga el domain.yml"""
         domain_paths = self._get_domain_paths()
@@ -154,8 +232,6 @@ class DomainBasedConfigurationManager:
                     if domain_data and isinstance(domain_data, dict):
                         self.domain_data = domain_data
                         logger.info(f"✅ Domain cargado desde: {domain_path}")
-                        
-                        # Log de contenido encontrado
                         intents = domain_data.get('intents', [])
                         entities = domain_data.get('entities', [])
                         slots = domain_data.get('slots', {})
@@ -189,7 +265,6 @@ class DomainBasedConfigurationManager:
             slots = self.domain_data.get('slots', {})
             actions = self.domain_data.get('actions', [])
             
-            # Crear estructura de configuración compatible
             self.intent_config = {
                 'intents': {},
                 'entities': {},
@@ -197,24 +272,21 @@ class DomainBasedConfigurationManager:
                 'actions': actions
             }
             
-            # Procesar intents
             for intent in intents:
                 intent_name = intent if isinstance(intent, str) else str(intent)
                 self.intent_config['intents'][intent_name] = {
                     'name': intent_name,
-                    'entities': [],  # Se llenará en _build_intelligent_mappings
+                    'entities': [],
                     'action': self._determine_action_for_intent(intent_name)
                 }
             
-            # Procesar entities
             for entity in entities:
                 entity_name = entity if isinstance(entity, str) else str(entity)
                 self.intent_config['entities'][entity_name] = {
                     'name': entity_name,
-                    'type': 'text'  # Default
+                    'type': 'text'
                 }
             
-            # Procesar slots
             for slot_name, slot_config in slots.items():
                 self.intent_config['slots'][slot_name] = {
                     'name': slot_name,
@@ -231,8 +303,6 @@ class DomainBasedConfigurationManager:
     
     def _determine_action_for_intent(self, intent_name: str) -> str:
         """Determina la acción apropiada para un intent basándose en patrones"""
-        
-        # Mapeo basado en patrones de nombres
         action_mappings = {
             'buscar_': 'action_busqueda_situacion',
             'consultar_': 'action_busqueda_situacion', 
@@ -246,16 +316,13 @@ class DomainBasedConfigurationManager:
             'ambiguity_fallback': 'action_fallback'
         }
         
-        # Buscar coincidencia exacta primero
         if intent_name in action_mappings:
             return action_mappings[intent_name]
         
-        # Buscar por prefijo
         for prefix, action in action_mappings.items():
             if intent_name.startswith(prefix.rstrip('_')):
                 return action
         
-        # Default para intents no clasificados
         return 'action_default_fallback'
     
     def _load_lookup_tables(self) -> bool:
@@ -297,7 +364,6 @@ class DomainBasedConfigurationManager:
         
         lookup_dict = {}
         
-        # Formato Rasa NLU standard
         if isinstance(data, dict) and "nlu" in data:
             for entry in data["nlu"]:
                 if isinstance(entry, dict) and "lookup" in entry:
@@ -318,7 +384,6 @@ class DomainBasedConfigurationManager:
                         lookup_dict[lookup_name] = examples
                         logger.debug(f"Lookup '{lookup_name}': {len(examples)} elementos")
         
-        # Formato diccionario directo
         elif isinstance(data, dict):
             for key, values in data.items():
                 if key == "nlu":
@@ -336,7 +401,6 @@ class DomainBasedConfigurationManager:
     def _build_intelligent_mappings(self):
         """Construye mapeos inteligentes basándose en el domain y lookup tables"""
         try:
-            # 1. Mapeo entity -> slot basado en el domain
             slots_config = self.domain_data.get('slots', {})
             for slot_name, slot_config in slots_config.items():
                 mappings = slot_config.get('mappings', [])
@@ -345,20 +409,10 @@ class DomainBasedConfigurationManager:
                         entity_name = mapping.get('entity', slot_name)
                         self.entity_to_slot_mapping[entity_name] = slot_name
             
-            # 2. Mapeo intent -> entities inteligente
-            search_entities = [
-                'producto', 'empresa', 'categoria', 'animal', 'sintoma', 'dosis', 'estado'
-            ]
+            search_entities = ['producto', 'empresa', 'categoria', 'animal', 'sintoma', 'dosis', 'estado']
+            comparative_entities = ['cantidad', 'precio', 'descuento', 'bonificacion', 'stock', 'comparador']
+            temporal_entities = ['tiempo', 'fecha', 'dia']
             
-            comparative_entities = [
-                'cantidad', 'precio', 'descuento', 'bonificacion', 'stock', 'comparador'
-            ]
-            
-            temporal_entities = [
-                'tiempo', 'fecha', 'dia'
-            ]
-            
-            # Mapeos específicos por tipo de intent
             intent_entity_mappings = {
                 'buscar_producto': search_entities + comparative_entities + temporal_entities,
                 'buscar_oferta': search_entities + ['descuento', 'bonificacion', 'precio'] + temporal_entities,
@@ -367,24 +421,20 @@ class DomainBasedConfigurationManager:
                 'completar_pedido': search_entities + comparative_entities
             }
             
-            # Aplicar mapeos
             for intent_name in self.intent_config['intents'].keys():
-                # Mapeo específico si existe
                 if intent_name in intent_entity_mappings:
                     entities = intent_entity_mappings[intent_name]
-                # Mapeo por patrón
                 elif intent_name.startswith('buscar_'):
                     entities = search_entities + comparative_entities + temporal_entities
                 elif intent_name.startswith('consultar_'):
                     entities = search_entities + comparative_entities
                 else:
-                    entities = ['sentimiento']  # Default para smalltalk
+                    entities = ['sentimiento']
                 
                 self.intent_config['intents'][intent_name]['entities'] = entities
                 self.intent_to_slots[intent_name] = entities
                 self.intent_to_action[intent_name] = self.intent_config['intents'][intent_name]['action']
             
-            # 3. Crear mapeos específicos para búsquedas
             self.search_intent_mappings = {
                 'buscar_producto': {
                     'search_type': 'producto',
@@ -398,7 +448,6 @@ class DomainBasedConfigurationManager:
                 }
             }
             
-            # 4. Mapear entities de lookup tables a entities de domain
             self._create_lookup_to_domain_mapping()
             
             logger.info(f"✅ Mapeos inteligentes construidos:")
@@ -414,9 +463,8 @@ class DomainBasedConfigurationManager:
         """Crea mapeo entre lookup tables y entities del domain"""
         self.lookup_to_domain_mapping = {}
         
-        # Mapeos explícitos para resolver discrepancias
         explicit_mappings = {
-            'compuesto': 'sintoma',  # compuesto en lookup -> sintoma en domain
+            'compuesto': 'sintoma',
             'indicador_temporal': 'tiempo',
             'sentimiento_positivo': 'sentimiento',
             'sentimiento_negativo': 'sentimiento'
@@ -431,7 +479,6 @@ class DomainBasedConfigurationManager:
             elif lookup_cat in domain_entities:
                 self.lookup_to_domain_mapping[lookup_cat] = lookup_cat
             else:
-                # Buscar coincidencia parcial
                 for domain_entity in domain_entities:
                     if lookup_cat in domain_entity or domain_entity in lookup_cat:
                         self.lookup_to_domain_mapping[lookup_cat] = domain_entity
@@ -441,18 +488,14 @@ class DomainBasedConfigurationManager:
     
     def _validate_system_health(self):
         """Valida estado del sistema con información del domain"""
-        
-        # Categorías críticas ajustadas según el domain actual
-        critical_categories = ['empresa', 'categoria', 'animal', 'dosis']  # Removido ingrediente_activo
+        critical_categories = ['empresa', 'categoria', 'animal', 'dosis']
         missing_critical = []
         
-        # Revisar tanto en lookup directo como en mapeos
         for category in critical_categories:
             found = False
             if category in self.lookup_tables:
                 found = True
             else:
-                # Buscar en mapeos inversos
                 for lookup_cat, domain_entity in self.lookup_to_domain_mapping.items():
                     if domain_entity == category and lookup_cat in self.lookup_tables:
                         found = True
@@ -462,7 +505,6 @@ class DomainBasedConfigurationManager:
                 missing_critical.append(category)
         
         if missing_critical:
-            # Solo warning si están disponibles como mapeos
             mapped_missing = []
             for missing in missing_critical:
                 if missing not in [v for v in self.lookup_to_domain_mapping.values()]:
@@ -475,12 +517,10 @@ class DomainBasedConfigurationManager:
             else:
                 logger.info("✅ Categorías críticas disponibles a través de mapeos")
         
-        # Validar que hay intents de búsqueda
         search_intents = [name for name in self.intent_to_slots.keys() if name.startswith('buscar_')]
         if not search_intents:
             self._health_status['warnings'].append("No se encontraron intents de búsqueda")
         
-        # Actualizar métricas
         total_lookup_elements = sum(len(v) for v in self.lookup_tables.values())
         self._health_status.update({
             'total_intents': len(self.intent_to_slots),
@@ -489,22 +529,27 @@ class DomainBasedConfigurationManager:
             'search_intents_count': len(search_intents),
             'has_critical_categories': len(missing_critical) == 0
         })
-    
+
     def _report_loading_status(self):
-        """Reporta estado final"""
+        """Reporta estado final de la carga de configuración."""
         status = self._health_status
         
         logger.info("=" * 60)
-        logger.info("CONFIGURACIÓN BASADA EN DOMAIN.YML")
+        logger.info("INFORME DE CONFIGURACIÓN Y ESTADO DEL SISTEMA")
         logger.info("=" * 60)
         
-        if status['domain_loaded'] and status['lookup_tables_loaded']:
-            logger.info("✅ Sistema completamente operativo")
-        elif status['domain_loaded']:
-            logger.warning("⚠️ Domain cargado, pero faltan lookup tables")
+        # <<< MODIFICADO: Condición de operatividad ahora incluye al modelo
+        if status['domain_loaded'] and status['lookup_tables_loaded'] and status['model_loaded']:
+            logger.info("✅ Sistema completamente operativo.")
         else:
-            logger.error("❌ SISTEMA NO OPERATIVO - Falta domain.yml")
+            logger.error("❌ SISTEMA NO OPERATIVO - Faltan componentes críticos.")
         
+        # <<< MODIFICADO: Reporte de estado del modelo
+        logger.info(f"   📄 Domain: {'✅ Cargado' if status.get('domain_loaded') else '❌ Faltante'}")
+        logger.info(f"   📚 Lookups: {'✅ Cargadas' if status.get('lookup_tables_loaded') else '❌ Faltantes'}")
+        logger.info(f"   🧠 Modelo LLM: {'✅ Conectado' if status.get('model_loaded') else '❌ No conectado'}")
+        
+        logger.info("-" * 25)
         logger.info(f"📊 Intents: {status.get('total_intents', 0)}")
         logger.info(f"📊 Intents de búsqueda: {status.get('search_intents_count', 0)}")
         logger.info(f"📊 Lookup categories: {status.get('total_lookup_categories', 0)}")
@@ -521,12 +566,11 @@ class DomainBasedConfigurationManager:
                 logger.warning(f"   - {warning}")
         
         logger.info("=" * 60)
-    
+
     def _set_fallback_config(self):
         """Configuración de emergencia"""
         logger.warning("🆘 Activando configuración de emergencia basada en domain mínimo")
         
-        # Configuración mínima si hay domain pero falta algo
         if self.domain_data:
             try:
                 self._extract_config_from_domain()
@@ -535,7 +579,6 @@ class DomainBasedConfigurationManager:
             except Exception as e:
                 logger.error(f"Error en configuración de emergencia: {e}")
         
-        # Fallback completo
         self.intent_config = {"intents": {}, "entities": {}, "slots": {}}
         self.lookup_tables = {}
         self.intent_to_slots = {}
@@ -543,6 +586,12 @@ class DomainBasedConfigurationManager:
     
     # === MÉTODOS PÚBLICOS ===
     
+    # <<< NUEVO: Método para acceder al modelo cargado
+    def get_chat_model(self) -> Optional[Any]:
+        """Devuelve la instancia del modelo de chat si fue cargado correctamente."""
+        return self.chat_model_instance
+
+    # ... (el resto de los métodos públicos no cambian) ...
     def get_intent_config(self) -> Dict[str, Any]:
         return self.intent_config
     
@@ -556,16 +605,13 @@ class DomainBasedConfigurationManager:
         return self.intent_to_action.get(intent_name)
     
     def validate_entity_value(self, entity_type: str, value: str) -> bool:
-        """Valida entidad considerando mapeos lookup->domain"""
         if not self.lookup_tables:
             logger.debug("No hay lookup tables, aceptando valor")
             return True
         
-        # Buscar directamente
         if entity_type in self.lookup_tables:
             return self._check_value_in_lookup(entity_type, value)
         
-        # Buscar en mapeos inversos
         for lookup_cat, domain_entity in self.lookup_to_domain_mapping.items():
             if domain_entity == entity_type and lookup_cat in self.lookup_tables:
                 logger.debug(f"Validando '{value}' en '{entity_type}' usando lookup '{lookup_cat}'")
@@ -575,7 +621,6 @@ class DomainBasedConfigurationManager:
         return True
     
     def _check_value_in_lookup(self, lookup_category: str, value: str) -> bool:
-        """Helper para verificar valor en lookup específica"""
         try:
             normalized_value = normalize_text(value)
             normalized_lookup = [normalize_text(v) for v in self.lookup_tables[lookup_category]]
@@ -585,7 +630,6 @@ class DomainBasedConfigurationManager:
             return True
     
     def get_entity_suggestions(self, entity_type: str, value: str, max_suggestions: int = 3) -> List[str]:
-        """Obtiene sugerencias considerando mapeos"""
         lookup_category = self._resolve_lookup_category(entity_type)
         
         if not lookup_category or lookup_category not in self.lookup_tables:
@@ -616,12 +660,9 @@ class DomainBasedConfigurationManager:
             return []
     
     def _resolve_lookup_category(self, entity_type: str) -> Optional[str]:
-        """Resuelve qué lookup category usar para una entidad del domain"""
-        # Directo
         if entity_type in self.lookup_tables:
             return entity_type
         
-        # A través de mapeo
         for lookup_cat, domain_entity in self.lookup_to_domain_mapping.items():
             if domain_entity == entity_type:
                 return lookup_cat
@@ -632,7 +673,6 @@ class DomainBasedConfigurationManager:
         return self._health_status.copy()
     
     def get_search_intent_info(self, intent_name: str) -> Dict[str, Any]:
-        """Obtiene información específica para intents de búsqueda"""
         return self.search_intent_mappings.get(intent_name, {})
 
 
@@ -652,6 +692,8 @@ INTENT_CONFIG = config_manager.get_intent_config()
 LOOKUP_TABLES = config_manager.get_lookup_tables()
 INTENT_TO_SLOTS = config_manager.intent_to_slots
 INTENT_TO_ACTION = config_manager.intent_to_action
+# <<< NUEVO: Exportamos el modelo para fácil acceso
+CHAT_MODEL = config_manager.get_chat_model()
 
 def get_lookup_tables() -> Dict[str, List[str]]:
     return config_manager.get_lookup_tables()
@@ -675,14 +717,16 @@ def diagnose_domain_configuration():
     
     health = config_manager.get_health_status()
     
+    # <<< MODIFICADO: Diagnóstico incluye estado del modelo
     logger.info(f"   📄 Domain cargado: {'✅' if health.get('domain_loaded') else '❌'}")
     logger.info(f"   📚 Lookup tables: {'✅' if health.get('lookup_tables_loaded') else '❌'}")
+    logger.info(f"   🧠 Modelo LLM: {'✅' if health.get('model_loaded') else '❌'}")
+    logger.info("-" * 15)
     logger.info(f"   🔍 Intents totales: {health.get('total_intents', 0)}")
     logger.info(f"   🔎 Intents de búsqueda: {health.get('search_intents_count', 0)}")
     logger.info(f"   🏷️ Categorías lookup: {health.get('total_lookup_categories', 0)}")
     logger.info(f"   📊 Elementos lookup: {health.get('total_lookup_elements', 0)}")
     
-    # Mostrar mapeo lookup->domain
     if hasattr(config_manager, 'lookup_to_domain_mapping'):
         logger.info(f"   🔗 Mapeos lookup->domain: {len(config_manager.lookup_to_domain_mapping)}")
         for lookup_cat, domain_entity in list(config_manager.lookup_to_domain_mapping.items())[:5]:

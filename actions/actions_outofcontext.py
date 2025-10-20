@@ -140,37 +140,34 @@ class ActionHandleOutOfContext(Action):
             prompt = self._get_contextual_prompt(current_intent, user_message, tracker)
             
             # ✅ Definir max_tokens según el intent (OPTIMIZADO para < 10s)
-            max_tokens = 50 if current_intent == "consulta_veterinaria_profesional" else 40
+            max_tokens = 150 if current_intent == "consulta_veterinaria_profesional" else 100
             
-            # ✅ PASO 1: Intentar streaming
-            logger.info("[OutOfContext] Intentando streaming...")
-            success = _chat_model.generate_and_stream(
-                user_prompt=prompt,
-                user_id=user_id,
+            # # ✅ PASO 1: Intentar streaming
+            # logger.info("[OutOfContext] Intentando streaming...")
+            # success = _chat_model.generate_and_stream(
+            #     user_prompt=prompt,
+            #     user_id=user_id,
+            #     max_new_tokens=max_tokens,
+            #     temperature=0.7
+            # )
+
+            
+            response = generate_text_with_context(
+                prompt=prompt,
+                tracker=tracker,
                 max_new_tokens=max_tokens,
                 temperature=0.7
             )
-
-            # ✅ PASO 2: Si streaming falla, usar generación estándar
-            if not success:
-                logger.warning("[OutOfContext] Streaming falló. Usando generación estándar...")
-                response = generate_text_with_context(
-                    prompt=prompt,
-                    tracker=tracker,
-                    max_new_tokens=max_tokens,
-                    temperature=0.7
-                )
-                
-                if response and response.strip():
-                    dispatcher.utter_message(text=response.strip())
-                    logger.info("[OutOfContext] ✓ Respuesta estándar enviada")
-                else:
-                    # ✅ PASO 3: Si todo falla, usar fallback hardcoded
-                    logger.error("[OutOfContext] Generación estándar también falló. Usando fallback.")
-                    fallback_response = self._get_fallback_response(current_intent)
-                    dispatcher.utter_message(text=fallback_response)
+            
+            if response and response.strip():
+                dispatcher.utter_message(text=response.strip())
+                logger.info("[OutOfContext] ✓ Respuesta estándar enviada")
             else:
-                logger.info("[OutOfContext] ✓ Streaming exitoso")
+                # ✅ PASO 3: Si todo falla, usar fallback hardcoded
+                logger.error("[OutOfContext] Generación estándar también falló. Usando fallback.")
+                fallback_response = self._get_fallback_response(current_intent)
+                dispatcher.utter_message(text=fallback_response)
+            
 
             # Enviar botones de seguimiento (independiente del método de generación)
             logger.info(f"[OutOfContext] Enviando botones de seguimiento...")
