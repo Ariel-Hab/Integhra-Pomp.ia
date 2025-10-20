@@ -1878,7 +1878,7 @@ class ActionBusquedaSituacion(Action):
                    is_modification: bool = False,
                    modification_details: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        ✅ CORREGIDO: Ejecuta búsqueda y envía respuesta en formato compatible con Flutter
+        ✅ CORREGIDO: Envía mensaje en el formato que espera Flutter
         """
         try:
             cleaned_parameters = self._clean_duplicate_parameters(parameters)
@@ -1891,10 +1891,10 @@ class ActionBusquedaSituacion(Action):
                     logger.warning("[ExecuteSearch] Comparación invalidada")
                     comparison_info = None
             
-            # Formatear parámetros para mensaje
-            formatted_params = self._format_parameters_for_display(parameters)
+            # Formatear parámetros para mensaje legible
+            formatted_params = self._format_parameters_for_display(cleaned_parameters)
             
-            # Construir mensaje de texto simple
+            # Construir mensaje legible
             if formatted_params:
                 criteria_text = ", ".join([f"{k}: {v}" for k, v in formatted_params.items()])
                 base_message = f"Buscando {search_type}s con {criteria_text}"
@@ -1904,7 +1904,7 @@ class ActionBusquedaSituacion(Action):
             # Enriquecer con comparación
             enriched_message = base_message
             if comparison_info and comparison_info.get('detected'):
-                enriched_message = self._enrich_message_with_comparison(base_message, parameters, comparison_info)
+                enriched_message = self._enrich_message_with_comparison(base_message, cleaned_parameters, comparison_info)
             
             # Enriquecer con filtros temporales
             if temporal_filters:
@@ -1912,24 +1912,54 @@ class ActionBusquedaSituacion(Action):
                 if temporal_description:
                     enriched_message += f" {temporal_description}"
             
-            # ✅ NUEVO: Preparar search_data en formato correcto
+            # ✅ PREPARAR COMPARISON_ANALYSIS (si existe)
+            comparison_analysis = None
+            if comparison_info and comparison_info.get('detected'):
+                comparisons = []
+                
+                # Construir lista de comparaciones desde grouped_entities
+                grouped_entities = comparison_info.get('grouped_entities', {})
+                for filter_type, filter_data in grouped_entities.items():
+                    if 'operator' in filter_data and 'value' in filter_data:
+                        comparisons.append({
+                            'field': filter_type,
+                            'operator': filter_data['operator'],
+                            'value': filter_data['value']
+                        })
+                
+                if comparisons:
+                    comparison_analysis = {
+                        'comparisons': comparisons,
+                        'description': comparison_info.get('description', '')
+                    }
+            
+            # ✅ PREPARAR SEARCH_DATA en el formato correcto para Flutter
             search_data = {
-                "search_type": search_type,
-                "parameters": self._serialize_parameters(cleaned_parameters),
                 "validated": True,
-                "timestamp": datetime.now().isoformat(),
-                "search_action": "modify" if is_modification else "new"
+                "search_type": search_type,  # "product" o "offer"
+                "parameters": self._serialize_parameters(cleaned_parameters),
             }
             
-            # Agregar información de modificación si aplica
+            # Agregar comparison_analysis si existe
+            if comparison_analysis:
+                search_data["comparison_analysis"] = comparison_analysis
+            
+            # ✅ ESTRUCTURA CORRECTA: Enviar como "custom" con "search_data" e "is_search"
+            custom_payload = {
+                "search_data": search_data,
+                "is_search": True,
+                "timestamp": datetime.now().isoformat(),
+            }
+            
+            # Agregar información adicional de modificación si aplica
             if is_modification and modification_details:
-                search_data["modification_details"] = modification_details
+                custom_payload["modification_details"] = modification_details
             
             # Agregar grupos del NLU si existen
             if comparison_info:
                 nlu_groups = comparison_info.get('nlu_groups', {})
                 if nlu_groups:
-                    search_data["nlu_groups"] = {
+                    custom_payload["nlu_groups"] = {
                         group_name: [
                             {
                                 'entity': e['entity'],
@@ -1940,30 +1970,19 @@ class ActionBusquedaSituacion(Action):
                         ]
                         for group_name, entities in nlu_groups.items()
                     }
-                
-                grouped_entities = comparison_info.get('grouped_entities', {})
-                if grouped_entities:
-                    search_data["grouped_filters"] = grouped_entities
             
             # Agregar filtros temporales
             if temporal_filters:
-                search_data["temporal_filters"] = temporal_filters
+                custom_payload["temporal_filters"] = temporal_filters
             
-            # ✅ CRÍTICO: Enviar en formato compatible con Flutter
-            # El frontend espera 'custom' con 'search_data' e 'is_search'
-            enriched_message = "Ya me pongo a buscar!"
-            
+            # ✅ ENVIAR MENSAJE CON FORMATO CORRECTO
             dispatcher.utter_message(
                 text=enriched_message,
-                json_message={
-                    "custom": {
-                        "is_search": True,
-                        "search_data": search_data
-                    }
-                }
+                custom=custom_payload  # ✅ Usar "custom" en lugar de "json_message"
             )
             
-            logger.info("[ExecuteSearch] ✅ Respuesta enviada con search_data")
+            logger.info("[ExecuteSearch] ✅ Respuesta enviada con custom payload")
+            logger.debug(f"[ExecuteSearch] Search data: {search_data}")
             
             return {
                 'type': 'search_success',
