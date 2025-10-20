@@ -1,3 +1,5 @@
+# actions/action_fallback.py
+
 from asyncio.log import logger
 import difflib
 from random import choice
@@ -6,6 +8,7 @@ from xml.dom.minidom import Text
 
 from actions.helpers import validate_entities_for_intent
 from actions.logger import log_message
+from actions.models.model_manager import generate_with_safe_fallback
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, EventType
@@ -13,7 +16,10 @@ from datetime import datetime
 from .conversation_state import ConversationState
 
 class ActionFallback(Action):
-    """Fallback avanzado con detección de sentimiento, análisis de entidades y manejo de ambigüedad"""
+    """
+    ✅ MEJORADO: Fallback con Ollama que usa contexto de conversación
+    Genera respuestas personalizadas con fallback a mensajes pre-escritos
+    """
     
     def name(self) -> Text:
         return "action_fallback"
@@ -30,11 +36,11 @@ class ActionFallback(Action):
         current_intent = tracker.latest_message.get('intent', {}).get('name', 'unknown')
         entities = tracker.latest_message.get('entities', [])
         
-        # ✅ NUEVA PRIORIDAD: Obtener sugerencia pendiente del sistema unificado
+        # Obtener sugerencia pendiente del sistema unificado
         pending_suggestion = context.get('pending_suggestion')
         awaiting_suggestion_response = context.get('awaiting_suggestion_response', False)
         
-        # Obtener slots activos (compatibilidad con sistema obsoleto)
+        # Obtener slots activos
         pending_search = tracker.get_slot('pending_search')
         pedido_incompleto = tracker.get_slot('pedido_incompleto')
         user_engagement_level = tracker.get_slot('user_engagement_level')
@@ -44,7 +50,7 @@ class ActionFallback(Action):
                                  entities, pending_suggestion, awaiting_suggestion_response, 
                                  user_engagement_level)
         
-        # Analizar entidades para determinar intención (con validación mejorada)
+        # Analizar entidades para determinar intención
         entity_analysis = self._analyze_entities_with_fragment_protection(entities)
         
         events = []
@@ -53,56 +59,90 @@ class ActionFallback(Action):
         # ✅ PRIORIDAD 1: Verificar si está completando una sugerencia pendiente
         if awaiting_suggestion_response and pending_suggestion:
             logger.info(f"[Fallback Decision] PRIORIDAD: Usuario completando sugerencia pendiente")
-            events.extend(self._handle_suggestion_completion(context, entity_analysis, dispatcher))
+            events.extend(self._handle_suggestion_completion(context, entity_analysis, dispatcher, tracker))
             return events
         
         # ✅ PRIORIDAD 2: Verificar si ignoró sugerencia y cambió de tema
         elif pending_suggestion and not awaiting_suggestion_response:
-            from ..conversation_state import SuggestionManager
+            from .conversation_state import SuggestionManager
             if SuggestionManager.check_if_suggestion_ignored(current_intent, pending_suggestion, context['is_small_talk']):
                 logger.info("[Fallback Decision] Usuario ignoró sugerencia pendiente")
-                events.extend(self._handle_ignored_suggestion(pending_suggestion, context, entity_analysis, dispatcher))
+                events.extend(self._handle_ignored_suggestion(pending_suggestion, context, entity_analysis, dispatcher, tracker))
                 return events
         
-        # Resto de la lógica original (sin cambios)...
+        # ✅ Resto de la lógica usando Ollama con fallback
         if current_intent in ['off_topic', 'out_of_scope']:
             logger.info(f"[Fallback Decision] Mensaje fuera de contexto detectado: {current_intent}")
-            events.extend(self._handle_out_of_scope(context, entity_analysis, dispatcher))
+            events.extend(self._handle_out_of_scope(context, entity_analysis, dispatcher, tracker))
             
         elif current_intent == 'ambiguity_fallback':
             logger.info(f"[Fallback Decision] Ambigüedad detectada con entidades: {[e['entity'] for e in entities]}")
-            events.extend(self._handle_ambiguity(context, entity_analysis, dispatcher))
+            events.extend(self._handle_ambiguity(context, entity_analysis, dispatcher, tracker))
             
         elif sentiment == "rejection":
             logger.info("[Fallback Decision] Sentimiento de rechazo detectado")
-            events.extend(self._handle_rejection(context, dispatcher))
+            events.extend(self._handle_rejection(context, dispatcher, tracker))
             
         elif sentiment == "negative":
             logger.info("[Fallback Decision] Feedback negativo detectado")
-            events.extend(self._handle_negative_feedback(context, dispatcher))
+            events.extend(self._handle_negative_feedback(context, dispatcher, tracker))
             
         elif "search_intentions" in implicit_intentions or entity_analysis['has_product_related']:
             logger.info(f"[Fallback Decision] Intención de búsqueda implícita o entidades de producto detectadas")
-            events.extend(self._handle_implicit_search(context, entity_analysis, dispatcher))
+            events.extend(self._handle_implicit_search(context, entity_analysis, dispatcher, tracker))
             
         elif "help_requests" in implicit_intentions:
             logger.info("[Fallback Decision] Solicitud de ayuda detectada")
-            events.extend(self._handle_help_request(context, dispatcher))
+            events.extend(self._handle_help_request(context, dispatcher, tracker))
             
         elif pending_search or pedido_incompleto:
-            logger.info(f"[Fallback Decision] Búsqueda pendiente o pedido incompleto activo (sistema obsoleto)")
-            events.extend(self._handle_pending_search_fallback(context, entity_analysis, dispatcher))
+            logger.info(f"[Fallback Decision] Búsqueda pendiente o pedido incompleto activo")
+            events.extend(self._handle_pending_search_fallback(context, entity_analysis, dispatcher, tracker))
             
         else:
             logger.info("[Fallback Decision] Fallback general - sin contexto específico")
-            events.extend(self._handle_general_fallback(context, entity_analysis, dispatcher))
+            events.extend(self._handle_general_fallback(context, entity_analysis, dispatcher, tracker))
         
         return events
+    
+    def _build_context_summary(self, context: Dict[str, Any], entity_analysis: Dict) -> str:
+        """✅ NUEVO: Construye resumen del contexto para el prompt de Ollama"""
+        context_parts = []
+        
+        # Historial de búsquedas
+        search_history = context.get('search_history', [])
+        if search_history:
+            last_search = search_history[-1]
+            search_type = last_search.get('type', 'producto')
+            params = last_search.get('parameters', {})
+            if params:
+                params_str = ", ".join([f"{k}='{v}'" for k, v in params.items()])
+                context_parts.append(f"Última búsqueda: {search_type} con {params_str}")
+        
+        # Entidades detectadas en mensaje actual
+        if entity_analysis['valid_entity_count'] > 0:
+            entities_str = ", ".join([
+                f"{e['type']}='{e['value']}'" 
+                for e in entity_analysis['product_entities'] + entity_analysis['commercial_entities']
+            ])
+            context_parts.append(f"Entidades mencionadas: {entities_str}")
+        
+        # Sentimiento
+        sentiment = context.get('detected_sentiment')
+        if sentiment and sentiment not in ['neutral', 'positive']:
+            context_parts.append(f"Sentimiento del usuario: {sentiment}")
+        
+        # Nivel de engagement
+        engagement = context.get('user_engagement_level')
+        if engagement:
+            context_parts.append(f"Estado del usuario: {engagement}")
+        
+        return "\n".join(context_parts) if context_parts else "Primera interacción"
     
     def _log_context_analysis(self, user_msg: str, intent: str, sentiment: str, 
                             implicit_intentions: List[str], entities: List[Dict], 
                             pending_suggestion: Any, awaiting_response: bool, engagement_level: str):
-        """✅ LOGGING MEJORADO: Análisis detallado del contexto incluyendo sistema unificado de sugerencias"""
+        """Logging detallado del contexto"""
         entity_summary = {e['entity']: e['value'] for e in entities} if entities else {}
         
         suggestion_info = "Ninguna"
@@ -112,7 +152,7 @@ class ActionFallback(Action):
             suggestion_info = f"{suggestion_type} ({suggestion_search_type})"
         
         logger.info(f"""
-=== ANÁLISIS DE CONTEXTO FALLBACK MEJORADO ===
+=== ANÁLISIS DE CONTEXTO FALLBACK CON OLLAMA ===
 Mensaje del usuario: "{user_msg}"
 Intent detectado: {intent}
 Sentimiento: {sentiment}
@@ -121,20 +161,18 @@ Entidades detectadas: {entity_summary}
 Sistema Unificado de Sugerencias:
   - Sugerencia pendiente: {suggestion_info}
   - Esperando respuesta: {'Sí' if awaiting_response else 'No'}
-Estado del usuario:
-  - user_engagement_level: {engagement_level}
+Estado del usuario: {engagement_level}
 =================================================
         """)
     
     def _analyze_entities_with_fragment_protection(self, entities: List[Dict]) -> Dict[str, Any]:
-        """✅ ANÁLISIS MEJORADO: Analiza las entidades con protección contra fragmentos de palabras"""
+        """Analiza las entidades con protección contra fragmentos de palabras"""
         
-        # Usar el helper mejorado para validar todas las entidades
         validation_result = validate_entities_for_intent(
             entities, 
-            intent_name=None,  # No tenemos intent específico en fallback
+            intent_name=None,
             min_length=3, 
-            check_fragments=True  # ✅ Activar protección anti-fragmentos
+            check_fragments=True
         )
         
         analysis = {
@@ -148,12 +186,10 @@ Estado del usuario:
             'rejected_fragments': 0
         }
         
-        # Contar fragmentos rechazados analizando entidades originales vs validadas
         original_values = [e.get('value', '') for e in entities if e.get('value')]
         analysis['rejected_fragments'] = len(original_values) - analysis['valid_entity_count']
         
-        # Categorizar entidades válidas
-        product_related = ['nombre', 'animal', 'sintoma']  # Parámetros mapeados
+        product_related = ['nombre', 'animal', 'sintoma']
         commercial_related = ['empresa', 'cantidad_descuento', 'cantidad_bonificacion', 'cantidad', 'precio']
         
         for param_name, param_value in validation_result['valid_params'].items():
@@ -168,20 +204,17 @@ Estado del usuario:
             else:
                 analysis['context_entities'].append({'type': param_name, 'value': param_value})
         
-        logger.info(f"[Entity Analysis Enhanced] Total: {analysis['entity_count']}, "
-                   f"Válidos: {analysis['valid_entity_count']}, "
-                   f"Fragmentos rechazados: {analysis['rejected_fragments']}, "
-                   f"Producto-relacionado: {analysis['has_product_related']}, "
-                   f"Comercial: {analysis['has_commercial_intent']}")
-        
-        # Agregar datos de validación completos para uso posterior
         analysis['validation_result'] = validation_result
         
         return analysis
 
+    # ============================================================
+    # ✅ HANDLERS CON OLLAMA
+    # ============================================================
+
     def _handle_suggestion_completion(self, context: Dict[str, Any], entity_analysis: Dict, 
-                                    dispatcher: CollectingDispatcher) -> List[EventType]:
-        """✅ NUEVA FUNCIÓN: Maneja cuando el usuario está completando una sugerencia pendiente"""
+                                    dispatcher: CollectingDispatcher, tracker: Tracker) -> List[EventType]:
+        """Maneja completación de sugerencia (sin cambios en lógica, solo logging)"""
         logger.info("[Action] Manejando completación de sugerencia pendiente")
         
         pending_suggestion = context.get('pending_suggestion', {})
@@ -191,21 +224,36 @@ Estado del usuario:
         
         try:
             if suggestion_type == 'missing_parameters':
-                # Usuario está proporcionando parámetros faltantes para búsqueda
                 search_type = pending_suggestion.get('search_type', 'producto')
                 current_parameters = pending_suggestion.get('current_parameters', {})
-                
-                # Obtener parámetros válidos del análisis de entidades
                 new_params = entity_analysis.get('validation_result', {}).get('valid_params', {})
                 
                 if new_params:
-                    # Combinar parámetros anteriores con nuevos
                     combined_params = {**current_parameters, **new_params}
-                    
                     params_text = ", ".join([f"{k}: {v}" for k, v in new_params.items()])
-                    dispatcher.utter_message(f"¡Perfecto! Agregando {params_text} a tu búsqueda de {search_type}s.")
                     
-                    # Ejecutar búsqueda con parámetros combinados
+                    # ✅ Usar Ollama para respuesta personalizada
+                    context_summary = self._build_context_summary(context, entity_analysis)
+                    prompt = f"""El usuario está completando una búsqueda de {search_type}s.
+Parámetros anteriores: {current_parameters}
+Nuevos parámetros agregados: {new_params}
+
+Contexto:
+{context_summary}
+
+Confirma de manera amigable que agregaste los nuevos parámetros y que procederás con la búsqueda.
+Máximo 2 oraciones."""
+
+                    generate_with_safe_fallback(
+                        prompt=prompt,
+                        dispatcher=dispatcher,
+                        tracker=tracker,
+                        fallback_template="utter_confirmar",
+                        max_new_tokens=80,
+                        temperature=0.4
+                    )
+                    
+                    # Ejecutar búsqueda
                     search_message = f"Buscando {search_type}s con: " + ", ".join([f"{k}: {v}" for k, v in combined_params.items()])
                     
                     dispatcher.utter_message(
@@ -221,7 +269,6 @@ Estado del usuario:
                         }
                     )
                     
-                    # Actualizar historial
                     search_history = context.get('search_history', [])
                     search_history.append({
                         'timestamp': datetime.now().isoformat(),
@@ -238,15 +285,12 @@ Estado del usuario:
                     ])
                     
                 else:
-                    # No se detectaron parámetros válidos
                     criteria = pending_suggestion.get('required_criteria', 'información adicional')
-                    dispatcher.utter_message(f"No pude identificar parámetros válidos en tu mensaje. ¿Puedes ser más específico con {criteria}?")
-                    
+                    dispatcher.utter_message(f"No pude identificar parámetros válidos. ¿Puedes ser más específico con {criteria}?")
                     events.append(SlotSet("user_engagement_level", "needs_clarification"))
             
             elif suggestion_type in ['entity_correction', 'type_correction']:
-                # Para correcciones de entidad, redirigir a ActionConfNegAgradecer
-                dispatcher.utter_message("Si aceptas la sugerencia, responde 'sí'. Si no, puedes decir 'no' o intentar con otros términos.")
+                dispatcher.utter_message("Si aceptas la sugerencia, responde 'sí'. Si no, intenta con otros términos.")
                 
             return events
             
@@ -260,9 +304,10 @@ Estado del usuario:
             ]
 
     def _handle_ignored_suggestion(self, pending_suggestion: Dict[str, Any], context: Dict[str, Any],
-                                 entity_analysis: Dict, dispatcher: CollectingDispatcher) -> List[EventType]:
-        """✅ NUEVA FUNCIÓN: Maneja cuando el usuario ignoró una sugerencia y cambió de tema"""
-        logger.info("[Action] Manejando sugerencia ignorada - usuario cambió de tema")
+                                 entity_analysis: Dict, dispatcher: CollectingDispatcher, 
+                                 tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja sugerencia ignorada"""
+        logger.info("[Action] Manejando sugerencia ignorada con Ollama")
         
         events = []
         
@@ -272,27 +317,34 @@ Estado del usuario:
             if suggestion_type == 'missing_parameters':
                 old_search_type = pending_suggestion.get('search_type', 'producto')
                 
-                # Si tiene entidades válidas para nueva búsqueda, proceder con la nueva
                 if entity_analysis['valid_entity_count'] > 0:
                     new_params = entity_analysis.get('validation_result', {}).get('valid_params', {})
+                    new_search_type = 'oferta' if entity_analysis['has_commercial_intent'] else 'producto'
                     
-                    # Determinar nuevo tipo de búsqueda basado en entidades
-                    if entity_analysis['has_commercial_intent']:
-                        new_search_type = 'oferta'
-                    else:
-                        new_search_type = 'producto'
-                    
-                    dispatcher.utter_message(
-                        f"Entiendo que quieres hacer una nueva búsqueda de {new_search_type}s "
-                        f"en lugar de completar la búsqueda de {old_search_type}s anterior. ¡Procedamos!"
+                    # ✅ Usar Ollama para reconducir amigablemente
+                    context_summary = self._build_context_summary(context, entity_analysis)
+                    prompt = f"""El usuario tenía una búsqueda de {old_search_type}s pendiente, pero ahora quiere buscar {new_search_type}s.
+Nuevos parámetros: {new_params}
+
+Contexto:
+{context_summary}
+
+Reconoce el cambio de manera amigable y confirma que procederás con la nueva búsqueda.
+Máximo 2 oraciones."""
+
+                    generate_with_safe_fallback(
+                        prompt=prompt,
+                        dispatcher=dispatcher,
+                        tracker=tracker,
+                        fallback_template="utter_confirmar",
+                        max_new_tokens=80,
+                        temperature=0.4
                     )
                     
                     # Ejecutar nueva búsqueda
                     params_text = ", ".join([f"{k}: {v}" for k, v in new_params.items()])
-                    search_message = f"Buscando {new_search_type}s con {params_text}"
-                    
                     dispatcher.utter_message(
-                        text=search_message,
+                        text=f"Buscando {new_search_type}s con {params_text}",
                         json_message={
                             "type": "search_results",
                             "search_type": new_search_type,
@@ -309,10 +361,19 @@ Estado del usuario:
                     ])
                     
                 else:
-                    # Cambió de tema pero sin entidades claras
-                    dispatcher.utter_message(
-                        f"Veo que quieres cambiar de la búsqueda de {old_search_type}s anterior. "
-                        f"¿Qué tipo de búsqueda quieres hacer ahora?"
+                    # ✅ Usar Ollama para pedir clarificación
+                    prompt = f"""El usuario cambió de tema desde una búsqueda de {old_search_type}s, pero no está claro qué quiere ahora.
+
+Pregunta amigablemente qué tipo de búsqueda quiere hacer.
+Máximo 2 oraciones."""
+
+                    generate_with_safe_fallback(
+                        prompt=prompt,
+                        dispatcher=dispatcher,
+                        tracker=tracker,
+                        fallback_template="utter_pedir_clarificacion",
+                        max_new_tokens=60,
+                        temperature=0.4
                     )
                     
                     events.extend([
@@ -321,7 +382,6 @@ Estado del usuario:
                     ])
             
             else:
-                # Para otros tipos de sugerencia, simplemente limpiar y continuar
                 dispatcher.utter_message("Entendido, sigamos con tu nueva consulta.")
                 events.append(SlotSet("pending_suggestion", None))
             
@@ -336,67 +396,141 @@ Estado del usuario:
             ]
     
     def _handle_out_of_scope(self, context: Dict[str, Any], entity_analysis: Dict, 
-                           dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja mensajes completamente fuera del contexto del sistema"""
-        logger.info("[Action] Manejando mensaje fuera de contexto")
+                           dispatcher: CollectingDispatcher, tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja mensajes fuera de contexto"""
+        logger.info("[Action] Manejando out of scope con Ollama")
+        
+        context_summary = self._build_context_summary(context, entity_analysis)
         
         if entity_analysis['has_product_related'] or entity_analysis['has_commercial_intent']:
-            # Tiene entidades relevantes, intentar reconducir
-            dispatcher.utter_message(
-                "Parece que mencionas algo relacionado con productos o búsquedas, "
-                "pero no entiendo completamente tu mensaje. ¿Podrías ser más específico "
-                "sobre qué producto o servicio necesitas?"
+            entities = entity_analysis['product_entities'] + entity_analysis['commercial_entities']
+            entities_str = ", ".join([f"{e['type']}: {e['value']}" for e in entities])
+            
+            prompt = f"""El usuario mencionó entidades relacionadas con productos: {entities_str}
+Pero su mensaje está fuera del contexto del sistema de búsqueda de productos veterinarios.
+
+Contexto:
+{context_summary}
+
+Reconoce amigablemente que mencionó algo relacionado, pero pide que sea más específico sobre qué producto o servicio necesita.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_pedir_clarificacion",
+                max_new_tokens=80,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "confused_but_interested")]
         else:
-            # Sin entidades relevantes, redirigir suavemente
-            dispatcher.utter_message(
-                "Me especializo en ayudarte a buscar productos y ofertas. "
-                "¿Hay algún producto específico que necesites encontrar?"
+            prompt = f"""El usuario dijo algo completamente fuera del contexto del sistema (productos veterinarios).
+
+Contexto:
+{context_summary}
+
+Redirige amigablemente explicando que te especializas en productos y ofertas veterinarias.
+Pregunta si hay algún producto específico que necesite.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_out_of_scope",
+                max_new_tokens=80,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "redirecting")]
     
     def _handle_ambiguity(self, context: Dict[str, Any], entity_analysis: Dict,
-                         dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja mensajes ambiguos usando las entidades detectadas para aclarar"""
-        logger.info("[Action] Manejando ambigüedad con análisis de entidades")
+                         dispatcher: CollectingDispatcher, tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja ambigüedad"""
+        logger.info("[Action] Manejando ambigüedad con Ollama")
+        
+        context_summary = self._build_context_summary(context, entity_analysis)
         
         if entity_analysis['entity_count'] == 0:
-            # Sin entidades, solicitar más información
-            dispatcher.utter_message(
-                "Tu mensaje no es del todo claro para mí. ¿Puedes ser más específico? "
-                "Por ejemplo, dime el nombre del producto, para qué animal es, "
-                "o qué tipo de oferta buscas."
+            prompt = f"""El usuario envió un mensaje ambiguo sin entidades claras.
+
+Contexto:
+{context_summary}
+
+Pide amigablemente más información específica (nombre del producto, animal, tipo de oferta, etc).
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_pedir_clarificacion",
+                max_new_tokens=80,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "needs_clarification")]
             
         elif entity_analysis['has_product_related']:
-            # Tiene entidades de producto, solicitar más detalles
-            product_mentions = [e['value'] for e in entity_analysis['product_entities']]
-            dispatcher.utter_message(
-                f"Mencionas {', '.join(product_mentions)}, pero necesito más detalles. "
-                f"¿Buscas un producto específico, comparar precios, o necesitas información sobre ofertas?"
+            products = [e['value'] for e in entity_analysis['product_entities']]
+            products_str = ", ".join(products)
+            
+            prompt = f"""El usuario mencionó: {products_str}
+Pero su mensaje es ambiguo y necesita más detalles.
+
+Contexto:
+{context_summary}
+
+Reconoce lo que mencionó y pregunta amigablemente si busca un producto específico, comparar precios, o ver ofertas.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_pedir_clarificacion",
+                max_new_tokens=100,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "clarifying_product")]
             
         elif entity_analysis['has_commercial_intent']:
-            # Tiene entidades comerciales, guiar hacia búsqueda
-            commercial_mentions = [e['value'] for e in entity_analysis['commercial_entities']]
-            dispatcher.utter_message(
-                f"Veo que mencionas {', '.join(commercial_mentions)}. "
-                f"¿Qué producto específico te interesa buscar o comparar?"
+            commercial = [e['value'] for e in entity_analysis['commercial_entities']]
+            commercial_str = ", ".join(commercial)
+            
+            prompt = f"""El usuario mencionó información comercial: {commercial_str}
+Pero falta saber qué producto específico le interesa.
+
+Contexto:
+{context_summary}
+
+Reconoce la información comercial y pregunta qué producto específico quiere buscar o comparar.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_buscar_producto",
+                max_new_tokens=80,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "commercial_interest")]
             
         else:
-            return self._handle_general_fallback(context, entity_analysis, dispatcher)
+            return self._handle_general_fallback(context, entity_analysis, dispatcher, tracker)
     
-    def _handle_rejection(self, context: Dict[str, Any], dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja rechazo total del usuario"""
-        logger.info("[Action] Manejando rechazo del usuario")
+    def _handle_rejection(self, context: Dict[str, Any], dispatcher: CollectingDispatcher,
+                         tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja rechazo"""
+        logger.info("[Action] Manejando rechazo con Ollama")
+        
         events = []
         
-        # Limpiar búsquedas pendientes
         if context.get('pending_search') or context.get('pedido_incompleto'):
             logger.info("[Action] Limpiando búsquedas pendientes por rechazo")
             events.extend([
@@ -404,134 +538,294 @@ Estado del usuario:
                 SlotSet("pedido_incompleto", None)
             ])
         
-        dispatcher.utter_message(
-            "Entiendo, disculpa si no pude ayudarte como esperabas. "
-            "Si cambias de opinión, estaré aquí para asistirte con productos y ofertas."
+        context_summary = self._build_context_summary(context, {})
+        
+        prompt = f"""El usuario rechazó la ayuda o mostró desinterés.
+
+Contexto:
+{context_summary}
+
+Responde con empatía, disculpándote si no pudiste ayudar como esperaba.
+Menciona que estarás disponible si cambia de opinión.
+Máximo 2 oraciones."""
+        
+        generate_with_safe_fallback(
+            prompt=prompt,
+            dispatcher=dispatcher,
+            tracker=tracker,
+            fallback_template="utter_despedir",
+            max_new_tokens=80,
+            temperature=0.5
         )
         
-        events.extend([
-            SlotSet("user_engagement_level", "disengaged")
-        ])
+        events.append(SlotSet("user_engagement_level", "disengaged"))
         
         return events
     
-    def _handle_negative_feedback(self, context: Dict[str, Any], dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja feedback negativo del usuario"""
-        logger.info("[Action] Manejando feedback negativo")
+    def _handle_negative_feedback(self, context: Dict[str, Any], dispatcher: CollectingDispatcher,
+                                  tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja feedback negativo"""
+        logger.info("[Action] Manejando feedback negativo con Ollama")
         
-        dispatcher.utter_message(
-            "Lamento que la experiencia no haya sido la esperada. "
-            "¿Podrías decirme específicamente qué producto o información necesitas? "
-            "Me gustaría ayudarte de manera más efectiva."
+        context_summary = self._build_context_summary(context, {})
+        
+        prompt = f"""El usuario dio feedback negativo sobre la experiencia.
+
+Contexto:
+{context_summary}
+
+Discúlpate con empatía y pregunta específicamente qué producto o información necesita para ayudarlo mejor.
+Máximo 2 oraciones."""
+        
+        generate_with_safe_fallback(
+            prompt=prompt,
+            dispatcher=dispatcher,
+            tracker=tracker,
+            fallback_template="utter_pedir_clarificacion",
+            max_new_tokens=80,
+            temperature=0.5
         )
         
         return [SlotSet("user_engagement_level", "needs_help")]
     
     def _handle_implicit_search(self, context: Dict[str, Any], entity_analysis: Dict,
-                              dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja intención implícita de búsqueda usando entidades detectadas"""
-        logger.info("[Action] Manejando búsqueda implícita")
+                              dispatcher: CollectingDispatcher, tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja búsqueda implícita"""
+        logger.info("[Action] Manejando búsqueda implícita con Ollama")
+        
+        context_summary = self._build_context_summary(context, entity_analysis)
         
         if entity_analysis['has_product_related']:
             products = [e['value'] for e in entity_analysis['product_entities']]
-            dispatcher.utter_message(
-                f"Veo que te interesa buscar información sobre {', '.join(products)}. "
-                f"¿Quieres ver productos disponibles, comparar precios, o buscar ofertas específicas?"
+            products_str = ", ".join(products)
+            
+            prompt = f"""El usuario mencionó productos: {products_str}
+Parece que quiere buscar información pero no fue explícito.
+
+Contexto:
+{context_summary}
+
+Reconoce lo que mencionó y pregunta amigablemente si quiere ver productos disponibles, comparar precios o buscar ofertas.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_buscar_producto",
+                max_new_tokens=100,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "product_focused")]
             
         elif entity_analysis['has_commercial_intent']:
-            dispatcher.utter_message(
-                "Parece que quieres hacer una consulta comercial. "
-                "¿Qué producto específico te interesa buscar o comparar?"
+            prompt = f"""El usuario mencionó información comercial pero no especificó qué producto.
+
+Contexto:
+{context_summary}
+
+Pregunta amigablemente qué producto específico le interesa buscar o comparar.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_buscar_producto",
+                max_new_tokens=80,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "commercial_interested")]
             
         else:
-            dispatcher.utter_message(
-                "Parece que quieres buscar algo. ¿Te interesa buscar productos, ofertas, "
-                "o tienes algo específico en mente? Puedes decirme el nombre del producto, "
-                "animal, o proveedor."
+            prompt = f"""El usuario parece querer buscar algo pero no es claro qué.
+
+Contexto:
+{context_summary}
+
+Pregunta amigablemente qué quiere buscar (productos, ofertas) o qué tiene en mente.
+Menciona que puede buscar por nombre, animal, proveedor, etc.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_buscar_producto",
+                max_new_tokens=100,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "search_interested")]
     
-    def _handle_help_request(self, context: Dict[str, Any], dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja solicitud de ayuda"""
-        logger.info("[Action] Manejando solicitud de ayuda")
+    def _handle_help_request(self, context: Dict[str, Any], dispatcher: CollectingDispatcher,
+                            tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja solicitud de ayuda"""
+        logger.info("[Action] Manejando solicitud de ayuda con Ollama")
         
-        dispatcher.utter_message(
-            "Puedo ayudarte a buscar productos y ofertas. Solo dime qué necesitas: "
-            "el nombre del producto, para qué animal es, qué proveedor prefieres, "
-            "ingrediente activo, síntomas que quieres tratar, o cualquier detalle que tengas."
+        context_summary = self._build_context_summary(context, {})
+        
+        prompt = f"""El usuario pidió ayuda.
+
+Contexto:
+{context_summary}
+
+Explica brevemente cómo puedes ayudarlo a buscar productos y ofertas.
+Menciona que puede decir nombre del producto, animal, proveedor, síntoma, etc.
+Máximo 3 oraciones."""
+        
+        generate_with_safe_fallback(
+            prompt=prompt,
+            dispatcher=dispatcher,
+            tracker=tracker,
+            fallback_template="utter_default",
+            max_new_tokens=120,
+            temperature=0.4
         )
+        
         return [SlotSet("user_engagement_level", "needs_guidance")]
     
     def _handle_pending_search_fallback(self, context: Dict[str, Any], entity_analysis: Dict,
-                                      dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja fallback con búsqueda pendiente considerando nuevas entidades"""
-        logger.info("[Action] Manejando fallback con búsqueda pendiente")
+                                      dispatcher: CollectingDispatcher, tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja fallback con búsqueda pendiente"""
+        logger.info("[Action] Manejando fallback con búsqueda pendiente usando Ollama")
         
         pending_search = context.get('pending_search')
         pedido_incompleto = context.get('pedido_incompleto')
+        context_summary = self._build_context_summary(context, entity_analysis)
         
         if entity_analysis['entity_count'] > 0:
-            # Tiene nuevas entidades, preguntar si quiere modificar búsqueda actual
             entity_values = [e.get('value', '') for e in 
                            entity_analysis['product_entities'] + entity_analysis['commercial_entities']]
-            dispatcher.utter_message(
-                f"Mencionas {', '.join(entity_values)} pero tienes una búsqueda pendiente. "
-                f"¿Quieres modificar tu búsqueda actual, empezar una nueva, o continuar con la anterior?"
+            entities_str = ", ".join(entity_values)
+            
+            prompt = f"""El usuario mencionó: {entities_str}
+Pero tiene una búsqueda pendiente.
+
+Contexto:
+{context_summary}
+
+Pregunta amigablemente si quiere modificar su búsqueda actual, empezar una nueva, o continuar con la anterior.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_modificar_busqueda",
+                max_new_tokens=100,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "modifying_search")]
         
-        # Sin nuevas entidades relevantes
         if pending_search:
             search_type = pending_search.get('search_type', 'búsqueda')
             current_params = pending_search.get('parameters', {})
             
             if current_params:
                 params_str = ", ".join([f"{k}: {v}" for k, v in current_params.items()])
-                dispatcher.utter_message(
-                    f"No entendí tu mensaje. Tu búsqueda de {search_type}s actual tiene: {params_str}. "
-                    f"¿Quieres continuarla, modificarla o cancelarla?"
-                )
+                
+                prompt = f"""El usuario envió un mensaje no claro.
+Tiene una búsqueda de {search_type}s pendiente con: {params_str}
+
+Contexto:
+{context_summary}
+
+Menciona los parámetros actuales y pregunta si quiere continuarla, modificarla o cancelarla.
+Máximo 2 oraciones."""
             else:
-                dispatcher.utter_message(
-                    f"No entendí tu mensaje. Tienes una búsqueda de {search_type}s pendiente. "
-                    f"¿Quieres continuarla, cancelarla o empezar algo diferente?"
-                )
+                prompt = f"""El usuario envió un mensaje no claro.
+Tiene una búsqueda de {search_type}s pendiente sin parámetros definidos.
+
+Contexto:
+{context_summary}
+
+Pregunta si quiere continuar, cancelar o empezar algo diferente.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_modificar_busqueda",
+                max_new_tokens=100,
+                temperature=0.4
+            )
         
         elif pedido_incompleto:
-            dispatcher.utter_message(
-                "Tienes un pedido incompleto. ¿Quieres completarlo, modificarlo o empezar de nuevo?"
+            prompt = f"""El usuario tiene un pedido incompleto.
+
+Contexto:
+{context_summary}
+
+Pregunta amigablemente si quiere completarlo, modificarlo o empezar de nuevo.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_confirmar",
+                max_new_tokens=80,
+                temperature=0.4
             )
         
         return [SlotSet("user_engagement_level", "pending_decision")]
     
     def _handle_general_fallback(self, context: Dict[str, Any], entity_analysis: Dict,
-                               dispatcher: CollectingDispatcher) -> List[EventType]:
-        """Maneja fallback general usando entidades si están disponibles"""
-        logger.info("[Action] Manejando fallback general")
+                               dispatcher: CollectingDispatcher, tracker: Tracker) -> List[EventType]:
+        """✅ CON OLLAMA: Maneja fallback general"""
+        logger.info("[Action] Manejando fallback general con Ollama")
+        
+        context_summary = self._build_context_summary(context, entity_analysis)
+        user_msg = context.get('user_message', '')
         
         if entity_analysis['entity_count'] > 0:
-            # Tiene entidades, ser específico en la respuesta
-            entity_types = list(set([e.get('entity', '') for e in 
-                                   context.get('latest_message', {}).get('entities', [])]))
+            entity_types = list(set([e['type'] for e in 
+                                   entity_analysis['product_entities'] + entity_analysis['commercial_entities']]))
+            entities_str = ", ".join(entity_types)
             
-            dispatcher.utter_message(
-                f"Veo que mencionas información relacionada con {', '.join(entity_types)}, "
-                f"pero no estoy seguro de qué necesitas exactamente. "
-                f"¿Podrías ser más específico sobre qué producto buscas o qué información necesitas?"
+            prompt = f"""El usuario mencionó información relacionada con: {entities_str}
+Mensaje: "{user_msg}"
+Pero no está claro qué necesita exactamente.
+
+Contexto:
+{context_summary}
+
+Reconoce lo que mencionó y pide amigablemente que sea más específico sobre qué producto busca o qué información necesita.
+Máximo 2 oraciones."""
+            
+            generate_with_safe_fallback(
+                prompt=prompt,
+                dispatcher=dispatcher,
+                tracker=tracker,
+                fallback_template="utter_pedir_clarificacion",
+                max_new_tokens=100,
+                temperature=0.4
             )
+            
             return [SlotSet("user_engagement_level", "entity_confused")]
         
-        # Sin entidades, respuesta general
-        fallback_messages = [
-            "No estoy seguro de entender. ¿Buscas productos, ofertas, o tienes otra consulta específica?",
-            "Disculpa, no comprendí bien. ¿Puedes ser más específico sobre qué producto o información necesitas?",
-            "No logré entender tu mensaje. ¿Te gustaría buscar algún producto en particular para algún animal?",
-            "Me especializo en productos veterinarios y ofertas. ¿Hay algo específico que pueda ayudarte a encontrar?"
-        ]
+        # Sin entidades
+        prompt = f"""El usuario dijo: "{user_msg}"
+No se detectaron entidades claras y el mensaje no es claro.
+
+Contexto:
+{context_summary}
+
+Pregunta amigablemente si busca productos, ofertas, o tiene otra consulta específica.
+Máximo 2 oraciones."""
         
-        dispatcher.utter_message(choice(fallback_messages))
+        generate_with_safe_fallback(
+            prompt=prompt,
+            dispatcher=dispatcher,
+            tracker=tracker,
+            fallback_template="utter_default",
+            max_new_tokens=80,
+            temperature=0.4
+        )
+        
         return [SlotSet("user_engagement_level", "general_confused")]
