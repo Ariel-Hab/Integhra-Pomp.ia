@@ -447,61 +447,61 @@ class ActionBusquedaSituacion(Action):
             logger.error(f"[OperatorMap] Error: {e}")
             return None
         
-        def _handle_modification_intent(self, context: Dict[str, Any], tracker: Tracker, 
-                                    dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-            """
-            [NUEVO Y UNIFICADO]
-            Maneja TODOS los intents de modificación llamando al detector y procesando su resultado.
-            """
-            try:
-                intent_name = context['current_intent']
-                user_message = context.get('user_message', '')
-                entities = tracker.latest_message.get("entities", [])
-                previous_params = self._extract_previous_search_parameters(context)
-                search_type = previous_params.get('_previous_search_type', 'producto')
-                
-                logger.info(f"[_handle_modification_intent] Orquestando para intent: {intent_name}")
+    def _handle_modification_intent(self, context: Dict[str, Any], tracker: Tracker, 
+                                dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+        """
+        [NUEVO Y UNIFICADO]
+        Maneja TODOS los intents de modificación llamando al detector y procesando su resultado.
+        """
+        try:
+            intent_name = context['current_intent']
+            user_message = context.get('user_message', '')
+            entities = tracker.latest_message.get("entities", [])
+            previous_params = self._extract_previous_search_parameters(context)
+            search_type = previous_params.get('_previous_search_type', 'producto')
+            
+            logger.info(f"[_handle_modification_intent] Orquestando para intent: {intent_name}")
 
-                # 1. LLAMADA ÚNICA AL DETECTOR
-                modification_result = self.modification_detector.detect_and_rebuild(
-                    text=user_message,
-                    entities=entities,
-                    intent_name=intent_name,
-                    current_params=previous_params,
-                    search_type=search_type
+            # 1. LLAMADA ÚNICA AL DETECTOR
+            modification_result = self.modification_detector.detect_and_rebuild(
+                text=user_message,
+                entities=entities,
+                intent_name=intent_name,
+                current_params=previous_params,
+                search_type=search_type
+            )
+
+            # 2. PROCESAR EL RESULTADO
+            if not modification_result.detected:
+                dispatcher.utter_message("No he entendido qué modificación quieres hacer.")
+                return {'type': 'modify_error', 'reason': 'no_detection'}
+
+            if modification_result.has_invalid_entities:
+                return self._handle_invalid_entity_modification(modification_result, search_type, dispatcher)
+
+            if modification_result.can_proceed_directly:
+                rebuilt_params, warnings = modification_result.rebuilt_params
+                
+                if warnings: # Informar al usuario sobre los edge cases
+                    dispatcher.utter_message(text='\n'.join(warnings))
+
+                # Ejecutar la búsqueda con los nuevos parámetros.
+                return self._execute_search(
+                    search_type, rebuilt_params, dispatcher,
+                    is_modification=True,
+                    modification_details={
+                        # ✅ USA EL NUEVO MÉTODO DE SERIALIZACIÓN
+                        'actions': [a.to_dict() for a in modification_result.actions],
+                        'previous_params': previous_params
+                    }
                 )
 
-                # 2. PROCESAR EL RESULTADO
-                if not modification_result.detected:
-                    dispatcher.utter_message("No he entendido qué modificación quieres hacer.")
-                    return {'type': 'modify_error', 'reason': 'no_detection'}
+            dispatcher.utter_message("He detectado una modificación, pero no estoy seguro de cómo aplicarla.")
+            return {'type': 'modify_error', 'reason': 'unhandled_detector_result'}
 
-                if modification_result.has_invalid_entities:
-                    return self._handle_invalid_entity_modification(modification_result, search_type, dispatcher)
-
-                if modification_result.can_proceed_directly:
-                    rebuilt_params, warnings = modification_result.rebuilt_params
-                    
-                    if warnings: # Informar al usuario sobre los edge cases
-                        dispatcher.utter_message(text='\n'.join(warnings))
-
-                    # Ejecutar la búsqueda con los nuevos parámetros.
-                    return self._execute_search(
-                        search_type, rebuilt_params, dispatcher,
-                        is_modification=True,
-                        modification_details={
-                            # ✅ USA EL NUEVO MÉTODO DE SERIALIZACIÓN
-                            'actions': [a.to_dict() for a in modification_result.actions],
-                            'previous_params': previous_params
-                        }
-                    )
-
-                dispatcher.utter_message("He detectado una modificación, pero no estoy seguro de cómo aplicarla.")
-                return {'type': 'modify_error', 'reason': 'unhandled_detector_result'}
-
-            except Exception as e:
-                logger.error(f"[_handle_modification_intent] Error crítico: {e}", exc_info=True)
-                return {'type': 'modify_error', 'error': str(e)}
+        except Exception as e:
+            logger.error(f"[_handle_modification_intent] Error crítico: {e}", exc_info=True)
+            return {'type': 'modify_error', 'error': str(e)}
 
     def _process_multiple_estados(self, estado_entities: List[Dict[str, Any]], 
                               search_params: Dict[str, Any]) -> None:
@@ -1873,16 +1873,18 @@ class ActionBusquedaSituacion(Action):
             dispatcher.utter_message("Hubo un error validando la modificación.")
             return {'type': 'modify_error', 'error': str(e)}
 
-    def _execute_search(self, search_type: str, parameters: Dict[str, str], dispatcher: CollectingDispatcher, 
-                   comparison_info: Dict[str, Any] = None, temporal_filters: Dict[str, Any] = None,
+    def _execute_search(self, search_type: str, parameters: Dict[str, str], 
+                   dispatcher: CollectingDispatcher, 
+                   comparison_info: Dict[str, Any] = None, 
+                   temporal_filters: Dict[str, Any] = None,
                    is_modification: bool = False,
                    modification_details: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        ✅ CORREGIDO: Envía mensaje en el formato que espera Flutter
+        ✅ VERSIÓN CORREGIDA: Envía búsqueda en formato compatible con Flutter
         """
         try:
             cleaned_parameters = self._clean_duplicate_parameters(parameters)
-            logger.info(f"[ExecuteSearch] Después de limpieza: {len(cleaned_parameters)} parámetros")
+            logger.info(f"[ExecuteSearch] {len(cleaned_parameters)} parámetros después de limpieza")
             
             # Validar comparación
             if comparison_info and comparison_info.get('detected'):
@@ -1901,88 +1903,78 @@ class ActionBusquedaSituacion(Action):
             else:
                 base_message = f"Mostrando {search_type}s disponibles"
             
-            # Enriquecer con comparación
+            # Enriquecer mensaje
             enriched_message = base_message
             if comparison_info and comparison_info.get('detected'):
-                enriched_message = self._enrich_message_with_comparison(base_message, cleaned_parameters, comparison_info)
+                enriched_message = self._enrich_message_with_comparison(
+                    base_message, cleaned_parameters, comparison_info
+                )
             
-            # Enriquecer con filtros temporales
             if temporal_filters:
                 temporal_description = self._format_temporal_description(temporal_filters)
                 if temporal_description:
                     enriched_message += f" {temporal_description}"
             
-            # ✅ PREPARAR COMPARISON_ANALYSIS (si existe)
+            # ✅ PREPARAR comparison_analysis PARA FLUTTER
             comparison_analysis = None
             if comparison_info and comparison_info.get('detected'):
                 comparisons = []
                 
-                # Construir lista de comparaciones desde grouped_entities
+                # Construir desde grouped_entities
                 grouped_entities = comparison_info.get('grouped_entities', {})
                 for filter_type, filter_data in grouped_entities.items():
                     if 'operator' in filter_data and 'value' in filter_data:
                         comparisons.append({
-                            'field': filter_type,
+                            'type': filter_type,
                             'operator': filter_data['operator'],
-                            'value': filter_data['value']
+                            'quantity': filter_data['value'],
+                            'usage': 'comparison'
                         })
                 
                 if comparisons:
                     comparison_analysis = {
-                        'comparisons': comparisons,
-                        'description': comparison_info.get('description', '')
+                        'detected': True,
+                        'comparisons': comparisons
                     }
             
-            # ✅ PREPARAR SEARCH_DATA en el formato correcto para Flutter
+            # ✅ PREPARAR search_data en formato CORRECTO para Flutter
             search_data = {
-                "validated": True,
-                "search_type": search_type,  # "product" o "offer"
+                "type": "search_results",  # ✅ Siempre incluir type
+                "search_type": search_type,  # ✅ "producto" u "oferta" (español)
                 "parameters": self._serialize_parameters(cleaned_parameters),
+                "validated": True,
+                "timestamp": datetime.now().isoformat(),
             }
             
             # Agregar comparison_analysis si existe
             if comparison_analysis:
                 search_data["comparison_analysis"] = comparison_analysis
             
-            # ✅ ESTRUCTURA CORRECTA: Enviar como "custom" con "search_data" e "is_search"
-            custom_payload = {
-                "search_data": search_data,
-                "is_search": True,
-                "timestamp": datetime.now().isoformat(),
-            }
-            
-            # Agregar información adicional de modificación si aplica
+            # Agregar detalles de modificación si aplica
             if is_modification and modification_details:
-                custom_payload["modification_details"] = modification_details
-            
-            # Agregar grupos del NLU si existen
-            if comparison_info:
-                nlu_groups = comparison_info.get('nlu_groups', {})
-                if nlu_groups:
-                    custom_payload["nlu_groups"] = {
-                        group_name: [
-                            {
-                                'entity': e['entity'],
-                                'value': e['value'],
-                                'role': e.get('role')
-                            }
-                            for e in entities
-                        ]
-                        for group_name, entities in nlu_groups.items()
-                    }
+                search_data["modification_details"] = modification_details
             
             # Agregar filtros temporales
             if temporal_filters:
-                custom_payload["temporal_filters"] = temporal_filters
+                search_data["temporal_filters"] = temporal_filters
             
-            # ✅ ENVIAR MENSAJE CON FORMATO CORRECTO
+            # ✅ ESTRUCTURA CORRECTA PARA FLUTTER
+            # Flutter espera: custom.search_data
+            custom_payload = {
+                "search_data": search_data,  # ✅ Anidado dentro de custom
+                "is_search": True,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            # ✅ ENVIAR CON LA ESTRUCTURA CORRECTA
             dispatcher.utter_message(
                 text=enriched_message,
-                custom=custom_payload  # ✅ Usar "custom" en lugar de "json_message"
+                custom=custom_payload  # ✅ custom contiene search_data
             )
             
-            logger.info("[ExecuteSearch] ✅ Respuesta enviada con custom payload")
-            logger.debug(f"[ExecuteSearch] Search data: {search_data}")
+            logger.info("[ExecuteSearch] ✅ Búsqueda enviada a Flutter")
+            logger.debug(f"[ExecuteSearch] Search type: {search_type}")
+            logger.debug(f"[ExecuteSearch] Parameters: {list(cleaned_parameters.keys())}")
             
             return {
                 'type': 'search_success',

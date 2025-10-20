@@ -301,29 +301,107 @@ async def get_tracker(user_id: str):
     
 @app.post("/message", response_model=ChatResponse)
 async def chat(payload: ChatRequest):
+    """
+    ✅ ENDPOINT CORREGIDO: Procesa mensaje con agente Rasa local
+    y preserva correctamente el campo 'custom' para Flutter
+    """
     if agent is None:
         raise HTTPException(status_code=503, detail="Rasa agent not available")
 
     user_text = payload.message.strip()
     user_id = payload.user_id
 
+    print(f"\n{'='*60}")
+    print(f"📤 Mensaje recibido de Flutter")
+    print(f"   User ID: {user_id}")
+    print(f"   Mensaje: {user_text}")
+    print(f"{'='*60}")
+
     if not user_text:
         return ChatResponse(responses=[], error="Empty message")
 
     output_channel = LoggingOutputChannel()
-    user_msg = UserMessage(text=user_text, output_channel=output_channel, sender_id=user_id)
+    user_msg = UserMessage(
+        text=user_text, 
+        output_channel=output_channel, 
+        sender_id=user_id
+    )
 
     try:
+        # Procesar mensaje con Rasa
         await agent.handle_message(user_msg)
+        
         if not output_channel.messages:
+            print("⚠️ Sin respuesta del agente")
             return ChatResponse(
                 responses=[{"text": "Lo siento, no pude procesar tu mensaje."}],
                 error="No response from agent"
             )
-        return ChatResponse(responses=output_channel.messages)
+        
+        # ✅ CLAVE: Preservar estructura de mensajes
+        print(f"\n📥 Respuesta del agente: {len(output_channel.messages)} mensajes")
+        
+        formatted_responses = []
+        
+        for i, msg in enumerate(output_channel.messages, 1):
+            print(f"\n📩 Mensaje {i}:")
+            print(f"   Keys: {list(msg.keys())}")
+            
+            # ✅ Crear respuesta formateada preservando TODOS los campos
+            formatted_msg = {}
+            
+            # 1. Texto (siempre presente)
+            if 'text' in msg:
+                formatted_msg['text'] = msg['text']
+                print(f"   Text: {msg['text'][:50]}...")
+            
+            # 2. ✅ CRÍTICO: Preservar 'custom' sin modificar
+            if 'custom' in msg:
+                formatted_msg['custom'] = msg['custom']
+                print(f"   ✅ Custom preservado")
+                
+                # ✅ Logging detallado para debugging
+                if isinstance(msg['custom'], dict):
+                    print(f"      Custom keys: {list(msg['custom'].keys())}")
+                    
+                    if 'search_data' in msg['custom']:
+                        sd = msg['custom']['search_data']
+                        print(f"      🎯 search_data detectado!")
+                        print(f"         - search_type: {sd.get('search_type')}")
+                        print(f"         - validated: {sd.get('validated')}")
+                        print(f"         - parameters: {list(sd.get('parameters', {}).keys())}")
+            
+            # 3. Botones (si existen)
+            if 'buttons' in msg:
+                formatted_msg['buttons'] = msg['buttons']
+                print(f"   Buttons: {len(msg['buttons'])}")
+            
+            # 4. Otros campos (por si acaso)
+            for key in msg.keys():
+                if key not in ['text', 'custom', 'buttons', 'recipient_id']:
+                    formatted_msg[key] = msg[key]
+                    print(f"   {key}: {type(msg[key])}")
+            
+            formatted_responses.append(formatted_msg)
+        
+        # ✅ Retornar en formato esperado por Flutter
+        response = ChatResponse(responses=formatted_responses)
+        
+        print(f"\n✅ Enviando {len(formatted_responses)} respuestas a Flutter")
+        print(f"{'='*60}\n")
+        
+        return response
+        
     except Exception as e:
+        print(f"\n❌ Error procesando mensaje: {e}")
+        import traceback
+        traceback.print_exc()
+        
         return ChatResponse(
-            responses=[{"text": "Error procesando el mensaje.", "type": "error"}],
+            responses=[{
+                "text": "Error procesando el mensaje.", 
+                "type": "error"
+            }],
             error=str(e)
         )
 
