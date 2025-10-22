@@ -1,48 +1,49 @@
 version: "3.9"
 
 services:
-  rasa_bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: rasa_bot
-    environment:
-      - PORT=8000
-      - ACTION_SERVER_URL=http://rasa_actions:5055/webhook
-      - RASA_MODEL_PATH=models
+  # 1. El Músculo (LLM)
+  ollama-server:
+    image: ollama/ollama
+    container_name: ollama_server
     ports:
-      - "8000:8000"
+      - "11434:11434"
     volumes:
-      # Monta carpetas específicas, no todo el directorio.
-      # Esto evita que tu poetry.lock local sobreescriba al del contenedor.
-      - ./bot:/app/bot
-      - ./actions:/app/actions
-      - ./scripts:/app/scripts
-      - ./data:/app/data
-      - ./models:/app/models
-      # Añade cualquier otro archivo/carpeta que necesites editar en vivo
-      - ./config.yml:/app/config.yml
-      - ./domain.yml:/app/domain.yml
-    # El comando ahora SÓLO ejecuta la aplicación
-    command: poetry run manage bot
+      - ollama_data:/root/.ollama
+    # Si tuvieras GPU en el Droplet, añadirías aquí la sección "deploy"
 
-  rasa_actions:
+  # 2. El Cerebro (Rasa NLU/Core)
+  rasa-server:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: rasa_actions
+      dockerfile: Dockerfile.bot
+    container_name: rasa_server
     environment:
-      - PORT=5055
+      - ACTION_SERVER_URL=http://actions-server:5055/webhook
+    ports:
+      - "5005:5005" # Puerto estándar de Rasa para la API
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+    command: "poetry run rasa run --enable-api --cors \"*\" -p 5005"
+    depends_on:
+      - actions-server
+
+  # 3. La Lógica (Actions + Langchain)
+  actions-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.actions
+    container_name: actions_server
+    environment:
+      # Así tu model_manager.py sabe dónde encontrar a Ollama
+      - OLLAMA_BASE_URL=http://ollama-server:11434/v1
     ports:
       - "5055:5055"
     volumes:
-      # Monta las mismas carpetas de código
-      - ./bot:/app/bot
-      - ./actions:/app/actions
-      - ./scripts:/app/scripts
-      - ./data:/app/data
-      # Añade cualquier otro archivo/carpeta que necesites
-      - ./config.yml:/app/config.yml
-      - ./domain.yml:/app/domain.yml
-    # El comando ahora SÓLO ejecuta la aplicación
-    command: poetry run manage actions
+      - ./actions:/app/actions # Montamos solo la carpeta de actions
+    command: "poetry run rasa run actions"
+    depends_on:
+      - ollama-server
+
+volumes:
+  ollama_data: # Volumen para guardar los modelos de Ollama

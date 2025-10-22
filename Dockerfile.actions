@@ -1,0 +1,25 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instala Poetry
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# --- Optimización de Caché ---
+# 1. Copia solo los archivos de dependencias
+COPY pyproject.toml poetry.lock ./
+
+# 2. Instala las dependencias (solo del grupo 'actions')
+# ¡Esta imagen será mucho más liviana!
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-root --only actions
+
+# 3. Copia solo el código de las actions
+# No necesitamos los 'data', 'models', 'tests', etc. de Rasa aquí
+COPY actions/ /app/actions
+# -----------------------------
+
+EXPOSE 5055
+CMD ["poetry", "run", "rasa", "run", "actions"]

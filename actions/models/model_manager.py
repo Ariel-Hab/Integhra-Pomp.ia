@@ -13,7 +13,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # ============== CONFIGURACIÓN ==============
-SYSTEM_PROMPT = """Sos Pompi, asistente veterinario argentino.
+SYSTEM_PROMPT = """Te llamas Pompi, asistente veterinario.
 Respuestas cortas: máximo 2 oraciones.
 Siempre preguntá qué necesita."""
 
@@ -23,8 +23,9 @@ MAX_CACHE_SIZE = 50
 GENERATION_TIMEOUT = 8
 OLLAMA_CLIENT_TIMEOUT = 10
 
+# Configuración del modelo
 MODEL_NAME = "llama3:8b-instruct-q4_0"
-MAX_TOKENS_DEFAULT = 150
+MAX_TOKENS_DEFAULT = 150    
 # ===========================================
 
 # Mensajes de fallback por tipo de error
@@ -48,13 +49,14 @@ class ChatModel:
         if self.client is not None:
             return
         try:
+            ollama_url = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434/v1')
             self.client = OpenAI(
-                base_url='http://localhost:11434/v1',
+                base_url=ollama_url,
                 api_key='ollama',
                 timeout=OLLAMA_CLIENT_TIMEOUT
             )
             self.client.models.list()
-            logger.info("✅ Conexión con Ollama establecida")
+            logger.info(f"✅ Conexión con Ollama ({ollama_url}) establecida")
         except Exception as e:
             logger.error(f"❌ Error conectando a Ollama: {e}")
             self.client = None

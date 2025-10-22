@@ -35,3 +35,7 @@ timestamp,user_message,detected_intent,confidence,sender_id
 2025-10-20T18:08:39.099796,que podes hacer,nlu_fallback,0.7,103
 2025-10-20T18:09:10.374605,que podes hacer,nlu_fallback,0.7,103
 2025-10-20T18:13:21.295649,pero los productos,nlu_fallback,0.7,103
+2025-10-22T15:49:17.378983,como anas pompi?,nlu_fallback,0.7,console_user
+2025-10-22T15:50:34.398911,a+,nlu_fallback,0.7,console_user
+2025-10-22T15:50:45.441985,nada,nlu_fallback,0.7,console_user
+2025-10-22T21:11:31.132744,holaa,nlu_fallback,0.7,console_user
