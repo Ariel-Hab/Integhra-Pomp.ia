@@ -1,0 +1,25 @@
+# Usa la misma base que tenías [cite: 1]
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instala Poetry (como en tu archivo original [cite: 2])
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# --- Optimización de Caché ---
+# 1. Copia solo los archivos de dependencias
+COPY pyproject.toml poetry.lock ./
+
+# 2. Instala las dependencias (solo del grupo 'bot')
+# Esto solo se re-ejecuta si el pyproject.toml cambia
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-root --only bot
+
+# 3. Copia el resto de la aplicación
+COPY . .
+# -----------------------------
+
+EXPOSE 5005
+CMD ["poetry", "run", "rasa", "run", "--enable-api", "--cors", "*", "-p", "5005"]

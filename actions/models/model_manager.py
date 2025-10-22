@@ -27,7 +27,7 @@ GENERATION_TIMEOUT = 8
 OLLAMA_CLIENT_TIMEOUT = 10
 
 # Configuración del modelo
-MODEL_NAME = "llama3:8b-instruct-q4_0"
+MODEL_NAME = "phi3:3.8b-mini-4k-instruct-q4_K_M"
 MAX_TOKENS_DEFAULT = 150
 # =======================================================
 
@@ -52,13 +52,14 @@ class ChatModel:
         if self.client is not None:
             return
         try:
+            ollama_url = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434/v1')
             self.client = OpenAI(
-                base_url='http://localhost:11434/v1',
+                base_url=ollama_url,
                 api_key='ollama',
                 timeout=OLLAMA_CLIENT_TIMEOUT
             )
             self.client.models.list()
-            logger.info("✅ Conexión con Ollama (local) establecida")
+            logger.info(f"✅ Conexión con Ollama ({ollama_url}) establecida")
         except Exception as e:
             logger.error(f"❌ No se pudo conectar a Ollama. Error: {e}")
             self.client = None

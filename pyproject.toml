@@ -30,13 +30,12 @@ fastapi = "^0.116.1"
 uvicorn = "^0.35.0"
 
 [tool.poetry.group.actions.dependencies]
+# Dependencias principales para el action server
 rasa-sdk = "^3.6.1"
-rasa = "^3.6.21"
-transformers = ">=4.31.0,<4.34.0"  # Versión compatible con Rasa
-torch = "^2.5.1"
-sentencepiece = "^0.2.0"
-openai = "2.3.0"
-accelerate = "^0.20.0"
+python-dotenv = "^1.1.1"
+
+# Dependencias para CLIENTES de API
+openai = "2.3.0"  # Para conectarte a Ollama (como ya haces)
 httpx = ">=0.24.0,<0.28.0"
 httpcore = ">=0.17.0"
 
