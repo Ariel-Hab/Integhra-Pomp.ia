@@ -24,3 +24,14 @@ timestamp,user_message,detected_intent,confidence,sender_id
 2025-10-20T03:21:57.284568,holas,nlu_fallback,0.7,103
 2025-10-20T04:23:20.464582,holaa,nlu_fallback,0.7,103
 2025-10-20T04:42:32.104355,holaa,nlu_fallback,0.7,103
+2025-10-20T14:04:10.692228,asdasdad,nlu_fallback,0.7,console_user
+2025-10-20T14:19:26.442247,asdasd,nlu_fallback,0.7,103
+2025-10-20T15:09:57.646578,holaa,nlu_fallback,0.7,103
+2025-10-20T15:15:59.389764,holaa,nlu_fallback,0.7,console_user
+2025-10-20T15:16:24.753486,adadasd,nlu_fallback,0.7,console_user
+2025-10-20T15:28:25.048344,todo bien perro?,nlu_fallback,0.7,103
+2025-10-20T15:56:38.730577,que sabes hacer?,nlu_fallback,0.7,103
+2025-10-20T16:08:43.400603,que sabes hacer?,nlu_fallback,0.7,103
+2025-10-20T18:08:39.099796,que podes hacer,nlu_fallback,0.7,103
+2025-10-20T18:09:10.374605,que podes hacer,nlu_fallback,0.7,103
+2025-10-20T18:13:21.295649,pero los productos,nlu_fallback,0.7,103

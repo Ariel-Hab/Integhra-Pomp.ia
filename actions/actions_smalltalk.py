@@ -8,7 +8,7 @@ import logging
 import random
 
 # ✅ IMPORTACIÓN SIMPLIFICADA
-from .models.model_manager import generate_text_with_context
+from .models.model_manager import generate_with_safe_fallback
 
 logger = logging.getLogger(__name__)
 
@@ -38,34 +38,30 @@ class ActionSmallTalkSituacion(Action):
             current_intent = tracker.latest_message.get("intent", {}).get("name", "")
             user_message = tracker.latest_message.get("text", "")
 
+            # 1. Preparar los parámetros
             prompt = self._get_simple_prompt(current_intent, user_message)
-            logger.info(f"[SmallTalk] Intent: {current_intent}")
-
             temp = 0.6 if current_intent in ["saludo", "despedida"] else 0.7
             max_tokens = 30 if current_intent in ["saludo", "despedida"] else 40
             
-            # 1. Intentar generar la respuesta
-            logger.info("[SmallTalk] Intentando generar respuesta...")
-            respuesta = generate_text_with_context(
+            # ✅ CAMBIO CRÍTICO: Una sola llamada que lo resuelve todo.
+            # Delegamos toda la lógica de generación, validación y fallback al model_manager.
+            # El manager se encargará de enviar el mensaje (ya sea el generado o un fallback).
+            logger.info(f"[SmallTalk] Delegando generación para intent: {current_intent}")
+            
+            generate_with_safe_fallback(
                 prompt=prompt,
+                dispatcher=dispatcher,
                 tracker=tracker,
+                # Usamos un template de Rasa como fallback prioritario
+                fallback_template=f"utter_{current_intent}",
                 max_new_tokens=max_tokens,
                 temperature=temp
             )
 
-            # 2. Validar la respuesta generada
-            if not self._is_response_valid(respuesta, current_intent):
-                logger.warning(f"[SmallTalk] La respuesta generada ('{respuesta}') no pasó la validación. Usando fallback.")
-                respuesta = self._get_fallback_response(current_intent)
-            
-            # 3. Enviar la respuesta final (ya sea la generada o el fallback)
-            logger.info(f"[SmallTalk] ✓ Respuesta final: '{respuesta}'")
-            dispatcher.utter_message(text=respuesta)
-
         except Exception as e:
-            logger.error(f"[SmallTalk] Error crítico en run: {e}", exc_info=True)
-            fallback = self._get_fallback_response(tracker.latest_message.get("intent", {}).get("name", ""))
-            dispatcher.utter_message(text=fallback)
+            # Este es un fallback de último recurso, por si algo falla DENTRO de la action.
+            logger.error(f"[SmallTalk] Error crítico en la action: {e}", exc_info=True)
+            dispatcher.utter_message(text="Perdón, tuve un problema. ¿Podrías repetirlo?")
 
         return []
 

@@ -5,13 +5,13 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import EventType
 
-# ✅ Importamos solo la función de generación estándar. No necesitamos el modelo directamente.
+# ✅ Importamos la función de generación con fallback automático
 from actions.models.model_manager import generate_text_with_context
 
 logger = logging.getLogger(__name__)
 
 class ActionExplicarAyuda(Action):
-    """Explica las capacidades del bot usando el LLM con un patrón simple de fallback."""
+    """Explica las capacidades del bot usando el LLM con fallback automático."""
     
     def name(self) -> str:
         return "action_explicar_ayuda"
@@ -38,28 +38,26 @@ class ActionExplicarAyuda(Action):
         Terminá siempre con una pregunta simple como '¿Qué te gustaría buscar hoy?'.
         """
         
-        # ✅ PASO 1: Intentar generar la respuesta completa.
+        # ✅ CORREGIDO: Ahora pasamos el dispatcher para que maneje fallback automáticamente
         logger.info("[ActionExplicarAyuda] Intentando generar respuesta de ayuda general...")
         response = generate_text_with_context(
             prompt=prompt_general,
             tracker=tracker,
+            dispatcher=dispatcher,  # ✅ Pasamos dispatcher para fallback automático
             max_new_tokens=120,
             temperature=0.3
         )
         
-        # ✅ PASO 2: Si la generación falla (devuelve None) o está vacía, usar el fallback.
+        # ✅ CAMBIO CRÍTICO: Si response es None, el fallback YA fue enviado
         if response:
+            # Solo enviar si hubo éxito en la generación
             dispatcher.utter_message(text=response)
-            logger.info("[ActionExplicarAyuda] ✓ Respuesta generada enviada.")
+            logger.info("[ActionExplicarAyuda] ✅ Respuesta generada enviada.")
         else:
-            logger.error("[ActionExplicarAyuda] La generación falló. Usando fallback hardcodeado.")
-            dispatcher.utter_message(
-                text="Puedo ayudarte a buscar productos veterinarios y ofertas. "
-                     "Podés decirme qué producto necesitás, para qué animal es, "
-                     "o si buscás ofertas con descuentos. ¿Qué te gustaría buscar hoy?"
-            )
+            # No hacer nada - el fallback ya fue enviado por generate_text_with_context
+            logger.info("[ActionExplicarAyuda] ✅ Fallback ya manejado por model_manager.")
 
-        # Los botones se envían siempre, lo cual está perfecto.
+        # Los botones se envían siempre
         dispatcher.utter_message(
             text="O elegí una de estas opciones:",
             buttons=[
@@ -96,29 +94,22 @@ class ActionExplicarAyuda(Action):
             Dale un ejemplo simple.
             """
 
-        # ✅ Lógica simplificada: intentar generar y si falla, usar fallback.
+        # ✅ CORREGIDO: Pasar dispatcher para fallback automático
         logger.info("[ActionExplicarAyuda] Intentando generar respuesta de ayuda contextual...")
         response = generate_text_with_context(
             prompt=prompt_contextual,
             tracker=tracker,
+            dispatcher=dispatcher,  # ✅ Pasamos dispatcher para fallback automático
             max_new_tokens=120,
             temperature=0.3
         )
         
+        # ✅ CAMBIO CRÍTICO: Si response es None, el fallback YA fue enviado
         if response:
             dispatcher.utter_message(text=response)
-            logger.info("[ActionExplicarAyuda] ✓ Respuesta contextual generada enviada.")
+            logger.info("[ActionExplicarAyuda] ✅ Respuesta contextual generada enviada.")
         else:
-            logger.error("[ActionExplicarAyuda] Generación contextual falló. Usando fallback hardcodeado.")
-            if current_params:
-                params_list = ", ".join([f"{k}: {v}" for k, v in current_params.items()])
-                fallback_msg = (f"Estás buscando {tipo_busqueda} con estos filtros: {params_list}. "
-                               f"Podés agregar más filtros, quitar alguno o cambiar los existentes. "
-                               f"¿Cómo querés seguir?")
-            else:
-                fallback_msg = (f"Empezaste a buscar {tipo_busqueda}. "
-                               f"Podés darme más detalles como el nombre, el animal o el tipo de producto. "
-                               f"¿Qué te gustaría buscar específicamente?")
-            dispatcher.utter_message(text=fallback_msg)
+            # No hacer nada - el fallback ya fue enviado por generate_text_with_context
+            logger.info("[ActionExplicarAyuda] ✅ Fallback contextual ya manejado por model_manager.")
         
         return []

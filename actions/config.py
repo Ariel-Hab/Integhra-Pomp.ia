@@ -166,6 +166,8 @@ class DomainBasedConfigurationManager:
             self._health_status['critical_errors'].append(error_msg)
             return False
 
+    # CÓDIGO CORREGIDO para config.py
+
     def _warmup_model(self, retries: int = 2, timeout: int = 30) -> bool:
         """
         Precalienta el modelo con una consulta simple.
@@ -188,22 +190,27 @@ class DomainBasedConfigurationManager:
                 
                 logger.info(f"   → Enviando prompt de warmup: '{warmup_prompt}'")
                 
-                # Usar el método generate() con el parámetro correcto: user_prompt
-                response = self.chat_model_instance.generate(
-                    user_prompt=warmup_prompt,  # ✅ Parámetro correcto
-                    max_new_tokens=10,           # Respuesta muy corta
+                # Usar el método generate() que ahora devuelve un diccionario
+                response_dict = self.chat_model_instance.generate(
+                    user_prompt=warmup_prompt,
+                    max_new_tokens=10,
                     temperature=0.3
                 )
                 
                 elapsed = time.time() - start_time
                 logger.info(f"   → Warmup completado en {elapsed:.2f}s")
                 
-                if response:
-                    logger.debug(f"   → Respuesta de warmup: {response[:50]}...")
+                # ✅ MODIFICADO: Validar el diccionario de respuesta
+                if response_dict and response_dict.get('success'):
+                    # Accedemos al texto con la clave 'text'
+                    response_text = response_dict.get('text', '')
+                    logger.debug(f"   → Respuesta de warmup: {response_text[:50]}...")
                     logger.info(f"✅ Warmup exitoso en intento {attempt}")
                     return True
                 else:
-                    logger.warning("   → La respuesta del warmup fue None o vacía")
+                    # Si falla, obtenemos el mensaje de error del diccionario
+                    error_reason = response_dict.get('error_type', 'respuesta vacía')
+                    logger.warning(f"   → La respuesta del warmup falló: {error_reason}")
                     
             except Exception as e:
                 logger.warning(f"⚠️ Intento {attempt} falló: {e}")

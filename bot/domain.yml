@@ -487,7 +487,7 @@ responses:
   - text: Perfecto, no hay problema
   - text: De acuerdo, entendido
 
-  utter_agradecimiento:
+  utter_agradecer: # <--- Cambiar aquí
   - text: ¡De nada! 😊
   - text: Siempre a disposición 🙌
   - text: Me alegra poder ayudarte

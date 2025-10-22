@@ -127,51 +127,32 @@ class ActionHandleOutOfContext(Action):
         message_lower = message.lower()
         return any(keyword in message_lower for keyword in emergency_keywords)
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, 
-            domain: dict) -> list[EventType]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: dict) -> list[EventType]:
         try:
             current_intent = tracker.latest_message.get("intent", {}).get("name", "")
             user_message = tracker.latest_message.get("text", "")
-            user_id = tracker.sender_id
 
             logger.info(f"[OutOfContext] Intent: {current_intent}, Mensaje: '{user_message[:50]}...'")
 
-            # Construir prompt contextual
+            # 1. Construir el prompt (la lógica principal de esta action)
             prompt = self._get_contextual_prompt(current_intent, user_message, tracker)
             
-            # ✅ Definir max_tokens según el intent (OPTIMIZADO para < 10s)
+            # 2. Definir parámetros para la generación
             max_tokens = 150 if current_intent == "consulta_veterinaria_profesional" else 100
             
-            # # ✅ PASO 1: Intentar streaming
-            # logger.info("[OutOfContext] Intentando streaming...")
-            # success = _chat_model.generate_and_stream(
-            #     user_prompt=prompt,
-            #     user_id=user_id,
-            #     max_new_tokens=max_tokens,
-            #     temperature=0.7
-            # )
-
-            
-            response = generate_text_with_context(
+            # ✅ 3. Delegar TODA la generación y el fallback al manager con una sola llamada
+            # El manager se encargará de enviar la respuesta generada o el fallback adecuado.
+            generate_with_safe_fallback(
                 prompt=prompt,
+                dispatcher=dispatcher,
                 tracker=tracker,
+                fallback_template=f"utter_{current_intent}", # Usar templates de Rasa!
                 max_new_tokens=max_tokens,
                 temperature=0.7
             )
-            
-            if response and response.strip():
-                dispatcher.utter_message(text=response.strip())
-                logger.info("[OutOfContext] ✓ Respuesta estándar enviada")
-            else:
-                # ✅ PASO 3: Si todo falla, usar fallback hardcoded
-                logger.error("[OutOfContext] Generación estándar también falló. Usando fallback.")
-                fallback_response = self._get_fallback_response(current_intent)
-                dispatcher.utter_message(text=fallback_response)
-            
 
-            # Enviar botones de seguimiento (independiente del método de generación)
+            # 4. Enviar botones de seguimiento (esto es lógica de la action, se mantiene)
             logger.info(f"[OutOfContext] Enviando botones de seguimiento...")
-            
             if current_intent == "consulta_veterinaria_profesional":
                 self._handle_medical_consultation(dispatcher, user_message, tracker)
             elif current_intent == "off_topic":
@@ -180,12 +161,11 @@ class ActionHandleOutOfContext(Action):
                 self._handle_out_of_scope(dispatcher, tracker)
 
         except Exception as e:
-            logger.error(f"[OutOfContext] Error crítico en run: {e}", exc_info=True)
-            fallback = self._get_fallback_response(tracker.latest_message.get("intent", {}).get("name", ""))
-            dispatcher.utter_message(text=fallback)
+            logger.error(f"[OutOfContext] Error crítico en la action: {e}", exc_info=True)
+            # Fallback de último recurso si la action misma explota
+            dispatcher.utter_message(text="Tuve un problema procesando eso. ¿Podrías decirlo de otra manera?")
 
         return []
-    
     def _handle_medical_consultation(self, dispatcher: CollectingDispatcher, 
                                      user_message: str, tracker: Tracker):
         """Maneja el seguimiento de consultas médicas (solo botones y alertas)."""

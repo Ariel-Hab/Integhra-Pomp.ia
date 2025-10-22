@@ -13,8 +13,18 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
-    command: sh -c "poetry lock && poetry install && poetry run manage bot"
+      # Monta carpetas específicas, no todo el directorio.
+      # Esto evita que tu poetry.lock local sobreescriba al del contenedor.
+      - ./bot:/app/bot
+      - ./actions:/app/actions
+      - ./scripts:/app/scripts
+      - ./data:/app/data
+      - ./models:/app/models
+      # Añade cualquier otro archivo/carpeta que necesites editar en vivo
+      - ./config.yml:/app/config.yml
+      - ./domain.yml:/app/domain.yml
+    # El comando ahora SÓLO ejecuta la aplicación
+    command: poetry run manage bot
 
   rasa_actions:
     build:
@@ -26,6 +36,13 @@ services:
     ports:
       - "5055:5055"
     volumes:
-      - .:/app
-    command: sh -c "poetry lock && poetry install && poetry run manage actions"
- 
+      # Monta las mismas carpetas de código
+      - ./bot:/app/bot
+      - ./actions:/app/actions
+      - ./scripts:/app/scripts
+      - ./data:/app/data
+      # Añade cualquier otro archivo/carpeta que necesites
+      - ./config.yml:/app/config.yml
+      - ./domain.yml:/app/domain.yml
+    # El comando ahora SÓLO ejecuta la aplicación
+    command: poetry run manage actions

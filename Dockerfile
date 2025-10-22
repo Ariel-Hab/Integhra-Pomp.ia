@@ -4,7 +4,7 @@ FROM python:3.10-slim
 # Set working directory
 WORKDIR /app
 
-# System dependencies (if needed for Rasa/Poetry)
+# System dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
@@ -16,14 +16,21 @@ ENV POETRY_HOME="/opt/poetry"
 ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Copy your repo (you can mount instead with volumes if you want dynamic updates)
+# Configura Poetry para no crear un .venv dentro del proyecto
+# Esto es crucial para que Docker funcione correctamente
+RUN poetry config virtualenvs.create false
+
+# Copia SÓLO los archivos de dependencias
+COPY pyproject.toml poetry.lock* /app/
+
+# Instala TODAS las dependencias (para ambos grupos, bot y actions)
+# Usamos --no-root porque no necesitamos instalar el paquete "pomp-ia" en sí mismo
+RUN poetry install --no-dev --no-root
+
+# Ahora copia el resto del código de tu aplicación
 COPY . /app
 
-# Install dependencies for bot or actions; you can override later
-# RUN poetry install --only bot --without dev
-
-# Expose ports for bot or actions (default ports)
+# Expose ports
 EXPOSE 8000 5055
 
-# Default command: override when running container
-# CMD ["poetry", "run", "python", "main.py"]
+# El CMD será sobrescrito por docker-compose

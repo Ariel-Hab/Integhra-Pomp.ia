@@ -20,15 +20,13 @@ class ModificationAction:
     new_value: Optional[str] = None
     confidence: float = 1.0
     
-    # ✅ 4. MÉTODO DE SERIALIZACIÓN CENTRALIZADO
     def to_dict(self) -> Dict[str, Any]:
-        """Serializa la acción a un diccionario JSON-compatible."""
         return {
-            'action_type': self.action_type.value,
+            'action_type': self.action_type.value if hasattr(self.action_type, 'value') else str(self.action_type),
             'entity_type': self.entity_type,
             'old_value': self.old_value,
             'new_value': self.new_value,
-            'confidence': self.confidence
+            'confidence': getattr(self, 'confidence', None)
         }
 
 @dataclass
