@@ -15,8 +15,8 @@ intents:
   - responder_estoy_bien
   - buscar_producto
   - buscar_oferta
-  - consultar_novedades_producto  
-  - consultar_novedades_oferta
+  # - consultar_novedades_producto  
+  # - consultar_novedades_oferta
   - modificar_busqueda
   - modificar_busqueda:reemplazar  # 🆕 Sub-intent para reemplazos
   - modificar_busqueda:agregar     # 🆕 Sub-intent para adiciones

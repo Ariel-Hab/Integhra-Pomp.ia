@@ -148,8 +148,31 @@ nlu:
     - quise poner [250mg]{"entity": "dosis", "role": "new"} en vez de [500mg]{"entity": "dosis", "role": "old"}
     - el proveedor correcto es [holliday]{"entity": "empresa", "role": "new"}, no [bayer]{"entity": "empresa", "role": "old"}
     - perdón, el animal era [equino]{"entity": "animal", "role": "new"}
-
-    
+    - en vez de Bayer mostrame Holliday
+    - cambiá Zoetis por Brouwer
+    - ahora quiero ver Holliday en lugar de Richmond
+    - reemplazá ivermectina por enrofloxacina
+    - cambiá la búsqueda de antibióticos por vitaminas
+    - mostrámelos de Holliday en vez de Bayer
+    - en lugar de vacunas quiero ver analgésicos
+    - olvidate de perros y mostrame los de gatos
+    - poné Holliday donde decía Brouwer
+    - mejor buscá los productos de Brouwer en vez de los de Zoetis
+    - cambiá totalmente la búsqueda: quiero ver productos de Holliday
+    - en vez de esto que buscaste, mostrame información de los productos de Brouwer
+    - ya no quiero ver los de Richmond, mostrámelos de Bayer
+    - reemplazá amoxicilina por doxiciclina
+    - cambiá analgésicos por antibióticos
+    - ahora buscá antiparasitarios en lugar de vitaminas
+    - quiero ver productos nuevos en vez de ofertas
+    - en vez de los productos de Bayer quiero los de Zoetis
+    - mostrámelos de Brouwer en vez de Richmond
+    - buscá productos veterinarios en lugar de insumos agrícolas
+    - cambiá de proveedor Bayer a proveedor Holliday
+    - quiero ver de Holliday, no de Zoetis
+    - olvidate de analgésicos y buscá antiparasitarios
+    - en lugar de productos para bovinos mostrame los de caninos
+    - mostrámelos de Bayer, no de Richmond    
 
 - intent: modificar_busqueda:agregar
   examples: |
@@ -364,6 +387,62 @@ nlu:
     - sumá [antibióticos](categoria) con bonificación [máxima]{"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [5]{"entity": "cantidad_bonificacion", "group": "bonificacion_filter"}
     - incluí [Biogenesis]{"entity": "empresa", "role": "proveedor"} con [al menos]{"entity": "comparador", "role": "gte", "group": "descuento_filter"} [20]{"entity": "cantidad_descuento", "group": "descuento_filter"}%
     - además [perros](animal) con [hasta]{"entity": "comparador", "role": "lte", "group": "bonificacion_filter"} [6]{"entity": "cantidad_bonificacion", "group": "bonificacion_filter"} gratis
+    - agregá los productos de Holliday
+
+    - sumá también Brouwer
+
+    - incluí los de Richmond en la búsqueda
+
+    - quiero que también aparezcan los de Zoetis
+
+    - agregá la categoría antibióticos
+
+    - mostrámelos también de Holliday
+
+    - añadí analgésicos a los resultados
+
+    - sumá los que son para bovinos
+
+    - agregá un filtro para nuevos
+
+    - quiero ver también los en stock
+
+    - mostrame además los productos de Brouwer
+
+    - incluí también las ofertas
+
+    - agregá resultados con doxiciclina
+
+    - mostrámelos con ivermectina también
+
+    - añadí productos de Holliday a lo que ya tengo
+
+    - sumá los que pertenecen a analgésicos
+
+    - quiero ver además los de Zoetis
+
+    - mostrame también los productos nuevos
+
+    - agregá los que tienen descuento
+
+    - sumá a Bayer en la búsqueda
+
+    - quiero ver los de Brouwer también
+
+    - incluí los productos de Richmond
+
+    - agregá las vitaminas a los resultados
+
+    - mostrámelos con filtro de precio bajo
+
+    - añadí vacunas también
+
+    - sumá antiparasitarios
+
+    - incluí productos para felinos
+
+    - agregá los que son de uso veterinario
+
 - intent: modificar_busqueda:multiple
   examples: |
     # ========================================
@@ -548,8 +627,28 @@ nlu:
     - ok, saquemos [bayer]{"entity": "empresa", "role": "remove"}. Mejor agregá [virbac]{"entity": "empresa", "role": "add"} y que sea para [gatos]{"entity": "animal", "role": "add"}
     - no, sin [perros]{"entity": "animal", "role": "remove"}. Y que la categoria sea [vacunas]{"entity": "categoria", "role": "add"} y que esté [en oferta]{"entity": "estado", "role": "add"}
     - olvidate de [holliday]{"entity": "empresa", "role": "remove"}. Sumá [zoetis]{"entity": "empresa", "role": "add"} y sacá el filtro de [novedades]{"entity": "estado", "role": "remove"}
-# INTENT: modificar_busqueda:remover
-# ============================================
+    - cambiá Bayer por Holliday y agregá los nuevos
+    - sacá los de Zoetis y sumá los de Brouwer
+    - reemplazá antibióticos por vitaminas y agregá los en stock
+    - quitá Richmond y mostrámelos de Bayer
+    - sacá los descuentos y agregá los nuevos
+    - cambiá de Holliday a Zoetis y mostrámelos solo para perros
+    - reemplazá amoxicilina por doxiciclina y agregá los en oferta
+    - eliminá analgésicos y sumá antiparasitarios
+    - quitá Bayer y agregá Holliday
+    - sacá los productos de Richmond y mostrámelos con descuento
+    - cambiá la búsqueda a antiparasitarios y agregá los para felinos
+    - reemplazá vitaminas por vacunas y eliminá Zoetis
+    - quitá los en stock y agregá los agotados
+    - cambiá Holliday por Bayer y sumá los productos nuevos
+    - reemplazá completamente la búsqueda por los productos de Brouwer con descuento
+    - sacá los antiparasitarios y mostrámelos de Holliday
+    - cambiá antibióticos por analgésicos y agregá Zoetis
+    - eliminá Brouwer y sumá Richmond con ofertas
+    - quitá los de Holliday y agregá Bayer
+    - reemplazá vacunas por vitaminas y sumá productos nuevos
+
+
 - intent: modificar_busqueda:remover
   examples: |
     - saca el filtro de [descuento](filter_name)
@@ -663,3 +762,28 @@ nlu:
     - dejá afuera a [bayer]{"entity": "empresa", "role": "proveedor"} de la búsqueda
     - el de [500mg]{"entity": "dosis", "role": "gramaje"} ya no lo busques
     - ignorá a los [perros](animal) por ahora
+    - sacá el filtro de descuento
+    - quitá los productos de Bayer
+    - eliminá Richmond de la búsqueda
+    - sin restricción de stock
+    - sacá el filtro de precio
+    - no quiero ver los de Zoetis
+    - eliminá la categoría antibióticos
+    - sacá los que son para bovinos
+    - mostrámelos sin ofertas
+    - sin filtro de nuevos
+    - sacá vitaminas
+    - no incluyas los de Holliday
+    - eliminá todo lo que sea analgésico
+    - quitá los productos de Brouwer
+    - sin filtro de empresa
+    - sacá las vacunas
+    - no me muestres los de Richmond
+    - eliminá el filtro de animal
+    - sacá los que no tienen stock
+    - mostrámelos sin restricciones
+    - quitá los productos de Zoetis
+    - sin categoría antibióticos
+    - remové productos nuevos
+    - sacá los que tienen descuento
+    - sin filtro de proveedor

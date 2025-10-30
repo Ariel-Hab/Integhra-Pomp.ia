@@ -16,7 +16,7 @@ pipeline:
 
     # === CLASIFICADORES ===
   - name: DIETClassifier
-    epochs: 200
+    epochs: 100
     constrain_similarities: true
     entity_recognition: true
     role_recognition: true
@@ -55,14 +55,14 @@ policies:
   - name: MemoizationPolicy
     max_history: 3
 
-  - name: TEDPolicy
-    max_history: 5
-    epochs: 50
-    constrain_similarities: true
+  # - name: TEDPolicy
+  #   max_history: 5
+  #   epochs: 50
+  #   constrain_similarities: true
 
-  - name: UnexpecTEDIntentPolicy
-    max_history: 5
-    epochs: 30
+  # - name: UnexpecTEDIntentPolicy
+  #   max_history: 5
+  #   epochs: 30
 
   - name: RulePolicy
     core_fallback_threshold: 0.3

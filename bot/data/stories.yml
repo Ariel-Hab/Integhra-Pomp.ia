@@ -1,231 +1,231 @@
 version: "3.1"
 
 stories:
-  # ========================================
-  # HISTORIAS DE BÚSQUEDA
-  # ========================================
+  # # ========================================
+  # # HISTORIAS DE BÚSQUEDA
+  # # ========================================
   
-  - story: Búsqueda de producto
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Búsqueda de producto
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Búsqueda de oferta
-    steps:
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
+  # - story: Búsqueda de oferta
+  #   steps:
+  #   - intent: buscar_oferta
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario busca y luego modifica
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: modificar_busqueda
-    - action: action_busqueda_situacion
+  # - story: Usuario busca y luego modifica
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: modificar_busqueda
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario busca y agradece
-    steps:
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
-    - intent: agradecer
-    - action: action_conf_neg_agradecer
+  # - story: Usuario busca y agradece
+  #   steps:
+  #   - intent: buscar_oferta
+  #   - action: action_busqueda_situacion
+  #   - intent: agradecer
+  #   - action: action_conf_neg_agradecer
 
-  - story: Usuario saluda y busca
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario saluda y busca
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  # ========================================
-  # HISTORIAS CON OFF-TOPIC
-  # ========================================
+  # # ========================================
+  # # HISTORIAS CON OFF-TOPIC
+  # # ========================================
   
-  - story: Usuario empieza con small talk y luego busca producto
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario empieza con small talk y luego busca producto
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario busca producto pero se desvía en charla casual
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario busca producto pero se desvía en charla casual
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario solo quiere charlar
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: off_topic
-    - action: action_handle_out_of_context
+  # - story: Usuario solo quiere charlar
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
 
-  - story: Off-topic después de agradecimiento
-    steps:
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
-    - intent: agradecer
-    - action: action_conf_neg_agradecer
-    - intent: off_topic
-    - action: action_handle_out_of_context
+  # - story: Off-topic después de agradecimiento
+  #   steps:
+  #   - intent: buscar_oferta
+  #   - action: action_busqueda_situacion
+  #   - intent: agradecer
+  #   - action: action_conf_neg_agradecer
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
 
-  # ========================================
-  # HISTORIAS CON OUT-OF-SCOPE
-  # ========================================
+  # # ========================================
+  # # HISTORIAS CON OUT-OF-SCOPE
+  # # ========================================
   
-  - story: Usuario pregunta algo fuera de dominio directamente
-    steps:
-    - intent: out_of_scope
-    - action: action_handle_out_of_context
+  # - story: Usuario pregunta algo fuera de dominio directamente
+  #   steps:
+  #   - intent: out_of_scope
+  #   - action: action_handle_out_of_context
 
-  - story: Usuario busca pero luego pregunta fuera de dominio
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: out_of_scope
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario busca pero luego pregunta fuera de dominio
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: out_of_scope
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Out of scope después de saludo
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: out_of_scope
-    - action: action_handle_out_of_context
+  # - story: Out of scope después de saludo
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: out_of_scope
+  #   - action: action_handle_out_of_context
 
-  - story: Usuario insiste fuera de dominio
-    steps:
-    - intent: out_of_scope
-    - action: action_handle_out_of_context
-    - intent: out_of_scope
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario insiste fuera de dominio
+  #   steps:
+  #   - intent: out_of_scope
+  #   - action: action_handle_out_of_context
+  #   - intent: out_of_scope
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  # ========================================
-  # HISTORIAS CON CONSULTAS VETERINARIAS
-  # ========================================
+  # # ========================================
+  # # HISTORIAS CON CONSULTAS VETERINARIAS
+  # # ========================================
   
-  - story: Consulta veterinaria directa
-    steps:
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
+  # - story: Consulta veterinaria directa
+  #   steps:
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
 
-  - story: Usuario busca producto pero hace consulta médica
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
+  # - story: Usuario busca producto pero hace consulta médica
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
 
-  - story: Consulta veterinaria y luego busca producto apropiado
-    steps:
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Consulta veterinaria y luego busca producto apropiado
+  #   steps:
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario pregunta médico después de ver oferta
-    steps:
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
+  # - story: Usuario pregunta médico después de ver oferta
+  #   steps:
+  #   - intent: buscar_oferta
+  #   - action: action_busqueda_situacion
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
 
-  - story: Saludo y emergencia veterinaria
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
+  # - story: Saludo y emergencia veterinaria
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
 
-  # ========================================
-  # HISTORIAS MIXTAS (REALISTAS)
-  # ========================================
+  # # ========================================
+  # # HISTORIAS MIXTAS (REALISTAS)
+  # # ========================================
   
-  - story: Flujo completo con redirección exitosa
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: agradecer
-    - action: action_conf_neg_agradecer
+  # - story: Flujo completo con redirección exitosa
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: agradecer
+  #   - action: action_conf_neg_agradecer
 
-  - story: Usuario confunde consulta médica con búsqueda de producto
-    steps:
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
-    - intent: afirmar
-    - action: action_conf_neg_agradecer
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario confunde consulta médica con búsqueda de producto
+  #   steps:
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
+  #   - intent: afirmar
+  #   - action: action_conf_neg_agradecer
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Múltiples desvíos antes de búsqueda real
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: out_of_scope
-    - action: action_handle_out_of_context
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Múltiples desvíos antes de búsqueda real
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: out_of_scope
+  #   - action: action_handle_out_of_context
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario busca, hace consulta médica, y vuelve a buscar
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
-    - intent: denegar
-    - action: action_conf_neg_agradecer
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario busca, hace consulta médica, y vuelve a buscar
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: consulta_veterinaria_profesional
+  #   - action: action_handle_out_of_context
+  #   - intent: denegar
+  #   - action: action_conf_neg_agradecer
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Charla casual persistente con redirección
-    steps:
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: off_topic
-    - action: action_handle_out_of_context
-    - intent: afirmar
-    - action: action_conf_neg_agradecer
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
+  # - story: Charla casual persistente con redirección
+  #   steps:
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: off_topic
+  #   - action: action_handle_out_of_context
+  #   - intent: afirmar
+  #   - action: action_conf_neg_agradecer
+  #   - intent: buscar_oferta
+  #   - action: action_busqueda_situacion
 
 
-  - story: Usuario pide ayuda al inicio
-    steps:
-    - intent: saludo
-    - action: action_smalltalk_situacion
-    - intent: pedir_ayuda
-    - action: action_explicar_ayuda  # Ahora una sola action
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
+  # - story: Usuario pide ayuda al inicio
+  #   steps:
+  #   - intent: saludo
+  #   - action: action_smalltalk_situacion
+  #   - intent: pedir_ayuda
+  #   - action: action_explicar_ayuda  # Ahora una sola action
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario pide ayuda durante búsqueda
-    steps:
-    - intent: buscar_producto
-    - action: action_busqueda_situacion
-    - intent: pedir_ayuda
-    - action: action_explicar_ayuda  # La misma action detecta el contexto
-    - intent: modificar_busqueda
-    - action: action_busqueda_situacion
+  # - story: Usuario pide ayuda durante búsqueda
+  #   steps:
+  #   - intent: buscar_producto
+  #   - action: action_busqueda_situacion
+  #   - intent: pedir_ayuda
+  #   - action: action_explicar_ayuda  # La misma action detecta el contexto
+  #   - intent: modificar_busqueda
+  #   - action: action_busqueda_situacion
 
-  - story: Usuario confundido después de oferta
-    steps:
-    - intent: buscar_oferta
-    - action: action_busqueda_situacion
-    - intent: pedir_ayuda
-    - action: action_explicar_ayuda  # La misma action
+  # - story: Usuario confundido después de oferta
+  #   steps:
+  #   - intent: buscar_oferta
+  #   - action: action_busqueda_situacion
+  #   - intent: pedir_ayuda
+  #   - action: action_explicar_ayuda  # La misma action

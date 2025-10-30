@@ -17,6 +17,7 @@ from actions.config import (
     validate_entity_value,
     get_entity_suggestions
 )
+from actions.models.model_manager import get_search_engine
 from ..conversation_state import ConversationState, SuggestionManager, create_smart_suggestion, get_improved_suggestions
 from .comparison_detector import ComparisonDetector
 from .modification_detector import ModificationDetector
@@ -29,6 +30,7 @@ class ActionBusquedaSituacion(Action):
     
     def __init__(self):
         try:
+            self.search_engine = get_search_engine()
             self.comparison_detector = ComparisonDetector()
             self.modification_detector = ModificationDetector()
             logger.info("[ActionBusquedaSituacion] Detectores inicializados correctamente")
@@ -166,7 +168,7 @@ class ActionBusquedaSituacion(Action):
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[str, Any]) -> List[EventType]:
         """
-        ✅ CORREGIDO: Lógica de flujo arreglada para evitar doble ejecución
+        ✅ INTEGRADO CON SEARCH ENGINE: Ejecuta búsquedas y formatea resultados
         """
         try:
             context = ConversationState.get_conversation_context(tracker)
@@ -176,7 +178,6 @@ class ActionBusquedaSituacion(Action):
             logger.info(f"[ActionBusquedaSituacion] Procesando intent: {intent_name}")
             
             events = []
-
             log_message(tracker, nlu_conf_threshold=0.6)
             
             # Detectar y limpiar sugerencias ignoradas
@@ -198,42 +199,90 @@ class ActionBusquedaSituacion(Action):
             if context['detected_sentiment'] != context['current_sentiment_slot']:
                 events.append(SlotSet("user_sentiment", context['detected_sentiment']))
             
-            # ✅ CORREGIDO: Lógica de procesamiento por tipo de intent
+            # ✅ LÓGICA DE PROCESAMIENTO POR TIPO DE INTENT
             
-            # 1. INTENTS DE MODIFICACIÓN (incluyendo sub-intents)
+            # 1. INTENTS DE MODIFICACIÓN
             if intent_name.startswith('modificar_busqueda'):
                 result = self._handle_modification_intent(context, tracker, dispatcher)
             
             # 2. INTENTS DE BÚSQUEDA
             elif self._is_search_intent(intent_name):
-                # Detectar comparaciones con grupos
                 comparison_info = self._analyze_comparison_with_groups(tracker)
-                logger.debug(f"[ActionBusquedaSituacion] Comparación con grupos: {comparison_info}")
+                logger.debug(f"[ActionBusquedaSituacion] Comparación: {comparison_info}")
                 
                 result = self._handle_search_intent(context, tracker, dispatcher, comparison_info)
             
-            # 3. INTENTS GENÉRICOS (afirmar, denegar, agradecer, etc.)
+            # 3. INTENTS GENÉRICOS
             else:
                 if intent_name in ['afirmar', 'denegar', 'agradecer']:
-                    # Estos se manejan por responses.yml, no hacer nada
                     result = {'type': 'generic_response'}
                 else:
-                    # Intent desconocido
                     dispatcher.utter_message("¿En qué puedo ayudarte hoy?")
                     result = {'type': 'generic_response'}
             
+            # ✅ NUEVO: Formatear y enviar resultados de búsqueda
+            if result.get('type') == 'search_success':
+                self._send_search_results(result, dispatcher)
+            
             events.extend(self._process_result(result, context))
-            logger.info(f"[ActionBusquedaSituacion] Procesamiento completado. Eventos: {len(events)}")
+            logger.info(f"[ActionBusquedaSituacion] Completado. Eventos: {len(events)}")
             
             return events
             
         except Exception as e:
             logger.error(f"[ActionBusquedaSituacion] Error crítico: {e}", exc_info=True)
-            try:
-                dispatcher.utter_message("Ocurrió un error procesando tu solicitud.")
-            except:
-                pass
+            dispatcher.utter_message("Ocurrió un error procesando tu solicitud.")
             return []
+
+    def _send_search_results(self, result: Dict[str, Any], dispatcher: CollectingDispatcher) -> None:
+        """
+        ✅ CORREGIDO: Envía un solo mensaje con 'text' (resumen) y 'custom' (JSON)
+        para que Flutter lo interprete correctamente.
+        """
+        try:
+            search_results = result.get('search_results', {})
+            search_type = result.get('search_type', 'productos')
+            total_results = search_results.get('total_results', 0)
+            
+            # --- 1. Crear el mensaje de TEXTO (el resumen human-readable) ---
+            if total_results == 0:
+                params_display = self._format_parameters_for_display(result.get('parameters', {}))
+                params_str = ", ".join([f"{k}: {v}" for k, v in params_display.items()])
+                text_message = f"❌ No encontré {search_type} con los parámetros:\n{params_str}"
+            else:
+                item_type = "ofertas" if search_type == "ofertas" else "productos"
+                # Este es el texto que el usuario verá en la burbuja de chat
+                text_message = f"✅ Encontré {total_results} {item_type}."
+
+            
+            # --- 2. Crear el payload 'custom' (el JSON de datos) ---
+            # Esta estructura DEBE coincidir con SearchResponseData.fromJson en chatbot_models.dart
+            custom_payload = {
+                "type": "search_results", # Para 'isSearchResults'
+                "search_type": search_type, #
+                "validated": True, # Para 'isValidated'
+                "timestamp": datetime.now().isoformat(),
+                "parameters": result.get('parameters', {}), #
+                
+                # Aquí pasamos el diccionario de resultados completo
+                # que tu app espera en
+                "search_results": search_results, 
+                
+                "comparison_analysis": result.get('comparison_info') #
+            }
+            
+            # --- 3. Enviar UN SOLO mensaje ---
+            # Este mensaje ahora tiene AMBAS partes: texto y datos.
+            dispatcher.utter_message(
+                text=text_message,
+                custom=custom_payload
+            )
+            
+            logger.info(f"[SearchResults] Enviado 1 mensaje con 'text' y 'custom' (JSON)")
+
+        except Exception as e:
+            logger.error(f"[SearchResults] Error: {e}", exc_info=True)
+            dispatcher.utter_message("Encontré resultados pero hubo un error al mostrarlos.")
 
     def _analyze_comparison_with_groups(self, tracker: Tracker) -> Dict[str, Any]:
         """
@@ -386,91 +435,7 @@ class ActionBusquedaSituacion(Action):
             logger.error(f"[OperatorMap] Error: {e}")
             return None
         
-    def _handle_modification_intent(self, context: Dict[str, Any], tracker: Tracker, 
-                                    dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """
-        ✅ CORREGIDO: Siempre envía un solo mensaje
-        """
-        try:
-            intent_name = context['current_intent']
-            user_message = context.get('user_message', '')
-            entities = tracker.latest_message.get("entities", [])
-            previous_params = self._extract_previous_search_parameters(context)
-            search_type = previous_params.get('_previous_search_type', 'producto')
-            
-            logger.info(f"[_handle_modification_intent] Orquestando para intent: {intent_name}")
-
-            if not self.modification_detector:
-                dispatcher.utter_message("No pude procesar la modificación en este momento.")
-                return {'type': 'modify_error', 'reason': 'detector_not_initialized'}
-
-            # 1. LLAMADA ÚNICA AL DETECTOR
-            modification_result = self.modification_detector.detect_and_rebuild(
-                text=user_message,
-                entities=entities,
-                intent_name=intent_name,
-                current_params=previous_params,
-                search_type=search_type
-            )
-
-            # 2. VALIDAR DETECCIÓN
-            if not modification_result.detected:
-                dispatcher.utter_message("No he entendido qué modificación quieres hacer.")
-                return {'type': 'modify_error', 'reason': 'no_detection'}
-
-            # 3. CASOS QUE NECESITAN CONFIRMACIÓN O VALIDACIÓN
-            if not modification_result.can_proceed_directly:
-                if modification_result.has_invalid_entities:
-                    # ✅ CORREGIDO: No envía mensaje aquí, lo hace la función
-                    return self._handle_invalid_entity_modification(
-                        modification_result, search_type, dispatcher
-                    )
-                else:
-                    confirmation_msg = getattr(modification_result, 'confirmation_message', 
-                                            "¿Estás seguro de esta modificación?")
-                    dispatcher.utter_message(confirmation_msg)  # ✅ UN SOLO MENSAJE
-                    
-                    return self._create_modification_confirmation_suggestion(
-                        actions=modification_result.actions,
-                        ambiguity_check={'message': confirmation_msg},
-                        search_type=search_type,
-                        dispatcher=None  # ✅ Ya enviamos el mensaje arriba
-                    )
-
-            # 4. APLICAR MODIFICACIÓN DIRECTA
-            rebuilt_params = modification_result.rebuilt_params
-            
-            # ✅ CORREGIDO: Consolidar warnings en el mensaje de búsqueda
-            warnings = getattr(modification_result, 'warnings', [])
-            
-            def serialize_action(action) -> Dict[str, Any]:
-                if isinstance(action, dict):
-                    return action
-                return {
-                    'action_type': action.action_type.value if hasattr(action.action_type, 'value') else str(action.action_type),
-                    'entity_type': action.entity_type,
-                    'old_value': action.old_value,
-                    'new_value': action.new_value,
-                    'confidence': getattr(action, 'confidence', None)
-                }
-
-            # ✅ Ejecutar búsqueda (envía UN mensaje)
-            return self._execute_search(
-                search_type, 
-                rebuilt_params, 
-                dispatcher,
-                is_modification=True,
-                modification_details={
-                    'actions': [serialize_action(a) for a in modification_result.actions],
-                    'previous_params': previous_params,
-                    'warnings': warnings  # ✅ Pasar warnings para incluir en mensaje
-                }
-            )
-
-        except Exception as e:
-            logger.error(f"[_handle_modification_intent] Error crítico: {e}", exc_info=True)
-            dispatcher.utter_message("Hubo un error al procesar tu modificación.")
-            return {'type': 'modify_error', 'error': str(e)}
+    
 
     def _process_multiple_estados(self, estado_entities: List[Dict[str, Any]], 
                               search_params: Dict[str, Any]) -> None:
@@ -1053,102 +1018,239 @@ class ActionBusquedaSituacion(Action):
         except Exception as e:
             logger.error(f"[NLUApply] Error: {e}")
             return current_params
+    def _build_search_params(
+        self, 
+        entities: List[Dict[str, Any]], 
+        context: Dict[str, Any],
+        comparison_info: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Construye parámetros de búsqueda"""
+        params = {}
+        
+        # Mapeo de entidades
+        entity_mapping = {
+            'producto': 'nombre',
+            'empresa': 'proveedor',
+            'categoria': 'categoria',
+            'estado': 'estado'
+        }
+        
+        for entity in entities:
+            entity_type = entity.get('entity')
+            entity_value = entity.get('value')
+            entity_role = entity.get('role')
+            
+            # Mapeo directo
+            if entity_type in entity_mapping:
+                param_name = entity_mapping[entity_type]
+                
+                if param_name:
+                    if entity_role and entity_type == 'empresa':
+                        params[entity_role] = entity_value
+                    else:
+                        params[param_name] = entity_value
+            
+            # Dosis
+            elif entity_type == 'dosis':
+                dosis_type = entity.get('dosis_type', 'forma')
+                params[f'dosis_{dosis_type}'] = entity_value
+            
+            # Comparadores con grupos
+            elif entity_type == 'comparador':
+                group = entity.get('group')
+                operator = entity.get('role', entity_value)
+                
+                if group == 'descuento_filter':
+                    if operator in ['gt', 'gte']:
+                        params['descuento_min'] = self._get_quantity_from_entities(entities, group)
+                    elif operator in ['lt', 'lte']:
+                        params['descuento_max'] = self._get_quantity_from_entities(entities, group)
+                
+                elif group == 'stock_filter':
+                    if operator in ['gt', 'gte']:
+                        params['stock_min'] = self._get_quantity_from_entities(entities, group)
+                    elif operator in ['lt', 'lte']:
+                        params['stock_max'] = self._get_quantity_from_entities(entities, group)
+        
+        logger.debug(f"[BuildParams] Construidos: {params}")
+        return params
 
-    
-    def _handle_search_intent(self, context: Dict[str, Any], tracker: Tracker, 
-                    dispatcher: CollectingDispatcher, 
-                    comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def _get_quantity_from_entities(self, entities: List[Dict], group: str) -> Optional[float]:
         """
-        ✅ CORREGIDO: Eliminados bloques redundantes
+        Extrae cantidad de entidades asociadas al grupo
         """
         try:
+            for entity in entities:
+                if entity.get('group') == group and entity.get('entity') in ['cantidad_descuento', 'cantidad_stock', 'cantidad']:
+                    return float(entity.get('value', 0))
+            return None
+        except:
+            return None
+    
+# En actions_busqueda.py
+
+    def _handle_search_intent(
+        self, 
+        context: Dict[str, Any], 
+        tracker: Tracker, 
+        dispatcher: CollectingDispatcher,
+        comparison_info: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Maneja intents de búsqueda usando SearchEngine"""
+        try:
             intent_name = context['current_intent']
-            search_type = self._get_search_type(intent_name, context)
+            entities = context['entities']
             user_message = context.get('user_message', '')
             
-            # ✅ ELIMINADO: Ya no manejamos sub-intents de modificación aquí
-            # Eso se hace en run() antes de llamar a este método
+            # 1. Normalizar entidades (LÓGICA EXISTENTE)
+            normalized_entities = self._normalize_regex_entities(entities)
             
-            # Búsqueda normal
-            slot_cleanup_events = self._generate_slot_cleanup_events(tracker, intent_name)
-            search_params = self._extract_search_parameters_from_entities(tracker)
+            # ==========================================================
+            # ✅ PASO 2: VALIDAR ENTIDADES (LÓGICA FALTANTE)
+            # Llamar al helper de validación ANTES de buscar
+            validation_result = self._validate_entities_with_helper(
+                tracker, 
+                intent_name, 
+                dispatcher
+            )
             
-            # Detectar si hay entidades en el mensaje original
-            entities = tracker.latest_message.get("entities", [])
-            has_entities = len(entities) > 0
+            # ✅ PASO 3: FRENAR SI HAY ERRORES O SUGERENCIAS
+            if validation_result.get('has_suggestions') or validation_result.get('has_errors'):
+                logger.warning(f"[HandleSearch] Búsqueda frenada por validación.")
+                # Retornamos el payload de la sugerencia para que _process_result lo maneje
+                return {
+                    'type': 'entity_suggestion',
+                    'suggestion_data': validation_result.get('suggestion_data'),
+                    'slot_cleanup_events': []
+                }
+            # ==========================================================
             
-            if search_params:
-                # CASO 1: Hay parámetros válidos → ejecutar búsqueda
-                if comparison_info and comparison_info.get('detected'):
-                    is_coherent = self._validate_comparison_coherence(comparison_info, search_params)
-                    if not is_coherent:
-                        logger.warning("[Search] Comparación descartada por incoherencia")
-                        comparison_info = None
-                
-                temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
-                
-                result = self._execute_search(
-                    search_type, 
-                    search_params, 
-                    dispatcher, 
-                    comparison_info, 
-                    temporal_filters,
-                    is_modification=False
-                )
-                result['slot_cleanup_events'] = slot_cleanup_events
-                return result
+            # ✅ PASO 4: CONTINUAR CON BÚSQUEDA (si todo es válido)
             
-            elif not has_entities:
-                # CASO 2: No hay parámetros Y no hay entidades → búsqueda sin filtros
-                logger.info(f"[Search] Búsqueda sin parámetros solicitada para {search_type}")
-                
-                temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
-                
-                result = self._execute_search(
-                    search_type, 
-                    {},
-                    dispatcher, 
-                    comparison_info, 
-                    temporal_filters,
-                    is_modification=False
-                )
-                result['slot_cleanup_events'] = slot_cleanup_events
-                return result
+            # 2. Construir parámetros (LÓGICA EXISTENTE)
+            search_params = self._build_search_params(
+                normalized_entities, 
+                context, 
+                comparison_info
+            )
             
+            # 3. Determinar tipo de búsqueda
+            search_type = self._determine_search_type(intent_name)
+            
+            logger.info(f"[HandleSearch] Tipo: {search_type}, Params: {search_params}")
+            
+            # 4. ✅ LLAMAR AL SEARCH ENGINE con info procesada
+            result = self.search_engine.execute_search(
+                search_params=search_params,
+                search_type=search_type,
+                user_message=user_message,
+                is_modification=False,  # Esto es búsqueda nueva
+                previous_params=None
+            )
+            
+            # 5. Procesar resultado
+            if result.get("success"):
+                logger.info(f"[HandleSearch] ✅ {result.get('total_results', 0)} resultados")
+                return {
+                    'type': 'search_success',
+                    'search_type': search_type,
+                    'parameters': search_params,
+                    'search_results': result.get('results', {}),
+                    'comparison_info': comparison_info
+                }
             else:
-                # CASO 3: Hay entidades pero no son válidas → validar y sugerir
-                logger.info(f"[Search] Entidades detectadas pero inválidas, solicitando corrección")
-                
-                validation_result = self._validate_entities_with_helper(tracker, intent_name, dispatcher)
-                
-                if validation_result.get('has_suggestions'):
-                    return {
-                        'type': 'entity_suggestion',
-                        'suggestion_data': validation_result['suggestion_data'],
-                        'slot_cleanup_events': slot_cleanup_events
-                    }
-                else:
-                    # Si hay entidades pero no hay sugerencias, permitir búsqueda sin filtros
-                    logger.info(f"[Search] Sin sugerencias válidas, permitiendo búsqueda sin filtros")
-                    
-                    temporal_filters = self._extract_temporal_filters(user_message, comparison_info)
-                    
-                    result = self._execute_search(
-                        search_type, 
-                        {},
-                        dispatcher, 
-                        comparison_info, 
-                        temporal_filters,
-                        is_modification=False
-                    )
-                    result['slot_cleanup_events'] = slot_cleanup_events
-                    return result
-                    
+                logger.error(f"[HandleSearch] ❌ Error: {result.get('error')}")
+                return {
+                    'type': 'search_error',
+                    'error': result.get('error'),
+                    'parameters': search_params
+                }
+        
         except Exception as e:
-            logger.error(f"[Search] Error: {e}", exc_info=True)
-            dispatcher.utter_message("Ocurrió un error procesando tu búsqueda.")
-            return {'type': 'search_error'}
+            logger.error(f"[HandleSearch] Error: {e}", exc_info=True)
+            return {'type': 'search_error', 'error': str(e)}
 
+
+    def _handle_modification_intent(
+        self, 
+        context: Dict[str, Any], 
+        tracker: Tracker, 
+        dispatcher: CollectingDispatcher
+    ) -> Dict[str, Any]:
+        """Maneja intents de MODIFICACIÓN"""
+        try:
+            user_message = context.get('user_message', '')
+            entities = tracker.latest_message.get("entities", [])
+            previous_params = self._extract_previous_search_parameters(context)
+            search_type = previous_params.get('_previous_search_type', 'producto')
+            intent_name = context['current_intent']
+
+            # ==========================================================
+            # ✅ PASO 1: VALIDAR NUEVAS ENTIDADES
+            # (LÓGICA FALTANTE)
+            validation_result = self._validate_entities_with_helper(
+                tracker, 
+                intent_name, 
+                dispatcher
+            )
+            
+            # ✅ PASO 2: FRENAR SI HAY ERRORES O SUGERENCIAS
+            if validation_result.get('has_suggestions') or validation_result.get('has_errors'):
+                logger.warning(f"[ModifyIntent] Modificación frenada por validación.")
+                # Retornamos el payload de la sugerencia para que _process_result lo maneje
+                return {
+                    'type': 'entity_suggestion',
+                    'suggestion_data': validation_result.get('suggestion_data'),
+                    'slot_cleanup_events': []
+                }
+            # ==========================================================
+
+            # ✅ PASO 3: CONTINUAR SI ES VÁLIDO
+            
+            # Normalizar nuevas entidades
+            normalized_entities = self._normalize_regex_entities(entities)
+            
+            # ⚠️ ATENCIÓN: Sigues usando _build_search_params aquí también.
+            # Deberías considerar reemplazar esto por _extract_search_parameters_from_entities(tracker)
+            current_params = self._build_search_params(normalized_entities, context, {})
+            
+            # ✅ LLAMAR AL SEARCH ENGINE para modificación
+            result = self.search_engine.execute_search(
+                search_params=current_params,
+                search_type=search_type,
+                user_message=user_message,
+                is_modification=True,  # ← Esto activa el LLM
+                previous_params=previous_params,
+                chat_history=context.get('chat_history', [])
+            )
+            
+            if result.get("success"):
+                return {
+                    'type': 'search_success',
+                    'search_type': search_type,
+                    'parameters': current_params,
+                    'search_results': result.get('results', {}),
+                    'modification_applied': True
+                }
+            else:
+                return {
+                    'type': 'modify_error',
+                    'error': result.get('error')
+                }
+                
+        except Exception as e:
+            logger.error(f"[ModifyIntent] Error: {e}", exc_info=True)
+            return {'type': 'modify_error', 'error': str(e)}
+            
+            
+    def _determine_search_type(self, intent_name: str) -> str:
+        """
+        Determina si buscar productos u ofertas según el intent
+        """
+        if 'oferta' in intent_name.lower():
+            return 'ofertas'
+        return 'productos'
     # Métodos auxiliares (sin cambios)
     def _is_search_intent(self, intent_name: str) -> bool:
         search_intents = ['buscar_producto', 'buscar_oferta', 'consultar_novedades_producto', 
@@ -1176,81 +1278,7 @@ class ActionBusquedaSituacion(Action):
             return "producto"
         else:
             return "producto"
-    def _handle_modification_intent(self, context: Dict[str, Any], tracker: Tracker, 
-                                    dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """
-        [NUEVO Y UNIFICADO]
-        Maneja TODOS los intents de modificación llamando al detector y procesando su resultado.
-        """
-        try:
-            intent_name = context['current_intent']
-            user_message = context.get('user_message', '')
-            entities = tracker.latest_message.get("entities", [])
-            previous_params = self._extract_previous_search_parameters(context)
-            search_type = previous_params.get('_previous_search_type', 'producto')
-            
-            logger.info(f"[_handle_modification_intent] Orquestando modificación para intent: {intent_name}")
-
-            if not self.modification_detector:
-                dispatcher.utter_message("No pude procesar la modificación en este momento.")
-                return {'type': 'modify_error', 'reason': 'detector_not_initialized'}
-
-            # 1. LLAMADA ÚNICA AL DETECTOR: Le pasamos toda la información.
-            modification_result = self.modification_detector.detect_and_rebuild(
-                text=user_message,
-                entities=entities,
-                intent_name=intent_name, # ⬅️ Pasamos el intent!
-                current_params=previous_params,
-                search_type=search_type,
-            )
-
-            # 2. PROCESAR EL RESULTADO DEL DETECTOR
-            if not modification_result.detected:
-                dispatcher.utter_message("No he entendido qué modificación quieres hacer.")
-                return {'type': 'modify_error', 'reason': 'no_detection'}
-
-            if modification_result.needs_confirmation:
-                # El detector no está seguro, pide confirmación al usuario.
-                return self._create_modification_confirmation_suggestion(
-                    actions=modification_result.actions,
-                    ambiguity_check={'message': modification_result.confirmation_message},
-                    search_type=search_type,
-                    dispatcher=dispatcher
-                )
-            
-            if modification_result.has_invalid_entities:
-                # El detector encontró entidades inválidas.
-                return self._handle_invalid_entity_modification(
-                    modification_result, search_type, dispatcher
-                )
-
-            if modification_result.can_proceed_directly:
-                # El detector está seguro. Aplicamos los cambios.
-                rebuilt_params = modification_result.rebuilt_params
-                
-                logger.info(f"[_handle_modification_intent] Aplicando cambios directos. Nuevos params: {rebuilt_params}")
-
-                # Ejecutamos la búsqueda con los nuevos parámetros.
-                result = self._execute_search(
-                    search_type, rebuilt_params, dispatcher,
-                    is_modification=True,
-                    modification_details={
-                        'actions': [a.__dict__ for a in modification_result.actions], # Serializamos las acciones
-                        'previous_params': previous_params
-                    }
-                )
-                result['modification_applied'] = True
-                result['combined_params'] = rebuilt_params
-                return result
-
-            # Fallback por si ninguna condición se cumple
-            dispatcher.utter_message("He detectado una modificación, pero no estoy seguro de cómo aplicarla.")
-            return {'type': 'modify_error', 'reason': 'unhandled_detector_result'}
-
-        except Exception as e:
-            logger.error(f"[_handle_modification_intent] Error crítico: {e}", exc_info=True)
-            dispatcher.utter_message("Hubo un error al procesar tu modificación.")
-            return {'type': 'modify_error', 'error': str(e)}
+    
 
     def _is_category_removal(self, entity_type: str, values: List[str]) -> bool:
         """

@@ -7,14 +7,16 @@ import os
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
-# <<< NUEVO: Importamos la instancia del modelo de chat desde tu model_manager
-from actions.models.model_manager import _chat_model as pompi_chat_model
+
+from actions.models.model_manager import get_search_engine
+from actions.models.model_manager import get_chat_model
+
 
 logger = logging.getLogger(__name__)
 
 class DomainBasedConfigurationManager:
     """
-    Gestor de configuración que extrae TODO del domain.yml y carga el modelo de chat.
+    Gestor de configuración que extrae TODO del domain.yml y carga los modelos.
     Sin dependencias circulares, usando domain como fuente única de verdad.
     """
     
@@ -33,8 +35,9 @@ class DomainBasedConfigurationManager:
             self.lookup_tables = {}
             self.intent_config = {}
             
-            # <<< NUEVO: Propiedad para almacenar la instancia del modelo cargado
+            # Instancias de modelos
             self.chat_model_instance = None 
+            self.search_engine_instance = None  # ← NUEVO
             
             # Mapeos derivados
             self.intent_to_slots = {}
@@ -49,7 +52,6 @@ class DomainBasedConfigurationManager:
             self._load_all_configs()
             DomainBasedConfigurationManager._config_loaded = True
     
-    # ... (los métodos _detect_project_root, _get_domain_paths, _get_lookup_paths no cambian) ...
     def _detect_project_root(self) -> Path:
         """Detecta automáticamente la raíz del proyecto Rasa"""
         root = Path(__file__).parent.parent / "bot"
@@ -86,7 +88,7 @@ class DomainBasedConfigurationManager:
         return [p for p in paths if p and p != Path('')]
     
     def _get_lookup_paths(self) -> List[Path]:
-        """Genera lista de paths para lookup tables (igual que antes)"""
+        """Genera lista de paths para lookup tables"""
         project_root = self._detect_project_root()
         paths = [
             Path(os.environ.get('RASA_LOOKUP_PATH', '')),
@@ -98,12 +100,13 @@ class DomainBasedConfigurationManager:
         return [p for p in paths if p and p != Path('')]
 
     def _load_all_configs(self):
-        """Carga toda la configuración: domain, lookups y el modelo de chat."""
+        """Carga toda la configuración: domain, lookups y AMBOS modelos."""
         try:
             self._health_status = {
                 'domain_loaded': False,
                 'lookup_tables_loaded': False,
-                'model_loaded': False, # <<< NUEVO: Estado para el modelo
+                'chat_model_loaded': False,  # ChatModel
+                'search_engine_loaded': False,  # ← NUEVO: SearchEngine
                 'critical_errors': [],
                 'warnings': [],
                 'paths_tried': {'domain': [], 'lookup': []}
@@ -121,107 +124,173 @@ class DomainBasedConfigurationManager:
             lookup_loaded = self._load_lookup_tables()
             self._health_status['lookup_tables_loaded'] = lookup_loaded
             
-            # <<< NUEVO: 4. Cargar el modelo de chat
-            model_loaded = self._load_chat_model()
-            self._health_status['model_loaded'] = model_loaded
+            # ⬇️ 4. REFACTORIZADO: Obtener ChatModel ⬇️
+            chat_model_loaded = self._get_chat_model_instance()
+            self._health_status['chat_model_loaded'] = chat_model_loaded
             
-            # 5. Construir mapeos inteligentes
+            # ⬇️ 5. REFACTORIZADO: Obtener SearchEngine ⬇️
+            search_engine_loaded = self._get_search_engine_instance()
+            self._health_status['search_engine_loaded'] = search_engine_loaded
+            
+            # 6. Construir mapeos inteligentes
             self._build_intelligent_mappings()
             
-            # 6. Validar estado del sistema
+            # 7. Validar estado del sistema
             self._validate_system_health()
             
-            # 7. Reportar estado
+            # 8. Reportar estado
             self._report_loading_status()
             
         except Exception as e:
             logger.error(f"Error crítico cargando configuración: {e}", exc_info=True)
             self._health_status['critical_errors'].append(str(e))
             self._set_fallback_config()
-
-    def _load_chat_model(self) -> bool:
-        """Carga, precalienta y valida la conexión con el modelo de chat (Ollama)."""
+    def _get_chat_model_instance(self) -> bool:
+        """
+        Obtiene la instancia del ChatModel desde el ModelManager.
+        Ya no es responsable de cargarlo ni calentarlo.
+        """
         try:
-            logger.info("🧠 Intentando cargar el modelo de chat (Ollama)...")
+            logger.info("🧠 [ChatModel] Obteniendo instancia desde ModelManager...")
             
-            # 1. Cargar el modelo
-            pompi_chat_model.load()
-            self.chat_model_instance = pompi_chat_model
-            logger.info("✅ Modelo de chat cargado.")
+            # get_chat_model() llama a _model_manager.get_chat_model()
+            # que lo inicializa si es necesario
+            self.chat_model_instance = get_chat_model() 
             
-            # 2. Warmup: hacer una consulta de prueba
-            logger.info("🔥 Precalentando el modelo...")
-            warmup_success = self._warmup_model()
-            
-            if warmup_success:
-                logger.info("✅ Modelo precalentado y listo para usar.")
+            if self.chat_model_instance and self.chat_model_instance._is_loaded:
+                logger.info("✅ [ChatModel] Instancia obtenida")
                 return True
             else:
-                logger.warning("⚠️ El modelo se cargó pero el warmup falló.")
+                logger.warning("⚠️ [ChatModel] No se pudo obtener la instancia")
                 return False
                 
         except Exception as e:
-            error_msg = f"No se pudo cargar el modelo de chat: {e}"
-            logger.error(f"❌ {error_msg}")
+            error_msg = f"No se pudo obtener ChatModel: {e}"
+            logger.error(f"❌ [ChatModel] {error_msg}")
             self._health_status['critical_errors'].append(error_msg)
             return False
 
-    # CÓDIGO CORREGIDO para config.py
-
-    def _warmup_model(self, retries: int = 2, timeout: int = 30) -> bool:
+    # ⬇️ MÉTODO REFACTORIZADO ⬇️
+    def _get_search_engine_instance(self) -> bool:
         """
-        Precalienta el modelo con una consulta simple.
-        
-        Args:
-            retries: Número de intentos (default: 2)
-            timeout: Tiempo máximo de espera en segundos (default: 30)
+        Obtiene la instancia del SearchEngine desde el ModelManager.
+        """
+        try:
+            logger.info("🔍 [SearchEngine] Obteniendo instancia desde ModelManager...")
             
-        Returns:
-            bool: True si el warmup fue exitoso
-        """
+            self.search_engine_instance = get_search_engine()
+            
+            if self.search_engine_instance and self.search_engine_instance._is_loaded:
+                logger.info("✅ [SearchEngine] Instancia obtenida")
+                return True
+            else:
+                logger.warning("⚠️ [SearchEngine] No se pudo obtener la instancia")
+                return False
+                
+        except Exception as e:
+            error_msg = f"No se pudo cargar SearchEngine: {e}"
+            logger.error(f"❌ [SearchEngine] {error_msg}")
+            self._health_status['critical_errors'].append(error_msg)
+            return False
+        
+    def _load_chat_model(self) -> bool:
+        """Carga, precalienta y valida la conexión con el modelo de chat (Ollama)."""
+        try:
+            logger.info("🧠 [ChatModel] Intentando cargar...")
+            
+            # 1. Cargar el modelo
+            pompi_chat_model = get_chat_model()
+            self.chat_model_instance = pompi_chat_model
+            logger.info("✅ [ChatModel] Cargado")
+            
+            # 2. Warmup
+            logger.info("🔥 [ChatModel] Precalentando...")
+            warmup_success = self._warmup_chat_model()
+            
+            if warmup_success:
+                logger.info("✅ [ChatModel] Precalentado y listo")
+                return True
+            else:
+                logger.warning("⚠️ [ChatModel] Cargado pero warmup falló")
+                return False
+                
+        except Exception as e:
+            error_msg = f"No se pudo cargar ChatModel: {e}"
+            logger.error(f"❌ [ChatModel] {error_msg}")
+            self._health_status['critical_errors'].append(error_msg)
+            return False
+
+    def _warmup_chat_model(self, retries: int = 2, timeout: int = 30) -> bool:
+        """Precalienta el ChatModel con una consulta simple."""
         import time
         
         for attempt in range(1, retries + 1):
             try:
-                logger.info(f"🔥 Intento de warmup {attempt}/{retries}")
+                logger.info(f"🔥 [ChatModel] Intento warmup {attempt}/{retries}")
                 
                 start_time = time.time()
                 warmup_prompt = "Hola"
                 
-                logger.info(f"   → Enviando prompt de warmup: '{warmup_prompt}'")
-                
-                # Usar el método generate() que ahora devuelve un diccionario
+                # Usar el método generate() que devuelve un diccionario
                 response_dict = self.chat_model_instance.generate(
                     user_prompt=warmup_prompt,
-                    max_new_tokens=10,
+                    max_new_tokens=50,
                     temperature=0.3
                 )
                 
                 elapsed = time.time() - start_time
-                logger.info(f"   → Warmup completado en {elapsed:.2f}s")
                 
-                # ✅ MODIFICADO: Validar el diccionario de respuesta
-                if response_dict and response_dict.get('success'):
-                    # Accedemos al texto con la clave 'text'
-                    response_text = response_dict.get('text', '')
-                    logger.debug(f"   → Respuesta de warmup: {response_text[:50]}...")
-                    logger.info(f"✅ Warmup exitoso en intento {attempt}")
+                # ✅ CORREGIDO: Validar que response_dict no sea None
+                if response_dict is None:
+                    logger.error(f"❌ [ChatModel] generate() retornó None")
+                    continue
+                
+                # Verificar éxito
+                if response_dict.get('success'):
+                    logger.info(f"✅ [ChatModel] Warmup exitoso en {elapsed:.2f}s")
                     return True
                 else:
-                    # Si falla, obtenemos el mensaje de error del diccionario
-                    error_reason = response_dict.get('error_type', 'respuesta vacía')
-                    logger.warning(f"   → La respuesta del warmup falló: {error_reason}")
+                    error_type = response_dict.get('error_type', 'unknown')
+                    logger.warning(f"⚠️ [ChatModel] Warmup falló: {error_type}")
                     
             except Exception as e:
-                logger.warning(f"⚠️ Intento {attempt} falló: {e}")
-            
-            if attempt < retries:
-                logger.info("   Reintentando en 2 segundos...")
-                time.sleep(2)
+                logger.error(f"❌ [ChatModel] Error en warmup intento {attempt}: {e}")
+                
+                if attempt < retries:
+                    logger.info(f"⏳ [ChatModel] Reintentando en 3s...")
+                    time.sleep(3)
         
-        logger.error("❌ Todos los intentos de warmup fallaron")
+        logger.error(f"❌ [ChatModel] Warmup falló después de {retries} intentos")
         return False
 
+    def _load_search_engine(self) -> bool:
+        """
+        ← NUEVO: Carga y precalienta el SearchEngine.
+        """
+        try:
+            logger.info("🔍 [SearchEngine] Intentando cargar...")
+            
+            # 1. Cargar el engine
+            search_engine.load()
+            self.search_engine_instance = search_engine
+            logger.info("✅ [SearchEngine] Cargado")
+            
+            # 2. Warmup
+            logger.info("🔥 [SearchEngine] Precalentando...")
+            warmup_success = search_engine.warmup()
+            
+            if warmup_success:
+                logger.info("✅ [SearchEngine] Precalentado y listo")
+                return True
+            else:
+                logger.warning("⚠️ [SearchEngine] Cargado pero warmup falló")
+                return False
+                
+        except Exception as e:
+            error_msg = f"No se pudo cargar SearchEngine: {e}"
+            logger.error(f"❌ [SearchEngine] {error_msg}")
+            self._health_status['critical_errors'].append(error_msg)
+            return False
 
     def _load_domain(self) -> bool:
         """Carga el domain.yml"""
@@ -537,24 +606,18 @@ class DomainBasedConfigurationManager:
             'has_critical_categories': len(missing_critical) == 0
         })
 
+
     def _report_loading_status(self):
-        """Reporta estado final de la carga de configuración."""
-        status = self._health_status
+        """Reporta estado de carga (ACTUALIZADO)"""
+        status = self.get_health_status()
         
         logger.info("=" * 60)
-        logger.info("INFORME DE CONFIGURACIÓN Y ESTADO DEL SISTEMA")
+        logger.info("📊 ESTADO DEL SISTEMA")
         logger.info("=" * 60)
-        
-        # <<< MODIFICADO: Condición de operatividad ahora incluye al modelo
-        if status['domain_loaded'] and status['lookup_tables_loaded'] and status['model_loaded']:
-            logger.info("✅ Sistema completamente operativo.")
-        else:
-            logger.error("❌ SISTEMA NO OPERATIVO - Faltan componentes críticos.")
-        
-        # <<< MODIFICADO: Reporte de estado del modelo
         logger.info(f"   📄 Domain: {'✅ Cargado' if status.get('domain_loaded') else '❌ Faltante'}")
         logger.info(f"   📚 Lookups: {'✅ Cargadas' if status.get('lookup_tables_loaded') else '❌ Faltantes'}")
-        logger.info(f"   🧠 Modelo LLM: {'✅ Conectado' if status.get('model_loaded') else '❌ No conectado'}")
+        logger.info(f"   💬 ChatModel: {'✅ Conectado' if status.get('chat_model_loaded') else '❌ No conectado'}")
+        logger.info(f"   🔍 SearchEngine: {'✅ Conectado' if status.get('search_engine_loaded') else '❌ No conectado'}")  # ← NUEVO
         
         logger.info("-" * 25)
         logger.info(f"📊 Intents: {status.get('total_intents', 0)}")
@@ -576,7 +639,7 @@ class DomainBasedConfigurationManager:
 
     def _set_fallback_config(self):
         """Configuración de emergencia"""
-        logger.warning("🆘 Activando configuración de emergencia basada en domain mínimo")
+        logger.warning("🆘 Activando configuración de emergencia")
         
         if self.domain_data:
             try:
@@ -593,12 +656,14 @@ class DomainBasedConfigurationManager:
     
     # === MÉTODOS PÚBLICOS ===
     
-    # <<< NUEVO: Método para acceder al modelo cargado
     def get_chat_model(self) -> Optional[Any]:
-        """Devuelve la instancia del modelo de chat si fue cargado correctamente."""
+        """Devuelve la instancia del ChatModel."""
         return self.chat_model_instance
+    
+    def get_search_engine(self) -> Optional[Any]:
+        """Devuelve la instancia del SearchEngine."""
+        return self.search_engine_instance
 
-    # ... (el resto de los métodos públicos no cambian) ...
     def get_intent_config(self) -> Dict[str, Any]:
         return self.intent_config
     
@@ -619,7 +684,7 @@ class DomainBasedConfigurationManager:
         if entity_type in self.lookup_tables:
             return self._check_value_in_lookup(entity_type, value)
         
-        for lookup_cat, domain_entity in self.lookup_to_domain_mapping.items():
+        for lookup_cat, domain_entity in getattr(self, 'lookup_to_domain_mapping', {}).items():
             if domain_entity == entity_type and lookup_cat in self.lookup_tables:
                 logger.debug(f"Validando '{value}' en '{entity_type}' usando lookup '{lookup_cat}'")
                 return self._check_value_in_lookup(lookup_cat, value)
@@ -670,7 +735,7 @@ class DomainBasedConfigurationManager:
         if entity_type in self.lookup_tables:
             return entity_type
         
-        for lookup_cat, domain_entity in self.lookup_to_domain_mapping.items():
+        for lookup_cat, domain_entity in getattr(self, 'lookup_to_domain_mapping', {}).items():
             if domain_entity == entity_type:
                 return lookup_cat
         
@@ -699,8 +764,8 @@ INTENT_CONFIG = config_manager.get_intent_config()
 LOOKUP_TABLES = config_manager.get_lookup_tables()
 INTENT_TO_SLOTS = config_manager.intent_to_slots
 INTENT_TO_ACTION = config_manager.intent_to_action
-# <<< NUEVO: Exportamos el modelo para fácil acceso
 CHAT_MODEL = config_manager.get_chat_model()
+SEARCH_ENGINE = config_manager.get_search_engine()
 
 def get_lookup_tables() -> Dict[str, List[str]]:
     return config_manager.get_lookup_tables()
@@ -717,6 +782,10 @@ def validate_entity_value(entity_type: str, value: str) -> bool:
 def get_entity_suggestions(entity_type: str, value: str, max_suggestions: int = 3) -> List[str]:
     return config_manager.get_entity_suggestions(entity_type, value, max_suggestions)
 
+def get_search_engine():
+    """← NUEVO: Función helper para obtener SearchEngine"""
+    return config_manager.get_search_engine()
+
 # Diagnóstico específico para domain
 def diagnose_domain_configuration():
     """Diagnóstico específico para configuración basada en domain"""
@@ -724,10 +793,10 @@ def diagnose_domain_configuration():
     
     health = config_manager.get_health_status()
     
-    # <<< MODIFICADO: Diagnóstico incluye estado del modelo
     logger.info(f"   📄 Domain cargado: {'✅' if health.get('domain_loaded') else '❌'}")
     logger.info(f"   📚 Lookup tables: {'✅' if health.get('lookup_tables_loaded') else '❌'}")
-    logger.info(f"   🧠 Modelo LLM: {'✅' if health.get('model_loaded') else '❌'}")
+    logger.info(f"   💬 ChatModel: {'✅' if health.get('chat_model_loaded') else '❌'}")
+    logger.info(f"   🔍 SearchEngine: {'✅' if health.get('search_engine_loaded') else '❌'}")  # ← NUEVO
     logger.info("-" * 15)
     logger.info(f"   🔍 Intents totales: {health.get('total_intents', 0)}")
     logger.info(f"   🔎 Intents de búsqueda: {health.get('search_intents_count', 0)}")

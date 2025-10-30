@@ -1,3 +1,4 @@
+# actions/model_manager.py
 import os
 import hashlib
 import logging
@@ -8,6 +9,9 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from rasa_sdk import Tracker
 from rasa_sdk.executor import CollectingDispatcher
+
+from actions.actions_busqueda.search_engine import SearchEngine
+
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -23,12 +27,10 @@ MAX_CACHE_SIZE = 50
 GENERATION_TIMEOUT = 8
 OLLAMA_CLIENT_TIMEOUT = 10
 
-# Configuración del modelo
-MODEL_NAME = "llama3:8b-instruct-q4_0"
-MAX_TOKENS_DEFAULT = 150    
+MODEL_NAME = "llama3:8b-instruct-q4_K_M"
+MAX_TOKENS_DEFAULT = 150
 # ===========================================
 
-# Mensajes de fallback por tipo de error
 FALLBACK_MESSAGES = {
     'timeout': "Estoy procesando tu consulta. ¿En qué más puedo ayudarte?",
     'connection_error': "Tengo un problema técnico temporal. ¿Podrías reformular tu pregunta?",
@@ -37,17 +39,20 @@ FALLBACK_MESSAGES = {
 }
 
 
+# ============== CHAT MODEL ==============
 class ChatModel:
-    """Modelo Ollama optimizado para generar respuestas con timeout."""
+    """Modelo conversacional para respuestas generales."""
     failed_attempts = 0
     
     def __init__(self):
         self.client = None
+        self._is_loaded = False
         
     def load(self):
-        """Carga y valida la conexión con Ollama."""
-        if self.client is not None:
+        """Carga cliente Ollama para chat."""
+        if self._is_loaded:
             return
+        
         try:
             ollama_url = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434/v1')
             self.client = OpenAI(
@@ -56,155 +61,216 @@ class ChatModel:
                 timeout=OLLAMA_CLIENT_TIMEOUT
             )
             self.client.models.list()
-            logger.info(f"✅ Conexión con Ollama ({ollama_url}) establecida")
+            self._is_loaded = True
+            logger.info(f"[ChatModel] ✅ Conexión establecida con {ollama_url}")
         except Exception as e:
-            logger.error(f"❌ Error conectando a Ollama: {e}")
+            logger.error(f"[ChatModel] ❌ Error: {e}")
             self.client = None
+            self._is_loaded = False
             raise ConnectionError("Fallo al conectar con Ollama.")
     
-    def generate(self, user_prompt: str, max_new_tokens: int = 100, 
-                 temperature: float = 0.3) -> Dict[str, Any]:
-        """
-        Genera respuesta con el modelo.
-        
-        Returns:
-            {
-                'success': bool,
-                'text': str | None,
-                'error_type': str | None,
-                'fallback_message': str | None
-            }
-        """
-        # NUEVO: Log de parámetros de generación
-        generation_params = {
-            "model": MODEL_NAME,
-            "max_tokens": max_new_tokens,
-            "temperature": temperature
-        }
-        logger.info(f"[Generate] New request. Params: {generation_params}")
-
-        cache_key = hashlib.md5(
-            f"{user_prompt}_{max_new_tokens}_{temperature}".encode()
-        ).hexdigest()
-        
-        # Cache hit
-        if cache_key in RESPONSE_CACHE:
-            logger.info("✅ Respuesta desde caché")
-            return {
-                'success': True,
-                'text': RESPONSE_CACHE[cache_key],
-                'error_type': None,
-                'fallback_message': None
-            }
-        
-        # Cargar cliente
-        try:
+    def warmup(self):
+        """Warmup del modelo conversacional."""
+        if not self._is_loaded:
             self.load()
-        except ConnectionError:
-            return {
-                'success': False,
-                'text': None,
-                'error_type': 'connection_error',
-                'fallback_message': FALLBACK_MESSAGES['connection_error']
-            }
-
-        if not self.client:
-            return {
-                'success': False,
-                'text': None,
-                'error_type': 'connection_error',
-                'fallback_message': FALLBACK_MESSAGES['connection_error']
-            }
-
-        start_time = time.time()
+        
         try:
-            response = self.client.chat.completions.create(
+            logger.info("[ChatModel] Iniciando warmup...")
+            start_time = time.time()
+            
+            _ = self.client.chat.completions.create(
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_prompt}
+                    {"role": "user", "content": "hola"}
                 ],
                 model=MODEL_NAME,
-                temperature=temperature,
-                max_tokens=max_new_tokens,
+                temperature=0.3,
+                max_tokens=50,
                 stream=False,
                 timeout=GENERATION_TIMEOUT
             )
             
             elapsed = time.time() - start_time
-            result = self._validate_response(response.choices[0].message.content)
+            logger.info(f"[ChatModel] ✅ Warmup completado en {elapsed:.2f}s")
             
-            if result:
-                self._update_cache(cache_key, result)
-                self.failed_attempts = 0
-                logger.info(f"[Generate] ✓ Generado en {elapsed:.2f}s")
+        except Exception as e:
+            logger.error(f"[ChatModel] ⚠️ Error en warmup: {e}")
+    
+    def generate(self, user_prompt: str, max_new_tokens: int = 100, 
+                 temperature: float = 0.3) -> Dict[str, Any]:
+        """
+        Genera respuesta usando el cliente Ollama, con caché y fallbacks.
+        NUNCA retorna None.
+        """
+        if not self._is_loaded:
+            try:
+                self.load()
+            except Exception as e:
+                logger.error(f"[ChatModel] ❌ Fallo al cargar (lazy load): {e}")
                 return {
+                    'success': False, 
+                    'error_type': 'connection_error', 
+                    'fallback_message': FALLBACK_MESSAGES['connection_error']
+                }
+
+        # 1. Crear clave de caché
+        cache_key = hashlib.md5(
+            f"{user_prompt}:{max_new_tokens}:{temperature}:{MODEL_NAME}".encode('utf-8')
+        ).hexdigest()
+
+        # 2. Revisar caché
+        if cache_key in RESPONSE_CACHE:
+            logger.info("[ChatModel] ✅ Respuesta desde caché")
+            return RESPONSE_CACHE[cache_key]
+
+        # 3. Preparar mensajes para la API
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt}
+        ]
+
+        try:
+            # 4. Llamar a la API de Ollama
+            start_time = time.time()
+            response = self.client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_new_tokens,
+                stream=False,
+                timeout=GENERATION_TIMEOUT
+            )
+            elapsed = time.time() - start_time
+
+            # 5. Procesar respuesta exitosa
+            if response.choices and response.choices[0].message.content:
+                text_response = response.choices[0].message.content.strip()
+                logger.info(f"[ChatModel] ✅ Respuesta generada en {elapsed:.2f}s")
+                
+                result = {
                     'success': True,
-                    'text': result,
+                    'text': text_response,
                     'error_type': None,
                     'fallback_message': None
                 }
+                
+                # Guardar en caché
+                if len(RESPONSE_CACHE) > MAX_CACHE_SIZE:
+                    RESPONSE_CACHE.pop(next(iter(RESPONSE_CACHE)))
+                RESPONSE_CACHE[cache_key] = result
+                
+                return result
             else:
-                logger.warning(f"[Generate] Respuesta inválida o vacía tras {elapsed:.2f}s")
-                return {
-                    'success': False,
-                    'text': None,
-                    'error_type': 'validation_error',
-                    'fallback_message': FALLBACK_MESSAGES['validation_error']
-                }
+                raise ValueError("Respuesta de API vacía o inválida")
 
-        except Exception as e:
-            elapsed = time.time() - start_time
-            self.failed_attempts += 1
-            
-            # Detectar tipo de error
-            error_str = str(e).lower()
-            if 'timeout' in error_str or elapsed >= GENERATION_TIMEOUT:
-                error_type = 'timeout'
-            elif 'connection' in error_str:
-                error_type = 'connection_error'
-            else:
-                error_type = 'default'
-            
-            logger.error(
-                f"❌ Intento {self.failed_attempts}/3 falló "
-                f"({error_type}) tras {elapsed:.2f}s: {e}"
-            )
-            
-            if self.failed_attempts >= 3:
-                logger.critical("❌ Máximo de reintentos alcanzado")
-            
+        # 6. Manejar errores
+        except OpenAI.APITimeoutError as e:
+            logger.warning(f"[ChatModel] ⚠️ Timeout ({GENERATION_TIMEOUT}s): {e}")
             return {
-                'success': False,
-                'text': None,
-                'error_type': error_type,
-                'fallback_message': FALLBACK_MESSAGES.get(
-                    error_type, 
-                    FALLBACK_MESSAGES['default']
-                )
+                'success': False, 
+                'error_type': 'timeout', 
+                'fallback_message': FALLBACK_MESSAGES['timeout']
+            }
+        except OpenAI.APIConnectionError as e:
+            logger.error(f"[ChatModel] ❌ Error de Conexión: {e}")
+            self.failed_attempts += 1
+            return {
+                'success': False, 
+                'error_type': 'connection_error', 
+                'fallback_message': FALLBACK_MESSAGES['connection_error']
+            }
+        except Exception as e:
+            logger.error(f"[ChatModel] ❌ Error Inesperado: {e}", exc_info=True)
+            return {
+                'success': False, 
+                'error_type': 'validation_error', 
+                'fallback_message': FALLBACK_MESSAGES['validation_error']
             }
 
-    def _validate_response(self, result: str) -> Optional[str]:
-        """Valida y limpia la respuesta."""
-        if not result or len(result.strip()) < 5:
-            return None
-        
-        clean_result = result.strip()
-        for prefix in ["Bot:", "Pompi:", "Respuesta:", "R:"]:
-            if clean_result.startswith(prefix):
-                clean_result = clean_result[len(prefix):].strip()
-        
-        return clean_result if clean_result else None
+
+# ============== MODEL MANAGER ==============
+class ModelManager:
+    """Gestor centralizado de modelos."""
     
-    def _update_cache(self, key: str, value: str):
-        """Actualiza el caché con límite."""
-        if len(RESPONSE_CACHE) >= MAX_CACHE_SIZE:
-            oldest_key = next(iter(RESPONSE_CACHE))
-            del RESPONSE_CACHE[oldest_key]
-        RESPONSE_CACHE[key] = value
+    def __init__(self):
+        self.chat_model = ChatModel()
+        self.search_engine = SearchEngine()  # ← NUEVO
+        self._initialized = False
+    
+    def initialize(self, warmup: bool = True):
+        """Inicializa ambos modelos."""
+        if self._initialized:
+            logger.info("[ModelManager] Ya inicializado")
+            return
+        
+        total_start = time.time()
+        logger.info("="*60)
+        logger.info("[ModelManager] 🚀 INICIANDO CARGA DE MODELOS")
+        logger.info("="*60)
+        
+        try:
+            # 1. ChatModel
+            logger.info("[ModelManager] [1/2] Cargando ChatModel...")
+            start = time.time()
+            self.chat_model.load()
+            logger.info(f"[ModelManager] ✅ ChatModel en {time.time()-start:.2f}s")
+            
+            # 2. SearchEngine
+            logger.info("[ModelManager] [2/2] Cargando SearchEngine...")
+            start = time.time()
+            self.search_engine.load()
+            logger.info(f"[ModelManager] ✅ SearchEngine en {time.time()-start:.2f}s")
+            
+            # 3. Warmup
+            if warmup:
+                logger.info("[ModelManager] 🔥 Warmup de modelos...")
+                start = time.time()
+                self.chat_model.warmup()
+                self.search_engine.warmup()
+                logger.info(f"[ModelManager] ✅ Warmup en {time.time()-start:.2f}s")
+            
+            total = time.time() - total_start
+            self._initialized = True
+            
+            logger.info("="*60)
+            logger.info(f"[ModelManager] ✅ COMPLETO en {total:.2f}s")
+            logger.info("="*60)
+            
+        except Exception as e:
+            logger.error(f"[ModelManager] ❌ Error: {e}", exc_info=True)
+            self._initialized = False
+            raise
+    
+    def get_chat_model(self) -> ChatModel:
+        if not self._initialized:
+            self.initialize()
+        return self.chat_model
+    
+    def get_search_engine(self) -> SearchEngine:
+        if not self._initialized:
+            self.initialize()
+        return self.search_engine
 
 
-# ============== INSTANCIA GLOBAL ==============
-_chat_model = ChatModel()
+# ============== INSTANCIAS GLOBALES ==============
+_model_manager = ModelManager()
+
+
+def initialize_models(warmup: bool = True):
+    """Inicializa modelos al arrancar Rasa."""
+    logger.info("[Init] Iniciando carga de modelos...")
+    _model_manager.initialize(warmup=warmup)
+    logger.info("[Init] ✅ Modelos listos")
+
+
+def get_chat_model() -> ChatModel:
+    return _model_manager.get_chat_model()
+
+
+def get_search_engine() -> SearchEngine:
+    """Obtiene SearchEngine inicializado."""
+    return _model_manager.get_search_engine()
+
 
 
 def generate_text_with_context(
@@ -222,8 +288,11 @@ def generate_text_with_context(
     - Si hay dispatcher: SIEMPRE envía mensaje (éxito o fallback) y retorna None
     - Si NO hay dispatcher: retorna el texto generado o mensaje de fallback
     """
-    start_time = time.time() # NUEVO: Inicia el cronómetro para toda la operación
+    start_time = time.time()
     try:
+        # Obtener modelo del manager (se inicializa automáticamente si es necesario)
+        chat_model = _model_manager.get_chat_model()
+        
         # Construir contexto
         context_info = _build_lightweight_context(tracker) if tracker else ""
         full_prompt = (
@@ -232,8 +301,8 @@ def generate_text_with_context(
         )
         
         # Generar respuesta
-        result = _chat_model.generate(full_prompt, max_new_tokens, temperature)
-        total_duration = time.time() - start_time # NUEVO: Calcula la duración total
+        result = chat_model.generate(full_prompt, max_new_tokens, temperature)
+        total_duration = time.time() - start_time
 
         # ✅ CASO 1: Generación exitosa
         if result['success'] and result['text']:
@@ -248,7 +317,6 @@ def generate_text_with_context(
         
         # ❌ CASO 2: Generación falló - usar fallback
         error_type = result.get('error_type', 'unknown')
-        # NUEVO: Log de fallback mejorado con duración y tipo de error
         logger.warning(
             f"[ModelManager] ⚠️ Generation failed after {total_duration:.2f}s "
             f"(type: {error_type}). Using fallback."
@@ -256,7 +324,6 @@ def generate_text_with_context(
         
         fallback_text = result.get('fallback_message', FALLBACK_MESSAGES['default'])
         
-        # NUEVO: Log para saber qué fallback se está utilizando
         log_fallback_source = (f"template '{fallback_template}'" 
                                if fallback_template and dispatcher 
                                else f"text '{fallback_text}'")

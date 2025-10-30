@@ -39,3 +39,10 @@ timestamp,user_message,detected_intent,confidence,sender_id
 2025-10-22T15:50:34.398911,a+,nlu_fallback,0.7,console_user
 2025-10-22T15:50:45.441985,nada,nlu_fallback,0.7,console_user
 2025-10-22T21:11:31.132744,holaa,nlu_fallback,0.7,console_user
+2025-10-28T17:30:49.883269,busca meloxivet,nlu_fallback,0.7,console_user
+2025-10-28T17:31:18.594118,busca meloxivet,nlu_fallback,0.7,console_user
+2025-10-28T17:31:33.877193,busca informacion sobre meloxivet,nlu_fallback,0.7,console_user
+2025-10-28T17:35:46.636202,busca meloxivet,nlu_fallback,0.7,console_user
+2025-10-29T03:08:57.511525,holaa,nlu_fallback,0.7,103
+2025-10-29T03:09:42.355951,holaa,nlu_fallback,0.7,103
+2025-10-29T15:11:31.061715,dije de ceva,nlu_fallback,0.7,103

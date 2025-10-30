@@ -429,6 +429,11 @@ nlu:
     - [Ivermectina](producto) [50ml]{"entity": "dosis", "role": "volumen"}
     - Busco [enrofloxacina](producto) [10ml]{"entity": "dosis", "role": "volumen"}
 
+    - mostrame [enrofloxacina](producto) [10ml]{"entity": "dosis", "role": "volumen"}
+    - quiero [Cefalexina](producto) [250mg]{"entity": "dosis", "role": "gramaje"}
+    - que productos tenes de [holliday]{"entity": "empresa", "role": "proveedor"}
+    - estoy buscando [echtol](producto) [250mg]{"entity": "dosis", "role": "gramaje"}
+
 
 - intent: buscar_oferta
   examples: |
@@ -727,8 +732,8 @@ nlu:
     # --- Ejemplos con dosis de gramaje ---
     - Ofertas de [amoxicilina](producto) de [500mg]{"entity": "dosis", "role": "gramaje"}
     - Promos de [cefalexina](producto) [250mg]{"entity": "dosis", "role": "gramaje"} para [perros](animal)
-    - Descuentos en [enrofloxacina](producto) [100mg]{"entity": "dosis", "role": "gramaje"}
-    - Hay ofertas de [doxiciclina](producto) [200mg]{"entity": "dosis", "role": "gramaje"} disponibles?
+    - descuentos en [enrofloxacina](producto) [100mg]{"entity": "dosis", "role": "gramaje"}
+    - hay ofertas de [doxiciclina](producto) [200mg]{"entity": "dosis", "role": "gramaje"} disponibles?
     - Promos de [ivermectina](producto) [1g]{"entity": "dosis", "role": "gramaje"} de [Biogenesis]{"entity": "empresa", "role": "proveedor"}
     - Ofertas de [sulfametoxazol](producto) [400mg]{"entity": "dosis", "role": "gramaje"} con bonificación
     - Descuentos en [florfenicol](producto) [300mg]{"entity": "dosis", "role": "gramaje"} para [bovinos](animal)
@@ -741,7 +746,7 @@ nlu:
     - Hay ofertas de [enrofloxacina](producto) [10ml]{"entity": "dosis", "role": "volumen"} vigentes?
     - Promos de [amoxicilina](producto) [20ml]{"entity": "dosis", "role": "volumen"} de [Zoetis]{"entity": "empresa", "role": "proveedor"}
     - Ofertas de [ceftiofur](producto) [100ml]{"entity": "dosis", "role": "volumen"} con [15](cantidad_descuento)% de descuento
-    - Descuentos en [florfenicol](producto) [50ml]{"entity": "dosis", "role": "volumen"} para [cerdos](animal)
+    - descuentos en [florfenicol](producto) [50ml]{"entity": "dosis", "role": "volumen"} para [cerdos](animal)
     - Promociones de [fipronil](producto) [30ml]{"entity": "dosis", "role": "volumen"} que terminan [esta semana](fecha:time_period)
 
     # --- Ejemplos con formas farmacéuticas ---
@@ -761,7 +766,7 @@ nlu:
     - Hay ofertas de [doxiciclina](producto) [200mg]{"entity": "dosis", "role": "gramaje"} en [pastillas]{"entity": "dosis", "role": "forma"}?
     - Promos de [ivermectina](producto) [6mg]{"entity": "dosis", "role": "gramaje"} en [comprimidos]{"entity": "dosis", "role": "forma"} de [Elanco]{"entity": "empresa", "role": "proveedor"}
     - Ofertas de [sulfametoxazol](producto) [400mg]{"entity": "dosis", "role": "gramaje"} en [tabletas]{"entity": "dosis", "role": "forma"} con [20](cantidad_descuento)% de descuento
-    - Descuentos en [florfenicol](producto) [300mg]{"entity": "dosis", "role": "gramaje"} en [cápsulas]{"entity": "dosis", "role": "forma"} para [bovinos](animal)
+    - descuentos en [florfenicol](producto) [300mg]{"entity": "dosis", "role": "gramaje"} en [cápsulas]{"entity": "dosis", "role": "forma"} para [bovinos](animal)
     - Promociones de [meloxicam](producto) [15mg]{"entity": "dosis", "role": "gramaje"} en [comprimidos]{"entity": "dosis", "role": "forma"} que terminan [mañana](dia:filtro_tiempo)
 
     # --- Ejemplos combinados (volumen + forma) ---
@@ -811,7 +816,7 @@ nlu:
     - Descuentos en productos con [stock limitado]{"entity": "estado", "role": "poco_stock"}
     - Hay ofertas de [ivermectina](producto) con [pocas unidades]{"entity": "estado", "role": "poco_stock"}?
     - Mostrame promos con [poco stock]{"entity": "estado", "role": "poco_stock"} de [Biogenesis]{"entity": "empresa", "role": "proveedor"}
-    - Qué descuentos tienen productos [casi agotados]{"entity": "estado", "role": "poco_stock"}?
+    - qué descuentos tienen productos [casi agotados]{"entity": "estado", "role": "poco_stock"}?
     - Ofertas de [antibióticos](categoria) con [stock limitado]{"entity": "estado", "role": "poco_stock"}
     - Promos de [amoxicilina](producto) [últimas unidades]{"entity": "estado", "role": "poco_stock"}
     - Descuentos urgentes con [poco stock]{"entity": "estado", "role": "poco_stock"} para [perros](animal)

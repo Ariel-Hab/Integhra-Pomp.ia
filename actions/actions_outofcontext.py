@@ -6,7 +6,7 @@ from rasa_sdk.events import EventType
 import logging
 import random
 
-from .models.model_manager import _chat_model, generate_text_with_context,generate_with_safe_fallback
+from .models.model_manager import generate_with_safe_fallback
 
 logger = logging.getLogger(__name__)
 
