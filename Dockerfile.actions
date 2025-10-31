@@ -1,25 +1,61 @@
+# --- STAGE 1: "Builder" ---
+# (Esta etapa está 100% correcta y no cambia)
+FROM python:3.10-slim as builder
+
+WORKDIR /app
+
+# 1. Instalar herramientas
+#    (Nota: Ya no instalamos pipx ni poetry)
+RUN apt-get update && apt-get install -y python3-venv && \
+    pip install --upgrade pip && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. Crear el venv
+#    (Lo creamos aquí para que pip instale en él)
+RUN python3 -m venv .venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+# 3. Pre-instalar torch (¡Buena idea! La mantenemos)
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# 4. === LA OPTIMIZACIÓN CLAVE ===
+#    Primero copiamos *SOLO* el archivo de requisitos
+COPY requirements-bot.txt ./
+
+# 5. Instalamos los requisitos
+#    Esta capa SÍ se guardará en caché mientras
+#    requirements-bot.txt no cambie.
+RUN pip install -r requirements-bot.txt
+
+# 6. Copiar código fuente
+#    Copiamos el código AL FINAL, para no invalidar
+#    la caché de las dependencias cada vez que
+#    cambiamos un .py
+COPY bot/ ./bot
+
+
+# --- STAGE 2: "Runtime" ---
+# (Esta etapa puede quedar EXACTAMENTE IGUAL que la tuya)
 FROM python:3.10-slim
 
 WORKDIR /app
 
-# Instala Poetry
-ENV POETRY_HOME="/opt/poetry"
-ENV PATH="$POETRY_HOME/bin:$PATH"
-RUN curl -sSL https://install.python-poetry.org | python3 -
+# 1. Crear usuario
+RUN useradd -m -d /app -s /bin/bash appuser
+USER appuser
 
-# --- Optimización de Caché ---
-# 1. Copia solo los archivos de dependencias
-COPY pyproject.toml poetry.lock ./
+# 2. Copiar el entorno virtual
+COPY --from=builder --chown=appuser:appuser /app/.venv ./.venv
 
-# 2. Instala las dependencias (solo del grupo 'actions')
-# ¡Esta imagen será mucho más liviana!
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-root --only actions
+# 3. Copiar el código de la aplicación
+COPY --from=builder --chown=appuser:appuser /app/bot/ ./bot
 
-# 3. Copia solo el código de las actions
-# No necesitamos los 'data', 'models', 'tests', etc. de Rasa aquí
-COPY actions/ /app/actions
-# -----------------------------
+# 4. Activar el venv
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PORT=8000
 
-EXPOSE 5055
-CMD ["poetry", "run", "rasa", "run", "actions"]
+# 5. Exponer el puerto
+EXPOSE 8000
+
+# 6. CMD
+CMD ["/app/.venv/bin/python", "main.py"]

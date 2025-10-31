@@ -1,0 +1,12 @@
+# Contenido para requirements-actions.txt
+
+httpcore>=0.17.0
+httpx>=0.24.0,<0.28.0
+make>=0.1.6.post2,<0.2.0
+packaging>=20.0,<21.0
+pydantic>=1.10.8,<2.0.0
+pyyaml>=6.0.2,<7.0.0
+python-dotenv>=1.1.1,<2.0.0
+rasa-sdk>=3.6.1,<4.0.0
+requests>=2.31.0,<3.0.0
+openai==2.3.0

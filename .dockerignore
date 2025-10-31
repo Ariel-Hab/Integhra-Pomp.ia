@@ -2,6 +2,8 @@ __pycache__/
 .rasa/cache/
 .config/
 .venv/
+venv/
+.venv
 .ideas/
 *.log
 *.sqlite3
@@ -14,3 +16,21 @@ __pycache__/
 .gitignore
 *.md
 docker-compose.yml
+# --- DATOS Y CACHÉS (LO MÁS PESADO) ---
+# Estas carpetas NUNCA deben ir en la imagen.
+# Se usan con "volumes" en docker-compose.
+bot/models/
+bot/.rasa/
+__pycache__/
+
+# --- ARCHIVOS LOCALES ---
+.venv
+.git
+.env
+.idea
+.vscode
+
+# --- ARCHIVOS INNECESARIOS ---
+*.md
+*.log
+*.sqlite3

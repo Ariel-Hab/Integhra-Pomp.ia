@@ -13,7 +13,15 @@ venv/
 .env/
 .env
 poetry.lock
-
-# Logs y temporales
 *.log
 *.tmp
+.git
+.vscode
+.idea
+pycache
+*.pyc
+.env
+.env.*
+!*.env.example
+.venv
+*.md
