@@ -54,12 +54,12 @@ class DomainBasedConfigurationManager:
     
     def _detect_project_root(self) -> Path:
         """Detecta automáticamente la raíz del proyecto Rasa"""
-        root = Path(__file__).parent.parent / "bot"
+        root = Path(__file__).parent.parent / "actions"
         current = root
         max_depth = 5
         
         for _ in range(max_depth):
-            rasa_indicators = ['domain.yml', 'config.yml', 'endpoints.yml', 'credentials.yml']
+            rasa_indicators = ['domain.yml', 'endpoints.yml', 'credentials.yml']
             if any((current / indicator).exists() for indicator in rasa_indicators):
                 logger.info(f"Raíz del proyecto Rasa detectada: {current}")
                 return current

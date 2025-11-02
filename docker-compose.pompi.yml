@@ -11,7 +11,7 @@ services:
     ports:
       - "8000:8000" # Expones tu API de main.py al mundo
     volumes:
-      - .:/app # Monta todo tu código para que main.py funcione
+      - ./bot:/app/bot
     environment:
       # Usa el nombre del servicio de Docker para la comunicación interna
       - ACTION_SERVER_URL=http://actions-server:5055/webhook

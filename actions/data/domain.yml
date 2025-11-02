@@ -1,0 +1,552 @@
+version: '3.1'
+config:
+  store_entities_as_slots: true
+  fallback_action: action_fallback
+
+intents:
+  - saludo
+  - saludar
+  - despedida
+  - agradecer 
+  - preguntar_como_estas
+  - responder_como_estoy
+  - pedir_chiste
+  - reirse
+  - responder_estoy_bien
+  - buscar_producto
+  - buscar_oferta
+  # - consultar_novedades_producto  
+  # - consultar_novedades_oferta
+  - modificar_busqueda
+  - modificar_busqueda:reemplazar  # 🆕 Sub-intent para reemplazos
+  - modificar_busqueda:agregar     # 🆕 Sub-intent para adiciones
+  - modificar_busqueda:remover     # 🆕 Sub-intent para remociones
+  - modificar_busqueda:multiple
+  - afirmar
+  - denegar
+  - completar_pedido
+  - off_topic
+  - out_of_scope
+  - ambiguity_fallback
+  - consulta_veterinaria_profesional
+  - pedir_ayuda
+
+entities:
+  - filter_name
+  # ===== ENTIDADES BÁSICAS CON ROLES PARA MODIFICACIONES =====
+  - producto:
+      roles:
+        - old    # Para modificaciones: "reemplaza X por Y"
+        - new
+        - add
+        - remove
+  
+  - empresa:
+      roles:
+        - proveedor      # Para búsquedas: "de holliday"
+        - distribuidor   # Para futuro
+        - old           # Para modificaciones
+        - new
+        - add       
+        - remove 
+  
+  - categoria:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - animal:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - sintoma:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - dosis:
+      roles:
+        - gramaje        # "500mg"
+        - volumen        # "100ml"
+        - forma          # "tabletas", "inyectable"
+        - old
+        - new
+        - add
+        - remove
+  
+  # ===== ESTADO CON 4 ROLES ESPECÍFICOS =====
+  - estado:
+      roles:
+        - nuevo
+        - poco_stock
+        - vence_pronto
+        - en_oferta
+        - old
+        - new
+        - add
+        - remove
+  
+  # ===== ENTIDADES NUMÉRICAS/COMPARATIVAS CON GRUPOS =====
+  
+  # 🆕 COMPARADOR: Roles para operadores + Grupos para filtros
+  - comparador:
+      roles:
+        - gt      # mayor, más, superior
+        - lt      # menor, menos, inferior
+        - gte     # al menos, mínimo
+        - lte     # hasta, máximo
+        - eq      # igual, exactamente
+        - neq     # diferente
+      groups:
+        - descuento_filter
+        - bonificacion_filter
+        - stock_filter
+        - precio_filter
+  
+  # 🆕 Cantidades con grupos para comparaciones
+  - cantidad_descuento:
+      groups:
+        - descuento_filter
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - cantidad_bonificacion:
+      groups:
+        - bonificacion_filter
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  - cantidad_stock:
+      groups:
+        - stock_filter
+      roles:
+        - old
+        - new
+        - add
+        - remove
+  
+  # Entidades simples (sin grupos, para uso directo)
+  - cantidad
+  - precio:
+      roles:
+        - old
+        - new
+        - add
+        - remove
+      groups:
+        - precio_filter
+  - descuento    # Para uso sin comparador
+  - bonificacion # Para uso sin comparador
+  - stock        # Para uso sin comparador
+  
+  # ===== ENTIDADES TEMPORALES =====
+  - tiempo
+  - fecha
+  - dia
+  
+  # ===== ENTIDADES DE CONTEXTO =====
+  - sentimiento
+
+slots:
+  # --- Slots principales ---
+  producto:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: producto
+
+  empresa:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: empresa
+
+  empresa_role:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: empresa
+        role: proveedor
+
+  categoria:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: categoria
+
+  animal:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: animal
+
+  sintoma:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: sintoma
+
+  dosis:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: dosis
+
+  estado:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: estado
+
+  estado_role:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: estado
+        role: nuevo
+      - type: from_entity
+        entity: estado
+        role: poco_stock
+      - type: from_entity
+        entity: estado
+        role: vence_pronto
+      - type: from_entity
+        entity: estado
+        role: en_oferta
+
+  # --- Slots numéricos/comparativos ---
+  cantidad:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: cantidad
+
+  precio:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: precio
+
+  descuento:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: descuento
+      - type: from_entity
+        entity: cantidad_descuento  # 🆕 También captura cantidad_descuento
+
+  bonificacion:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: bonificacion
+      - type: from_entity
+        entity: cantidad_bonificacion  # 🆕 También captura cantidad_bonificacion
+
+  stock:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: stock
+      - type: from_entity
+        entity: cantidad_stock  # 🆕 También captura cantidad_stock
+
+  comparador:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: comparador
+
+  # --- Slots temporales ---
+  tiempo:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: tiempo
+
+  fecha:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: fecha
+
+  dia:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: dia
+
+  sentimiento:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: sentimiento
+
+  # --- Slots de control de conversación ---
+  last_intent_flow:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+
+  user_engagement_level:
+    type: categorical
+    influence_conversation: false
+    values:
+      - neutral
+      - engaged
+      - needs_help
+      - confused
+      - friendly
+      - collaborative
+      - reset
+      - disengaged
+      - interested
+      - needs_guidance
+      - satisfied
+      - awaiting_confirmation
+      - awaiting_parameters
+    initial_value: neutral
+    mappings:
+      - type: from_entity
+        entity: user_engagement_level
+
+  current_search_params:
+    type: any
+    influence_conversation: false
+    initial_value: {}
+    mappings: []
+
+  search_active:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: from_intent
+        value: true
+        intent: buscar_producto
+      - type: from_intent
+        value: true
+        intent: buscar_oferta
+      - type: from_intent
+        value: false
+        intent: despedida
+
+  last_search_type:
+    type: text
+    influence_conversation: true
+    initial_value: null
+    mappings:
+      - type: from_text
+  
+  user_sentiment:
+    type: text
+    influence_conversation: false
+    initial_value: null
+    mappings: []
+
+  pending_suggestion:
+    type: text
+    influence_conversation: true
+    initial_value: null
+    mappings: 
+      - type: custom
+
+  suggestion_context:
+    type: text
+    influence_conversation: false
+    initial_value: null
+    mappings: []
+
+  search_history:
+    type: any
+    influence_conversation: false
+    initial_value: []
+    mappings: []
+
+  context_decision_pending:
+    type: bool
+    influence_conversation: false
+    initial_value: false
+    mappings: []
+
+  validation_errors:
+    type: any
+    influence_conversation: false
+    initial_value: []
+    mappings: []
+  
+  # Para ESTADO (4 slots booleanos)
+estado_nuevo:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: nuevo
+
+estado_poco_stock:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: poco_stock
+
+estado_vence_pronto:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: vence_pronto
+
+estado_en_oferta:
+  type: bool
+  initial_value: false
+  mappings:
+    - type: from_entity
+      entity: estado
+      role: en_oferta
+
+responses:
+  utter_saludo:
+  - text: ¡Hola!🐶
+  - text: Buenas, un gusto saludarte 🐾
+  - text: ¡Hola! Encantado de verte por acá 🐾
+  
+  utter_responder_como_estoy:
+  - text: Espectacular!
+  - text: Guau! Me alegro 🐶
+  - text: ¡Sigue así! 💪
+  - text: ¡Eres un campeón! 🏆
+  
+  utter_reirse_chiste:
+  - text: 😄 Me alegra que te haya sacado una sonrisa
+  - text: 😂 jajaja, buenísimo
+  
+  utter_preguntar_como_estas:
+  - text: ¡Todo bien! ¿Y vos?
+  
+  utter_responder_estoy_bien:
+  - text: Espectacular! Necesitas buscar algo?
+  - text: Buenisimoo! Necesitas ayuda?
+  - text: Genial! Estoy aquí por si necesitas algo
+
+  utter_pedir_chiste:
+  - text: 'Aquí va uno: —Doctor, mi perro no deja de perseguir bicicletas. —¿Y qué hizo? —Vendí la bicicleta.'
+  - text: 'Aquí va uno: ¿Por qué el gato no trabaja en la computadora? Porque le tiene miedo al *ratón*.'
+  - text: 'Aquí va uno: ¿Cuál es el animal más tecnológico? El *gallo*, porque siempre da el primer *click* del día.'
+  - text: 'Aquí va uno: ¿Qué hace una vaca cuando escucha música? ¡Da leche condensada!'
+  - text: 'Aquí va uno: ¿Por qué el pez nunca estudia? Porque siempre se queda en *escuela*.'
+  - text: 'Aquí va uno: ¿Qué hace un perro con un taladro? ¡Hace agujeros a lo *guau*!'
+  - text: 'Aquí va uno: ¿Cuál es el animal más antiguo? La cebra... porque todavía está en blanco y negro.'
+  - text: 'Aquí va uno: ¿Por qué el caballo fue a terapia? Porque tenía muchas *cargas emocionales*.'
+  - text: 'Aquí va uno: ¿Qué hace un conejo cuando se aburre? ¡Ve *zanahorias* películas!'
+  - text: 'Aquí va uno: ¿Cómo se despiden dos pulgas? Nos vemos en el perro'
+
+  utter_despedida:
+  - text: ¡Adiós! Que tengas un gran día ✨
+  - text: Hasta luego, nos vemos pronto 🐾
+  - text: Chao, cuidate mucho
+
+  utter_denegar:
+  - text: Está bien, lo respeto 👍
+  - text: Perfecto, no hay problema
+  - text: De acuerdo, entendido
+
+  utter_agradecer: # <--- Cambiar aquí
+  - text: ¡De nada! 😊
+  - text: Siempre a disposición 🙌
+  - text: Me alegra poder ayudarte
+
+  utter_afirmar:
+  - text: ¡Perfecto!
+  - text: Genial, entendido 👍
+  - text: Claro que sí
+
+  utter_pedir_parametros_producto:
+  - text: |
+      Para buscar un producto necesito al menos un dato 🛒  
+      Ejemplo ➡️ nombre del producto, categoría, ingrediente activo o animal.  
+      ¿Cuál me pasás?
+
+  utter_pedir_parametros_oferta:
+  - text: |
+      Para mostrarte ofertas necesito saber algun dato **de qué producto o categoría** 👌  
+      ¿Cuál te interesa?
+
+  utter_pedir_criterio_oferta:
+  - text: |
+      ¿Qué tipo de oferta buscás? 🎯  
+      🔹 descuento  
+      🔹 bonificación  
+      🔹 o una fecha específica  
+      Así te muestro las más relevantes.
+
+  utter_recomendaciones_no_disponible:
+  - text: |
+      Entiendo que buscás recomendaciones 🎯 
+      Por el momento esta funcionalidad no está disponible, pero puedo ayudarte a buscar productos específicos o ver ofertas actuales.
+      ¿Te interesa que busquemos algo en particular?
+  - text: |
+      Perfecto, capturo que querés recomendaciones 💡 
+      Esa función está en desarrollo aún. Mientras tanto, puedo mostrarte productos por categoría o buscar ofertas.
+      ¿Qué prefieres?
+      
+actions:
+  - action_busqueda_situacion
+  - action_conf_neg_agradecer
+  - action_context_validator
+  - action_despedida_limpia_contexto
+  - action_fallback
+  - action_smalltalk_situacion
+  - action_recomendaciones
+  - action_handle_out_of_context
+  - action_explicar_ayuda
+  
+nlu:
+  - data/nlu/nlu_basics.yml
+  - data/nlu/nlu_busquedas.yml
+  - data/nlu/nlu_modificaciones.yml
+  - data/nlu/nlu_fuera_contexto.yml
+  - data/lookup_tables.yml
+  - data/synonyms.yml
+  - data/regex_entities.yml
+  - data/regex_features.yml   
+
+session_config:
+  session_expiration_time: 300
+  carry_over_slots_to_new_session: true

@@ -58,4 +58,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # 6. CMD
-CMD ["/app/.venv/bin/python", "main.py"]
+CMD ["/app/.venv/bin/python", "bot/main.py"]

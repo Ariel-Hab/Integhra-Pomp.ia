@@ -1,41 +1,28 @@
 # --- STAGE 1: "Builder" ---
-# (Esta etapa está 100% correcta y no cambia)
 FROM python:3.10-slim as builder
 
 WORKDIR /app
 
 # 1. Instalar herramientas
-#    (Nota: Ya no instalamos pipx ni poetry)
 RUN apt-get update && apt-get install -y python3-venv && \
     pip install --upgrade pip && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Crear el venv
-#    (Lo creamos aquí para que pip instale en él)
 RUN python3 -m venv .venv
 ENV PATH="/app/.venv/bin:$PATH"
 
-# 3. Pre-instalar torch (¡Buena idea! La mantenemos)
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+# 3. === CAMBIO 1: Copiar requisitos de ACCIONES ===
+COPY requirements-actions.txt ./
 
-# 4. === LA OPTIMIZACIÓN CLAVE ===
-#    Primero copiamos *SOLO* el archivo de requisitos
-COPY requirements-bot.txt ./
+# 4. === CAMBIO 2: Instalar requisitos de ACCIONES ===
+RUN pip install -r requirements-actions.txt
 
-# 5. Instalamos los requisitos
-#    Esta capa SÍ se guardará en caché mientras
-#    requirements-bot.txt no cambie.
-RUN pip install -r requirements-bot.txt
-
-# 6. Copiar código fuente
-#    Copiamos el código AL FINAL, para no invalidar
-#    la caché de las dependencias cada vez que
-#    cambiamos un .py
-COPY bot/ ./bot
+# 5. === CAMBIO 3: Copiar código de ACCIONES ===
+COPY actions/ ./actions
 
 
 # --- STAGE 2: "Runtime" ---
-# (Esta etapa puede quedar EXACTAMENTE IGUAL que la tuya)
 FROM python:3.10-slim
 
 WORKDIR /app
@@ -47,15 +34,14 @@ USER appuser
 # 2. Copiar el entorno virtual
 COPY --from=builder --chown=appuser:appuser /app/.venv ./.venv
 
-# 3. Copiar el código de la aplicación
-COPY --from=builder --chown=appuser:appuser /app/bot/ ./bot
+# 3. === CAMBIO 4: Copiar el código de ACCIONES ===
+COPY --from=builder --chown=appuser:appuser /app/actions/ ./actions
 
 # 4. Activar el venv
 ENV PATH="/app/.venv/bin:$PATH"
-ENV PORT=8000
 
-# 5. Exponer el puerto
-EXPOSE 8000
+# 5. Exponer el puerto del action server
+EXPOSE 5055
 
-# 6. CMD
-CMD ["/app/.venv/bin/python", "main.py"]
+# 6. === CAMBIO 5: Comando para iniciar el Action Server de Rasa ===
+CMD ["python", "-m", "rasa_sdk", "--endpoints", "actions/data/endpoints.yml", "--actions", "actions"]
