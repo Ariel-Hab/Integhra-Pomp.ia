@@ -2,7 +2,7 @@ version: "3.1"
 
 rules:
   # ========================================
-  # BÚSQUEDAS
+  # BÚSQUEDAS (COMPLEJO - Sin cambios)
   # ========================================
   
   - rule: Cualquier intent de búsqueda
@@ -11,12 +11,12 @@ rules:
       - intent: buscar_producto
       - intent: buscar_oferta
       - intent: modificar_busqueda
-      - intent: consultar_novedades_producto
-      - intent: consultar_novedades_oferta
+      # - intent: consultar_novedades_producto # (Estaban comentados en tu domain, pero los dejo)
+      # - intent: consultar_novedades_oferta
     - action: action_busqueda_situacion
 
   # ========================================
-  # CON SUGERENCIA PENDIENTE
+  # CON SUGERENCIA PENDIENTE (COMPLEJO - Sin cambios)
   # ========================================
   
   - rule: Afirmación con sugerencia activa
@@ -47,7 +47,8 @@ rules:
     - action: action_conf_neg_agradecer
 
   # ========================================
-  # SIN SUGERENCIA PENDIENTE
+  # SIN SUGERENCIA PENDIENTE (COMPLEJO - Sin cambios)
+  # (Esta action decide si el 'afirmar' es trivial o no)
   # ========================================
   
   - rule: Afirmación sin contexto especial
@@ -75,7 +76,7 @@ rules:
     - action: action_conf_neg_agradecer
 
   # ========================================
-  # MODIFICACIONES DE BÚSQUEDA
+  # MODIFICACIONES DE BÚSQUEDA (COMPLEJO - Sin cambios)
   # ========================================
   
   - rule: Modificar búsqueda múltiple
@@ -104,68 +105,69 @@ rules:
     - action: action_busqueda_situacion
 
   # ========================================
-  # SMALL TALK
+  # SMALL TALK (TRIVIAL - ¡MODIFICADO!)
   # ========================================
   
   - rule: Saludo
     steps:
     - intent: saludo
-    - action: action_smalltalk_situacion
-  
+    - action: utter_saludo # <-- CAMBIADO
+
   - rule: Despedida
     steps:
     - intent: despedida
-    - action: action_smalltalk_situacion
-
+    - action: utter_despedida # <-- CAMBIADO
+  
   - rule: Responder a preguntar_como_estas
     steps:
     - intent: preguntar_como_estas
-    - action: action_smalltalk_situacion
+    - action: utter_preguntar_como_estas # <-- CAMBIADO
 
   - rule: Responder a responder_como_estoy
     steps:
     - intent: responder_como_estoy
-    - action: action_smalltalk_situacion
+    - action: utter_responder_como_estoy # <-- CAMBIADO
 
   - rule: Pedir chiste
     steps:
     - intent: pedir_chiste
-    - action: action_smalltalk_situacion
+    - action: utter_pedir_chiste # <-- CAMBIADO
 
   - rule: Usuario se ríe
     steps:
     - intent: reirse
-    - action: action_smalltalk_situacion
+    - action: utter_reirse_chiste # <-- CAMBIADO
+
   - rule: Responder a responder_estoy_bien
     steps:
     - intent: responder_estoy_bien
-    - action: action_smalltalk_situacion
+    - action: utter_responder_estoy_bien # <-- CAMBIADO
 
+  # ========================================
+  # AYUDA Y FUERA DE CONTEXTO (COMPLEJO - Sin cambios)
+  # ========================================
+  
   - rule: Pedir ayuda
     steps:
     - intent: pedir_ayuda
-    - action: action_explicar_ayuda
+    - action: action_explicar_ayuda # <-- (Se mantiene, es complejo)
 
-  # ========================================
-  # MENSAJES FUERA DE CONTEXTO
-  # ========================================
-  
   - rule: Manejar conversación casual (off-topic)
     steps:
     - intent: off_topic
-    - action: action_handle_out_of_context
+    - action: action_handle_out_of_context # <-- (Se mantiene, es complejo)
 
   - rule: Manejar consultas fuera de dominio
     steps:
     - intent: out_of_scope
-    - action: action_handle_out_of_context
+    - action: action_handle_out_of_context # <-- (Se mantiene, es complejo)
 
   - rule: Manejar consultas veterinarias profesionales
     steps:
     - intent: consulta_veterinaria_profesional
-    - action: action_handle_out_of_context
+    - action: action_handle_out_of_context # <-- (Se mantiene, es complejo)
     
   - rule: Activar fallback
     steps:
       - intent: nlu_fallback
-      - action: action_fallback
+      - action: action_fallback # <-- (Se mantiene, es complejo)

@@ -5,8 +5,8 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import EventType
 
-# ✅ Importamos la función de generación con fallback automático
-from actions.models.model_manager import generate_text_with_context
+from actions.functions.chat_handler import generate_text_with_context
+
 
 logger = logging.getLogger(__name__)
 

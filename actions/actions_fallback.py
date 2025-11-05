@@ -1,19 +1,20 @@
 # actions/action_fallback.py
 
 from asyncio.log import logger
-from typing import Any, Dict, List, Text
+import json
+from typing import Any, Dict, List, Optional, Text
 from datetime import datetime
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, EventType
 
+from actions.functions.chat_handler import generate_with_safe_fallback
+
 from .helpers import validate_entities_for_intent
 from .logger import log_message
 from .conversation_state import ConversationState
 
-# ✅ Importación única y limpia del wrapper de más alto nivel
-from .models.model_manager import generate_with_safe_fallback
 
 class ActionFallback(Action):
     """
@@ -60,6 +61,31 @@ class ActionFallback(Action):
         
         events = [SlotSet("user_sentiment", sentiment)]
         
+        # ============================================================
+        # ✅ NUEVA LÓGICA: CLASIFICACIÓN INTELIGENTE CON LLM
+        # ============================================================
+        
+        # PRIORIDAD 0: Si el mensaje tiene baja confianza Y no tiene entidades claras,
+        # usar el modelo de búsqueda para clasificar
+        should_classify_with_llm = (
+            entity_analysis['valid_entity_count'] == 0 and  # Sin entidades válidas
+            current_intent in ['off_topic', 'out_of_scope', 'ambiguity_fallback'] and
+            sentiment not in ['rejection', 'negative']  # No es rechazo claro
+        )
+        
+        if should_classify_with_llm:
+            logger.info("[Fallback Decision] 🧠 Usando LLM para clasificar intención")
+            classification_result = self._classify_and_handle_with_llm(
+                context, entity_analysis, dispatcher, tracker
+            )
+            if classification_result is not None:
+                events.extend(classification_result)
+                return events
+        
+        # ============================================================
+        # PRIORIDADES EXISTENTES (sin cambios)
+        # ============================================================
+        
         # PRIORIDAD 1: Verificar si está completando una sugerencia pendiente
         if awaiting_suggestion_response and pending_suggestion:
             logger.info("[Fallback Decision] PRIORIDAD: Usuario completando sugerencia pendiente")
@@ -101,6 +127,174 @@ class ActionFallback(Action):
             events.extend(self._handle_general_fallback(context, entity_analysis, dispatcher, tracker))
         
         return events
+    def _classify_and_handle_with_llm(
+        self,
+        context: Dict[str, Any],
+        entity_analysis: Dict,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker
+    ) -> Optional[List[EventType]]:
+        """
+        Usa el modelo de búsqueda (MistralB) para:
+        1. Clasificar si es búsqueda o conversacional
+        2a. Si es búsqueda → generar parámetros y ejecutar
+        2b. Si NO es búsqueda → generar respuesta conversacional con LLM
+        """
+        try:
+            from actions.models.model_manager import get_search_engine
+            search_engine = get_search_engine()
+            
+            user_msg = context.get('user_message', '')
+            
+            # ===== PASO 1: CLASIFICAR =====
+            logger.info(f"[LLM Classify] Clasificando mensaje: '{user_msg}'")
+            classification = search_engine.classify_intent(user_msg, context)
+            
+            is_search = classification.get('is_search', False)
+            confidence = classification.get('confidence', 0.0)
+            reasoning = classification.get('reasoning', '')
+            llm_used = classification.get('llm_used', 'none')
+            
+            logger.info(
+                f"[LLM Classify] Resultado: {'🔍 BÚSQUEDA' if is_search else '💬 CONVERSACIONAL'} "
+                f"(conf: {confidence:.2f}, {llm_used.upper()})\n"
+                f"    Razón: {reasoning}"
+            )
+            
+            # ===== PASO 2a: ES BÚSQUEDA → GENERAR Y EJECUTAR =====
+            if is_search and confidence >= 0.6:  # Umbral de confianza
+                logger.info("[LLM Classify] ✅ Generando parámetros de búsqueda con LLM...")
+                
+                # Generar parámetros de búsqueda
+                generation_result = search_engine.generate_search_from_message(
+                    user_msg, context, search_type="productos"
+                )
+                
+                if not generation_result.get('success'):
+                    logger.error(f"[LLM Classify] ❌ Error generando búsqueda: {generation_result.get('error')}")
+                    # Fallback a mensaje conversacional
+                    dispatcher.utter_message(
+                        "Entiendo que quieres buscar algo, pero no pude entender bien los detalles. "
+                        "¿Podrías ser más específico? Por ejemplo: 'busco antibióticos para perros'"
+                    )
+                    return [SlotSet("user_engagement_level", "needs_clarification")]
+                
+                search_params = generation_result['search_params']
+                search_type = generation_result['search_type']
+                llm_time = generation_result.get('llm_time', 0.0)
+                
+                logger.info(
+                    f"[LLM Classify] ✅ Parámetros generados: {json.dumps(search_params)}\n"
+                    f"    Tipo: {search_type}, Tiempo LLM: {llm_time:.2f}s"
+                )
+                
+                # Ejecutar búsqueda
+                try:
+                    search_result = search_engine.execute_search(
+                        search_params=search_params,
+                        search_type=search_type,
+                        user_message=user_msg,
+                        is_modification=False,
+                        previous_params=None
+                    )
+                    
+                    if search_result.get('success'):
+                        total_results = search_result.get('total_results', 0)
+                        
+                        # Formatear mensaje
+                        params_display = self._format_parameters_for_display(search_params)
+                        params_str = ", ".join([f"{k}: {v}" for k, v in params_display.items()])
+                        
+                        if total_results > 0:
+                            text_message = f"✅ Encontré {total_results} {'ofertas' if search_type == 'ofertas' else 'productos'}."
+                        else:
+                            text_message = f"❌ No encontré {search_type} con: {params_str}"
+                        
+                        # Enviar resultados
+                        custom_payload = {
+                            "type": "search_results",
+                            "search_type": search_type,
+                            "validated": True,
+                            "timestamp": datetime.now().isoformat(),
+                            "parameters": search_params,
+                            "search_results": search_result.get('results', {}),
+                            "generated_by_llm": True,
+                            "llm_confidence": confidence
+                        }
+                        
+                        dispatcher.utter_message(text=text_message, custom=custom_payload)
+                        
+                        # Actualizar historial
+                        search_history = context.get('search_history', [])
+                        search_history.append({
+                            'timestamp': datetime.now().isoformat(),
+                            'type': search_type,
+                            'parameters': search_params,
+                            'status': 'completed_by_llm',
+                            'llm_confidence': confidence
+                        })
+                        
+                        return [
+                            SlotSet("search_history", search_history),
+                            SlotSet("user_engagement_level", "satisfied")
+                        ]
+                    
+                    else:
+                        error = search_result.get('error', 'Error desconocido')
+                        logger.error(f"[LLM Classify] ❌ Error ejecutando búsqueda: {error}")
+                        dispatcher.utter_message(
+                            "Entendí que querés buscar algo, pero hubo un error. "
+                            "¿Podrías intentar reformular tu búsqueda?"
+                        )
+                        return [SlotSet("user_engagement_level", "needs_help")]
+                
+                except Exception as search_error:
+                    logger.error(f"[LLM Classify] ❌ Excepción en búsqueda: {search_error}", exc_info=True)
+                    dispatcher.utter_message(
+                        "Hubo un error al procesar tu búsqueda. ¿Podrías intentar de nuevo?"
+                    )
+                    return [SlotSet("user_engagement_level", "needs_help")]
+            
+            # ===== PASO 2b: NO ES BÚSQUEDA → RESPUESTA CONVERSACIONAL =====
+            else:
+                logger.info("[LLM Classify] 💬 Generando respuesta conversacional con LLM")
+                
+                # Usar el sistema de generación conversacional existente
+                context_summary = self._build_context_summary(context, entity_analysis)
+                
+                prompt = f"""El usuario dijo: "{user_msg}"
+
+Contexto:
+{context_summary}
+
+No es una búsqueda de productos. Responde de manera amigable y útil. Si parece confundido, ofrece ayuda sobre cómo buscar productos. Máximo 2 oraciones."""
+                
+                self._dispatch_llm_response(
+                    prompt, dispatcher, tracker, 
+                    "utter_default", 100, temperature=0.5
+                )
+                
+                return [SlotSet("user_engagement_level", "engaged")]
+        
+        except Exception as e:
+            logger.error(f"[LLM Classify] ❌ Error crítico: {e}", exc_info=True)
+            # Fallback a lógica original
+            return None
+    
+    def _format_parameters_for_display(self, parameters: Dict[str, Any]) -> Dict[str, str]:
+        """Formatea parámetros para mostrar al usuario (reutilizar de actions_busqueda)."""
+        formatted = {}
+        
+        for key, value in parameters.items():
+            if isinstance(value, dict):
+                if 'value' in value:
+                    formatted[key] = str(value['value'])
+                else:
+                    formatted[key] = str(value)
+            else:
+                formatted[key] = str(value)
+        
+        return formatted
     
     def _build_context_summary(self, context: Dict[str, Any], entity_analysis: Dict) -> str:
         context_parts = []

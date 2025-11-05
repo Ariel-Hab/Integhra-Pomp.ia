@@ -1,9 +1,7 @@
 import logging
 import re
 from typing import Dict, Any, List, Optional, Tuple
-from datetime import datetime, timedelta
-from rasa_sdk import Tracker
-from scripts.config_loader import ConfigLoader
+from datetime import datetime
 from .config import INTENT_CONFIG
 
 logger = logging.getLogger(__name__)

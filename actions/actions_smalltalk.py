@@ -1,5 +1,6 @@
 # actions/actions_smalltalk_situacion.py
 
+from actions.functions.chat_handler import generate_with_safe_fallback
 from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -7,8 +8,6 @@ from rasa_sdk.events import EventType
 import logging
 import random
 
-# ✅ IMPORTACIÓN SIMPLIFICADA
-from .models.model_manager import generate_with_safe_fallback
 
 logger = logging.getLogger(__name__)
 

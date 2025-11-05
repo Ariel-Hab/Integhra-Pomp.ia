@@ -2,6 +2,7 @@ import logging
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
+from actions.functions.chat_handler import generate_text_with_context
 from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -9,7 +10,6 @@ from rasa_sdk.events import SlotSet, EventType
 
 from .conversation_state import ConversationState, analyze_user_confirmation, get_slot_safely
 from .helpers import get_intent_info
-from .models.model_manager import generate_text_with_context
 
 logger = logging.getLogger(__name__)
 

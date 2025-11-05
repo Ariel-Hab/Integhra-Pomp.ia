@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from typing import Dict, Any
 
-LOG_FILE = "unrecognized_messages.csv"
+# LOG_FILE = "unrecognized_messages.csv"
 
 def log_message(tracker: Any, nlu_conf_threshold: float = 0.5):
     """
@@ -29,9 +29,9 @@ def log_message(tracker: Any, nlu_conf_threshold: float = 0.5):
             "sender_id": tracker.sender_id,
         }
 
-        file_exists = os.path.isfile(LOG_FILE)
-        with open(LOG_FILE, mode="a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=row.keys())
-            if not file_exists:
-                writer.writeheader()
-            writer.writerow(row)
+        # file_exists = os.path.isfile(LOG_FILE)
+        # with open(LOG_FILE, mode="a", newline="", encoding="utf-8") as f:
+        #     writer = csv.DictWriter(f, fieldnames=row.keys())
+        #     if not file_exists:
+        #         writer.writeheader()
+        #     writer.writerow(row)

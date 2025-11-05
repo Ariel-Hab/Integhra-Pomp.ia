@@ -1,0 +1,62 @@
+# docker-compose.cpu.yml (CORREGIDO)
+version: "3.9"
+
+services:
+  # 1️⃣ Rasa Core (cerebro)
+  rasa-server:
+    # ... (sin cambios)
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    container_name: rasa_server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./bot:/app/bot
+    working_dir: /app/bot
+    command: ["/app/.venv/bin/python", "main.py"]
+    environment:
+      - ACTION_SERVER_URL=http://actions-server:5055/webhook
+    depends_on:
+      - actions-server
+
+  # 2️⃣ Rasa Actions (lógica)
+  actions-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.actions
+    container_name: actions_server
+    volumes:
+      - ./actions:/app/actions
+    
+    # --- INICIO DE MODIFICACIÓN ---
+    # Elimina el 'environment:' harcodeado y usa 'env_file:'
+    # para cargar TODAS las variables desde tu archivo .env.local
+    env_file:
+      - .env.local
+    # --- FIN DE MODIFICACIÓN ---
+
+    depends_on:
+      - ollama-cpu
+
+  # 3️⃣ Ollama (modelo CPU)
+  ollama-cpu:
+    image: ollama/ollama:latest
+    container_name: ollama_cpu
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_PORT=11434
+    ports:
+      - "11434:11434"
+   
+    # --- ARREGLO RECOMENDADO (del chat anterior) ---
+    # Cambia esto para evitar el error 'mkdir'
+    volumes:
+      - ollama_cpu_data:/root/.ollama
+      # 2. EL ARREGLO: Un "portal" de solo lectura a tus Modelfiles de CPU
+      - ./actions/models/pompi_liviano_cpu:/modelfiles_cpu
+
+# --- AÑADE ESTO AL FINAL ---
+volumes:
+  ollama_cpu_data:
