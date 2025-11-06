@@ -16,7 +16,8 @@ RUN python3 -m venv .venv
 ENV PATH="/app/.venv/bin:$PATH"
 
 # 3. Pre-instalar torch (¡Buena idea! La mantenemos)
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+# --- IMPLEMENTACIÓN OPCIÓN B ---
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
 # 4. === LA OPTIMIZACIÓN CLAVE ===
 #    Primero copiamos *SOLO* el archivo de requisitos
@@ -25,13 +26,20 @@ COPY requirements-bot.txt ./
 # 5. Instalamos los requisitos
 #    Esta capa SÍ se guardará en caché mientras
 #    requirements-bot.txt no cambie.
-RUN pip install -r requirements-bot.txt
+# --- IMPLEMENTACIÓN OPCIÓN B ---
+RUN pip install --no-cache-dir -r requirements-bot.txt
 
 # 6. Copiar código fuente
 #    Copiamos el código AL FINAL, para no invalidar
 #    la caché de las dependencias cada vez que
 #    cambiamos un .py
 COPY bot/ ./bot
+
+# --- IMPLEMENTACIÓN OPCIÓN C ---
+# Limpiar el venv ANTES de copiarlo a la etapa final.
+# Borra todos los cachés de __pycache__ y archivos .pyc
+RUN find /app/.venv -name "__pycache__" -type d -exec rm -rf {} + && \
+    find /app/.venv -name "*.pyc" -delete
 
 
 # --- STAGE 2: "Runtime" ---
@@ -44,7 +52,7 @@ WORKDIR /app
 RUN useradd -m -d /app -s /bin/bash appuser
 USER appuser
 
-# 2. Copiar el entorno virtual
+# 2. Copiar el entorno virtual (ya limpio)
 COPY --from=builder --chown=appuser:appuser /app/.venv ./.venv
 
 # 3. Copiar el código de la aplicación
@@ -58,4 +66,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # 6. CMD
-CMD ["/app/.venv/bin/python", "bot/main.py"]
+CMD ["/app/.venv/bin/python","bot/main.py"]

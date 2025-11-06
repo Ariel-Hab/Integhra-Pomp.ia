@@ -10,6 +10,5 @@ rasa>=3.6.21,<4.0.0
 rasa-sdk>=3.6.1,<4.0.0
 sacremoses>=0.1.1,<0.2.0
 sentencepiece>=0.2.0,<0.3.0
-torch>=2.7.1,<3.0.0
 unidecode>=1.4.0,<2.0.0
 uvicorn>=0.35.0,<0.36.0
