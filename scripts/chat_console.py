@@ -39,7 +39,7 @@ def send_message(message, user_id="console_user"):
             method='POST'
         )
         
-        with urllib.request.urlopen(req, timeout=30) as response:
+        with urllib.request.urlopen(req, timeout=60) as response:
             if response.status == 200:
                 result = json.loads(response.read().decode())
                 return result

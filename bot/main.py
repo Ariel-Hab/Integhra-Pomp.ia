@@ -1,5 +1,6 @@
 import os
 import threading
+# from dotenv import load_dotenv
 import uvicorn
 import asyncio
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -12,6 +13,7 @@ from rasa.shared.core.events import SessionStarted, SlotSet
 import glob
 
 # ---------- Configuración ----------
+# load_dotenv("../.env.local")
 ACTION_SERVER_URL = os.getenv("ACTION_SERVER_URL", "http://localhost:5055/webhook")
 MODEL_FOLDER = os.getenv("RASA_MODEL_PATH", "models")
 PORT = int(os.getenv("PORT", 8000))

@@ -1,0 +1,27 @@
+FROM ollama/ollama:latest
+
+RUN apt-get update && \
+    apt-get install -y curl coreutils && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./models/pompi_pesado_gpu /models_gpu
+
+RUN \
+    set -ex && \
+    echo "--- Iniciando servidor Ollama en background ---" && \
+    ollama serve & \
+    OLLAMA_PID=$! && \echo "--- Esperando a que el servidor levante (max 30s) ---" && \
+    timeout 30s sh -c 'while ! curl -s http://127.0.0.1:11434/ > /dev/null; do echo -n "." && sleep 0.1; done' && \
+    echo "¡Ollama está listo!" && \
+    echo "--- Descargando modelos base ---" && \
+    ollama pull mistral:7b-instruct-q4_K_M && \
+    echo "--- Creando pompi_chat_gpu ---" && \
+    ollama create pompi_chat_gpu -f /models_gpu/Modelfile.chat && \
+    echo "--- Creando pompi_search_gpu ---" && \
+    ollama create pompi_search_gpu -f /models_gpu/Modelfile.search && \
+    echo "--- Limpiando modelos base ---" && \
+    ollama rm mistral:7b-instruct-q4_K_M && \
+    echo "--- Apagando servidor temporal ---" && \
+    kill $OLLAMA_PID
+
+CMD ["ollama", "serve"]

@@ -1,9 +1,14 @@
+# actions/actions_busqueda.py - REFACTORIZADO
+# ✅ CAMBIO PRINCIPAL: _handle_search_intent ya NO ejecuta búsquedas directamente
+# Ahora solo hace PRE-ANÁLISIS y delega al LLM (search_engine)
+
 import logging
 from typing import Any, Dict, List, Optional
 from datetime import datetime, timedelta
 import re
 
 import actions
+from actions.functions.search_engine_cpu import get_cpu_search_engine
 from actions.logger import log_message
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -26,32 +31,42 @@ from ..helpers import validate_entities_for_intent, validate_entity_detection
 logger = logging.getLogger(__name__)
 
 class ActionBusquedaSituacion(Action):
-    """Action optimizada con soporte completo para roles y grupos del NLU"""
+    """
+    ✅ REFACTORIZADO: Ahora actúa como "Cerebro A" (Pre-análisis)
+    Su trabajo es PREPARAR información para el LLM, no ejecutar búsquedas
+    """
     
     def __init__(self):
         try:
+            # Motor GPU (prioritario) - TU CÓDIGO ORIGINAL
             self.search_engine = get_search_engine()
+            
+            # ✅ NUEVO: Motor CPU (fallback optimizado)
+            self.search_engine_cpu = get_cpu_search_engine()
+            
+            # Detectores (sin cambios)
+            from .comparison_detector import ComparisonDetector
+            from .modification_detector import ModificationDetector
             self.comparison_detector = ComparisonDetector()
             self.modification_detector = ModificationDetector()
-            logger.info("[ActionBusquedaSituacion] Detectores inicializados correctamente")
+            
+            logger.info("[ActionBusquedaSituacion] Motores inicializados (GPU + CPU)")
+            logger.info(f"    GPU disponible: {self.search_engine.is_gpu_available()}")
+            logger.info(f"    CPU disponible: {self.search_engine_cpu.is_available()}")
+            
         except Exception as e:
-            logger.error(f"[ActionBusquedaSituacion] Error inicializando detectores: {e}")
+            logger.error(f"[ActionBusquedaSituacion] Error inicializando: {e}")
             self.comparison_detector = None
             self.modification_detector = None
     
     def name(self) -> str:
         return "action_busqueda_situacion"
     
-    # Agregar al inicio de la clase ActionBusquedaSituacion, después de __init__
-
+    # ============== NORMALIZACIÓN DE ENTIDADES (Sin cambios) ==============
+    
     def _normalize_regex_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
-        ✅ NUEVO: Normaliza entidades específicas de regex a formato genérico
-        
-        Convierte:
-        - comparador_lt_descuento → comparador (role=lt, group=descuento_filter)
-        - estado_nuevo → estado (value=nuevo, role=nuevo)
-        - dosis_gramaje → dosis (type=gramaje)
+        Normaliza entidades específicas de regex a formato genérico
         """
         try:
             normalized = []
@@ -60,15 +75,14 @@ class ActionBusquedaSituacion(Action):
                 entity_type = entity.get('entity')
                 entity_value = entity.get('value')
                 
-                # CASO 1: Comparadores con contexto (comparador_lt_descuento, comparador_gt_precio)
+                # CASO 1: Comparadores con contexto
                 if entity_type.startswith('comparador_'):
-                    parts = entity_type.split('_')  # ['comparador', 'lt', 'descuento']
+                    parts = entity_type.split('_')
                     
                     if len(parts) >= 3:
-                        operator_role = parts[1]  # 'lt', 'gt', 'lte', 'gte'
-                        context = parts[2]        # 'descuento', 'precio', 'stock', 'bonificacion'
+                        operator_role = parts[1]
+                        context = parts[2]
                         
-                        # Mapear contexto a grupo
                         group_map = {
                             'descuento': 'descuento_filter',
                             'precio': 'precio_filter',
@@ -78,18 +92,17 @@ class ActionBusquedaSituacion(Action):
                         
                         normalized_entity = {
                             **entity,
-                            'entity': 'comparador',  # ← Normalizado
+                            'entity': 'comparador',
                             'value': operator_role,
                             'role': operator_role,
                             'group': group_map.get(context, f"{context}_filter"),
-                            '_original_entity': entity_type  # Preservar original
+                            '_original_entity': entity_type
                         }
                         
                         logger.debug(f"[Normalize] {entity_type} → comparador (role={operator_role}, group={group_map.get(context)})")
                         normalized.append(normalized_entity)
                     
                     elif len(parts) == 2:
-                        # comparador_lt_generico o comparador_lt
                         operator_role = parts[1].replace('generico', '').strip()
                         
                         normalized_entity = {
@@ -104,16 +117,15 @@ class ActionBusquedaSituacion(Action):
                         normalized.append(normalized_entity)
                     
                     else:
-                        # Mantener sin cambios si no matchea patrón esperado
                         normalized.append(entity)
                 
-                # CASO 2: Estados específicos (estado_nuevo, estado_poco_stock, etc.)
+                # CASO 2: Estados específicos
                 elif entity_type.startswith('estado_'):
-                    estado_role = entity_type.replace('estado_', '')  # 'nuevo', 'poco_stock', etc.
+                    estado_role = entity_type.replace('estado_', '')
                     
                     normalized_entity = {
                         **entity,
-                        'entity': 'estado',  # ← Normalizado
+                        'entity': 'estado',
                         'value': entity_value or estado_role,
                         'role': estado_role,
                         '_original_entity': entity_type
@@ -122,28 +134,28 @@ class ActionBusquedaSituacion(Action):
                     logger.debug(f"[Normalize] {entity_type} → estado (role={estado_role})")
                     normalized.append(normalized_entity)
                 
-                # CASO 3: Dosis específicas (dosis_gramaje, dosis_volumen, dosis_forma)
+                # CASO 3: Dosis específicas
                 elif entity_type.startswith('dosis_'):
-                    dosis_type = entity_type.replace('dosis_', '')  # 'gramaje', 'volumen', 'forma'
+                    dosis_type = entity_type.replace('dosis_', '')
                     
                     normalized_entity = {
                         **entity,
-                        'entity': 'dosis',  # ← Normalizado
+                        'entity': 'dosis',
                         'value': entity_value,
-                        'dosis_type': dosis_type,  # ← Info adicional
+                        'dosis_type': dosis_type,
                         '_original_entity': entity_type
                     }
                     
                     logger.debug(f"[Normalize] {entity_type} → dosis (type={dosis_type})")
                     normalized.append(normalized_entity)
                 
-                # CASO 4: Animales específicos (animal_perro, animal_gato)
+                # CASO 4: Animales específicos
                 elif entity_type.startswith('animal_'):
-                    animal_value = entity_type.replace('animal_', '')  # 'perro', 'gato'
+                    animal_value = entity_type.replace('animal_', '')
                     
                     normalized_entity = {
                         **entity,
-                        'entity': 'animal',  # ← Normalizado
+                        'entity': 'animal',
                         'value': entity_value or animal_value,
                         '_original_entity': entity_type
                     }
@@ -151,7 +163,7 @@ class ActionBusquedaSituacion(Action):
                     logger.debug(f"[Normalize] {entity_type} → animal")
                     normalized.append(normalized_entity)
                 
-                # CASO 5: Mantener entidades genéricas sin cambios
+                # CASO 5: Mantener genéricas
                 else:
                     normalized.append(entity)
             
@@ -164,11 +176,13 @@ class ActionBusquedaSituacion(Action):
             
         except Exception as e:
             logger.error(f"[Normalize] Error: {e}", exc_info=True)
-            return entities  # Fallback: retornar originales
+            return entities
+
+    # ============== RUN (Sin cambios mayores) ==============
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[str, Any]) -> List[EventType]:
         """
-        ✅ INTEGRADO CON SEARCH ENGINE: Ejecuta búsquedas y formatea resultados
+        Ejecuta búsquedas y formatea resultados
         """
         try:
             context = ConversationState.get_conversation_context(tracker)
@@ -180,7 +194,7 @@ class ActionBusquedaSituacion(Action):
             events = []
             log_message(tracker, nlu_conf_threshold=0.6)
             
-            # Detectar y limpiar sugerencias ignoradas
+            # Detectar sugerencias ignoradas
             ignored_suggestion_cleanup = self._handle_ignored_suggestions(context, intent_name, dispatcher)
             events.extend(ignored_suggestion_cleanup['events'])
             
@@ -199,7 +213,7 @@ class ActionBusquedaSituacion(Action):
             if context['detected_sentiment'] != context['current_sentiment_slot']:
                 events.append(SlotSet("user_sentiment", context['detected_sentiment']))
             
-            # ✅ LÓGICA DE PROCESAMIENTO POR TIPO DE INTENT
+            # ✅ LÓGICA DE PROCESAMIENTO
             
             # 1. INTENTS DE MODIFICACIÓN
             if intent_name.startswith('modificar_busqueda'):
@@ -220,7 +234,7 @@ class ActionBusquedaSituacion(Action):
                     dispatcher.utter_message("¿En qué puedo ayudarte hoy?")
                     result = {'type': 'generic_response'}
             
-            # ✅ NUEVO: Formatear y enviar resultados de búsqueda
+            # ✅ Formatear y enviar resultados
             if result.get('type') == 'search_success':
                 self._send_search_results(result, dispatcher)
             
@@ -234,797 +248,364 @@ class ActionBusquedaSituacion(Action):
             dispatcher.utter_message("Ocurrió un error procesando tu solicitud.")
             return []
 
-    def _send_search_results(self, result: Dict[str, Any], dispatcher: CollectingDispatcher) -> None:
-        """
-        ✅ CORREGIDO: Envía un solo mensaje con 'text' (resumen) y 'custom' (JSON)
-        para que Flutter lo interprete correctamente.
-        """
-        try:
-            search_results = result.get('search_results', {})
-            search_type = result.get('search_type', 'productos')
-            total_results = search_results.get('total_results', 0)
-            
-            # --- 1. Crear el mensaje de TEXTO (el resumen human-readable) ---
-            if total_results == 0:
-                params_display = self._format_parameters_for_display(result.get('parameters', {}))
-                params_str = ", ".join([f"{k}: {v}" for k, v in params_display.items()])
-                text_message = f"❌ No encontré {search_type} con los parámetros:\n{params_str}"
-            else:
-                item_type = "ofertas" if search_type == "ofertas" else "productos"
-                # Este es el texto que el usuario verá en la burbuja de chat
-                text_message = f"✅ Encontré {total_results} {item_type}."
-
-            
-            # --- 2. Crear el payload 'custom' (el JSON de datos) ---
-            # Esta estructura DEBE coincidir con SearchResponseData.fromJson en chatbot_models.dart
-            custom_payload = {
-                "type": "search_results", # Para 'isSearchResults'
-                "search_type": search_type, #
-                "validated": True, # Para 'isValidated'
-                "timestamp": datetime.now().isoformat(),
-                "parameters": result.get('parameters', {}), #
-                
-                # Aquí pasamos el diccionario de resultados completo
-                # que tu app espera en
-                "search_results": search_results, 
-                
-                "comparison_analysis": result.get('comparison_info') #
-            }
-            
-            # --- 3. Enviar UN SOLO mensaje ---
-            # Este mensaje ahora tiene AMBAS partes: texto y datos.
-            dispatcher.utter_message(
-                text=text_message,
-                custom=custom_payload
-            )
-            
-            logger.info(f"[SearchResults] Enviado 1 mensaje con 'text' y 'custom' (JSON)")
-
-        except Exception as e:
-            logger.error(f"[SearchResults] Error: {e}", exc_info=True)
-            dispatcher.utter_message("Encontré resultados pero hubo un error al mostrarlos.")
-
-    def _analyze_comparison_with_groups(self, tracker: Tracker) -> Dict[str, Any]:
-        """
-        ✅ NUEVO: Analiza comparaciones extrayendo grupos del NLU
-        """
-        try:
-            if not self.comparison_detector:
-                return {}
-            
-            text = tracker.latest_message.get("text", "")
-            entities = tracker.latest_message.get("entities", [])
-            
-            if not text:
-                return {}
-            
-            logger.debug(f"[Comparison] Analizando con {len(entities)} entidades")
-            
-            # ✅ NUEVO: Extraer grupos antes de la detección
-            entity_groups = self._extract_entity_groups(entities)
-            
-            # Ejecutar detección estándar
-            comparison_result = self.comparison_detector.detect_comparison(text, entities)
-            
-            if not comparison_result.detected:
-                return {}
-            
-            # ✅ NUEVO: Enriquecer con grupos del NLU
-            comparison_info = {
-                'detected': True,
-                'operator': comparison_result.operator.value if comparison_result.operator else None,
-                'operator_role': self._map_operator_to_role(comparison_result.operator),
-                'quantity': comparison_result.quantity,
-                'type': comparison_result.comparison_type.value if comparison_result.comparison_type else None,
-                'entities': comparison_result.entities,
-                'groups': comparison_result.groups_detected,
-                'roles': comparison_result.roles_detected,
-                'confidence': comparison_result.confidence,
-                'temporal_filters': comparison_result.temporal_filters,
-                'normalized_dates': comparison_result.normalized_dates,
-                # ✅ NUEVO: Grupos del NLU
-                'nlu_groups': entity_groups,
-                'grouped_entities': self._group_entities_by_filter(entity_groups)
-            }
-            
-            logger.info(
-                f"[Comparison] Detectada con grupos: {list(entity_groups.keys())}, "
-                f"confianza: {comparison_result.confidence:.2f}"
-            )
-            
-            return comparison_info
-            
-        except Exception as e:
-            logger.error(f"[Comparison] Error: {e}", exc_info=True)
-            return {}
-
-    def _extract_entity_groups(self, entities: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-        """
-        ✅ NUEVO: Extrae grupos de entidades del NLU
-        """
-        try:
-            groups = {}
-            
-            for entity in entities:
-                group = entity.get('group')
-                if group:
-                    if group not in groups:
-                        groups[group] = []
-                    
-                    groups[group].append({
-                        'entity': entity.get('entity'),
-                        'value': entity.get('value'),
-                        'role': entity.get('role'),
-                        'confidence': entity.get('confidence', 0.0)
-                    })
-            
-            if groups:
-                logger.debug(f"[Groups] Extraídos {len(groups)} grupos: {list(groups.keys())}")
-                for group_name, group_entities in groups.items():
-                    logger.debug(f"[Groups]   {group_name}: {[e['entity'] for e in group_entities]}")
-            
-            return groups
-            
-        except Exception as e:
-            logger.error(f"[Groups] Error extrayendo: {e}")
-            return {}
-
-    def _group_entities_by_filter(self, entity_groups: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Dict[str, Any]]:
-        """
-        ✅ NUEVO: Agrupa entidades por tipo de filtro (descuento, precio, stock, etc.)
-        """
-        try:
-            grouped = {}
-            
-            for group_name, entities in entity_groups.items():
-                # Identificar tipo de filtro del nombre del grupo
-                if 'descuento' in group_name:
-                    filter_type = 'descuento'
-                elif 'precio' in group_name:
-                    filter_type = 'precio'
-                elif 'stock' in group_name:
-                    filter_type = 'stock'
-                elif 'bonificacion' in group_name:
-                    filter_type = 'bonificacion'
-                else:
-                    filter_type = group_name
-                
-                # Organizar entidades del grupo
-                filter_data = {}
-                for entity in entities:
-                    entity_type = entity['entity']
-                    role = entity.get('role')
-                    
-                    if entity_type == 'comparador':
-                        filter_data['operator'] = role
-                        filter_data['operator_text'] = entity['value']
-                    else:
-                        filter_data['value'] = entity['value']
-                        filter_data['entity_type'] = entity_type
-                
-                grouped[filter_type] = filter_data
-            
-            if grouped:
-                logger.debug(f"[GroupedFilters] {len(grouped)} filtros agrupados")
-                for filter_type, data in grouped.items():
-                    logger.debug(f"[GroupedFilters]   {filter_type}: {data}")
-            
-            return grouped
-            
-        except Exception as e:
-            logger.error(f"[GroupedFilters] Error: {e}")
-            return {}
-
-    def _map_operator_to_role(self, operator) -> Optional[str]:
-        """
-        ✅ NUEVO: Mapea operador de comparación a role del NLU
-        """
-        try:
-            from .comparison_detector import ComparisonOperator
-            
-            mapping = {
-                ComparisonOperator.GREATER_THAN: 'gt',
-                ComparisonOperator.LESS_THAN: 'lt',
-                ComparisonOperator.EQUAL_TO: 'eq',
-                ComparisonOperator.DIFFERENT_FROM: 'neq'
-            }
-            
-            return mapping.get(operator)
-            
-        except Exception as e:
-            logger.error(f"[OperatorMap] Error: {e}")
-            return None
+    # ============== ✅ REFACTORIZADO: _handle_search_intent ==============
         
-    
-
-    def _process_multiple_estados(self, estado_entities: List[Dict[str, Any]], 
-                              search_params: Dict[str, Any]) -> None:
-        """
-        ✅ NUEVO: Procesa múltiples estados y los combina
-        
-        Ejemplos:
-            - ['nuevo', 'poco_stock'] → 'nuevo,poco_stock'
-            - ['vence_pronto', 'poco_stock'] → 'vence_pronto,poco_stock'
-        """
-        try:
-            estados_validos = []
-            
-            for item in estado_entities:
-                entity_obj = item['entity']
-                estado_role = entity_obj.get('role')
-                estado_value = entity_obj.get('value')
+    def _handle_search_intent(
+            self, 
+            context: Dict[str, Any], 
+            tracker: Tracker, 
+            dispatcher: CollectingDispatcher,
+            comparison_info: Dict[str, Any]
+        ) -> Dict[str, Any]:
+            """
+            ✅ NUEVO FLUJO CON TRIAGE:
+            1. Pre-análisis (Cerebro A) - SIEMPRE
+            2. Triage: GPU vs CPU Simple vs CPU Complejo
+            3. Ejecución según ruta elegida
+            4. Procesamiento de resultados
+            """
+            try:
+                intent_name = context['current_intent']
+                entities = context['entities']
+                user_message = context.get('user_message', '')
                 
-                # Priorizar role sobre value
-                estado = estado_role if estado_role else estado_value
+                # ============== PASO 1: VALIDAR ENTIDADES ==============
+                # (Tu código original, sin cambios)
+                validation_result = self._validate_entities_with_helper(
+                    tracker, 
+                    intent_name, 
+                    dispatcher
+                )
                 
-                if estado:
-                    # Normalizar estado
-                    estado_normalizado = estado.lower().replace(' ', '_')
-                    
-                    # Mapeo de variantes
-                    estado_map = {
-                        'nuevas': 'nuevo',
-                        'novedades': 'nuevo',
-                        'no_vistas': 'nuevo',
-                        'stock_limitado': 'poco_stock',
-                        'ultimas_unidades': 'poco_stock',
-                        'proximo_a_vencer': 'vence_pronto',
-                        'por_vencer': 'vence_pronto'
+                if validation_result.get('has_suggestions') or validation_result.get('has_errors'):
+                    logger.warning(f"[HandleSearch] Búsqueda frenada por validación.")
+                    return {
+                        'type': 'entity_suggestion',
+                        'suggestion_data': validation_result.get('suggestion_data'),
+                        'slot_cleanup_events': []
                     }
+                
+                # ============== PASO 2: PRE-ANÁLISIS (Cerebro A) ==============
+                # (Tu código original, sin cambios)
+                
+                normalized_entities = self._normalize_regex_entities(entities)
+                
+                pre_analyzed_params = self._build_search_params(
+                    normalized_entities, 
+                    context, 
+                    comparison_info
+                )
+                
+                search_type = self._determine_search_type(intent_name)
+                
+                logger.info(f"[HandleSearch] 🧠 Pre-análisis (Cerebro A): {pre_analyzed_params}")
+                logger.info(f"[HandleSearch] 📝 Tipo sugerido: {search_type}")
+                
+                # ============== PASO 3: TRIAGE (LÓGICA NUEVA) ==============
+                
+                is_gpu = self.search_engine.is_gpu_available()
+                is_complex = self._is_query_complex(tracker, pre_analyzed_params, user_message)
+                
+                logger.info(f"[HandleSearch] 🎯 Triage: GPU={is_gpu}, Complejo={is_complex}")
+                
+                # --- RUTA 1: GPU (FLUJO ORIGINAL - SIN CAMBIOS) ---
+                if is_gpu:
+                    logger.info("[HandleSearch] 🚀 Ruta: GPU (flujo original preservado)")
                     
-                    estado_final = estado_map.get(estado_normalizado, estado_normalizado)
+                    llm_result = self.search_engine.execute_search(
+                        search_params=pre_analyzed_params,
+                        search_type=search_type,
+                        user_message=user_message,
+                        is_modification=False,
+                        previous_params=None
+                    )
+                
+                # --- RUTA 2: CPU SIMPLE (BYPASS DIRECTO) ---
+                elif not is_complex:
+                    logger.info("[HandleSearch] ⚡️ Ruta: CPU Bypass (pre-análisis directo, <1s)")
                     
-                    if estado_final not in estados_validos:
-                        estados_validos.append(estado_final)
-            
-            if estados_validos:
-                # Enviar como string separado por comas para el backend
-                search_params['estado'] = ','.join(estados_validos)
-                
-                logger.info(f"[MultiEstados] {len(estados_validos)} estados procesados: {estados_validos}")
-            
-        except Exception as e:
-            logger.error(f"[MultiEstados] Error: {e}")
-    def _extract_search_parameters_from_entities(self, tracker: Tracker) -> Dict[str, Any]:
-        try:
-            search_params = {}
-            current_entities = tracker.latest_message.get("entities", [])
-            
-            if not current_entities:
-                return {}
-            
-            logger.info(f"[EntityParams] Procesando {len(current_entities)} entidades")
-            
-            # Normalizar entidades
-            normalized_entities = current_entities
-            
-            # Deduplicar
-            entity_map = {}
-            for entity in normalized_entities:
-                entity_type = entity.get("entity")
-                entity_value = entity.get("value", "").strip().lower()
-                entity_role = entity.get("role")
-                group = entity.get('group')
-                
-                if not entity_type or not entity_value:
-                    continue
-                
-                entity_key = f"{entity_type}:{entity_value}"
-                
-                if entity_key not in entity_map:
-                    entity_map[entity_key] = entity
-                else:
-                    existing = entity_map[entity_key]
-                    if group and not existing.get('group'):
-                        entity_map[entity_key] = entity
-                    elif entity_role and not existing.get('role'):
-                        entity_map[entity_key] = entity
-            
-            deduplicated_entities = list(entity_map.values())
-            
-            # ✅ NUEVO: Agrupar entidades por tipo
-            entities_by_type = {}
-            grouped_comparisons = {}
-            
-            for entity in deduplicated_entities:
-                entity_type = entity.get("entity")
-                entity_value = entity.get("value", "").strip()
-                entity_role = entity.get("role")
-                group = entity.get('group')
-                
-                # Procesar grupos de comparación
-                if group:
-                    if group not in grouped_comparisons:
-                        grouped_comparisons[group] = []
-                    grouped_comparisons[group].append(entity)
-                    continue
-                
-                # Agrupar entidades sin grupo por tipo
-                if entity_type not in entities_by_type:
-                    entities_by_type[entity_type] = []
-                
-                entities_by_type[entity_type].append({
-                    'value': entity_value,
-                    'role': entity_role,
-                    'entity': entity
-                })
-            
-            # Procesar grupos de comparación
-            for group_name, group_entities in grouped_comparisons.items():
-                self._process_comparison_group(group_name, group_entities, search_params)
-            
-            # ✅ NUEVO: Procesar múltiples estados
-            if 'estado' in entities_by_type:
-                self._process_multiple_estados(entities_by_type['estado'], search_params)
-            
-            # Procesar otras entidades
-            entity_to_param = {
-                'producto': 'nombre',
-                'empresa': 'empresa',
-                'categoria': 'categoria',
-                'animal': 'animal',
-                'sintoma': 'sintoma',
-                'dosis': 'dosis',
-                'cantidad': 'cantidad',
-                'precio': 'precio',
-                'cantidad_descuento': 'descuento',
-                'cantidad_bonificacion': 'bonificacion',
-                'cantidad_stock': 'stock',
-                'comparador': 'comparador',
-                'tiempo': 'tiempo',
-                'fecha': 'fecha'
-            }
-            
-            for entity_type, entity_list in entities_by_type.items():
-                if entity_type == 'estado':  # Ya procesado
-                    continue
-                
-                if entity_type not in entity_to_param:
-                    continue
-                
-                param_name = entity_to_param[entity_type]
-                valid_values = []
-                common_role = None
-                
-                for item in entity_list:
-                    entity_value = item['value']
-                    entity_role = item['role']
-                    
-                    validation_result = validate_entity_detection(
-                        entity_type=entity_type,
-                        entity_value=entity_value,
-                        min_length=2,
-                        check_fragments=True
+                    # Ejecutar búsqueda directa sin LLM
+                    direct_result = self.search_engine.execute_direct(
+                        pre_analyzed_params, search_type
                     )
                     
-                    if validation_result.get("valid"):
-                        normalized_value = validation_result.get("normalized", entity_value)
-                        valid_values.append(normalized_value)
-                        if entity_role and not common_role:
-                            common_role = entity_role
-                
-                # Guardar valores
-                if valid_values:
-                    if len(valid_values) > 1:
-                        if entity_type in ["empresa", "dosis"]:
-                            search_params[param_name] = {
-                                "value": ", ".join(valid_values),
-                                "role": common_role or "unspecified"
-                            }
-                        else:
-                            search_params[param_name] = ", ".join(valid_values)
-                    else:
-                        if entity_type in ["empresa", "dosis"]:
-                            search_params[param_name] = {
-                                "value": valid_values[0],
-                                "role": common_role or "unspecified"
-                            }
-                        else:
-                            search_params[param_name] = valid_values[0]
-            
-            logger.info(f"[EntityParams] {len(search_params)} parámetros extraídos")
-            return search_params
-            
-        except Exception as e:
-            logger.error(f"[EntityParams] Error: {e}", exc_info=True)
-            return {}
-
-    def _process_dosis_entity(self, entity: Dict[str, Any], search_params: Dict[str, Any]) -> None:
-        """
-        ✅ NUEVO: Procesa entidades de dosis con tipos específicos
-        """
-        try:
-            dosis_value = entity.get('value')
-            dosis_type = entity.get('dosis_type')  # 'gramaje', 'volumen', 'forma'
-            
-            if dosis_type:
-                # Guardar con tipo para filtrado más específico
-                search_params['dosis'] = {
-                    'value': dosis_value,
-                    'type': dosis_type
-                }
-                
-                logger.info(f"[DosisProcess] Dosis con tipo: {dosis_type} = {dosis_value}")
-            else:
-                # Dosis genérica
-                search_params['dosis'] = dosis_value
-                
-                logger.info(f"[DosisProcess] Dosis genérica: {dosis_value}")
-            
-        except Exception as e:
-            logger.error(f"[DosisProcess] Error: {e}")
-
-    def _process_estado_entity(self, entity: Dict[str, Any], search_params: Dict[str, Any]) -> None:
-        """
-        ✅ NUEVO: Procesa entidades de estado con roles específicos
-        """
-        try:
-            estado_role = entity.get('role')  # 'nuevo', 'poco_stock', 'vence_pronto', 'en_oferta'
-            estado_value = entity.get('value')
-            
-            if estado_role:
-                # Guardar con role para que actions lo procesen correctamente
-                search_params['estado'] = {
-                    'value': estado_value or estado_role,
-                    'role': estado_role
-                }
-                
-                logger.info(f"[EstadoProcess] Estado con role: {estado_role}")
-            else:
-                # Estado genérico sin role
-                search_params['estado'] = estado_value
-                
-                logger.info(f"[EstadoProcess] Estado genérico: {estado_value}")
-            
-        except Exception as e:
-            logger.error(f"[EstadoProcess] Error: {e}")
-
-    def _process_comparison_group(self, group_name: str, group_entities: List[Dict[str, Any]], 
-                           search_params: Dict[str, Any]) -> None:
-        """
-        ✅ VERSIÓN CORREGIDA: Maneja múltiples comparadores en el mismo grupo
-        """
-        try:
-            logger.debug(f"[CompGroup] Procesando grupo '{group_name}' con {len(group_entities)} entidades")
-            
-            # ✅ NUEVO: Separar en listas (no variables únicas)
-            comparadores = []
-            valores = []
-            
-            for entity in group_entities:
-                entity_type = entity.get('entity')
-                
-                if entity_type == 'comparador':
-                    comparadores.append(entity)
-                else:
-                    valores.append(entity)
-            
-            # ✅ VALIDAR: Debe haber al menos un comparador y un valor
-            if not comparadores or not valores:
-                logger.warning(f"[CompGroup] Grupo '{group_name}' incompleto: {len(comparadores)} comparadores, {len(valores)} valores")
-                return
-            
-            # ✅ NUEVO: Determinar tipo de parámetro base
-            first_value = valores[0]
-            value_type = first_value.get('entity')
-            
-            # Mapeo de entity_type a param_name
-            if value_type == 'cantidad_descuento':
-                param_base = 'descuento'
-            elif value_type == 'cantidad_bonificacion':
-                param_base = 'bonificacion'
-            elif value_type == 'cantidad_stock':
-                param_base = 'stock'
-            elif value_type == 'precio':
-                param_base = 'precio'
-            else:
-                param_base = value_type
-            
-            # ✅ NUEVO: Emparejar comparadores con valores
-            pares = []
-            
-            # Caso 1: Mismo número de comparadores y valores → emparejar 1 a 1
-            if len(comparadores) == len(valores):
-                for comp, val in zip(comparadores, valores):
-                    pares.append({
-                        'operator': comp.get('role'),
-                        'value': val.get('value'),
-                        'group': group_name
-                    })
-            
-            # Caso 2: Más valores que comparadores → usar último comparador para todos
-            elif len(comparadores) < len(valores):
-                for val in valores:
-                    pares.append({
-                        'operator': comparadores[-1].get('role'),
-                        'value': val.get('value'),
-                        'group': group_name
-                    })
-            
-            # Caso 3: Más comparadores que valores → usar primer valor para todos
-            else:
-                for comp in comparadores:
-                    pares.append({
-                        'operator': comp.get('role'),
-                        'value': valores[0].get('value'),
-                        'group': group_name
-                    })
-            
-            # ✅ NUEVO: Construir parámetros por tipo de operador
-            for par in pares:
-                operator_role = par['operator']
-                value = par['value']
-                
-                # Determinar sufijo según operador
-                if operator_role in ['gt', 'gte']:
-                    final_key = f"{param_base}_min"
-                elif operator_role in ['lt', 'lte']:
-                    final_key = f"{param_base}_max"
-                else:
-                    final_key = param_base
-                
-                # Guardar parámetro
-                search_params[final_key] = {
-                    'operator': operator_role,
-                    'value': value,
-                    'type': value_type,
-                    'group': group_name
-                }
-                
-                logger.info(f"[CompGroup] ✅ {final_key}: {operator_role} {value}")
-            
-        except Exception as e:
-            logger.error(f"[CompGroup] Error procesando grupo: {e}", exc_info=True)
-
-    def _clean_duplicate_parameters(self, search_params: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        ✅ NUEVO: Elimina parámetros duplicados (base + _min/_max)
-        
-        Regla: Si existe descuento_min o descuento_max, NO enviar descuento base
-        """
-        try:
-            cleaned_params = {}
-            
-            # Parámetros que pueden tener variantes _min/_max
-            comparable_params = ['descuento', 'bonificacion', 'stock', 'precio']
-            
-            for param_name in comparable_params:
-                has_min = f"{param_name}_min" in search_params
-                has_max = f"{param_name}_max" in search_params
-                has_base = param_name in search_params
-                
-                if has_min or has_max:
-                    # Si hay _min o _max, solo usar esos
-                    if has_min:
-                        cleaned_params[f"{param_name}_min"] = search_params[f"{param_name}_min"]
-                    if has_max:
-                        cleaned_params[f"{param_name}_max"] = search_params[f"{param_name}_max"]
+                    # Empaquetar resultado en formato estándar
+                    llm_result = {
+                        "success": direct_result.get("success"),
+                        "results": direct_result.get("results"),
+                        "total_results": direct_result.get("total_results"),
+                        "llm_used": "none (bypass)",
+                        "llm_time": 0.0,
+                        "final_params": pre_analyzed_params,
+                        "final_search_type": search_type
+                    }
                     
-                    # NO incluir el parámetro base
-                    if has_base:
-                        logger.info(f"[CleanDuplicates] Eliminado '{param_name}' (existe _min/_max)")
+                    logger.info(f"[HandleSearch] ✅ Bypass completado: {llm_result['total_results']} resultados")
                 
-                elif has_base:
-                    # Solo hay parámetro base, conservarlo
-                    cleaned_params[param_name] = search_params[param_name]
+                # --- RUTA 3: CPU COMPLEJO (LLM CON TIMEOUT) ---
+                else:
+                    logger.info("[HandleSearch] 🐢 Ruta: CPU con LLM (timeout 40s + fallback)")
+                    
+                    # Intentar con LLM CPU (timeout 40s)
+                    cpu_result = self.search_engine_cpu.execute_with_timeout(
+                        pre_analyzed_params=pre_analyzed_params,
+                        search_type=search_type,
+                        user_message=user_message,
+                        timeout=40
+                    )
+                    
+                    # Si LLM CPU tuvo éxito
+                    if cpu_result and cpu_result.get("success"):
+                        logger.info("[HandleSearch] ✅ CPU LLM exitoso, ejecutando búsqueda")
+                        
+                        final_params = cpu_result["params"]
+                        final_action = cpu_result["action"]
+                        final_search_type = "ofertas" if final_action == "search_offers" else "productos"
+                        
+                        # Ejecutar búsqueda con parámetros del LLM
+                        direct_result = self.search_engine.execute_direct(
+                            final_params, final_search_type
+                        )
+                        
+                        llm_result = {
+                            "success": direct_result.get("success"),
+                            "results": direct_result.get("results"),
+                            "total_results": direct_result.get("total_results"),
+                            "llm_used": "cpu",
+                            "llm_time": cpu_result.get("llm_time", 0.0),
+                            "final_params": final_params,
+                            "final_search_type": final_search_type
+                        }
+                    
+                    # Si LLM CPU falló (timeout/error) → FALLBACK al pre-análisis
+                    else:
+                        logger.warning("[HandleSearch] ⚠️ CPU LLM falló/timeout, usando fallback (pre-análisis)")
+                        
+                        direct_result = self.search_engine.execute_direct(
+                            pre_analyzed_params, search_type
+                        )
+                        
+                        llm_result = {
+                            "success": direct_result.get("success"),
+                            "results": direct_result.get("results"),
+                            "total_results": direct_result.get("total_results"),
+                            "llm_used": "fallback (pre-análisis)",
+                            "llm_time": 40.0,  # Timeout alcanzado
+                            "final_params": pre_analyzed_params,
+                            "final_search_type": search_type,
+                            "fallback_reason": "CPU LLM timeout/error"
+                        }
+                
+                # ============== PASO 4: PROCESAR RESULTADO ==============
+                # (Tu código original, sin cambios)
+                
+                if not llm_result.get("success"):
+                    logger.error(f"[HandleSearch] ❌ Error: {llm_result.get('error')}")
+                    return {
+                        'type': 'search_error',
+                        'error': llm_result.get('error'),
+                        'parameters': pre_analyzed_params
+                    }
+                
+                # Extraer resultados finales
+                final_results = llm_result.get('results', {})
+                total_results = llm_result.get('total_results', 0)
+                
+                logger.info(
+                    f"[HandleSearch] ✅ {total_results} resultados "
+                    f"(ruta: {llm_result.get('llm_used')}, tiempo: {llm_result.get('llm_time', 0):.2f}s)"
+                )
+                
+                return {
+                    'type': 'search_success',
+                    'search_type': llm_result.get('final_search_type', search_type),
+                    'parameters': llm_result.get('final_params', pre_analyzed_params),
+                    'search_results': final_results,
+                    'comparison_info': comparison_info,
+                    'llm_used': llm_result.get('llm_used'),
+                    'llm_time': llm_result.get('llm_time', 0.0)
+                }
             
-            # Copiar todos los demás parámetros que no son comparables
-            for key, value in search_params.items():
-                if key not in cleaned_params and not any(key.startswith(p) for p in comparable_params):
-                    cleaned_params[key] = value
-            
-            logger.info(f"[CleanDuplicates] {len(search_params)} → {len(cleaned_params)} parámetros")
-            return cleaned_params
-            
-        except Exception as e:
-            logger.error(f"[CleanDuplicates] Error: {e}")
-            return search_params
+            except Exception as e:
+                logger.error(f"[HandleSearch] Error: {e}", exc_info=True)
+                return {'type': 'search_error', 'error': str(e)}
+    # ============== ✅ REFACTORIZADO: _handle_modification_intent ==============
     
-    def _create_modification_confirmation_suggestion(self, actions: List[Dict[str, Any]],
-                                                ambiguity_check: Dict[str, Any],
-                                                search_type: str,
-                                                dispatcher: CollectingDispatcher = None) -> Dict[str, Any]:
+    def _handle_modification_intent(
+        self, 
+        context: Dict[str, Any], 
+        tracker: Tracker, 
+        dispatcher: CollectingDispatcher
+    ) -> Dict[str, Any]:
         """
-        ✅ CORREGIDO: Ya no envía mensaje (se envió antes)
-        """
-        try:
-            # ✅ Ya no enviamos mensaje aquí
-            
-            # Serializar actions
-            serialized_actions = []
-            for action in actions:
-                if isinstance(action, dict):
-                    serialized_actions.append(action)
-                else:
-                    serialized_actions.append({
-                        'type': action.action_type.value if hasattr(action, 'action_type') else 'unknown',
-                        'entity_type': action.entity_type if hasattr(action, 'entity_type') else '',
-                        'old_value': action.old_value if hasattr(action, 'old_value') else None,
-                        'new_value': action.new_value if hasattr(action, 'new_value') else None
-                    })
-            
-            suggestion_data = {
-                'suggestion_type': 'modification_confirmation',
-                'search_type': search_type,
-                'actions': serialized_actions,
-                'ambiguity_reason': ambiguity_check.get('reason'),
-                'ambiguity_details': ambiguity_check.get('details', {}),
-                'timestamp': datetime.now().isoformat(),
-                'awaiting_response': True
-            }
-            
-            logger.info(f"[ConfirmSuggestion] Creada sugerencia de confirmación")
-            
-            return {
-                'type': 'entity_suggestion',
-                'suggestion_data': suggestion_data,
-                'slot_cleanup_events': []
-            }
-            
-        except Exception as e:
-            logger.error(f"[ConfirmSuggestion] Error: {e}")
-            return {'type': 'modify_error', 'error': str(e)}
-
-    def _extract_nlu_modifications(self, tracker: Tracker) -> Dict[str, Any]:
-        """
-        ✅ OPTIMIZADO: Extrae modificaciones de roles old/new del NLU (incluyendo formatos compuestos)
+        ✅ NUEVO FLUJO: Pre-análisis de modificaciones → LLM → Búsqueda
         """
         try:
+            user_message = context.get('user_message', '')
             entities = tracker.latest_message.get("entities", [])
-            
-            modifications = {
-                'detected': False,
-                'actions': []
-            }
-            
-            logger.debug(f"[NLUMod] Analizando {len(entities)} entidades")
-            
-            # Agrupar entidades por tipo para encontrar pares old/new
-            entities_by_type = {}
-            for entity in entities:
-                entity_type = entity.get('entity')
-                role = entity.get('role', '')
-                value = entity.get('value')
-                
-                if not role or not value:
-                    continue
-                
-                # ✅ NUEVO: Detectar roles que terminen en _old o _new (ej: proveedor_old, proveedor_new)
-                role_suffix = None
-                if role.endswith('_old') or role == 'old':
-                    role_suffix = 'old'
-                elif role.endswith('_new') or role == 'new':
-                    role_suffix = 'new'
-                
-                if role_suffix:
-                    if entity_type not in entities_by_type:
-                        entities_by_type[entity_type] = {}
-                    entities_by_type[entity_type][role_suffix] = value
-                    logger.debug(f"[NLUMod] Detectado: {entity_type} con role '{role}' → {role_suffix} = '{value}'")
-            
-            # Crear acciones de modificación
-            for entity_type, roles in entities_by_type.items():
-                if 'old' in roles and 'new' in roles:
-                    modifications['actions'].append({
-                        'type': 'replace',
-                        'entity_type': entity_type,
-                        'old_value': roles['old'],
-                        'new_value': roles['new']
-                    })
-                    modifications['detected'] = True
-                    logger.info(f"[NLUMod] ✅ Reemplazo detectado: {entity_type} '{roles['old']}' → '{roles['new']}'")
-                
-                elif 'new' in roles and 'old' not in roles:
-                    # Solo hay new, es una adición
-                    modifications['actions'].append({
-                        'type': 'add',
-                        'entity_type': entity_type,
-                        'new_value': roles['new']
-                    })
-                    modifications['detected'] = True
-                    logger.info(f"[NLUMod] ✅ Adición detectada: {entity_type} = '{roles['new']}'")
-            
-            if modifications['detected']:
-                logger.info(f"[NLUMod] ✅ {len(modifications['actions'])} modificaciones extraídas del NLU")
-            else:
-                logger.debug("[NLUMod] No se encontraron modificaciones en el NLU")
-            
-            return modifications
-            
-        except Exception as e:
-            logger.error(f"[NLUMod] Error: {e}", exc_info=True)
-            return {'detected': False, 'actions': []}
+            previous_params = self._extract_previous_search_parameters(context)
+            search_type = previous_params.get('_previous_search_type', 'productos')
+            intent_name = context['current_intent']
 
-    def _validate_modification_entities(self, actions: List[Dict[str, Any]], 
-                                       search_type: str) -> Dict[str, Any]:
-        """
-        ✅ NUEVO: Valida que las entidades modificadas sean válidas para el tipo de búsqueda
-        """
-        try:
-            if not self.modification_detector:
-                return {'has_invalid': False, 'valid_actions': actions, 'invalid_actions': []}
+            # ============== PASO 1: VALIDAR NUEVAS ENTIDADES ==============
+            validation_result = self._validate_entities_with_helper(
+                tracker, 
+                intent_name, 
+                dispatcher
+            )
             
-            valid_actions = []
-            invalid_actions = []
-            validation_errors = []
+            if validation_result.get('has_suggestions') or validation_result.get('has_errors'):
+                logger.warning(f"[ModifyIntent] Modificación frenada por validación.")
+                return {
+                    'type': 'entity_suggestion',
+                    'suggestion_data': validation_result.get('suggestion_data'),
+                    'slot_cleanup_events': []
+                }
+
+            # ============== PASO 2: PRE-ANÁLISIS DE CAMBIOS (Cerebro A) ==============
             
-            for action in actions:
-                entity_type = action['entity_type']
-                
-                if self.modification_detector._is_valid_entity_for_search_type(entity_type, search_type):
-                    valid_actions.append(action)
-                else:
-                    invalid_actions.append(action)
-                    valid_for = self.modification_detector._get_valid_search_types(entity_type)
-                    validation_errors.append({
-                        'entity_type': entity_type,
-                        'value': action.get('new_value') or action.get('old_value'),
-                        'reason': f'not_valid_for_{search_type}',
-                        'valid_for': valid_for
-                    })
+            # 2.1 Normalizar nuevas entidades
+            normalized_entities = self._normalize_regex_entities(entities)
+            
+            # 2.2 Construir parámetros de los CAMBIOS detectados
+            current_params = self._build_search_params(normalized_entities, context, {})
+            
+            logger.info(f"[ModifyIntent] 🧠 Pre-análisis de cambios (Cerebro A): {current_params}")
+            logger.info(f"[ModifyIntent] 📋 Parámetros previos: {previous_params}")
+            
+            # ============== PASO 3: LLAMAR AL LLM (Cerebro B) ==============
+            
+            llm_result = self.search_engine.execute_search(
+                search_params=current_params,  # ← Cambios detectados
+                search_type=search_type,
+                user_message=user_message,
+                is_modification=True,  # ← Activar modo modificación
+                previous_params=previous_params,
+                chat_history=context.get('chat_history', [])
+            )
+            
+            # ============== PASO 4: PROCESAR RESULTADO ==============
+            
+            if not llm_result.get("success"):
+                logger.error(f"[ModifyIntent] ❌ Error: {llm_result.get('error')}")
+                return {
+                    'type': 'modify_error',
+                    'error': llm_result.get('error')
+                }
+            
+            final_results = llm_result.get('results', {})
+            total_results = llm_result.get('total_results', 0)
+            
+            logger.info(f"[ModifyIntent] ✅ {total_results} resultados después de modificar")
             
             return {
-                'has_invalid': len(invalid_actions) > 0,
-                'valid_actions': valid_actions,
-                'invalid_actions': invalid_actions,
-                'validation_errors': validation_errors
+                'type': 'search_success',
+                'search_type': llm_result.get('final_search_type', search_type),
+                'parameters': llm_result.get('final_params', current_params),
+                'search_results': final_results,
+                'modification_applied': True,
+                'llm_used': llm_result.get('llm_used'),
+                'llm_time': llm_result.get('llm_time', 0.0)
             }
-            
+                
         except Exception as e:
-            logger.error(f"[ModValidation] Error: {e}")
-            return {'has_invalid': False, 'valid_actions': actions, 'invalid_actions': []}
-
-    def _apply_nlu_modifications(self, current_params: Dict[str, Any], 
-                                 actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+            logger.error(f"[ModifyIntent] Error: {e}", exc_info=True)
+            return {'type': 'modify_error', 'error': str(e)}
+        
+    def _is_query_complex(
+        self, 
+        tracker: Tracker, 
+        pre_params: Dict[str, Any],
+        user_message: str
+    ) -> bool:
         """
-        ✅ NUEVO: Aplica modificaciones extraídas del NLU
+        ✅ NUEVA FUNCIÓN: Determina si una query es "compleja" y necesita LLM.
+        
+        SIMPLE (bypass directo):
+        - 1-2 filtros claros del NLU (ej: {"proveedor": "holliday"})
+        - Query corta sin ambigüedad
+        
+        COMPLEJA (necesita LLM):
+        - Más de 3 filtros
+        - Mensaje largo con contexto ambiguo
+        - Comparaciones numéricas (descuentos, stock)
+        - Intents de modificación
+        - Pre-análisis vacío pero mensaje largo (NLU falló)
+        
+        Args:
+            tracker: Tracker de Rasa
+            pre_params: Parámetros del pre-análisis
+            user_message: Mensaje original del usuario
+        
+        Returns:
+            True si es compleja (necesita LLM), False si es simple (bypass)
         """
         try:
-            rebuilt = {}
+            intent = tracker.get_intent_of_latest_message()
             
-            # Copiar parámetros actuales
-            for key, value in current_params.items():
-                if not key.startswith('_'):
-                    rebuilt[key] = value
+            # REGLA 1: Modificaciones SIEMPRE son complejas
+            if intent.startswith('modificar_busqueda'):
+                logger.debug("[IsComplex] Modificación → COMPLEJO")
+                return True
             
-            # Aplicar modificaciones
-            for action in actions:
-                action_type = action['type']
-                entity_type = action['entity_type']
-                
-                if action_type == 'replace':
-                    old_value = action['old_value']
-                    new_value = action['new_value']
-                    
-                    # Reemplazar
-                    if entity_type in rebuilt:
-                        if isinstance(rebuilt[entity_type], dict) and 'value' in rebuilt[entity_type]:
-                            rebuilt[entity_type]['value'] = new_value
-                        else:
-                            rebuilt[entity_type] = new_value
-                        logger.info(f"[NLUApply] Reemplazado: {entity_type} '{old_value}' → '{new_value}'")
-                    else:
-                        rebuilt[entity_type] = new_value
-                        logger.info(f"[NLUApply] Agregado (reemplazo): {entity_type} = '{new_value}'")
-                
-                elif action_type == 'add':
-                    new_value = action['new_value']
-                    rebuilt[entity_type] = new_value
-                    logger.info(f"[NLUApply] Agregado: {entity_type} = '{new_value}'")
+            # REGLA 2: Pre-análisis vacío + mensaje largo = ambigüedad
+            if not pre_params and len(user_message) > 15:
+                logger.debug("[IsComplex] Pre-análisis vacío + mensaje largo → COMPLEJO")
+                return True
             
-            logger.info(f"[NLUApply] {len(rebuilt)} parámetros después de modificaciones")
-            return rebuilt
+            # REGLA 3: Muchos filtros = complejo
+            num_filters = len([v for v in pre_params.values() if v])
+            if num_filters > 3:
+                logger.debug(f"[IsComplex] {num_filters} filtros → COMPLEJO")
+                return True
+            
+            # REGLA 4: Comparaciones numéricas = complejo
+            numeric_filters = ['descuento_min', 'descuento_max', 'stock_min', 'stock_max', 
+                             'bonificacion_min', 'bonificacion_max']
+            has_numeric = any(k in pre_params for k in numeric_filters)
+            if has_numeric:
+                logger.debug("[IsComplex] Filtros numéricos detectados → COMPLEJO")
+                return True
+            
+            # REGLA 5: Múltiples estados = complejo
+            estado_value = pre_params.get('estado', '')
+            if isinstance(estado_value, str) and ',' in estado_value:
+                logger.debug("[IsComplex] Múltiples estados → COMPLEJO")
+                return True
+            
+            # REGLA 6: Dosis con múltiples componentes = complejo
+            dosis_fields = ['dosis_gramaje', 'dosis_volumen', 'dosis_forma']
+            num_dosis = sum(1 for k in dosis_fields if k in pre_params and pre_params[k])
+            if num_dosis >= 2:
+                logger.debug(f"[IsComplex] {num_dosis} campos de dosis → COMPLEJO")
+                return True
+            
+            # REGLA 7: Mensaje muy largo (>50 chars) con contexto = complejo
+            if len(user_message) > 50 and num_filters > 0:
+                logger.debug("[IsComplex] Mensaje largo con contexto → COMPLEJO")
+                return True
+            
+            # POR DEFECTO: Query simple (1-2 filtros básicos)
+            logger.debug(f"[IsComplex] Query simple ({num_filters} filtros) → BYPASS")
+            return False
             
         except Exception as e:
-            logger.error(f"[NLUApply] Error: {e}")
-            return current_params
+            logger.error(f"[IsComplex] Error: {e}, asumiendo COMPLEJO por seguridad")
+            return True  # En caso de error, asumir complejo (usar LLM o fallback)
+    
+
+    # ============== BUILD SEARCH PARAMS (Cerebro A - LÓGICA COMPLETA) ==============
+    
     def _build_search_params(
         self, 
         entities: List[Dict[str, Any]], 
         context: Dict[str, Any],
         comparison_info: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Construye parámetros de búsqueda"""
+        """
+        ✅ CONSERVADO: Esta es la lógica de "Cerebro A"
+        Construye el pre-análisis estructurado que el LLM usará
+        """
         params = {}
         
         # Mapeo de entidades
@@ -1072,9 +653,56 @@ class ActionBusquedaSituacion(Action):
                     elif operator in ['lt', 'lte']:
                         params['stock_max'] = self._get_quantity_from_entities(entities, group)
         
+        # Procesar estados múltiples
+        estado_entities = [e for e in entities if e.get('entity') == 'estado']
+        if estado_entities:
+            self._process_multiple_estados(
+                [{'entity': e} for e in estado_entities], 
+                params
+            )
+        
         logger.debug(f"[BuildParams] Construidos: {params}")
         return params
 
+    def _process_multiple_estados(self, estado_entities: List[Dict[str, Any]], 
+                              search_params: Dict[str, Any]) -> None:
+        """
+        Procesa múltiples estados y los combina
+        """
+        try:
+            estados_validos = []
+            
+            for item in estado_entities:
+                entity_obj = item['entity']
+                estado_role = entity_obj.get('role')
+                estado_value = entity_obj.get('value')
+                
+                estado = estado_role if estado_role else estado_value
+                
+                if estado:
+                    estado_normalizado = estado.lower().replace(' ', '_')
+                    
+                    estado_map = {
+                        'nuevas': 'nuevo',
+                        'novedades': 'nuevo',
+                        'no_vistas': 'nuevo',
+                        'stock_limitado': 'poco_stock',
+                        'ultimas_unidades': 'poco_stock',
+                        'proximo_a_vencer': 'vence_pronto',
+                        'por_vencer': 'vence_pronto'
+                    }
+                    
+                    estado_final = estado_map.get(estado_normalizado, estado_normalizado)
+                    
+                    if estado_final not in estados_validos:
+                        estados_validos.append(estado_final)
+            
+            if estados_validos:
+                search_params['estado'] = ','.join(estados_validos)
+                logger.info(f"[MultiEstados] {len(estados_validos)} estados procesados: {estados_validos}")
+            
+        except Exception as e:
+            logger.error(f"[MultiEstados] Error: {e}")
 
     def _get_quantity_from_entities(self, entities: List[Dict], group: str) -> Optional[float]:
         """
@@ -1087,467 +715,290 @@ class ActionBusquedaSituacion(Action):
             return None
         except:
             return None
+
+    # ============== HELPERS (Conservados sin cambios) ==============
     
-# En actions_busqueda.py
-
-    def _handle_search_intent(
-        self, 
-        context: Dict[str, Any], 
-        tracker: Tracker, 
-        dispatcher: CollectingDispatcher,
-        comparison_info: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """Maneja intents de búsqueda usando SearchEngine"""
-        try:
-            intent_name = context['current_intent']
-            entities = context['entities']
-            user_message = context.get('user_message', '')
-            
-            # 1. Normalizar entidades (LÓGICA EXISTENTE)
-            normalized_entities = self._normalize_regex_entities(entities)
-            
-            # ==========================================================
-            # ✅ PASO 2: VALIDAR ENTIDADES (LÓGICA FALTANTE)
-            # Llamar al helper de validación ANTES de buscar
-            validation_result = self._validate_entities_with_helper(
-                tracker, 
-                intent_name, 
-                dispatcher
-            )
-            
-            # ✅ PASO 3: FRENAR SI HAY ERRORES O SUGERENCIAS
-            if validation_result.get('has_suggestions') or validation_result.get('has_errors'):
-                logger.warning(f"[HandleSearch] Búsqueda frenada por validación.")
-                # Retornamos el payload de la sugerencia para que _process_result lo maneje
-                return {
-                    'type': 'entity_suggestion',
-                    'suggestion_data': validation_result.get('suggestion_data'),
-                    'slot_cleanup_events': []
-                }
-            # ==========================================================
-            
-            # ✅ PASO 4: CONTINUAR CON BÚSQUEDA (si todo es válido)
-            
-            # 2. Construir parámetros (LÓGICA EXISTENTE)
-            search_params = self._build_search_params(
-                normalized_entities, 
-                context, 
-                comparison_info
-            )
-            
-            # 3. Determinar tipo de búsqueda
-            search_type = self._determine_search_type(intent_name)
-            
-            logger.info(f"[HandleSearch] Tipo: {search_type}, Params: {search_params}")
-            
-            # 4. ✅ LLAMAR AL SEARCH ENGINE con info procesada
-            result = self.search_engine.execute_search(
-                search_params=search_params,
-                search_type=search_type,
-                user_message=user_message,
-                is_modification=False,  # Esto es búsqueda nueva
-                previous_params=None
-            )
-            
-            # 5. Procesar resultado
-            if result.get("success"):
-                logger.info(f"[HandleSearch] ✅ {result.get('total_results', 0)} resultados")
-                return {
-                    'type': 'search_success',
-                    'search_type': search_type,
-                    'parameters': search_params,
-                    'search_results': result.get('results', {}),
-                    'comparison_info': comparison_info
-                }
-            else:
-                logger.error(f"[HandleSearch] ❌ Error: {result.get('error')}")
-                return {
-                    'type': 'search_error',
-                    'error': result.get('error'),
-                    'parameters': search_params
-                }
-        
-        except Exception as e:
-            logger.error(f"[HandleSearch] Error: {e}", exc_info=True)
-            return {'type': 'search_error', 'error': str(e)}
-
-
-    def _handle_modification_intent(
-        self, 
-        context: Dict[str, Any], 
-        tracker: Tracker, 
-        dispatcher: CollectingDispatcher
-    ) -> Dict[str, Any]:
-        """Maneja intents de MODIFICACIÓN"""
-        try:
-            user_message = context.get('user_message', '')
-            entities = tracker.latest_message.get("entities", [])
-            previous_params = self._extract_previous_search_parameters(context)
-            search_type = previous_params.get('_previous_search_type', 'producto')
-            intent_name = context['current_intent']
-
-            # ==========================================================
-            # ✅ PASO 1: VALIDAR NUEVAS ENTIDADES
-            # (LÓGICA FALTANTE)
-            validation_result = self._validate_entities_with_helper(
-                tracker, 
-                intent_name, 
-                dispatcher
-            )
-            
-            # ✅ PASO 2: FRENAR SI HAY ERRORES O SUGERENCIAS
-            if validation_result.get('has_suggestions') or validation_result.get('has_errors'):
-                logger.warning(f"[ModifyIntent] Modificación frenada por validación.")
-                # Retornamos el payload de la sugerencia para que _process_result lo maneje
-                return {
-                    'type': 'entity_suggestion',
-                    'suggestion_data': validation_result.get('suggestion_data'),
-                    'slot_cleanup_events': []
-                }
-            # ==========================================================
-
-            # ✅ PASO 3: CONTINUAR SI ES VÁLIDO
-            
-            # Normalizar nuevas entidades
-            normalized_entities = self._normalize_regex_entities(entities)
-            
-            # ⚠️ ATENCIÓN: Sigues usando _build_search_params aquí también.
-            # Deberías considerar reemplazar esto por _extract_search_parameters_from_entities(tracker)
-            current_params = self._build_search_params(normalized_entities, context, {})
-            
-            # ✅ LLAMAR AL SEARCH ENGINE para modificación
-            result = self.search_engine.execute_search(
-                search_params=current_params,
-                search_type=search_type,
-                user_message=user_message,
-                is_modification=True,  # ← Esto activa el LLM
-                previous_params=previous_params,
-                chat_history=context.get('chat_history', [])
-            )
-            
-            if result.get("success"):
-                return {
-                    'type': 'search_success',
-                    'search_type': search_type,
-                    'parameters': current_params,
-                    'search_results': result.get('results', {}),
-                    'modification_applied': True
-                }
-            else:
-                return {
-                    'type': 'modify_error',
-                    'error': result.get('error')
-                }
-                
-        except Exception as e:
-            logger.error(f"[ModifyIntent] Error: {e}", exc_info=True)
-            return {'type': 'modify_error', 'error': str(e)}
-            
-            
     def _determine_search_type(self, intent_name: str) -> str:
-        """
-        Determina si buscar productos u ofertas según el intent
-        """
+        """Determina si buscar productos u ofertas"""
         if 'oferta' in intent_name.lower():
             return 'ofertas'
         return 'productos'
-    # Métodos auxiliares (sin cambios)
+    
     def _is_search_intent(self, intent_name: str) -> bool:
         search_intents = ['buscar_producto', 'buscar_oferta', 'consultar_novedades_producto', 
                          'consultar_novedades_oferta', 'consultar_recomendaciones_producto',
                          'consultar_recomendaciones_oferta']
         return intent_name in search_intents
     
-    def _is_modify_intent(self, intent_name: str) -> bool:
-        """Detecta intents de búsqueda o modificación (incluyendo sub-intents)"""
-        
-        return (
-            intent_name.startswith('modificar_busqueda')  # ✅ Incluye todos los sub-intents
-        )
-    
-    def _get_search_type(self, intent_name: str, context: Dict[str, Any] = None) -> str:
-        if intent_name == "modificar_busqueda":
-            if context:
-                search_history = context.get('search_history', [])
-                if search_history:
-                    return search_history[-1].get('type', 'producto')
-            return "producto"
-        elif "oferta" in intent_name:
-            return "oferta"
-        elif "producto" in intent_name:
-            return "producto"
-        else:
-            return "producto"
-    
-
-    def _is_category_removal(self, entity_type: str, values: List[str]) -> bool:
-        """
-        ✅ NUEVO: Detecta si el usuario quiere remover la categoría completa
-        vs un valor específico dentro de ella
-        """
+    def _analyze_comparison_with_groups(self, tracker: Tracker) -> Dict[str, Any]:
+        """Analiza comparaciones extrayendo grupos del NLU"""
         try:
-            # Si no hay valores o todos son None → remover categoría
-            if not values or all(v is None for v in values):
-                return True
+            if not self.comparison_detector:
+                return {}
             
-            # Si el valor mencionado es el nombre de la categoría misma → remover categoría
-            # Ej: "sin estado" donde value='estado' y entity_type='estado'
-            category_names = [entity_type, entity_type.lower()]
+            text = tracker.latest_message.get("text", "")
+            entities = tracker.latest_message.get("entities", [])
             
-            for value in values:
-                if value and value.lower() in category_names:
-                    return True
+            if not text:
+                return {}
             
-            # Casos especiales para ciertos tipos de entidad
-            generic_removal_terms = ['filtro', 'restriccion', 'limite', 'parametro']
-            for value in values:
-                if value and value.lower() in generic_removal_terms:
-                    return True
+            logger.debug(f"[Comparison] Analizando con {len(entities)} entidades")
             
-            return False
+            entity_groups = self._extract_entity_groups(entities)
+            comparison_result = self.comparison_detector.detect_comparison(text, entities)
             
-        except Exception as e:
-            logger.error(f"[CategoryRemoval] Error: {e}")
-            return True  # En caso de error, asumir remoción de categoría
-
-    def _remove_entire_parameter(self, params: Dict, entity_type: str):
-        """Remueve un parámetro completo y sus variantes"""
-        keys_to_remove = [
-            entity_type,
-            f"{entity_type}_min",
-            f"{entity_type}_max"
-        ]
-        
-        for key in keys_to_remove:
-            params.pop(key, None)
-
-    def _remove_specific_values(self, params: Dict, entity_type: str, values_to_remove: List[str]):
-        """Remueve valores específicos de un parámetro que puede tener múltiples valores"""
-        
-        # Buscar el parámetro en params
-        param_key = entity_type
-        if param_key not in params:
-            # Intentar con variantes
-            param_key = f"{entity_type}_min" if f"{entity_type}_min" in params else \
-                        f"{entity_type}_max" if f"{entity_type}_max" in params else None
+            if not comparison_result.detected:
+                return {}
             
-            if not param_key:
-                return  # No existe el parámetro
-        
-        current_value = params[param_key]
-        
-        # Si es string simple, verificar si contiene múltiples valores separados por coma
-        if isinstance(current_value, str):
-            current_values = [v.strip() for v in current_value.split(',')]
+            comparison_info = {
+                'detected': True,
+                'operator': comparison_result.operator.value if comparison_result.operator else None,
+                'operator_role': self._map_operator_to_role(comparison_result.operator),
+                'quantity': comparison_result.quantity,
+                'type': comparison_result.comparison_type.value if comparison_result.comparison_type else None,
+                'entities': comparison_result.entities,
+                'groups': comparison_result.groups_detected,
+                'roles': comparison_result.roles_detected,
+                'confidence': comparison_result.confidence,
+                'temporal_filters': comparison_result.temporal_filters,
+                'normalized_dates': comparison_result.normalized_dates,
+                'nlu_groups': entity_groups,
+                'grouped_entities': self._group_entities_by_filter(entity_groups)
+            }
             
-            # Remover valores especificados
-            remaining_values = [v for v in current_values if v.lower() not in [r.lower() for r in values_to_remove]]
-            
-            if remaining_values:
-                # Actualizar con valores restantes
-                params[param_key] = ', '.join(remaining_values)
-            else:
-                # Si no quedan valores, remover el parámetro completo
-                params.pop(param_key)
-        
-        # Si es dict con value/role
-        elif isinstance(current_value, dict) and 'value' in current_value:
-            value_str = current_value['value']
-            current_values = [v.strip() for v in value_str.split(',')]
-            
-            remaining_values = [v for v in current_values if v.lower() not in [r.lower() for r in values_to_remove]]
-            
-            if remaining_values:
-                current_value['value'] = ', '.join(remaining_values)
-            else:
-                params.pop(param_key)
-
-    def _handle_ignored_suggestions(self, context: Dict[str, Any], current_intent: str, 
-                                   dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """Detecta y limpia sugerencias ignoradas automáticamente"""
-        try:
-            pending_suggestion = context.get('pending_suggestion')
-            if not pending_suggestion:
-                return {'suggestion_was_ignored': False, 'events': []}
-            
-            suggestion_ignored = SuggestionManager.check_if_suggestion_ignored(
-                current_intent, pending_suggestion, context.get('is_small_talk', False)
+            logger.info(
+                f"[Comparison] Detectada con grupos: {list(entity_groups.keys())}, "
+                f"confianza: {comparison_result.confidence:.2f}"
             )
             
-            if suggestion_ignored:
-                suggestion_type = pending_suggestion.get('suggestion_type', 'unknown')
-                original_search_type = pending_suggestion.get('search_type', 'unknown')
-                
-                logger.info(f"[IgnoredSugg] Detectada - Tipo: {suggestion_type}")
-                
-                if suggestion_type == 'entity_correction':
-                    original_value = pending_suggestion.get('original_value', '')
-                    message = f"Entiendo que prefieres hacer una nueva búsqueda en lugar de corregir '{original_value}'."
-                elif suggestion_type == 'type_correction':
-                    message = "Perfecto, te ayudo con esta nueva búsqueda."
-                else:
-                    message = "Perfecto, te ayudo con tu nueva búsqueda."
-                
-                current_search_type = self._get_search_type(current_intent)
-                if original_search_type != 'unknown' and current_search_type != original_search_type:
-                    try:
-                        dispatcher.utter_message(message)
-                    except Exception as msg_error:
-                        logger.error(f"[IgnoredSugg] Error enviando mensaje: {msg_error}")
-                
-                cleanup_events = [
-                    SlotSet("pending_suggestion", None),
-                    SlotSet("suggestion_context", None),
-                    SlotSet("user_engagement_level", "engaged"),
-                ]
-                
-                return {
-                    'suggestion_was_ignored': True,
-                    'events': cleanup_events,
-                    'cleanup_reason': 'user_changed_search_type'
-                }
-            
-            return {'suggestion_was_ignored': False, 'events': []}
+            return comparison_info
             
         except Exception as e:
-            logger.error(f"[IgnoredSugg] Error: {e}", exc_info=True)
-            return {
-                'suggestion_was_ignored': True,
-                'events': [SlotSet("pending_suggestion", None)],
-                'cleanup_reason': 'error_recovery'
-            }
-
-    def _validate_comparison_coherence(self, comparison_info: Dict[str, Any], 
-                                       parameters: Dict[str, str]) -> bool:
-        """
-        ✅ OPTIMIZADO: Valida coherencia usando grupos del NLU
-        """
-        try:
-            if not comparison_info or not comparison_info.get('detected'):
-                return False
-            
-            # ✅ NUEVO: Validar usando grupos del NLU si están disponibles
-            nlu_groups = comparison_info.get('nlu_groups', {})
-            if nlu_groups:
-                # Si hay grupos del NLU, la comparación es inherentemente coherente
-                # porque ya fue validada por el NLU
-                logger.info(f"[CoherenceCheck] Validada por NLU groups: {list(nlu_groups.keys())}")
-                return True
-            
-            # Fallback: validación original
-            comparison_type = comparison_info.get('type')
-            confidence = comparison_info.get('confidence', 0.0)
-            
-            if confidence < 0.7:
-                logger.warning(f"[CoherenceCheck] Baja confianza: {confidence:.2f}")
-                return False
-            
-            if comparison_type == 'price':
-                has_price_entities = any(
-                    key in parameters for key in ['precio', 'descuento', 'bonificacion']
-                )
-                if not has_price_entities:
-                    logger.warning(f"[CoherenceCheck] Tipo 'price' sin entidades de precio")
-                    return False
-            
-            elif comparison_type == 'quantity':
-                if 'cantidad' not in parameters:
-                    logger.warning(f"[CoherenceCheck] Tipo 'quantity' sin entidad cantidad")
-                    return False
-            
-            elif comparison_type == 'stock':
-                if 'stock' not in parameters:
-                    logger.warning(f"[CoherenceCheck] Tipo 'stock' sin entidad stock")
-                    return False
-            
-            logger.info(f"[CoherenceCheck] Validada: {comparison_type} (conf: {confidence:.2f})")
-            return True
-            
-        except Exception as e:
-            logger.error(f"[CoherenceCheck] Error: {e}")
-            return False
-
-    def _extract_temporal_filters(self, text: str, comparison_info: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Extrae filtros temporales del texto"""
-        try:
-            temporal_filters = {}
-            text_lower = text.lower()
-            
-            # Si hay filtros temporales de comparación, usarlos como base
-            if comparison_info and comparison_info.get('temporal_filters'):
-                temporal_filters.update(comparison_info['temporal_filters'])
-                logger.debug(f"[TemporalFilters] Usando de comparación: {temporal_filters}")
-            
-            # Detectar términos temporales adicionales
-            now = datetime.now()
-            
-            if not temporal_filters and any(word in text_lower for word in ["reciente", "nuevo", "últimos"]):
-                temporal_filters["date_from"] = (now - timedelta(weeks=2)).strftime("%Y-%m-%d")
-                temporal_filters["date_to"] = now.strftime("%Y-%m-%d")
-                temporal_filters["period"] = "recent"
-            
-            if any(word in text_lower for word in ["vigente", "válido", "activo"]):
-                if not temporal_filters.get("date_from"):
-                    temporal_filters["date_from"] = now.strftime("%Y-%m-%d")
-                temporal_filters["status"] = "active"
-            
-            if any(phrase in text_lower for phrase in ["que vencen", "próximos a vencer", "por vencer"]):
-                temporal_filters["date_to"] = (now + timedelta(days=30)).strftime("%Y-%m-%d")
-                temporal_filters["status"] = "expiring_soon"
-            
-            if temporal_filters:
-                logger.info(f"[TemporalFilters] Extraídos: {temporal_filters}")
-            
-            return temporal_filters
-            
-        except Exception as e:
-            logger.error(f"[TemporalFilters] Error: {e}", exc_info=True)
+            logger.error(f"[Comparison] Error: {e}", exc_info=True)
             return {}
 
-    def _format_temporal_description(self, temporal_filters: Dict[str, Any]) -> str:
-        """Formatea descripción legible de filtros temporales"""
+    def _extract_entity_groups(self, entities: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """Extrae grupos de entidades del NLU"""
         try:
-            if not temporal_filters:
-                return ""
+            groups = {}
             
-            descriptions = []
+            for entity in entities:
+                group = entity.get('group')
+                if group:
+                    if group not in groups:
+                        groups[group] = []
+                    
+                    groups[group].append({
+                        'entity': entity.get('entity'),
+                        'value': entity.get('value'),
+                        'role': entity.get('role'),
+                        'confidence': entity.get('confidence', 0.0)
+                    })
             
-            if temporal_filters.get("period"):
-                period_descriptions = {
-                    "current_week": "de esta semana",
-                    "current_month": "de este mes",
-                    "recent": "recientes",
-                    "current_and_future": "vigentes"
-                }
-                period = temporal_filters["period"]
-                if period in period_descriptions:
-                    descriptions.append(period_descriptions[period])
+            if groups:
+                logger.debug(f"[Groups] Extraídos {len(groups)} grupos: {list(groups.keys())}")
             
-            if temporal_filters.get("date_from") and temporal_filters.get("date_to"):
-                if temporal_filters["date_from"] == temporal_filters["date_to"]:
-                    descriptions.append(f"del {temporal_filters['date_from']}")
-                else:
-                    descriptions.append(f"desde {temporal_filters['date_from']} hasta {temporal_filters['date_to']}")
-            elif temporal_filters.get("date_from"):
-                descriptions.append(f"desde {temporal_filters['date_from']}")
-            elif temporal_filters.get("date_to"):
-                descriptions.append(f"hasta {temporal_filters['date_to']}")
-            
-            if temporal_filters.get("status") == "expiring_soon":
-                descriptions.append("que vencen pronto")
-            elif temporal_filters.get("status") == "active":
-                descriptions.append("activos")
-            
-            return " ".join(descriptions) if descriptions else ""
+            return groups
             
         except Exception as e:
-            logger.error(f"[TemporalDesc] Error: {e}")
-            return ""
+            logger.error(f"[Groups] Error extrayendo: {e}")
+            return {}
 
+    def _group_entities_by_filter(self, entity_groups: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Dict[str, Any]]:
+        """Agrupa entidades por tipo de filtro"""
+        try:
+            grouped = {}
+            
+            for group_name, entities in entity_groups.items():
+                if 'descuento' in group_name:
+                    filter_type = 'descuento'
+                elif 'precio' in group_name:
+                    filter_type = 'precio'
+                elif 'stock' in group_name:
+                    filter_type = 'stock'
+                elif 'bonificacion' in group_name:
+                    filter_type = 'bonificacion'
+                else:
+                    filter_type = group_name
+                
+                filter_data = {}
+                for entity in entities:
+                    entity_type = entity['entity']
+                    role = entity.get('role')
+                    
+                    if entity_type == 'comparador':
+                        filter_data['operator'] = role
+                        filter_data['operator_text'] = entity['value']
+                    else:
+                        filter_data['value'] = entity['value']
+                        filter_data['entity_type'] = entity_type
+                
+                grouped[filter_type] = filter_data
+            
+            if grouped:
+                logger.debug(f"[GroupedFilters] {len(grouped)} filtros agrupados")
+            
+            return grouped
+            
+        except Exception as e:
+            logger.error(f"[GroupedFilters] Error: {e}")
+            return {}
+
+    def _map_operator_to_role(self, operator) -> Optional[str]:
+        """Mapea operador de comparación a role del NLU"""
+        try:
+            from .comparison_detector import ComparisonOperator
+            
+            mapping = {
+                ComparisonOperator.GREATER_THAN: 'gt',
+                ComparisonOperator.LESS_THAN: 'lt',
+                ComparisonOperator.EQUAL_TO: 'eq',
+                ComparisonOperator.DIFFERENT_FROM: 'neq'
+            }
+            
+            return mapping.get(operator)
+            
+        except Exception as e:
+            logger.error(f"[OperatorMap] Error: {e}")
+            return None
+
+    def _extract_previous_search_parameters(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Extrae parámetros de búsqueda previa"""
+        try:
+            search_history = context.get('search_history', [])
+            
+            if not search_history:
+                return {}
+            
+            latest_search = search_history[-1]
+            previous_params = latest_search.get('parameters', {})
+            search_type = latest_search.get('type', 'productos')
+            
+            enriched_params = previous_params.copy()
+            enriched_params['_previous_search_type'] = search_type
+            enriched_params['_previous_timestamp'] = latest_search.get('timestamp')
+            
+            if previous_params:
+                logger.info(f"[PrevParams] {len(previous_params)} parámetros de búsqueda anterior ({search_type})")
+            
+            return enriched_params
+            
+        except Exception as e:
+            logger.error(f"[PrevParams] Error: {e}")
+            return {}
+
+    # ============== SEND RESULTS ==============
+    
+    def _send_search_results(self, result: Dict[str, Any], dispatcher: CollectingDispatcher) -> None:
+        """
+        Envía un solo mensaje con 'text' (resumen) y 'custom' (JSON)
+        """
+        try:
+            search_results = result.get('search_results', {})
+            search_type = result.get('search_type', 'productos')
+            total_results = search_results.get('total_results', 0)
+            
+            # Mensaje de texto
+            if total_results == 0:
+                params_display = self._format_parameters_for_display(result.get('parameters', {}))
+                params_str = ", ".join([f"{k}: {v}" for k, v in params_display.items()])
+                text_message = f"❌ No encontré {search_type} con los parámetros:\n{params_str}"
+            else:
+                item_type = "ofertas" if search_type == "ofertas" else "productos"
+                text_message = f"✅ Encontré {total_results} {item_type}."
+            
+            # Payload custom
+            custom_payload = {
+                "type": "search_results",
+                "search_type": search_type,
+                "validated": True,
+                "timestamp": datetime.now().isoformat(),
+                "parameters": result.get('parameters', {}),
+                "search_results": search_results,
+                "comparison_analysis": result.get('comparison_info')
+            }
+            
+            dispatcher.utter_message(
+                text=text_message,
+                custom=custom_payload
+            )
+            
+            logger.info(f"[SearchResults] Enviado 1 mensaje con 'text' y 'custom' (JSON)")
+
+        except Exception as e:
+            logger.error(f"[SearchResults] Error: {e}", exc_info=True)
+            dispatcher.utter_message("Encontré resultados pero hubo un error al mostrarlos.")
+
+    def _format_parameters_for_display(self, parameters: Dict[str, Any]) -> Dict[str, str]:
+        """Formatea parámetros para mostrar al usuario"""
+        try:
+            formatted = {}
+            
+            for key, value in parameters.items():
+                if isinstance(value, dict):
+                    if 'value' in value and 'role' in value:
+                        role = value['role']
+                        val = value['value']
+                        
+                        if key == 'estado':
+                            role_display = {
+                                'nuevo': 'productos nuevos',
+                                'poco_stock': 'poco stock',
+                                'vence_pronto': 'vence pronto',
+                                'en_oferta': 'en oferta'
+                            }.get(role, val)
+                            formatted[key] = role_display
+                        
+                        elif key == 'empresa':
+                            formatted[key] = f"{val}" if role == 'proveedor' else f"{val} ({role})"
+                        
+                        else:
+                            formatted[key] = val
+                    
+                    elif 'value' in value and 'type' in value:
+                        dosis_type = value['type']
+                        val = value['value']
+                        
+                        type_display = {
+                            'gramaje': 'mg/g',
+                            'volumen': 'ml/l',
+                            'forma': ''
+                        }.get(dosis_type, '')
+                        
+                        formatted[key] = f"{val} {type_display}".strip()
+                    
+                    elif 'operator' in value and 'value' in value:
+                        operator = value['operator']
+                        val = value['value']
+                        
+                        op_display = {
+                            'lt': 'menor a',
+                            'gt': 'mayor a',
+                            'lte': 'hasta',
+                            'gte': 'al menos',
+                            'eq': 'igual a'
+                        }.get(operator, operator)
+                        
+                        formatted[key] = f"{op_display} {val}"
+                    
+                    else:
+                        formatted[key] = str(value.get('value', value))
+                
+                else:
+                    formatted[key] = str(value)
+            
+            return formatted
+            
+        except Exception as e:
+            logger.error(f"[FormatDisplay] Error: {e}")
+            return parameters
+
+    # ============== VALIDACIÓN DE ENTIDADES ==============
+    
     def _validate_entities_with_helper(self, tracker: Tracker, intent_name: str, 
                                    dispatcher: CollectingDispatcher) -> Dict[str, Any]:
         """
-        ✅ CORREGIDO: Consolida TODOS los mensajes en uno solo
+        Valida entidades y genera sugerencias si es necesario
         """
         try:
             entities = tracker.latest_message.get("entities", [])
@@ -1567,7 +1018,7 @@ class ActionBusquedaSituacion(Action):
             
             helper_result = validate_entities_for_intent(entities_sorted, intent_name, min_length=2, check_fragments=True)
             
-            # ✅ ACUMULAR TODOS LOS MENSAJES
+            # Acumular todos los mensajes
             all_messages = []
             enhanced_suggestions = []
             cross_entity_suggestions = []
@@ -1588,7 +1039,7 @@ class ActionBusquedaSituacion(Action):
                         if suggestions_list:
                             suggestion_text = suggestions_list[0]
                             message = f"'{raw_value}' no es válido. ¿Te refieres a '{suggestion_text}'?"
-                            all_messages.append(message)  # ✅ Acumular mensaje
+                            all_messages.append(message)
                             
                             suggestion_data = SuggestionManager.create_entity_suggestion(
                                 raw_value, entity_type, suggestion_text, 
@@ -1606,7 +1057,7 @@ class ActionBusquedaSituacion(Action):
                             if cross_matches:
                                 cross_message = self.format_cross_entity_suggestions(cross_matches)
                                 message = f"'{raw_value}' no es válido como {entity_type}. {cross_message}"
-                                all_messages.append(message)  # ✅ Acumular mensaje
+                                all_messages.append(message)
                                 
                                 best_match = cross_matches[0]
                                 cross_suggestion_data = SuggestionManager.create_entity_suggestion(
@@ -1621,13 +1072,13 @@ class ActionBusquedaSituacion(Action):
                                 logger.info(f"[EntityValidation] Sugerencia cruzada: '{raw_value}' → '{best_match['suggestion']}'")
                             else:
                                 message = f"'{raw_value}' no es válido como {entity_type}."
-                                all_messages.append(message)  # ✅ Acumular mensaje
+                                all_messages.append(message)
                     
                     except Exception as suggestion_error:
                         logger.error(f"[EntityValidation] Error en sugerencia: {suggestion_error}")
                         continue
             
-            # ✅ ENVIAR UN SOLO MENSAJE CON TODO
+            # Enviar UN SOLO mensaje consolidado
             if all_messages:
                 consolidated_message = "\n".join(all_messages)
                 dispatcher.utter_message(consolidated_message)
@@ -1645,7 +1096,7 @@ class ActionBusquedaSituacion(Action):
             
         except Exception as e:
             logger.error(f"[EntityValidation] Error: {e}", exc_info=True)
-            dispatcher.utter_message("Error validando entidades")  # ✅ UN SOLO MENSAJE
+            dispatcher.utter_message("Error validando entidades")
             return {
                 'valid_params': {},
                 'has_suggestions': False,
@@ -1653,7 +1104,6 @@ class ActionBusquedaSituacion(Action):
                 'has_errors': True,
                 'errors': ["Error validando entidades"]
             }
-
 
     def validate_and_suggest_entities(self, invalid_value: str, original_entity_type: str) -> List[Dict[str, Any]]:
         """Usa sistema avanzado de similitud"""
@@ -1737,405 +1187,65 @@ class ActionBusquedaSituacion(Action):
         }
         return display_names.get(entity_type, entity_type)
 
-    def _extract_previous_search_parameters(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        ✅ OPTIMIZADO: Extrae parámetros preservando estructura con roles
-        """
+    # ============== MANEJO DE SUGERENCIAS IGNORADAS ==============
+    
+    def _handle_ignored_suggestions(self, context: Dict[str, Any], current_intent: str, 
+                                   dispatcher: CollectingDispatcher) -> Dict[str, Any]:
+        """Detecta y limpia sugerencias ignoradas automáticamente"""
         try:
-            search_history = context.get('search_history', [])
+            pending_suggestion = context.get('pending_suggestion')
+            if not pending_suggestion:
+                return {'suggestion_was_ignored': False, 'events': []}
             
-            if not search_history:
-                return {}
-            
-            latest_search = search_history[-1]
-            previous_params = latest_search.get('parameters', {})
-            search_type = latest_search.get('type', 'producto')
-            
-            # Incluir metadata
-            enriched_params = previous_params.copy()
-            enriched_params['_previous_search_type'] = search_type
-            enriched_params['_previous_timestamp'] = latest_search.get('timestamp')
-            
-            if previous_params:
-                logger.info(f"[PrevParams] {len(previous_params)} parámetros de búsqueda anterior ({search_type})")
-            
-            return enriched_params
-            
-        except Exception as e:
-            logger.error(f"[PrevParams] Error: {e}")
-            return {}
-
-    def _generate_slot_cleanup_events(self, tracker: Tracker, intent_name: str = None) -> List[EventType]:
-        """
-        ✅ OPTIMIZADO: Limpieza inteligente preservando contexto
-        """
-        try:
-            cleanup_events = []
-            
-            current_entities = tracker.latest_message.get("entities", [])
-            current_entity_types = {entity.get("entity") for entity in current_entities if entity.get("entity")}
-            
-            search_slots = [
-                'producto', 'empresa', 'categoria', 'animal', 'sintoma', 'dosis',
-                'estado', 'cantidad', 'precio', 'descuento', 'bonificacion', 
-                'stock', 'tiempo', 'fecha'
-            ]
-            
-            if intent_name == 'modificar_busqueda':
-                logger.info("[SlotCleanup] Modo conservador para modificar_busqueda")
-                # No limpiar nada - preservar todo el contexto
-            else:
-                slots_cleaned = []
-                for slot_name in search_slots:
-                    current_slot_value = tracker.get_slot(slot_name)
-                    
-                    if current_slot_value and slot_name not in current_entity_types:
-                        cleanup_events.append(SlotSet(slot_name, None))
-                        slots_cleaned.append(slot_name)
-                
-                if slots_cleaned:
-                    logger.info(f"[SlotCleanup] Limpiados {len(slots_cleaned)} slots")
-            
-            return cleanup_events
-            
-        except Exception as e:
-            logger.error(f"[SlotCleanup] Error: {e}")
-            return []
-
-    def _handle_invalid_entity_modification(self, modification_result: Any,
-                                       search_type: str, dispatcher: CollectingDispatcher) -> Dict[str, Any]:
-        """
-        ✅ CORREGIDO: Envía UN SOLO mensaje consolidado
-        """
-        try:
-            if isinstance(modification_result, dict):
-                invalid_actions = modification_result.get('invalid_actions', [])
-                validation_errors = modification_result.get('validation_errors', [])
-            else:
-                invalid_actions = modification_result.invalid_actions
-                validation_errors = modification_result.validation_errors
-            
-            logger.info(f"[InvalidMod] Procesando {len(invalid_actions)} entidades inválidas")
-            
-            # Serializar invalid_actions
-            serialized_invalid_actions = []
-            for action in invalid_actions:
-                if isinstance(action, dict):
-                    serialized_invalid_actions.append(action)
-                else:
-                    serialized_invalid_actions.append({
-                        'action_type': action.action_type.value if hasattr(action.action_type, 'value') else str(action.action_type),
-                        'entity_type': action.entity_type,
-                        'old_value': action.old_value,
-                        'new_value': action.new_value,
-                        'confidence': getattr(action, 'confidence', None)
-                    })
-            
-            # ✅ CONSOLIDAR TODO EN UN SOLO MENSAJE
-            if len(serialized_invalid_actions) == 1:
-                invalid_action = serialized_invalid_actions[0]
-                entity_type = invalid_action.get('entity_type')
-                valid_for = validation_errors[0].get('valid_for', []) if validation_errors else []
-                
-                if valid_for:
-                    valid_types_text = ' o '.join(valid_for)
-                    message = (
-                        f"'{entity_type}' no es válido para buscar {search_type}s. "
-                        f"Este parámetro se usa para: {valid_types_text}.\n\n"
-                        f"¿Querés cambiar a buscar {valid_for[0]}s?"
-                    )
-                else:
-                    message = f"'{entity_type}' no es válido para buscar {search_type}s."
-            else:
-                invalid_list = ', '.join([f"'{a.get('entity_type')}'" for a in serialized_invalid_actions])
-                message = f"Los siguientes parámetros no son válidos para buscar {search_type}s: {invalid_list}."
-            
-            # ✅ ENVIAR UN SOLO MENSAJE
-            dispatcher.utter_message(message)
-            
-            suggestion_data = {
-                'suggestion_type': 'invalid_entity_modification',
-                'search_type': search_type,
-                'invalid_actions': serialized_invalid_actions,
-                'validation_errors': validation_errors,
-                'timestamp': datetime.now().isoformat(),
-                'awaiting_response': True
-            }
-            
-            return {
-                'type': 'entity_suggestion',
-                'suggestion_data': suggestion_data,
-                'slot_cleanup_events': []
-            }
-            
-        except Exception as e:
-            logger.error(f"[InvalidMod] Error: {e}", exc_info=True)
-            dispatcher.utter_message("Hubo un error validando la modificación.")
-            return {'type': 'modify_error', 'error': str(e)}
-
-    def _execute_search(self, search_type: str, parameters: Dict[str, str], 
-               dispatcher: CollectingDispatcher, 
-               comparison_info: Dict[str, Any] = None, 
-               temporal_filters: Dict[str, Any] = None,
-               is_modification: bool = False,
-               modification_details: Dict[str, Any] = None) -> Dict[str, Any]:
-        """
-        ✅ CORREGIDO: Incluye warnings en el mensaje principal
-        """
-        try:
-            cleaned_parameters = self._clean_duplicate_parameters(parameters)
-            logger.info(f"[ExecuteSearch] {len(cleaned_parameters)} parámetros después de limpieza")
-            
-            # Validar comparación
-            if comparison_info and comparison_info.get('detected'):
-                is_valid = self._validate_comparison_coherence(comparison_info, parameters)
-                if not is_valid:
-                    logger.warning("[ExecuteSearch] Comparación invalidada")
-                    comparison_info = None
-            
-            # Formatear parámetros para mensaje legible
-            formatted_params = self._format_parameters_for_display(cleaned_parameters)
-            
-            # Construir mensaje base
-            if formatted_params:
-                criteria_text = ", ".join([f"{k}: {v}" for k, v in formatted_params.items()])
-                base_message = f"Buscando {search_type}s con {criteria_text}"
-            else:
-                base_message = f"Mostrando {search_type}s disponibles"
-            
-            # Enriquecer mensaje
-            enriched_message = base_message
-            if comparison_info and comparison_info.get('detected'):
-                enriched_message = self._enrich_message_with_comparison(
-                    base_message, cleaned_parameters, comparison_info
-                )
-            
-            if temporal_filters:
-                temporal_description = self._format_temporal_description(temporal_filters)
-                if temporal_description:
-                    enriched_message += f" {temporal_description}"
-            
-            # ✅ INCLUIR WARNINGS EN EL MENSAJE (si existen)
-            if modification_details and 'warnings' in modification_details:
-                warnings = modification_details['warnings']
-                if warnings:
-                    warnings_text = "\n".join(warnings)
-                    enriched_message = f"{warnings_text}\n\n{enriched_message}"
-            
-            # Preparar comparison_analysis
-            comparison_analysis = None
-            if comparison_info and comparison_info.get('detected'):
-                comparisons = []
-                grouped_entities = comparison_info.get('grouped_entities', {})
-                for filter_type, filter_data in grouped_entities.items():
-                    if 'operator' in filter_data and 'value' in filter_data:
-                        comparisons.append({
-                            'type': filter_type,
-                            'operator': filter_data['operator'],
-                            'quantity': filter_data['value'],
-                            'usage': 'comparison'
-                        })
-                
-                if comparisons:
-                    comparison_analysis = {
-                        'detected': True,
-                        'comparisons': comparisons
-                    }
-            
-            # Preparar search_data
-            search_data = {
-                "type": "search_results",
-                "search_type": search_type,
-                "parameters": self._serialize_parameters(cleaned_parameters),
-                "validated": True,
-                "timestamp": datetime.now().isoformat(),
-            }
-            
-            if comparison_analysis:
-                search_data["comparison_analysis"] = comparison_analysis
-            
-            if is_modification and modification_details:
-                search_data["modification_details"] = modification_details
-            
-            if temporal_filters:
-                search_data["temporal_filters"] = temporal_filters
-            
-            custom_payload = {
-                "search_data": search_data,
-                "is_search": True,
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            # ✅ ENVIAR UN SOLO MENSAJE (con warnings incluidos si existen)
-            dispatcher.utter_message(
-                text=enriched_message,
-                custom=custom_payload
+            suggestion_ignored = SuggestionManager.check_if_suggestion_ignored(
+                current_intent, pending_suggestion, context.get('is_small_talk', False)
             )
             
-            logger.info("[ExecuteSearch] ✅ Búsqueda enviada (UN SOLO MENSAJE)")
-            
-            return {
-                'type': 'search_success',
-                'search_type': search_type,
-                'parameters': cleaned_parameters, 
-                'message': enriched_message,
-                'comparison_info': comparison_info,
-                'temporal_filters': temporal_filters
-            }
-            
-        except Exception as e:
-            logger.error(f"[ExecuteSearch] Error: {e}", exc_info=True)
-            dispatcher.utter_message("Ocurrió un error ejecutando la búsqueda.")
-            return {'type': 'search_execution_error', 'error': str(e)}
-
-    def _enrich_message_with_comparison(self, base_message: str, parameters: Dict[str, str], 
-                                        comparison_info: Dict[str, Any]) -> str:
-        """Enriquece mensaje con información de comparación"""
-        try:
-            if not comparison_info or not comparison_info.get('detected'):
-                return base_message
-            
-            operator = comparison_info.get('operator')
-            quantity = comparison_info.get('quantity')
-            
-            if operator and quantity:
-                operator_text = self._get_operator_text(operator)
-                comparison_detail = f" ({operator_text} {quantity})"
-            else:
-                comparison_type = comparison_info.get('type', '')
-                if comparison_type:
-                    comparison_detail = f" (con filtros de {comparison_type})"
-                else:
-                    comparison_detail = " (con comparación aplicada)"
-            
-            return base_message + comparison_detail
-            
-        except Exception as e:
-            logger.error(f"[EnrichMessage] Error: {e}")
-            return base_message
-
-    def _get_operator_text(self, operator: str) -> str:
-        """Convierte operador a texto legible"""
-        operator_mapping = {
-            'greater_than': 'más de',
-            'less_than': 'menos de',
-            'equal_to': 'igual a',
-            'different_from': 'diferente de',
-            'gt': 'más de',
-            'lt': 'menos de',
-            'gte': 'al menos',
-            'lte': 'hasta',
-            'eq': 'igual a'
-        }
-        return operator_mapping.get(operator, operator)
-
-    def _determine_quantity_usage(self, parameters: Dict[str, str], comparison_info: Dict[str, Any]) -> str:
-        """Determina uso de la cantidad"""
-        try:
-            operator = comparison_info.get('operator')
-            
-            if operator in ['greater_than', 'less_than', 'gt', 'lt', 'gte', 'lte']:
-                return 'comparison'
-            elif operator in ['equal_to', 'eq']:
-                return 'exact_value'
-            else:
-                return 'exact_value'
-                    
-        except Exception as e:
-            logger.error(f"[QuantityUsage] Error: {e}")
-            return 'exact_value'
-
-    def _format_parameters_for_display(self, parameters: Dict[str, Any]) -> Dict[str, str]:
-        """
-        ✅ OPTIMIZADO: Formatea parámetros incluyendo tipos específicos
-        """
-        try:
-            formatted = {}
-            
-            for key, value in parameters.items():
-                if isinstance(value, dict):
-                    # Casos con estructura
-                    if 'value' in value and 'role' in value:
-                        role = value['role']
-                        val = value['value']
-                        
-                        if key == 'estado':
-                            role_display = {
-                                'nuevo': 'productos nuevos',
-                                'poco_stock': 'poco stock',
-                                'vence_pronto': 'vence pronto',
-                                'en_oferta': 'en oferta'
-                            }.get(role, val)
-                            formatted[key] = role_display
-                        
-                        elif key == 'empresa':
-                            formatted[key] = f"{val}" if role == 'proveedor' else f"{val} ({role})"
-                        
-                        else:
-                            formatted[key] = val
-                    
-                    # ✅ NUEVO: Dosis con tipo
-                    elif 'value' in value and 'type' in value:
-                        dosis_type = value['type']
-                        val = value['value']
-                        
-                        type_display = {
-                            'gramaje': 'mg/g',
-                            'volumen': 'ml/l',
-                            'forma': ''
-                        }.get(dosis_type, '')
-                        
-                        formatted[key] = f"{val} {type_display}".strip()
-                    
-                    # ✅ NUEVO: Filtros de comparación
-                    elif 'operator' in value and 'value' in value:
-                        operator = value['operator']
-                        val = value['value']
-                        
-                        op_display = {
-                            'lt': 'menor a',
-                            'gt': 'mayor a',
-                            'lte': 'hasta',
-                            'gte': 'al menos',
-                            'eq': 'igual a'
-                        }.get(operator, operator)
-                        
-                        formatted[key] = f"{op_display} {val}"
-                    
-                    else:
-                        # Dict sin estructura conocida
-                        formatted[key] = str(value.get('value', value))
+            if suggestion_ignored:
+                suggestion_type = pending_suggestion.get('suggestion_type', 'unknown')
+                original_search_type = pending_suggestion.get('search_type', 'unknown')
                 
+                logger.info(f"[IgnoredSugg] Detectada - Tipo: {suggestion_type}")
+                
+                if suggestion_type == 'entity_correction':
+                    original_value = pending_suggestion.get('original_value', '')
+                    message = f"Entiendo que prefieres hacer una nueva búsqueda en lugar de corregir '{original_value}'."
+                elif suggestion_type == 'type_correction':
+                    message = "Perfecto, te ayudo con esta nueva búsqueda."
                 else:
-                    formatted[key] = str(value)
+                    message = "Perfecto, te ayudo con tu nueva búsqueda."
+                
+                current_search_type = self._determine_search_type(current_intent)
+                if original_search_type != 'unknown' and current_search_type != original_search_type:
+                    try:
+                        dispatcher.utter_message(message)
+                    except Exception as msg_error:
+                        logger.error(f"[IgnoredSugg] Error enviando mensaje: {msg_error}")
+                
+                cleanup_events = [
+                    SlotSet("pending_suggestion", None),
+                    SlotSet("suggestion_context", None),
+                    SlotSet("user_engagement_level", "engaged"),
+                ]
+                
+                return {
+                    'suggestion_was_ignored': True,
+                    'events': cleanup_events,
+                    'cleanup_reason': 'user_changed_search_type'
+                }
             
-            return formatted
+            return {'suggestion_was_ignored': False, 'events': []}
             
         except Exception as e:
-            logger.error(f"[FormatDisplay] Error: {e}")
-            return parameters
-    def _serialize_parameters(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        ✅ OPTIMIZADO: Serializa parámetros preservando estructura de roles
-        """
-        try:
-            serialized = {}
-            
-            for key, value in parameters.items():
-                if isinstance(value, dict) and 'value' in value and 'role' in value:
-                    serialized[key] = {
-                        "value": value['value'],
-                        "role": value['role']
-                    }
-                else:
-                    serialized[key] = value
-            
-            return serialized
-            
-        except Exception as e:
-            logger.error(f"[Serialize] Error: {e}")
-            return parameters
+            logger.error(f"[IgnoredSugg] Error: {e}", exc_info=True)
+            return {
+                'suggestion_was_ignored': True,
+                'events': [SlotSet("pending_suggestion", None)],
+                'cleanup_reason': 'error_recovery'
+            }
 
+    # ============== PROCESAR RESULTADOS ==============
+    
     def _process_result(self, result: Dict[str, Any], context: Dict[str, Any]) -> List[EventType]:
         """Genera eventos de slot apropiados"""
         try:

@@ -4,19 +4,15 @@ import os
 import time
 import json
 from typing import Dict, Any, Tuple, List, Optional
-from openai import OpenAI, APITimeoutError, APIConnectionError, NotFoundError
+
+# from dotenv import load_dotenv
+from actions.functions.conections_broker import ConnectionBroker, ConnectionType, get_broker
+# from openai import OpenAI, APITimeoutError, APIConnectionError, NotFoundError
 
 from actions.api_client import search_products, search_offers
 
 logger = logging.getLogger(__name__)
 
-# ============== CONFIGURACIÓN ==============
-# Carga TODAS las variables de entorno necesarias
-MODEL_SEARCH_GPU = os.getenv("MODEL_SEARCH_GPU", "pompi_search_gpu")
-OLLAMA_GPU_URL = os.getenv('OLLAMA_GPU_URL', "http://host.docker.internal:11435")
-
-MODEL_SEARCH_CPU = os.getenv("MODEL_SEARCH_CPU", "pompi_search_cpu")
-OLLAMA_CPU_URL = os.getenv('OLLAMA_CPU_URL', "http://host.docker.internal:11434")
 
 OLLAMA_API_KEY = "ollama"
 TEMPERATURE = 0.1
@@ -35,139 +31,106 @@ ESTADO_MAP = {
 class SearchEngine:
     """
     Motor de búsqueda inteligente con LLM.
-    Prioriza GPU y usa CPU como fallback.
+    Ahora el LLM es el responsable principal de generar búsquedas,
+    usando el pre-análisis del NLU como guía.
     """
     
     def __init__(self):
-        self.client_gpu = None
-        self.client_cpu = None
+        # self.client_gpu = None
+        # self.client_cpu = None
         
-        self.url_gpu = OLLAMA_GPU_URL
-        self.url_cpu = OLLAMA_CPU_URL
-        self.model_gpu = MODEL_SEARCH_GPU
-        self.model_cpu = MODEL_SEARCH_CPU
-        
-        self._is_loaded = False
-        self._gpu_available = False
-        self._cpu_available = False
+        # self.url_gpu = OLLAMA_GPU_URL
+        # self.url_cpu = OLLAMA_CPU_URL
+        # self.model_gpu = MODEL_SEARCH_GPU
+        # self.model_cpu = MODEL_SEARCH_CPU
+        self.broker: Optional[ConnectionBroker] = None 
+        self._is_loaded = False 
+        self._gpu_available = False 
+        self._cpu_available = False 
         
     def load(self):
-            """Carga y calienta clientes Ollama (GPU y CPU) de forma independiente."""
-            if self._is_loaded:
-                logger.info("🔍 [SearchEngine] Ya está cargado")
-                return
-            
-            # --- Cargar GPU ---
-            try:
-                logger.info(f"🔍 [SearchEngine] Inicializando Ollama GPU ({self.model_gpu})...")
-                logger.info(f"    URL: {self.url_gpu}")
-                
-                self.client_gpu = OpenAI(base_url=self.url_gpu, api_key=OLLAMA_API_KEY)
-                
-                models_response = self.client_gpu.models.list()
-                # Convertir lista de objetos modelo a lista de IDs (strings)
-                available_models = [m.id for m in models_response.data]
-                
-                # --- INICIO DEL ARREGLO ---
-                # Comprueba si algún modelo en la lista COMIENZA con el nombre que buscamos.
-                # Esto soluciona el problema de "pompi_search_gpu" vs "pompi_search_gpu:latest"
-                found_gpu = any(model_id.startswith(self.model_gpu) for model_id in available_models)
-                
-                if found_gpu:
-                # --- FIN DEL ARREGLO ---
-                    logger.info(f"✅ [SearchEngine] Modelo GPU {self.model_gpu} disponible")
-                    self._gpu_available = True
-                else:
-                    logger.warning(
-                        f"⚠️ [SearchEngine] Modelo GPU {self.model_gpu} no encontrado. "
-                        f"Disponibles: {available_models}"
-                    )
-                    self._gpu_available = False
-                    
-            except Exception as e:
-                logger.warning(f"⚠️ [SearchEngine] No se pudo conectar a GPU: {e}")
-                self._gpu_available = False
+        """
+        🔄 MODIFICADO: Carga el broker de conexiones.
+        """
+        if self._is_loaded:
+            logger.info("🔒 [SearchEngine] Ya está cargado")
+            return
+        
+        logger.info("🔧 [SearchEngine] Inicializando broker...")
+        self.broker = get_broker()
+        self._is_loaded = True
+        logger.info("✅ [SearchEngine] Broker listo")
 
-            # --- Cargar CPU ---
-            try:
-                logger.info(f"🔍 [SearchEngine] Inicializando Ollama CPU ({self.model_cpu})...")
-                logger.info(f"    URL: {self.url_cpu}")
-                
-                self.client_cpu = OpenAI(base_url=self.url_cpu, api_key=OLLAMA_API_KEY)
-                
-                models_response = self.client_cpu.models.list()
-                available_models = [m.id for m in models_response.data]
-                
-                # --- INICIO DEL ARREGLO ---
-                # Aplicamos la misma lógica de "startswith" para el CPU
-                found_cpu = any(model_id.startswith(self.model_cpu) for model_id in available_models)
-
-                if found_cpu:
-                # --- FIN DEL ARREGLO ---
-                    logger.info(f"✅ [SearchEngine] Modelo CPU {self.model_cpu} disponible")
-                    self._cpu_available = True
-                else:
-                    logger.warning(
-                        f"⚠️ [SearchEngine] Modelo CPU {self.model_cpu} no encontrado. "
-                        f"Disponibles: {available_models}"
-                    )
-                    self._cpu_available = False
-                    
-            except Exception as e:
-                logger.warning(f"⚠️ [SearchEngine] No se pudo conectar a CPU: {e}")
-                self._cpu_available = False
-                
-            self._is_loaded = True
-            logger.info(f"✅ [SearchEngine] Carga completada (GPU: {self._gpu_available}, CPU: {self._cpu_available})")
-
-    def _warmup_client(self, client: OpenAI, model: str, client_name: str) -> bool:
-        """Función helper para calentar un cliente específico."""
+    def warmup(self) -> bool:
+        """
+        🔄 MODIFICADO: Calienta el broker con una request de prueba.
+        """
+        if not self._is_loaded:
+            self.load()
+        
+        logger.info("🔥 [SearchEngine] Calentando broker (via SearchEngine)...")
+        
         try:
-            start = time.time()
+            test_messages = [
+                {"role": "system", "content": "Responde con un JSON simple"},
+                {"role": "user", "content": "Dame un JSON con {test: true}"}
+            ]
             
-            _ = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": "Responde con un JSON simple"},
-                    {"role": "user", "content": "Dame un JSON con {test: true}"}
-                ],
+            # ✅ NUEVO: Usa el broker para el warmup
+            result = self.broker.generate(
+                messages=test_messages,
                 temperature=0,
                 max_tokens=50,
                 timeout=GENERATION_TIMEOUT
             )
             
-            warmup_time = time.time() - start
-            logger.info(f"✅ [SearchEngine] Modelo {client_name} ({model}) calentado en {warmup_time:.2f}s")
-            return True
-            
+            if result:
+                logger.info("✅ [SearchEngine] Warmup exitoso")
+                return True
+            else:
+                logger.warning("⚠️ [SearchEngine] Warmup falló (broker retornó None)")
+                return False
+                
         except Exception as e:
-            logger.warning(f"⚠️ [SearchEngine] Error en warmup {client_name}: {e}")
+            logger.warning(f"⚠️ [SearchEngine] Error en warmup: {e}")
             return False
 
-    def warmup(self) -> bool:
-        """Calienta el LLM (GPU primero, luego CPU como fallback)."""
+    def is_gpu_available(self) -> bool:
+        """
+        ✅ CORREGIDO: Verifica si "GPU" (alias de RunPod) está disponible.
+        """
         if not self._is_loaded:
             self.load()
         
-        if self._gpu_available:
-            logger.info("🔥 [SearchEngine] Calentando GPU...")
-            success = self._warmup_client(self.client_gpu, self.model_gpu, "GPU")
-            if not success:
-                self._gpu_available = False # Marcar como fallido
-                if self._cpu_available:
-                    logger.info("🔥 [SearchEngine] GPU falló, calentando CPU...")
-                    return self._warmup_client(self.client_cpu, self.model_cpu, "CPU")
-            return success
-        
-        elif self._cpu_available:
-            logger.info("🔥 [SearchEngine] GPU no disponible, calentando CPU...")
-            return self._warmup_client(self.client_cpu, self.model_cpu, "CPU")
-            
-        else:
-            logger.info("⚠️ [SearchEngine] No hay LLMs (GPU/CPU) disponibles, skip warmup")
+        if not self.broker:
             return False
-
+            
+        status = self.broker.get_status()
+        
+        # ✅ SOLUCIÓN: Hacemos que "GPU" sea un alias de "RUNPOD"
+        runpod_status = status.get(ConnectionType.RUNPOD.value, {})
+        return runpod_status.get("available", False)
     # ============== PUNTO DE ENTRADA PRINCIPAL ==============
+    def _is_broker_available(self) -> bool:
+        if not self.broker:
+            return False
+        status = self.broker.get_status()
+        # Verifica si alguna conexión está disponible
+        return any(conn.get("available", False) for conn in status.values())
+
+    # ✅ NUEVO: Helper para saber qué conexión usó el broker
+    def _get_last_used_connection(self, broker_status: Dict) -> str:
+        """Helper para determinar qué conexión se usó"""
+        most_recent = None
+        most_recent_time = 0
+        
+        for conn_name, conn_data in broker_status.items():
+            last_used = conn_data.get("last_used")
+            if last_used and last_used > most_recent_time:
+                most_recent = conn_name
+                most_recent_time = last_used
+        
+        return most_recent or "none"
     
     def execute_search(
         self,
@@ -179,44 +142,243 @@ class SearchEngine:
         chat_history: List[Dict] = None
     ) -> Dict[str, Any]:
         """
-        Ejecuta búsqueda con decisión inteligente:
-        - Si is_modification=False → Búsqueda directa SIN LLM
-        - Si is_modification=True Y (GPU o CPU disponible) → Usa LLM
-        - Si LLMs no disponibles → Fallback a búsqueda directa (autocompletar)
+        🔄 MODIFICADO: Usa _is_broker_available() para el fallback.
         """
         if not self._is_loaded:
             self.load()
         
-        # Caso 1: Modificación CON algún LLM disponible
-        if is_modification and (self._gpu_available or self._cpu_available):
-            logger.info("🧠 [SearchEngine] Usando LLM para MODIFICACIÓN")
-            return self._execute_with_llm(
+        # ✅ CASO 1: Modificación
+        if is_modification and previous_params:
+            logger.info("🧠 [SearchEngine] Usando LLM (Broker) para MODIFICACIÓN")
+            return self._execute_with_llm_modification(
                 current_params=search_params,
-                previous_params=previous_params or {},
+                previous_params=previous_params,
                 user_message=user_message,
                 search_type=search_type,
                 chat_history=chat_history or []
             )
         
-        # Caso 2: Búsqueda directa O LLMs no disponibles
-        if is_modification and not (self._gpu_available or self._cpu_available):
-            logger.warning(
-                "⚠️ [SearchEngine] No hay LLM (GPU/CPU) disponible para modificación. "
-                "Usando autocompletado de parámetros detectados por Rasa"
+        # ✅ CASO 2: Búsqueda NUEVA (usa el broker si está disponible)
+        elif self._is_broker_available():
+            logger.info("🧠 [SearchEngine] Usando LLM (Broker) para BÚSQUEDA NUEVA")
+            return self._execute_with_llm_new_search(
+                pre_analyzed_params=search_params,
+                user_message=user_message,
+                search_type=search_type
             )
-        else:
-            logger.info("⚡ [SearchEngine] Búsqueda directa (sin LLM)")
         
-        return self._execute_direct(search_params, search_type)
+        # ⚠️ CASO 3: Fallback si NO hay broker
+        else:
+            logger.warning("⚠️ [SearchEngine] No hay LLM (Broker) disponible. Usando pre-análisis directo.")
+            return self.execute_direct(search_params, search_type)
+    
+    # ============== ✅ NUEVO: BÚSQUEDA NUEVA CON LLM ==============
+    
+    def _execute_with_llm_new_search(
+        self,
+        pre_analyzed_params: Dict[str, Any],
+        user_message: str,
+        search_type: str
+    ) -> Dict[str, Any]:
+        """
+        🔄 MODIFICADO: Usa self.broker.generate() en lugar de try/except GPU/CPU
+        """
+        llm_start = time.time()
+        
+        # 1. Preparar prompts (sin cambios)
+        system_prompt = self._build_new_search_system_prompt(search_type)
+        user_prompt = self._build_new_search_user_prompt(
+            user_message, pre_analyzed_params 
+        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        raw_response = None
+        llm_time = 0.0
+        llm_used = "none"
+        
+        try:
+            # --- ✅ NUEVO: Llamada única al Broker ---
+            logger.info(f"🧠 [NewSearch] Enviando a Broker...")
+            
+            raw_response = self.broker.generate(
+                messages=messages,
+                temperature=TEMPERATURE,
+                max_tokens=500,
+                timeout=GENERATION_TIMEOUT
+            )
+            
+            llm_time = time.time() - llm_start
+            
+            # Obtener qué conexión se usó
+            status = self.broker.get_status()
+            llm_used = self._get_last_used_connection(status)
+            
+            # --- ❌ ELIMINADO: Lógica try/except GPU/CPU ---
+
+            # --- Si no hay respuesta ---
+            if raw_response is None:
+                logger.error("❌ [NewSearch] El Broker retornó None")
+                return self._fallback_to_direct(
+                    pre_analyzed_params, search_type, 
+                    "Broker returned None", llm_time
+                )
+
+            logger.info(f"✅ [NewSearch] Broker respondió en {llm_time:.3f}s (usando {llm_used})")
+            
+            # --- 3. Parsear respuesta (sin cambios) ---
+            logger.debug(f"[NewSearch] Respuesta cruda: {raw_response}")
+            llm_output = self._extract_json_from_response(raw_response)
+            logger.debug(f"    LLM Output: {json.dumps(llm_output, ensure_ascii=False)}")
+            
+            # 4. Extraer parámetros finales (sin cambios)
+            final_params = {
+                k: v for k, v in llm_output.items() 
+                if k != "action" and v is not None
+            }
+            action = llm_output.get("action", "search_products")
+            final_search_type = "ofertas" if action == "search_offers" else "productos"
+            
+            logger.info(f"🛠️ [NewSearch] Parámetros finales del LLM: {json.dumps(final_params, ensure_ascii=False)}")
+            
+            # 5. Ejecutar búsqueda directa (sin cambios)
+            direct_result = self.execute_direct(final_params, final_search_type)
+            direct_result["llm_time"] = llm_time
+            direct_result["llm_used"] = llm_used # Ahora será "ollama_gpu", "ollama_cpu", etc.
+            direct_result["final_params"] = final_params
+            direct_result["final_search_type"] = final_search_type
+            return direct_result
+
+        
+        except json.JSONDecodeError as e:
+            llm_time = time.time() - llm_start
+            logger.error(f"❌ [NewSearch] Error parseando JSON: {e}")
+            return self._fallback_to_direct(
+                pre_analyzed_params, search_type, 
+                f"JSON parsing error: {e}", llm_time
+            )
+        
+        except Exception as e:
+            # ✅ NUEVO: Captura errores del broker
+            llm_time = time.time() - llm_start
+            logger.error(f"❌ [NewSearch] Error en Broker.generate(): {e}", exc_info=True)
+            return self._fallback_to_direct(
+                pre_analyzed_params, search_type, 
+                f"Error Broker: {str(e)}", llm_time
+            )
+    
+    # ============== ✅ MODIFICADO: MODIFICACIÓN CON LLM ==============
+    
+    def _execute_with_llm_modification(
+        self,
+        current_params: Dict[str, Any],
+        previous_params: Dict[str, Any],
+        user_message: str,
+        search_type: str,
+        chat_history: List[Dict]
+    ) -> Dict[str, Any]:
+        """
+        🔄 MODIFICADO: Usa self.broker.generate() en lugar de try/except GPU/CPU
+        """
+        
+        llm_start = time.time()
+        
+        # 1. Preparar prompts (sin cambios)
+        system_prompt = self._build_modification_system_prompt()
+        user_prompt = self._build_modification_user_prompt(
+            previous_params, current_params, user_message, search_type
+        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        raw_response = None
+        llm_time = 0.0
+        llm_used = "none"
+        
+        try:
+            # --- ✅ NUEVO: Llamada única al Broker ---
+            logger.info(f"🧠 [Modification] Enviando a Broker...")
+            
+            raw_response = self.broker.generate(
+                messages=messages,
+                temperature=TEMPERATURE,
+                max_tokens=500,
+                timeout=GENERATION_TIMEOUT
+            )
+            
+            llm_time = time.time() - llm_start
+            
+            status = self.broker.get_status()
+            llm_used = self._get_last_used_connection(status)
+            
+            # --- ❌ ELIMINADO: Lógica try/except GPU/CPU ---
+            
+            # --- Si no hay respuesta ---
+            if raw_response is None:
+                logger.error("❌ [Modification] El Broker retornó None")
+                return self._fallback_to_direct(
+                    current_params, search_type, 
+                    "Broker returned None", llm_time
+                )
+            
+            logger.info(f"✅ [Modification] Broker respondió en {llm_time:.3f}s (usando {llm_used})")
+
+            # --- 3. Parsear respuesta (sin cambios) ---
+            logger.debug(f"[Modification] Respuesta cruda: {raw_response}")
+            llm_output = self._extract_json_from_response(raw_response)
+            logger.debug(f"    LLM Output: {json.dumps(llm_output, ensure_ascii=False)}")
+            
+            # 4. Extraer parámetros (sin cambios)
+            rebuilt_params = {
+                k: v for k, v in llm_output.items() 
+                if k != "action" and v is not None
+            }
+            logger.info(f"🛠️ [Modification] Parámetros reconstruidos: {json.dumps(rebuilt_params, ensure_ascii=False)}")
+            
+            # 5. Ejecutar búsqueda (sin cambios)
+            direct_result = self.execute_direct(rebuilt_params, search_type)
+            direct_result["llm_time"] = llm_time
+            direct_result["llm_used"] = llm_used
+            direct_result["final_params"] = rebuilt_params
+            direct_result["final_search_type"] = search_type
+            return direct_result
+        except json.JSONDecodeError as e:
+            llm_time = time.time() - llm_start
+            logger.error(f"❌ [Modification] Error parseando JSON: {e}")
+            return self._fallback_to_direct(
+                current_params, search_type, 
+                f"JSON parsing error: {e}", llm_time
+            )
+        
+            
+        except Exception as e:
+            # ✅ NUEVO: Captura errores del broker
+            llm_time = time.time() - llm_start
+            logger.error(f"❌ [Modification] Error en Broker.generate(): {e}", exc_info=True)
+            return self._fallback_to_direct(
+                current_params, search_type, 
+                f"Error Broker: {str(e)}", llm_time
+            )
     
     # ============== BÚSQUEDA DIRECTA (SIN LLM) ==============
     
-    def _execute_direct(
-        self, 
-        search_params: Dict[str, Any], 
-        search_type: str
-    ) -> Dict[str, Any]:
-        """Ejecuta búsqueda directa SIN usar LLM."""
+    def execute_direct(self, search_params: Dict[str, Any], search_type: str) -> Dict[str, Any]:
+        """
+        Ejecuta búsqueda directa SIN usar LLM.
+        
+        ✅ AHORA ES PÚBLICO para permitir bypass desde el orquestador.
+        
+        Args:
+            search_params: Parámetros de búsqueda pre-procesados
+            search_type: "productos" o "ofertas"
+        
+        Returns:
+            Dict con resultados de la API
+        """
         action = "search_offers" if search_type == "ofertas" else "search_products"
         
         try:
@@ -254,187 +416,180 @@ class SearchEngine:
     ) -> Dict[str, Any]:
         """Helper para centralizar el fallback a búsqueda directa."""
         logger.warning(
-            f"⚠️ [SearchEngine] Fallback a búsqueda directa (autocompletado). "
-            f"Razón: {reason}"
+            f"⚠️ [SearchEngine] Fallback a búsqueda directa. Razón: {reason}"
         )
-        direct_result = self._execute_direct(search_params, search_type)
+        direct_result = self.execute_direct(search_params, search_type)
         direct_result["llm_time"] = llm_time
         direct_result["llm_used"] = False
         direct_result["fallback_reason"] = reason
         return direct_result
 
-    # ============== BÚSQUEDA CON LLM (MODIFICACIONES) ==============
+    # ============== ✅ NUEVOS PROMPTS MEJORADOS ==============
     
-    def _execute_with_llm(
+    def _build_new_search_system_prompt(self, search_type: str) -> str: # <-- ACEPTA EL ARGUMENTO
+            """
+            ✅ NUEVO: System prompt para búsquedas nuevas con pre-análisis
+            """
+            
+            # Determinamos la acción OBLIGATORIA basado en la sugerencia del NLU
+            action_obligatoria = "search_offers" if search_type == "ofertas" else "search_products"
+
+            # Usamos un f-string para inyectar la acción
+            return f"""Eres un asistente experto en generar búsquedas de productos veterinarios.
+
+    REGLA DE ORO: Debes generar un JSON válido. Responde SÓLO con el JSON. NADA MÁS.
+
+    FORMATO OBLIGATORIO (responde SOLO este JSON):
+    {{
+        "action": "{action_obligatoria}",
+        "nombre": ["producto1", "producto2"],
+        "proveedor": ["Richmond", "Holliday"],
+        "categoria": ["Antiparasitarios"],
+        "animal": ["perro", "gato"],
+        "sintoma": ["vomitos"],
+        "estado": ["nuevo", "poco_stock"],
+        "descuento_min": 20,
+        "descuento_max": 50,
+        "bonificacion_min": 10,
+        "bonificacion_max": 30,
+        "stock_min": 5,
+        "stock_max": 100,
+        "dosis_gramaje": "500mg",
+        "dosis_volumen": "10ml",
+        "dosis_forma": "comprimidos"
+    }}
+
+    REGLAS CRÍTICAS:
+    1.  **ACCIÓN OBLIGATORIA**: El NLU ha determinado que esto es una búsqueda de '{search_type}'.
+        Tu JSON DEBE incluir la clave "action" con el valor "{action_obligatoria}".
+        NO USES la clave "búsqueda". USA LA CLAVE "action".
+
+    2.  **FORMATO ARRAY OBLIGATORIO**: Los campos 'nombre', 'proveedor', 'categoria', 'animal', 'sintoma', y 'estado' DEBEN ser arrays `[]`.
+        - INCORRECTO: "proveedor": "holliday"
+        - CORRECTO: "proveedor": ["holliday"]
+
+    3.  **PRE-ANÁLISIS**: El pre-análisis del NLU (que verás en el prompt del usuario) es una *guía*. Úsalo.
+        - Si el pre-análisis dice `"descuento_min": 20`, tu JSON debe tener `"descuento_min": 20`.
+        - Si el pre-análisis dice `"estado": "nuevo,poco_stock"`, tu JSON debe tener `"estado": ["nuevo", "poco_stock"]`.
+
+    4.  **MENSAJE DEL USUARIO**: Úsalo para encontrar filtros que el NLU omitió (como 'amoxicilina' en "busco amoxicilina para perros").
+        
+    5.  **REGLA DE ESTADOS vs ACCIÓN (IMPORTANTE):**
+        - Si "action" es "search_products", el ÚNICO estado válido es "en_oferta".
+        - Si "action" es "search_offers", puedes usar: "nuevo", "vistas", "poco_stock", "vence_pronto".
+        - Si el usuario pide "productos nuevos" (y la action es "search_products"), NO uses el filtro de estado, ignóralo.
+
+    Responde SOLO el JSON, nada más."""
+
+    def _build_new_search_user_prompt(
         self,
-        current_params: Dict[str, Any],
-        previous_params: Dict[str, Any],
         user_message: str,
-        search_type: str,
-        chat_history: List[Dict]
-    ) -> Dict[str, Any]:
-        """Usa LLM (GPU con fallback a CPU) para reconstruir parámetros."""
+        pre_analyzed_params: Dict[str, Any]
+    ) -> str:
+        """
+        ✅ CORREGIDO: User prompt para búsquedas nuevas
+        """
+        # Convertir pre-análisis a JSON legible
+        pre_analysis_str = "Sin pre-análisis."
+        if pre_analyzed_params:
+            pre_analysis_str = json.dumps(pre_analyzed_params, indent=2, ensure_ascii=False)
         
-        llm_start = time.time()
-        
-        # 1. Preparar prompts
-        system_prompt = self._build_system_prompt()
-        user_prompt = self._build_user_prompt(
-            previous_params, current_params, user_message, search_type
-        )
-        
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ]
-        
-        raw_response = None
-        llm_time = 0.0
-        
-        try:
-            # --- Intento 1: GPU ---
-            if self._gpu_available:
-                try:
-                    logger.info(f"🧠 [SearchEngine] Enviando a LLM (GPU: {self.model_gpu})...")
-                    response = self.client_gpu.chat.completions.create(
-                        model=self.model_gpu,
-                        messages=messages,
-                        temperature=TEMPERATURE,
-                        max_tokens=500,
-                        timeout=GENERATION_TIMEOUT
-                    )
-                    raw_response = response.choices[0].message.content
-                    llm_time = time.time() - llm_start
-                    logger.info(f"✅ [SearchEngine] LLM (GPU) respondió en {llm_time:.3f}s")
-                
-                except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                    llm_time = time.time() - llm_start
-                    logger.warning(
-                        f"⚠️ [SearchEngine] Error de conexión LLM (GPU) ({e.__class__.__name__}). "
-                        f"Marcando GPU como no disponible."
-                    )
-                    self._gpu_available = False # Marcar como muerta
-                    raw_response = None # Asegurarse que no hay respuesta
-            
-            # --- Intento 2: CPU (si GPU falló o no estaba disponible) ---
-            if raw_response is None and self._cpu_available:
-                try:
-                    logger.info(f"🧠 [SearchEngine] Enviando a LLM (CPU: {self.model_cpu})...")
-                    # Reiniciar tiempo si es el primer intento
-                    if llm_time == 0.0: llm_start = time.time() 
+        # ✅ ARREGLO: Se borró la línea "Tipo de búsqueda sugerido: {search_type}"
+        return f"""Mensaje del usuario: "{user_message}"
 
-                    response = self.client_cpu.chat.completions.create(
-                        model=self.model_cpu,
-                        messages=messages,
-                        temperature=TEMPERATURE,
-                        max_tokens=500,
-                        timeout=GENERATION_TIMEOUT # Podrías querer un timeout más largo para CPU
-                    )
-                    raw_response = response.choices[0].message.content
-                    llm_time = time.time() - llm_start
-                    logger.info(f"✅ [SearchEngine] LLM (CPU) respondió en {llm_time:.3f}s")
-                
-                except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                    llm_time = time.time() - llm_start
-                    logger.error(
-                        f"❌ [SearchEngine] Error de conexión LLM (CPU) ({e.__class__.__name__}). "
-                        f"Marcando CPU como no disponible."
-                    )
-                    self._cpu_available = False # Marcar como muerta
-                    return self._fallback_to_direct(
-                        current_params, search_type, 
-                        f"Error de conexión LLM (CPU): {e}", llm_time
-                    )
-            
-            # --- Si no hay respuesta de ninguno ---
-            if raw_response is None:
-                return self._fallback_to_direct(
-                    current_params, search_type, 
-                    "Ningún LLM (GPU/CPU) disponible o ambos fallaron", llm_time
-                )
+Mi pre-análisis (NLU/Reglas):
+{pre_analysis_str}
 
-            # --- 3. Parsear respuesta (si tuvimos éxito) ---
-            logger.debug(f"[SearchEngine] Respuesta cruda: {raw_response}")
-            llm_output = self._extract_json_from_response(raw_response)
-            logger.debug(f"    LLM Output: {json.dumps(llm_output)}")
-            
-            # 4. Extraer params reconstruidos
-            rebuilt_params = {
-                k: v for k, v in llm_output.items() 
-                if k != "action" and v is not None
-            }
-            
-            logger.info(f"🛠️ [SearchEngine] Parámetros reconstruidos: {json.dumps(rebuilt_params)}")
-            
-            # 5. Ejecutar búsqueda
-            direct_result = self._execute_direct(rebuilt_params, search_type)
-            direct_result["llm_time"] = llm_time
-            direct_result["llm_used"] = True
-            
-            return direct_result
-            
-        except json.JSONDecodeError as e:
-            llm_time = time.time() - llm_start
-            logger.error(f"❌ [SearchEngine] Error parseando JSON de LLM: {e}")
-            return self._fallback_to_direct(
-                current_params, search_type, 
-                f"LLM JSON parsing error: {e}", llm_time
-            )
-            
-        except Exception as e:
-            llm_time = time.time() - llm_start
-            logger.error(f"❌ [SearchEngine] Error inesperado en LLM: {e}", exc_info=True)
-            return self._fallback_to_direct(
-                current_params, search_type, 
-                f"Error inesperado LLM: {str(e)}", llm_time
-            )
-    
-    # ============== FUNCIONES AUXILIARES (Sin cambios) ==============
-    
-    def _build_system_prompt(self) -> str:
-        """Construye el system prompt para el LLM."""
-        return """Eres un asistente que MODIFICA búsquedas previas de productos veterinarios.
+Genera el JSON final de búsqueda combinando el mensaje del usuario y mi pre-análisis,
+siguiendo las reglas y el formato JSON obligatorio del system prompt.
 
-CRITICAL: Tu respuesta debe ser ÚNICAMENTE un objeto JSON válido.
-NO agregues explicaciones, NO uses markdown, NO escribas texto antes o después del JSON.
+JSON FINAL:"""
 
-FORMATO OBLIGATORIO:
-{
-    "action": "search_products" o "search_offers",
-    "nombre": "...",
-    "proveedor": "...",
-    "descuento_min": 20,
-    ...
-}
+    def _build_modification_system_prompt(self) -> str:
+            """
+            ✅ REFACTORIZADO: System prompt alineado con el de búsqueda nueva.
+            """
+            return """Eres un asistente que MODIFICA búsquedas previas de productos veterinarios.
 
-REGLAS:
-1. Preserva parámetros previos que no se modifican
-2. Si el usuario reemplaza un valor, usa el nuevo
-3. Si el usuario agrega un filtro, inclúyelo
-4. Si el usuario remueve algo, omítelo
+    REGLA DE ORO: Debes generar un JSON válido. Responde SÓLO con el JSON. NADA MÁS.
 
-Responde SOLO el JSON, nada más."""
+    FORMATO OBLIGATORIO (responde SOLO este JSON):
+    {{
+        "action": "search_products" o "search_offers",
+        "nombre": ["producto1"],
+        "proveedor": ["Richmond"],
+        "categoria": ["Antiparasitarios"],
+        "estado": ["nuevo", "poco_stock"],
+        "descuento_min": 20,
+        ...
+    }}
 
-    def _build_user_prompt(
+    REGLAS DE MODIFICACIÓN:
+
+    1.  **AGREGAR**: Si el usuario menciona algo nuevo, agrégalo.
+        - "ahora con descuento del 15%" → agregar descuento_min: 15
+        - "que sean de Richmond" → agregar proveedor: ["Richmond"]
+
+    2.  **REEMPLAZAR**: Si el usuario cambia un valor, reemplázalo.
+        - Anterior: {{"proveedor": ["Holliday"]}}
+        - Usuario: "cambia a Richmond"
+        - Final: {{"proveedor": ["Richmond"]}}
+
+    3.  **REMOVER**: Si el usuario quita algo, omítelo.
+        - Usuario: "sin filtro de proveedor" → NO incluir proveedor en el JSON final.
+        - Usuario: "saca el estado" → NO incluir estado.
+
+    4.  **PRESERVAR**: Todo lo que el usuario NO menciona, se mantiene.
+        - Anterior: {{"nombre": ["amoxicilina"], "animal": ["perro"]}}
+        - Usuario: "ahora con descuento"
+        - Final: {{"nombre": ["amoxicilina"], "animal": ["perro"], "descuento_min": ...}}
+
+    5.  **ACCIÓN**: El `action` ("search_products" o "search_offers") PUEDE cambiar.
+        - Si la búsqueda anterior era "search_products" y el usuario pide "ver ofertas",
+        la nueva `action` debe ser "search_offers".
+
+    6.  **FORMATO ARRAY OBLIGATORIO**: Los campos 'nombre', 'proveedor', 'categoria', 'animal', 'sintoma', y 'estado' DEBEN ser arrays `[]`.
+
+    7.  **REGLA DE ESTADOS vs ACCIÓN (IMPORTANTE):**
+        - Si la "action" final es "search_products", el ÚNICO estado válido es "en_oferta".
+        - Si la "action" final es "search_offers", puedes usar: "nuevo", "vistas", "poco_stock", "vence_pronto".
+        - Si el usuario pide "productos nuevos" (y la action es "search_products"), NO uses el filtro de estado, ignóralo.
+
+    Responde SOLO el JSON, nada más."""
+
+    def _build_modification_user_prompt(
         self,
         previous_params: Dict[str, Any],
         current_params: Dict[str, Any],
         user_message: str,
         search_type: str
     ) -> str:
-        """Construye el user prompt para el LLM."""
-        return f"""Parámetros previos:
-{json.dumps(previous_params, indent=2, ensure_ascii=False)}
+        """
+        ✅ MODIFICADO: User prompt mejorado para modificaciones
+        """
+        return f"""El usuario quiere MODIFICAR su búsqueda.
 
-Parámetros actuales detectados:
-{json.dumps(current_params, indent=2, ensure_ascii=False)}
+Búsqueda Anterior (Historial):
+{json.dumps(previous_params, indent=2, ensure_ascii=False)}
 
 Mensaje del usuario: "{user_message}"
 
+Mi pre-análisis de las NUEVAS entidades del mensaje:
+{json.dumps(current_params, indent=2, ensure_ascii=False)}
+
 Tipo de búsqueda: {search_type}
 
-Combina los parámetros y dame el JSON final."""
+Tu trabajo:
+1. Toma la "Búsqueda Anterior" como base
+2. Usa el "Mensaje del usuario" y mi "pre-análisis" para entender qué cambiar (agregar, quitar, reemplazar)
+3. Genera el JSON final que representa la nueva búsqueda combinada
 
+Responde SOLO con el JSON final.
+
+JSON FINAL:"""
+
+    # ============== FUNCIONES AUXILIARES (Mantenidas) ==============
+    
     def _extract_json_from_response(self, text: str) -> Dict[str, Any]:
         """
         Extrae JSON de la respuesta del LLM.
@@ -474,7 +629,10 @@ Combina los parámetros y dame el JSON final."""
         params: Dict[str, Any], 
         action: str
     ) -> Dict[str, Any]:
-        """Transforma parámetros al formato de la API."""
+        """
+        ✅ CORREGIDO: Transforma parámetros al formato de la API.
+        Acepta arrays del LLM y los convierte a strings con comas para Django.
+        """
         api_params = {}
         
         # Validar parámetros
@@ -483,23 +641,41 @@ Combina los parámetros y dame el JSON final."""
             logger.error(f"❌ [SearchEngine] Validación fallida: {error_msg}")
             raise ValueError(error_msg)
         
-        # Transformar 'nombre' a 'producto_1', 'producto_2', etc.
+        # ✅ Transformar 'nombre' a 'producto_1', 'producto_2', etc.
         if "nombre" in params and params["nombre"]:
-            nombres = [n.strip() for n in str(params["nombre"]).split(',') if n.strip()]
-            for i, nombre in enumerate(nombres, start=1):
+            nombres_val = params["nombre"]
+            nombres_list = []
+
+            if isinstance(nombres_val, list):
+                # El LLM envió una lista (caso ideal)
+                nombres_list = [str(n).strip() for n in nombres_val if str(n).strip()]
+            elif isinstance(nombres_val, str):
+                # Fallback: el LLM envió un string con comas
+                nombres_list = [n.strip() for n in nombres_val.split(',') if n.strip()]
+
+            for i, nombre in enumerate(nombres_list, start=1):
                 api_params[f"producto_{i}"] = nombre
-                
-                # Dosis solo para el primer producto
+
+                # La lógica de dosis se aplica SÓLO al primer producto
                 if i == 1 and action == "search_products":
                     for dosis_key in ["dosis_gramaje", "dosis_volumen", "dosis_forma"]:
-                        if dosis_key in params:
+                        if dosis_key in params and params[dosis_key]:
                             api_params[f"{dosis_key}_1"] = params[dosis_key]
 
-        # Transformar otros parámetros
+        # ✅ Transformar proveedor, categoria, estado (acepta lista o string)
         for key in ["proveedor", "categoria", "estado"]:
             if key in params and params[key]:
                 value = params[key]
-                api_params[key] = ','.join(str(v) for v in value) if isinstance(value, list) else str(value)
+                if isinstance(value, list):
+                    # Filtra valores vacíos y convierte a string
+                    clean_values = [str(v).strip() for v in value if str(v).strip()]
+                    if clean_values:
+                        api_params[key] = ','.join(clean_values)
+                elif isinstance(value, str):
+                    # Acepta un string como fallback si el LLM se equivoca
+                    clean_value = value.strip()
+                    if clean_value:
+                        api_params[key] = clean_value
     
         # Copiar parámetros numéricos
         for key in ["descuento_min", "descuento_max", "bonificacion_min", 
@@ -535,16 +711,25 @@ Combina los parámetros y dame el JSON final."""
         
         return True, None
 
-    def _normalize_estado(self, estados_str: str, search_type: str) -> Optional[str]:
-        """Normaliza uno o múltiples estados."""
-        if not estados_str: 
+    def _normalize_estado(self, estados_input: Any, search_type: str) -> Optional[str]:
+        """
+        ✅ CORREGIDO: Normaliza uno o múltiples estados.
+        Acepta lista o string como entrada.
+        """
+        if not estados_input: 
             return None
         
-        estados_individuales = [
-            e.strip().lower().replace(" ", "_") 
-            for e in estados_str.split(',') 
-            if e.strip()
-        ]
+        estados_individuales = []
+        if isinstance(estados_input, list):
+            # El LLM envió una lista (caso ideal)
+            estados_individuales = [str(e).strip().lower().replace(" ", "_") for e in estados_input if str(e).strip()]
+        elif isinstance(estados_input, str):
+            # Fallback: el LLM envió un string con comas
+            estados_individuales = [e.strip().lower().replace(" ", "_") for e in estados_input.split(',') if e.strip()]
+        else:
+            logger.warning(f"Tipo de estado no reconocido: {type(estados_input)}")
+            return None  # Tipo no soportado
+        
         estados_normalizados = []
         
         for estado_lower in estados_individuales:
@@ -571,41 +756,33 @@ Combina los parámetros y dame el JSON final."""
             return None
         
         return ",".join(estados_normalizados)
+
+    # ============== FUNCIONES DE CLASIFICACIÓN (Mantenidas) ==============
+    
     def classify_intent(
         self,
         user_message: str,
         context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
-        Clasifica si un mensaje es de BÚSQUEDA o CONVERSACIONAL.
-        Usa el modelo de búsqueda (MistralB) con GPU fallback a CPU.
-        
-        Returns:
-            {
-                "is_search": bool,
-                "confidence": float,
-                "reasoning": str,
-                "llm_time": float,
-                "llm_used": str  # "gpu", "cpu", o "none"
-            }
+        🔄 MODIFICADO: Usa self.broker.generate() 
         """
         if not self._is_loaded:
             self.load()
         
-        # Si no hay LLMs disponibles, asumir conversacional
-        if not (self._gpu_available or self._cpu_available):
-            logger.warning("⚠️ [Classify] No hay LLM disponible, asumiendo conversacional")
+        # 🔄 MODIFICADO: Usa _is_broker_available()
+        if not self._is_broker_available():
+            logger.warning("⚠️ [Classify] No hay LLM (Broker) disponible, asumiendo conversacional")
             return {
                 "is_search": False,
                 "confidence": 0.0,
-                "reasoning": "No LLM available",
+                "reasoning": "No LLM (Broker) available",
                 "llm_time": 0.0,
                 "llm_used": "none"
             }
         
         llm_start = time.time()
         
-        # Construir prompt de clasificación
         system_prompt = self._build_classification_system_prompt()
         user_prompt = self._build_classification_user_prompt(user_message, context)
         
@@ -618,63 +795,34 @@ Combina los parámetros y dame el JSON final."""
         llm_used = "none"
         
         try:
-            # Intento 1: GPU
-            if self._gpu_available:
-                try:
-                    logger.info(f"🧠 [Classify] Clasificando con GPU ({self.model_gpu})...")
-                    response = self.client_gpu.chat.completions.create(
-                        model=self.model_gpu,
-                        messages=messages,
-                        temperature=0.1,  # Baja temperatura para clasificación
-                        max_tokens=200,
-                        timeout=GENERATION_TIMEOUT
-                    )
-                    raw_response = response.choices[0].message.content
-                    llm_used = "gpu"
-                    logger.info(f"✅ [Classify] GPU respondió")
-                
-                except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                    logger.warning(f"⚠️ [Classify] Error GPU: {e}")
-                    self._gpu_available = False
-                    raw_response = None
+            # --- ✅ NUEVO: Llamada única al Broker ---
+            logger.info(f"🧠 [Classify] Clasificando con Broker...")
             
-            # Intento 2: CPU
-            if raw_response is None and self._cpu_available:
-                try:
-                    logger.info(f"🧠 [Classify] Clasificando con CPU ({self.model_cpu})...")
-                    response = self.client_cpu.chat.completions.create(
-                        model=self.model_cpu,
-                        messages=messages,
-                        temperature=0.1,
-                        max_tokens=200,
-                        timeout=GENERATION_TIMEOUT
-                    )
-                    raw_response = response.choices[0].message.content
-                    llm_used = "cpu"
-                    logger.info(f"✅ [Classify] CPU respondió")
-                
-                except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                    logger.error(f"❌ [Classify] Error CPU: {e}")
-                    self._cpu_available = False
-                    return {
-                        "is_search": False,
-                        "confidence": 0.0,
-                        "reasoning": f"LLM error: {e}",
-                        "llm_time": time.time() - llm_start,
-                        "llm_used": "none"
-                    }
+            raw_response = self.broker.generate(
+                messages=messages,
+                temperature=0.1,
+                max_tokens=200,
+                timeout=GENERATION_TIMEOUT
+            )
             
+            llm_time = time.time() - llm_start
+            
+            status = self.broker.get_status()
+            llm_used = self._get_last_used_connection(status)
+            
+            # --- ❌ ELIMINADO: Lógica try/except GPU/CPU ---
+
             if raw_response is None:
+                logger.error("❌ [Classify] El Broker retornó None")
                 return {
                     "is_search": False,
                     "confidence": 0.0,
-                    "reasoning": "No LLM responded",
-                    "llm_time": time.time() - llm_start,
+                    "reasoning": "No LLM (Broker) responded",
+                    "llm_time": llm_time,
                     "llm_used": "none"
                 }
-            
-            # Parsear respuesta
-            llm_time = time.time() - llm_start
+
+            # Parsear respuesta (sin cambios)
             classification = self._parse_classification_response(raw_response)
             classification["llm_time"] = llm_time
             classification["llm_used"] = llm_used
@@ -695,167 +843,6 @@ Combina los parámetros y dame el JSON final."""
                 "llm_time": time.time() - llm_start,
                 "llm_used": llm_used
             }
-    
-    def generate_search_from_message(
-        self,
-        user_message: str,
-        context: Dict[str, Any],
-        search_type: str = "productos"
-    ) -> Dict[str, Any]:
-        """
-        Genera parámetros de búsqueda desde un mensaje del usuario.
-        Usa el modelo de búsqueda (MistralB) con GPU fallback a CPU.
-        
-        Returns:
-            {
-                "success": bool,
-                "search_params": Dict[str, Any],
-                "search_type": str,
-                "confidence": float,
-                "llm_time": float,
-                "llm_used": str
-            }
-        """
-        if not self._is_loaded:
-            self.load()
-        
-        if not (self._gpu_available or self._cpu_available):
-            logger.error("❌ [GenerateSearch] No hay LLM disponible")
-            return {
-                "success": False,
-                "error": "No LLM available",
-                "search_params": {},
-                "search_type": search_type,
-                "llm_time": 0.0,
-                "llm_used": "none"
-            }
-        
-        llm_start = time.time()
-        
-        # Construir prompts
-        system_prompt = self._build_search_generation_system_prompt()
-        user_prompt = self._build_search_generation_user_prompt(
-            user_message, context, search_type
-        )
-        
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ]
-        
-        raw_response = None
-        llm_used = "none"
-        
-        try:
-            # Intento 1: GPU
-            if self._gpu_available:
-                try:
-                    logger.info(f"🧠 [GenerateSearch] Generando búsqueda con GPU...")
-                    response = self.client_gpu.chat.completions.create(
-                        model=self.model_gpu,
-                        messages=messages,
-                        temperature=TEMPERATURE,
-                        max_tokens=500,
-                        timeout=GENERATION_TIMEOUT
-                    )
-                    raw_response = response.choices[0].message.content
-                    llm_used = "gpu"
-                    logger.info(f"✅ [GenerateSearch] GPU respondió")
-                
-                except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                    logger.warning(f"⚠️ [GenerateSearch] Error GPU: {e}")
-                    self._gpu_available = False
-                    raw_response = None
-            
-            # Intento 2: CPU
-            if raw_response is None and self._cpu_available:
-                try:
-                    logger.info(f"🧠 [GenerateSearch] Generando búsqueda con CPU...")
-                    response = self.client_cpu.chat.completions.create(
-                        model=self.model_cpu,
-                        messages=messages,
-                        temperature=TEMPERATURE,
-                        max_tokens=500,
-                        timeout=GENERATION_TIMEOUT
-                    )
-                    raw_response = response.choices[0].message.content
-                    llm_used = "cpu"
-                    logger.info(f"✅ [GenerateSearch] CPU respondió")
-                
-                except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                    logger.error(f"❌ [GenerateSearch] Error CPU: {e}")
-                    self._cpu_available = False
-                    return {
-                        "success": False,
-                        "error": f"LLM error: {e}",
-                        "search_params": {},
-                        "search_type": search_type,
-                        "llm_time": time.time() - llm_start,
-                        "llm_used": "none"
-                    }
-            
-            if raw_response is None:
-                return {
-                    "success": False,
-                    "error": "No LLM responded",
-                    "search_params": {},
-                    "search_type": search_type,
-                    "llm_time": time.time() - llm_start,
-                    "llm_used": "none"
-                }
-            
-            # Parsear JSON
-            llm_time = time.time() - llm_start
-            llm_output = self._extract_json_from_response(raw_response)
-            
-            # Extraer action y parámetros
-            action = llm_output.get("action", "search_products")
-            inferred_search_type = "ofertas" if action == "search_offers" else "productos"
-            
-            search_params = {
-                k: v for k, v in llm_output.items() 
-                if k != "action" and v is not None
-            }
-            
-            logger.info(
-                f"✅ [GenerateSearch] Parámetros generados: {json.dumps(search_params)} "
-                f"({llm_used.upper()}, {llm_time:.2f}s)"
-            )
-            
-            return {
-                "success": True,
-                "search_params": search_params,
-                "search_type": inferred_search_type,
-                "confidence": 0.8,  # Puedes ajustar según necesites
-                "llm_time": llm_time,
-                "llm_used": llm_used
-            }
-            
-        except json.JSONDecodeError as e:
-            llm_time = time.time() - llm_start
-            logger.error(f"❌ [GenerateSearch] Error parseando JSON: {e}")
-            return {
-                "success": False,
-                "error": f"JSON parsing error: {str(e)}",
-                "search_params": {},
-                "search_type": search_type,
-                "llm_time": llm_time,
-                "llm_used": llm_used
-            }
-        
-        except Exception as e:
-            llm_time = time.time() - llm_start
-            logger.error(f"❌ [GenerateSearch] Error: {e}", exc_info=True)
-            return {
-                "success": False,
-                "error": str(e),
-                "search_params": {},
-                "search_type": search_type,
-                "llm_time": llm_time,
-                "llm_used": llm_used
-            }
-    
-    # ============== PROMPTS PARA CLASIFICACIÓN ==============
     
     def _build_classification_system_prompt(self) -> str:
         """System prompt para clasificar intención."""
@@ -915,87 +902,26 @@ Contexto:
 
 Clasifica la intención y responde con el JSON."""
 
-    # ============== PROMPTS PARA GENERACIÓN DE BÚSQUEDA ==============
-    
-    def _build_search_generation_system_prompt(self) -> str:
-        """System prompt para generar búsqueda desde mensaje."""
-        return """Eres un asistente que EXTRAE parámetros de búsqueda de productos veterinarios desde mensajes del usuario.
-
-CRITICAL: Tu respuesta debe ser ÚNICAMENTE un objeto JSON válido.
-NO agregues explicaciones, NO uses markdown, NO escribas texto antes o después del JSON.
-
-FORMATO OBLIGATORIO:
-{
-    "action": "search_products" o "search_offers",
-    "nombre": "nombre del producto (opcional)",
-    "proveedor": "nombre del proveedor (opcional)",
-    "categoria": "categoría (opcional)",
-    "animal": "perro/gato/bovino/etc (opcional)",
-    "sintoma": "síntoma (opcional)",
-    "estado": "nuevo/poco_stock/vence_pronto/en_oferta (opcional)",
-    "descuento_min": 20 (opcional, número),
-    "descuento_max": 50 (opcional, número),
-    "bonificacion_min": 10 (opcional, número),
-    "stock_min": 5 (opcional, número)
-}
-
-REGLAS:
-1. Usa "search_products" si busca productos, "search_offers" si busca ofertas/descuentos
-2. Extrae SOLO los parámetros que menciona el usuario
-3. Normaliza valores (ej: "perrito" → "perro")
-4. Si menciona comparación (">", "más de"), usa _min; ("<", "menos de"), usa _max
-5. Estados válidos: nuevo, poco_stock, vence_pronto, en_oferta
-
-Responde SOLO el JSON, nada más."""
-
-    def _build_search_generation_user_prompt(
-        self,
-        user_message: str,
-        context: Dict[str, Any],
-        search_type: str
-    ) -> str:
-        """User prompt para generación de búsqueda."""
-        search_history = context.get('search_history', [])
-        
-        context_info = ""
-        if search_history:
-            last_search = search_history[-1]
-            last_params = last_search.get('parameters', {})
-            if last_params:
-                context_info = f"\n\nBúsqueda previa:\n{json.dumps(last_params, indent=2, ensure_ascii=False)}"
-        
-        return f"""Mensaje del usuario: "{user_message}"
-
-Tipo de búsqueda sugerido: {search_type}{context_info}
-
-Extrae los parámetros de búsqueda y dame el JSON."""
-
-    # ============== PARSEO DE RESPUESTAS ==============
-    
     def _parse_classification_response(self, raw_response: str) -> Dict[str, Any]:
         """Parsea respuesta de clasificación."""
         try:
-            # Intentar extraer JSON
             classification = self._extract_json_from_response(raw_response)
             
-            # Validar campos requeridos
             is_search = classification.get("is_search", False)
             confidence = float(classification.get("confidence", 0.5))
             reasoning = classification.get("reasoning", "")
             
-            # Normalizar bool (por si viene como string)
             if isinstance(is_search, str):
                 is_search = is_search.lower() in ['true', 'yes', 'sí', '1']
             
             return {
                 "is_search": bool(is_search),
-                "confidence": min(max(confidence, 0.0), 1.0),  # Clamp 0-1
+                "confidence": min(max(confidence, 0.0), 1.0),
                 "reasoning": reasoning
             }
             
         except Exception as e:
             logger.error(f"❌ [ParseClassification] Error: {e}")
-            # Fallback: buscar keywords en texto plano
             text_lower = raw_response.lower()
             
             if any(word in text_lower for word in ["is_search: true", "búsqueda", "search"]):
@@ -1003,11 +929,12 @@ Extrae los parámetros de búsqueda y dame el JSON."""
             else:
                 return {"is_search": False, "confidence": 0.6, "reasoning": "Keyword match (conversational)"}
 
-# ============== INSTANCIA GLOBAL (Sin cambios) ==============
+
+# ============== INSTANCIA GLOBAL ==============
 _search_engine = SearchEngine()
 
 def get_search_engine() -> SearchEngine:
     """Función helper para obtener la instancia única del motor."""
-    if not _search_engine._is_loaded:
-        _search_engine.load()
+    # if not _search_engine._is_loaded:
+    #     _search_engine.load()
     return _search_engine

@@ -1,143 +1,79 @@
-# actions/models/model_manager.py
-import os
+# actions/models/model_manager.py (REFACTORIZADO)
 import logging
 import time
-from typing import Optional
+from typing import Optional, List, Dict
 
-from openai import OpenAI, APITimeoutError, APIConnectionError, NotFoundError
-from dotenv import load_dotenv
-
+from actions.functions.conections_broker import get_broker
 from actions.functions.search_engine import SearchEngine
 
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 # ============== CONFIGURACIÓN ==============
-# --- Modelos de Chat ---
-MODEL_CHAT_CPU = os.getenv("MODEL_CHAT_CPU", "pompi_chat_cpu")
-OLLAMA_CPU_URL = os.getenv('OLLAMA_CPU_URL', "http://host.docker.internal:11434")
-MODEL_CHAT_GPU = os.getenv("MODEL_CHAT_GPU", "pompi_chat_gpu")
-OLLAMA_GPU_URL = os.getenv('OLLAMA_GPU_URL', "http://host.docker.internal:11435")
-
-# Timeouts
-GENERATION_TIMEOUT = 120
-OLLAMA_CLIENT_TIMEOUT = 150
+GENERATION_TIMEOUT = 40
 # ===========================================
 
 
-# ============== CHAT MODEL (GPU con Fallback a CPU) ==============
 class ChatModel:
     """
     Modelo conversacional para respuestas generales.
-    Prioriza GPU y usa CPU como fallback.
+    ✅ AHORA USA EL BROKER para manejo robusto de conexiones.
     """
     
     def __init__(self):
-        self.client_gpu = None
-        self.client_cpu = None
-        self.url_gpu = OLLAMA_GPU_URL
-        self.url_cpu = OLLAMA_CPU_URL
-        self.model_gpu = MODEL_CHAT_GPU
-        self.model_cpu = MODEL_CHAT_CPU
-        self._gpu_available = False
-        self._cpu_available = False
+        self.broker = None
         self._is_loaded = False
         
     def load(self):
-        """Carga clientes Ollama para GPU y CPU de forma independiente."""
+        """Carga el broker de conexiones."""
         if self._is_loaded:
             logger.info("[ChatModel] Ya está cargado")
             return
 
-        # --- Cargar GPU ---
-        try:
-            logger.info(f"[ChatModel] Conectando a GPU en {self.url_gpu} ({self.model_gpu})...")
-            self.client_gpu = OpenAI(
-                base_url=self.url_gpu,
-                api_key='ollama',
-                timeout=OLLAMA_CLIENT_TIMEOUT
-            )
-            self.client_gpu.models.list() # Test connection
-            self._gpu_available = True
-            logger.info(f"[ChatModel] ✅ Conexión GPU establecida")
-        except Exception as e:
-            logger.warning(f"[ChatModel] ⚠️ No se pudo conectar a GPU: {e}")
-            
-            # --- AGREGAR ESTA LÍNEA ---
-            logger.debug(f"[ChatModel] Error detallado de conexión GPU", exc_info=True)
-            # --- FIN DE LÍNEA AGREGADA ---
-
-            self.client_gpu = None
-            self._gpu_available = False
-        
-        # --- Cargar CPU ---
-        try:
-            logger.info(f"[ChatModel] Conectando a CPU en {self.url_cpu} ({self.model_cpu})...")
-            self.client_cpu = OpenAI(
-                base_url=self.url_cpu,
-                api_key='ollama',
-                timeout=OLLAMA_CLIENT_TIMEOUT
-            )
-            self.client_cpu.models.list() # Test connection
-            self._cpu_available = True
-            logger.info(f"[ChatModel] ✅ Conexión CPU establecida")
-        except Exception as e:
-            logger.warning(f"[ChatModel] ⚠️ No se pudo conectar a CPU: {e}")
-            self.client_cpu = None
-            self._cpu_available = False
-        
+        logger.info("[ChatModel] Inicializando broker...")
+        self.broker = get_broker()
         self._is_loaded = True
-        
-        if not self._gpu_available and not self._cpu_available:
-            logger.error("[ChatModel] ❌ FALLA TOTAL: No se pudo conectar a CPU ni a GPU.")
-        else:
-            logger.info(f"[ChatModel] Carga completada (GPU: {self._gpu_available}, CPU: {self._cpu_available})")
-
-    def _warmup_client(self, client: OpenAI, model: str, client_name: str) -> bool:
-        """Helper interno para calentar un cliente."""
-        try:
-            start = time.time()
-            _ = client.chat.completions.create(
-                messages=[{"role": "user", "content": "hola"}],
-                model=model,
-                temperature=0.3,
-                max_tokens=10,
-                timeout=GENERATION_TIMEOUT
-            )
-            elapsed = time.time() - start
-            logger.info(f"[ChatModel] ✅ Warmup {client_name} completado en {elapsed:.2f}s")
-            return True
-        except Exception as e:
-            logger.error(f"[ChatModel] ⚠️ Error en warmup {client_name}: {e}")
-            return False
+        logger.info("[ChatModel] ✅ Broker listo")
         
     def warmup(self):
-        """Precalienta el modelo (GPU primero, luego CPU)."""
+        """Precalienta el broker con una request de prueba."""
         if not self._is_loaded:
             self.load()
         
-        if self._gpu_available:
-            logger.info(f"[ChatModel] 🔥 Iniciando warmup GPU ({self.model_gpu})...")
-            if self._warmup_client(self.client_gpu, self.model_gpu, "GPU"):
-                # Si GPU funciona, no necesitamos calentar CPU
-                return True
-            # GPU falló warmup, marcar como no disponible
-            self._gpu_available = False
-            logger.warning("[ChatModel] Warmup GPU falló, marcando como no disponible.")
+        logger.info("[ChatModel] 🔥 Iniciando warmup...")
         
-        if self._cpu_available:
-            logger.info(f"[ChatModel] 🔥 Iniciando warmup CPU ({self.model_cpu})...")
-            if not self._warmup_client(self.client_cpu, self.model_cpu, "CPU"):
-                self._cpu_available = False # CPU también falló
+        test_messages = [
+            {"role": "user", "content": "hola"}
+        ]
         
-        logger.warning("[ChatModel] ⚠️ No hay cliente (GPU/CPU) disponible para warmup")
-        return False
+        result = self.broker.generate(
+            messages=test_messages,
+            temperature=0.3,
+            max_tokens=10
+        )
+        
+        if result:
+            logger.info("[ChatModel] ✅ Warmup exitoso")
+            return True
+        else:
+            logger.warning("[ChatModel] ⚠️ Warmup falló")
+            return False
     
-    def generate_raw(self, messages: list, temperature: float = 0.3, 
-                    max_tokens: int = 150) -> Optional[str]:
+    def generate_raw(
+        self, 
+        messages: List[Dict], 
+        temperature: float = 0.3, 
+        max_tokens: int = 150
+    ) -> Optional[str]:
         """
-        Genera respuesta usando GPU, con fallback a CPU.
-        Retorna el texto generado o None si ambos fallan.
+        Genera respuesta usando el broker.
+        
+        Args:
+            messages: Lista de mensajes en formato OpenAI
+            temperature: Temperatura de generación
+            max_tokens: Máximo de tokens a generar
+            
+        Returns:
+            Texto generado o None si falla
         """
         if not self._is_loaded:
             try:
@@ -146,88 +82,64 @@ class ChatModel:
                 logger.error(f"[ChatModel] No se pudo cargar: {e}")
                 return None
 
-        if not self._gpu_available and not self._cpu_available:
-            logger.error("[ChatModel] ❌ No hay clientes (GPU/CPU) disponibles para generar.")
-            return None
-
         start_time = time.time()
         
-        # --- Intento 1: GPU ---
-        if self._gpu_available:
-            try:
-                logger.info(f"[ChatModel] 🧠 Generando con GPU ({self.model_gpu})...")
-                response = self.client_gpu.chat.completions.create(
-                    model=self.model_gpu,
-                    messages=messages,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    stream=False,
-                    timeout=GENERATION_TIMEOUT
-                )
-                elapsed = time.time() - start_time
-                
-                if response.choices and response.choices[0].message.content:
-                    text = response.choices[0].message.content.strip()
-                    logger.info(f"[ChatModel] ✅ Generación GPU exitosa en {elapsed:.2f}s")
-                    return text
-                else:
-                    logger.warning("[ChatModel] ⚠️ Respuesta vacía del modelo GPU")
-                    # No hacer fallback por respuesta vacía, es un problema del modelo
-                    return None 
-
-            except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                logger.warning(f"[ChatModel] ⚠️ Error de conexión GPU: {e}. Fallback a CPU.")
-                self._gpu_available = False # Marcar como muerta
+        try:
+            logger.info("[ChatModel] 🧠 Generando respuesta...")
             
-            except Exception as e:
-                logger.error(f"[ChatModel] ❌ Error inesperado en GPU: {e}", exc_info=True)
-                self._gpu_available = False # Marcar como muerta por si acaso
-                # Continuar para fallback a CPU
-        
-        # --- Intento 2: CPU (si GPU falló o no estaba disponible) ---
-        if self._cpu_available:
-            try:
-                logger.info(f"[ChatModel] 🧠 Generando con CPU ({self.model_cpu})...")
-                start_time_cpu = time.time()
-                
-                response = self.client_cpu.chat.completions.create(
-                    model=self.model_cpu,
-                    messages=messages,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    stream=False,
-                    timeout=GENERATION_TIMEOUT
-                )
-                
-                elapsed = time.time() - start_time_cpu
-                
-                if response.choices and response.choices[0].message.content:
-                    text = response.choices[0].message.content.strip()
-                    logger.info(f"[ChatModel] ✅ Generación CPU exitosa en {elapsed:.2f}s")
-                    return text
-                else:
-                    logger.warning("[ChatModel] ⚠️ Respuesta vacía del modelo CPU")
-                    return None
+            # ✅ Usar el broker directamente
+            response = self.broker.generate(
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                timeout=GENERATION_TIMEOUT
+            )
             
-            except (APITimeoutError, APIConnectionError, NotFoundError) as e:
-                logger.warning(f"[ChatModel] ⚠️ Error de conexión CPU: {e}")
-                self._cpu_available = False # Marcar CPU como muerta
+            elapsed = time.time() - start_time
+            
+            if response:
+                logger.info(f"[ChatModel] ✅ Generación exitosa en {elapsed:.2f}s")
+                
+                # Obtener info de qué conexión se usó
+                status = self.broker.get_status()
+                conn_used = self._get_last_used_connection(status)
+                logger.info(f"[ChatModel] 📡 Conexión usada: {conn_used}")
+                
+                return response
+            else:
+                logger.warning("[ChatModel] ⚠️ El broker retornó None")
                 return None
                 
-            except Exception as e:
-                logger.error(f"[ChatModel] ❌ Error inesperado en CPU: {e}", exc_info=True)
-                return None
+        except Exception as e:
+            elapsed = time.time() - start_time
+            logger.error(f"[ChatModel] ❌ Error después de {elapsed:.2f}s: {e}", exc_info=True)
+            return None
+    
+    def _get_last_used_connection(self, broker_status: Dict) -> str:
+        """Helper para determinar qué conexión se usó"""
+        most_recent = None
+        most_recent_time = 0
         
-        # Si llegamos aquí, es que GPU falló y CPU no estaba disponible (o falló)
-        logger.error("[ChatModel] ❌ Fallback a CPU falló o no estaba disponible.")
-        return None
+        for conn_name, conn_data in broker_status.items():
+            last_used = conn_data.get("last_used")
+            if last_used and last_used > most_recent_time:
+                most_recent = conn_name
+                most_recent_time = last_used
+        
+        return most_recent or "unknown"
+    
+    def get_broker_status(self) -> Dict:
+        """Obtiene el estado actual del broker (útil para debugging)"""
+        if not self._is_loaded:
+            return {"error": "Broker no cargado"}
+        
+        return self.broker.get_status()
 
 
-# ============== MODEL MANAGER (Sin cambios) ==============
 class ModelManager:
     """
     Gestor centralizado de modelos.
-    Responsable de inicializar ChatModel y SearchEngine.
+    ✅ SIMPLIFICADO: Ahora solo maneja ChatModel y SearchEngine.
     """
     
     def __init__(self):
@@ -236,7 +148,7 @@ class ModelManager:
         self._initialized = False
     
     def initialize(self, warmup: bool = True):
-        """Inicializa ambos modelos (ChatModel CPU y SearchEngine GPU)."""
+        """Inicializa ambos modelos."""
         if self._initialized:
             logger.info("[ModelManager] Ya inicializado")
             return
@@ -247,14 +159,14 @@ class ModelManager:
         logger.info("=" * 60)
         
         try:
-            # 1. ChatModel (Ahora con lógica GPU/CPU)
-            logger.info("[ModelManager] [1/2] Cargando ChatModel (GPU/CPU)...")
+            # 1. ChatModel (usa broker internamente)
+            logger.info("[ModelManager] [1/2] Cargando ChatModel...")
             start = time.time()
             self.chat_model.load()
             logger.info(f"[ModelManager] ✅ ChatModel listo en {time.time()-start:.2f}s")
             
-            # 2. SearchEngine (GPU/CPU)
-            logger.info("[ModelManager] [2/2] Cargando SearchEngine (GPU/CPU)...")
+            # 2. SearchEngine (usa broker internamente)
+            logger.info("[ModelManager] [2/2] Cargando SearchEngine...")
             start = time.time()
             self.search_engine.load()
             logger.info(f"[ModelManager] ✅ SearchEngine listo en {time.time()-start:.2f}s")
@@ -274,10 +186,32 @@ class ModelManager:
             logger.info(f"[ModelManager] ✅ CARGA COMPLETA en {total:.2f}s")
             logger.info("=" * 60)
             
+            # Mostrar estado del broker
+            self._log_broker_status()
+            
         except Exception as e:
             logger.error(f"[ModelManager] ❌ Error crítico: {e}", exc_info=True)
             self._initialized = False
             raise
+    
+    def _log_broker_status(self):
+        """Muestra el estado del broker"""
+        try:
+            status = self.chat_model.get_broker_status()
+            
+            logger.info("=" * 60)
+            logger.info("📊 [ModelManager] ESTADO DEL BROKER")
+            logger.info("=" * 60)
+            
+            for conn_name, conn_data in status.items():
+                available = "✅" if conn_data["available"] else "❌"
+                priority = conn_data["priority"]
+                logger.info(f"  [{priority}] {conn_name}: {available}")
+            
+            logger.info("=" * 60)
+            
+        except Exception as e:
+            logger.warning(f"[ModelManager] No se pudo obtener estado del broker: {e}")
     
     def get_chat_model(self) -> ChatModel:
         """Obtiene la instancia de ChatModel, inicializando si es necesario."""
@@ -290,9 +224,16 @@ class ModelManager:
         if not self._initialized:
             self.initialize()
         return self.search_engine
+    
+    def get_broker_status(self) -> Dict:
+        """Obtiene el estado del broker (útil para monitoring)"""
+        if not self._initialized:
+            return {"error": "ModelManager no inicializado"}
+        
+        return self.chat_model.get_broker_status()
 
 
-# ============== INSTANCIAS GLOBALES (Sin cambios) ==============
+# ============== INSTANCIAS GLOBALES ==============
 _model_manager = ModelManager()
 
 def initialize_models(warmup: bool = True):
@@ -308,3 +249,7 @@ def get_chat_model() -> ChatModel:
 def get_search_engine() -> SearchEngine:
     """Obtiene la instancia global de SearchEngine."""
     return _model_manager.get_search_engine()
+
+def get_broker_status() -> Dict:
+    """Helper para obtener estado del broker desde cualquier parte"""
+    return _model_manager.get_broker_status()

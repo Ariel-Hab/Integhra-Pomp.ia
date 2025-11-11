@@ -1,17 +1,12 @@
-version: "3.9"
+# version: "3.9" (Esta línea es obsoleta, la quito)
 
 services:
   # 1️⃣ Rasa Core (cerebro)
   rasa-server:
-    # --- CAMBIO ---
-    # Ya no usa "build:", ahora "jala" la imagen desde GHCR
     image: ghcr.io/ariel-hab/integhra-pomp.ia:rasa-1.0
     container_name: rasa_server
     ports:
       - "8000:8000"
-    # --- IMPORTANTE ---
-    # Mantenemos el volumen para que puedas editar tu
-    # código localmente y se refleje DENTRO del contenedor
     volumes:
       - ./bot:/app/bot
     working_dir: /app/bot
@@ -23,12 +18,8 @@ services:
 
   # 2️⃣ Rasa Actions (lógica)
   actions-server:
-    # --- CAMBIO ---
-    # Ya no usa "build:", ahora "jala" la imagen desde GHCR
     image: ghcr.io/ariel-hab/integhra-pomp.ia:actions-1.0
     container_name: actions_server
-    # --- IMPORTANTE ---
-    # Mantenemos el volumen para el desarrollo local
     volumes:
       - ./actions:/app/actions
     env_file:
@@ -38,7 +29,7 @@ services:
 
   # 3️⃣ Ollama (modelo CPU)
   ollama-cpu:
-    image: ollama/ollama:latest # (Este ya estaba bien)
+    image: ollama/ollama:latest
     container_name: ollama_cpu
     restart: unless-stopped
     environment:
@@ -48,7 +39,31 @@ services:
       - "11434:11434"
     volumes:
       - ollama_cpu_data:/root/.ollama
-      - ./actions/models/pompi_liviano_cpu:/modelfiles_cpu
+      - ./models/pompi_liviano_cpu:/modelfiles_cpu
+    
+    entrypoint: /bin/sh
+
+    # --- ⬇️ AQUÍ ESTÁ EL CAMBIO ⬇️ ---
+    command: >
+      -c "
+        echo '🚀 Iniciando servidor Ollama en segundo plano...' &&
+        ollama serve &
+        
+        echo '⏳ Esperando 5 segundos a que el servidor levante...' &&
+        sleep 5 &&
+        
+        echo '🚚 Descargando modelo base phi3:mini (si no existe)...' &&
+        ollama pull phi3:mini &&
+        
+        echo '🛠️ Creando modelo pompi_chat_cpu...' &&
+        ollama create pompi_chat_cpu -f /modelfiles_cpu/Modelfile.chat &&
+        
+        echo '🛠️ Creando modelo pompi_search_cpu...' &&
+        ollama create pompi_search_cpu -f /modelfiles_cpu/Modelfile.search &&
+        
+        echo '✅ ¡Modelos creados! Manteniendo el servidor vivo...' &&
+        wait
+      "
 
 volumes:
   ollama_cpu_data:

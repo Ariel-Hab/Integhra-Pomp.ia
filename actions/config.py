@@ -156,11 +156,15 @@ class DomainBasedConfigurationManager:
             
             self.chat_model_instance = get_chat_model() 
             
-            if self.chat_model_instance and (self.chat_model_instance._cpu_available or self.chat_model_instance._gpu_available):
+            # --- ✅ CORRECCIÓN ---
+            # La lógica de _cpu_available / _gpu_available ya no existe aquí.
+            # Si get_chat_model() no lanzó una excepción, la instancia se obtuvo.
+            if self.chat_model_instance:
                 logger.info("✅ [ChatModel] Instancia obtenida")
                 return True
             else:
-                logger.warning("⚠️ [ChatModel] No se pudo obtener la instancia")
+                # Este caso es improbable si get_chat_model() funciona bien
+                logger.warning("⚠️ [ChatModel] No se pudo obtener la instancia (retornó None)")
                 return False
                 
         except Exception as e:
@@ -178,11 +182,14 @@ class DomainBasedConfigurationManager:
             
             self.search_engine_instance = get_search_engine()
             
-            if self.chat_model_instance and (self.chat_model_instance._cpu_available or self.chat_model_instance._gpu_available):
+            # --- ✅ CORRECCIÓN ---
+            # 1. Se cambió para que verifique self.search_engine_instance (no el chat_model)
+            # 2. Se eliminó la lógica de _cpu_available / _gpu_available
+            if self.search_engine_instance:
                 logger.info("✅ [SearchEngine] Instancia obtenida")
                 return True
             else:
-                logger.warning("⚠️ [SearchEngine] No se pudo obtener la instancia")
+                logger.warning("⚠️ [SearchEngine] No se pudo obtener la instancia (retornó None)")
                 return False
                 
         except Exception as e:
@@ -190,6 +197,7 @@ class DomainBasedConfigurationManager:
             logger.error(f"❌ [SearchEngine] {error_msg}")
             self._health_status['critical_errors'].append(error_msg)
             return False
+                
 
     def _load_domain(self) -> bool:
         """Carga el domain.yml"""

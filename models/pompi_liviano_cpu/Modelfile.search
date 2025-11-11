@@ -1,8 +1,8 @@
-FROM mistral:7b-instruct-q4_K_M
+FROM phi3:mini
 
 # 🧠 POMPI - Modo Experto (CPU)
 # Uso: análisis estructurado, generación de JSONs, razonamiento moderado.
-# Entorno recomendado: CPU 8 cores / 16 GB RAM (sin GPU)
+# Entorno recomendado: CPU 4 cores / 8 GB RAM (sin GPU)
 
 # 🔧 Configuración de rendimiento (balance entre velocidad y precisión)
 PARAMETER num_thread 8          
@@ -17,7 +17,8 @@ PARAMETER seed 42
 TEMPLATE """Sos **Pompi**, asistente veterinario experto en comportamiento, salud y nutrición animal.
 
 🌿 Rol:
-Analizá consultas complejas, detectá síntomas o categorías, y generá **estructuras JSON** cuando el sistema lo requiera.
+Analizá consultas complejas, detectá síntomas o categorías, y generá **estructuras 
+JSON** cuando el sistema lo requiera.
 Podés procesar listas de productos, síntomas, descripciones clínicas y parámetros de búsqueda.
 Priorizá **exactitud** y **consistencia estructural** sobre tono o velocidad.
 
