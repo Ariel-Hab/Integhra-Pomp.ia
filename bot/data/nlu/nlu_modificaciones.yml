@@ -172,21 +172,46 @@ nlu:
     - quiero ver de Holliday, no de Zoetis
     - olvidate de analgésicos y buscá antiparasitarios
     - en lugar de productos para bovinos mostrame los de caninos
-    - mostrámelos de Bayer, no de Richmond    
+    - mostrámelos de Bayer, no de Richmond  
+    # ============================================
+    # REEMPLAZAR COMPUESTO
+    # ============================================
+    - en vez de [metopreno](compuesto){"role": "old"} que tenga [praziquantel](compuesto){"role": "new"}
+    - cambiá [vitaminas](compuesto){"role": "old"} por [probióticos](compuesto){"role": "new"}
+    - reemplazá [ácido clavulánico](compuesto){"role": "old"} por [adjuvante](compuesto){"role": "new"}
+    - mejor [metopreno](compuesto){"role": "new"} que [praziquantel](compuesto){"role": "old"}
+    - no, era [probióticos](compuesto){"role": "new"} no [vitaminas](compuesto){"role": "old"}
+
+    # ============================================
+    # REEMPLAZAR SINTOMA
+    # ============================================
+    - en vez de [diarrea](sintoma){"role": "old"} que sea para [vómitos](sintoma){"role": "new"}
+    - cambiá [fiebre](sintoma){"role": "old"} por [tos](sintoma){"role": "new"}
+    - reemplazá [parásitos](sintoma){"role": "old"} por [infección](sintoma){"role": "new"}
+    - mejor para [vómitos](sintoma){"role": "new"} que para [diarrea](sintoma){"role": "old"}
+    - no, para [tos](sintoma){"role": "new"}, no para [fiebre](sintoma){"role": "old"}  
 
 - intent: modificar_busqueda:agregar
   examples: |
+    # ========================================
+    # AGREGAR COMPUESTO
+    # ========================================
+    - agrega [ácido clavulánico](compuesto)
+    - sumale [probióticos](compuesto)
+    - y que tenga [metopreno](compuesto)
+    - también con [praziquantel](compuesto)
+    - incluí [vitaminas](compuesto)
+    - poné [adjuvante](compuesto)
 
-    # === Sensibilidad de Mayúsculas/Minúsculas (Corrige Test [16/26]) ===
-    - sacá [richmond]{"entity": "empresa", "role": "old"} y poné [Zoetis]{"entity": "empresa", "role": "new"}
-    - me equivoqué, era [ivermectina]{"entity": "producto", "role": "new"} no [Ivermectina]{"entity": "producto", "role": "old"}
-    - no, de [Bayer]{"entity": "empresa", "role": "new"} no [bayer]{"entity": "empresa", "role": "old"}
-
-    # === Reemplazos implícitos o por corrección ===
-    - ah no, me refería a [gatos]{"entity": "animal", "role": "new"}, no [perros]{"entity": "animal", "role": "old"}
-    - quise poner [250mg]{"entity": "dosis", "role": "new"} en vez de [500mg]{"entity": "dosis", "role": "old"}
-    - el proveedor correcto es [holliday]{"entity": "empresa", "role": "new"}, no [bayer]{"entity": "empresa", "role": "old"}
-    - perdón, el animal era [equino]{"entity": "animal", "role": "new"}
+    # ========================================
+    # AGREGAR SINTOMA
+    # ========================================
+    - agrega [fiebre](sintoma)
+    - sumale para [tos](sintoma)
+    - y que sirva para [vómitos](sintoma)
+    - también para [parásitos](sintoma)
+    - incluí [diarrea](sintoma)
+    - poné [infección](sintoma)
     # ========================================
     # PATRÓN DIRECTO: "agrega [ENTIDAD] [VALOR]"
     # ========================================
@@ -525,7 +550,25 @@ nlu:
     # ========================================
     # COMPARADORES: Cambiar valores numéricos
     # ========================================
-    
+    # ========================================
+    # CON COMPUESTOS
+    # ========================================
+    - cambia [ivermectina](producto){"role": "old"} por [amoxicilina](producto){"role": "new"} y agrega [ácido clavulánico](compuesto){"role": "add"}
+    - reemplaza [bayer]{"entity": "empresa", "role": "old"} por [zoetis]{"entity": "empresa", "role": "new"} y suma [probióticos](compuesto){"role": "add"}
+    - en vez de [vitaminas](compuesto){"role": "old"} busca [metopreno](compuesto){"role": "new"} y añade [perro](animal){"role": "add"}
+    - saca [holliday](empresa){"role": "remove"} y agrega [praziquantel](compuesto){"role": "add"}
+    - quita [praziquantel](compuesto){"role": "remove"} y suma [metopreno](compuesto){"role": "add"}
+    - cambia [metopreno](compuesto){"role": "old"} por [praziquantel](compuesto){"role": "new"} y saca [estado](filter_name){"role": "remove"}
+
+    # ========================================
+    # CON SINTOMAS
+    # ========================================
+    - cambia [diarrea](sintoma){"role": "old"} por [vómitos](sintoma){"role": "new"} y agrega [holliday](empresa){"role": "add"}
+    - reemplaza [perro](animal){"role": "old"} por [gato](animal){"role": "new"} y suma para [fiebre](sintoma){"role": "add"}
+    - en vez de [tos](sintoma){"role": "old"} busca para [parásitos](sintoma){"role": "new"} y añade [bayer](empresa){"role": "add"}
+    - saca [estado](filter_name){"role": "remove"} y agrega [infección](sintoma){"role": "add"}
+    - quita para [diarrea](sintoma){"role": "remove"} y suma [antibioticos](categoria){"role": "add"}
+    - cambia [fiebre](sintoma){"role": "old"} por [tos](sintoma){"role": "new"} y quita [precio](filter_name){"role": "remove"}
     # === DESCUENTO: Cambiar comparador + cantidad ===
     - cambia descuento [mayor]{"entity": "comparador", "role": "old", "role": "gt", "group": "descuento_filter"} a [10]{"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [menor]{"entity": "comparador", "role": "new", "role": "lt", "group": "descuento_filter"} a [20]{"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
     - modifica descuento [menor]{"entity": "comparador", "role": "old", "role": "lt", "group": "descuento_filter"} a [20]{"entity": "cantidad_descuento", "role": "old", "group": "descuento_filter"}% por [máximo]{"entity": "comparador", "role": "new", "role": "lte", "group": "descuento_filter"} [25]{"entity": "cantidad_descuento", "role": "new", "group": "descuento_filter"}%
@@ -651,6 +694,34 @@ nlu:
 
 - intent: modificar_busqueda:remover
   examples: |
+    # ==========================================
+    # CASO 1: Remover FILTRO (Nombre)
+    # ==========================================
+    - saca el filtro de [compuesto](filter_name)
+    - quita [sintoma](filter_name)
+    - elimina el filtro de [compuestos](filter_name)
+    - sin restricción de [sintomas](filter_name)
+
+    # ==========================================
+    # CASO 2: Remover VALOR (Compuesto)
+    # ==========================================
+    - saca [ácido clavulánico](compuesto)
+    - quita [probióticos](compuesto)
+    - elimina [metopreno](compuesto)
+    - sin [praziquantel](compuesto)
+    - no quiero más [vitaminas](compuesto)
+    - sacá [adjuvante](compuesto)
+
+    # ==========================================
+    # CASO 2: Remover VALOR (Sintoma)
+    # ==========================================
+    - saca [fiebre](sintoma)
+    - quita [tos](sintoma)
+    - elimina [vómitos](sintoma)
+    - sin [parásitos](sintoma)
+    - no quiero para [diarrea](sintoma)
+    - sacá [infección](sintoma)
+    - quitá el síntoma [fiebre](sintoma)
     - saca el filtro de [descuento](filter_name)
     - quita [proveedor](filter_name)
     - elimina el filtro de [stock](filter_name)

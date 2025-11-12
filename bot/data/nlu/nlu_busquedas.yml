@@ -288,6 +288,59 @@ nlu:
     - Necesito [amoxicilina](producto) + [clavulánico]{"entity": "producto", "role": "compuesto"}
     - Mostrame [fipronil](producto) combinado con [permethrina]{"entity": "producto", "role": "compuesto"}
     - Catálogo de [cefalexina](producto) con [probióticos]{"entity": "producto", "role": "compuesto"}
+    # --- BÚSQUEDA POR COMPUESTO (Solo) ---
+    - busco [ácido clavulánico](compuesto)
+    - tenés [metopreno](compuesto)?
+    - [praziquantel](compuesto)
+    - necesito [trimetoprima](compuesto)
+    - qué productos tienen [metopreno](compuesto)?
+    - mostrame todo lo que tenga [praziquantel](compuesto)
+    - algo con [probióticos](compuesto)
+    - quiero ver qué hay con [ácido clavulánico](compuesto)
+    - ando buscando [metopreno](compuesto)
+
+    # --- COMPUESTO + ANIMAL / SINTOMA ---
+    - productos con [metopreno](compuesto) para [gatos](animal)
+    - qué tenés con [praziquantel](compuesto) para [perros](animal)?
+    - necesito algo con [trimetoprima](compuesto) para [infecciones](sintoma)
+    - busco [ácido clavulánico](compuesto) para [cachorros](animal)
+    - algo con [metopreno](compuesto) para [pulgas](sintoma)
+    - tenés [probióticos](compuesto) para [diarrea](sintoma)?
+    - [praziquantel](compuesto) para [parásitos](sintoma) en [perros](animal)
+
+    # --- COMPUESTO + DOSIS (Forma, Gramaje, Volumen) ---
+    - busco [ácido clavulánico](compuesto) [inyectable]{"entity": "dosis", "role": "forma"}
+    - tenés [metopreno](compuesto) en [pipeta]{"entity": "dosis", "role": "forma"}?
+    - necesito [praziquantel](compuesto) en [comprimidos]{"entity": "dosis", "role": "forma"}
+    - productos [orales]{"entity": "dosis", "role": "forma"} con [trimetoprima](compuesto)
+    - mostrame [praziquantel](compuesto) de [50mg]{"entity": "dosis", "role": "gramaje"}
+    - algo con [ácido clavulánico](compuesto) de [100ml]{"entity": "dosis", "role": "volumen"}
+    - busco [probióticos](compuesto) en [polvo]{"entity": "dosis", "role": "forma"}
+    - [metopreno](compuesto) en [spray]{"entity": "dosis", "role": "forma"}
+
+    # --- COMPUESTO + EMPRESA ---
+    - busco [metopreno](compuesto) de [merial]{"entity": "empresa", "role": "proveedor"}
+    - qué tenés con [ácido clavulánico](compuesto) de [zoetis]{"entity": "empresa", "role": "proveedor"}?
+    - productos de [bayer]{"entity": "empresa", "role": "proveedor"} que tengan [trimetoprima](compuesto)
+    - [praziquantel](compuesto) de [elanco]{"entity": "empresa", "role": "proveedor"}
+    - [probióticos](compuesto) de [biogenesis]{"entity": "empresa", "role": "proveedor"}
+
+    # --- COMPUESTO + CATEGORÍA ---
+    - busco [antibióticos](categoria) con [ácido clavulánico](compuesto)
+    - tenés [antiparasitarios](categoria) con [metopreno](compuesto)?
+    - mostrame [antiparasitarios](categoria) que incluyan [praziquantel](compuesto)
+    - [antibióticos](categoria) más [probióticos](compuesto)
+    - [vacunas](categoria) que tengan [adjuvante](compuesto)
+    - quiero [suplementos](categoria) con [probióticos](compuesto)
+
+    # --- COMPUESTO (Combinaciones Complejas) ---
+    - busco [antibióticos](categoria) con [ácido clavulánico](compuesto) [inyectables]{"entity": "dosis", "role": "forma"}
+    - tenés [antiparasitarios](categoria) con [metopreno](compuesto) para [gatos](animal)?
+    - algo [oral]{"entity": "dosis", "role": "forma"} con [praziquantel](compuesto) para [perros](animal) de [zoetis]{"entity": "empresa", "role": "proveedor"}
+    - productos de [bayer]{"entity": "empresa", "role": "proveedor"} con [trimetoprima](compuesto) para [infecciones](sintoma)
+    - [comprimidos]{"entity": "dosis", "role": "forma"} de [250mg]{"entity": "dosis", "role": "gramaje"} que tengan [ácido clavulánico](compuesto)
+    - mostrame [antiparasitarios](categoria) con [metopreno](compuesto) de [merial]{"entity": "empresa", "role": "proveedor"} para [cachorros](animal)
+    - [inyectables]{"entity": "dosis", "role": "forma"} de [100ml]{"entity": "dosis", "role": "volumen"} con [ácido clavulánico](compuesto)
 
     # --- Ejemplos con dosis de gramaje ---
     - Busco [amoxicilina](producto) de [500mg]{"entity": "dosis", "role": "gramaje"}
